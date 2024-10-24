@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.util.List;
 
 @Slf4j
@@ -37,7 +36,8 @@ public class Settings {
     /**
      * Ssl settings
      */
-    private boolean handleSsl = true;
+    // @JsonIgnore
+    private boolean handleSsl = false;
     private CertType certType = CertType.BUILT_IN;
     private String selectedCert;
 

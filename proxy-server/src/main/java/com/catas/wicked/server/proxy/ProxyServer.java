@@ -1,14 +1,11 @@
 package com.catas.wicked.server.proxy;
 
-import com.catas.wicked.common.config.CertificateConfig;
 import com.catas.wicked.common.constant.ServerStatus;
 import com.catas.wicked.common.executor.ThreadPoolService;
-import com.catas.wicked.common.provider.CertManager;
 import com.catas.wicked.common.util.AlertUtils;
-import com.catas.wicked.server.cert.CertPool;
-import com.catas.wicked.server.cert.CertService;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.server.handler.server.ServerChannelInitializer;
+import io.micronaut.context.annotation.Parallel;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -16,9 +13,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SslProvider;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.JdkLoggerFactory;
 import jakarta.annotation.PostConstruct;
@@ -26,11 +20,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
-
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
-
 
 @Slf4j
 @Singleton
@@ -40,15 +29,6 @@ public class ProxyServer {
 
     @Inject
     private ApplicationConfig applicationConfig;
-
-    @Inject
-    private CertService certService;
-
-    @Inject
-    private CertManager certManager;
-
-    @Inject
-    private CertPool certPool;
 
     @Inject
     private ServerChannelInitializer proxyServerInitializer;
@@ -106,30 +86,10 @@ public class ProxyServer {
         }
     }
 
-    // @Parallel
+    @Parallel
     @PostConstruct
     private void init() {
         setStatus(ServerStatus.HALTED);
-        SslContextBuilder contextBuilder = SslContextBuilder.forClient()
-                .sslProvider(SslProvider.OPENSSL)
-                .startTls(true)
-                .protocols("TLSv1.1", "TLSv1.2", "TLSv1")
-                .trustManager(InsecureTrustManagerFactory.INSTANCE);
-        try {
-            applicationConfig.setClientSslCtx(contextBuilder.build());
-            CertificateConfig certConfig = certManager.getSelectedCert();
-            X509Certificate caCert = certManager.getCertById(certConfig.getId());
-            PrivateKey caPriKey = certManager.getPriKeyById(certConfig.getId());
-            applicationConfig.updateRootCertConfigs(certManager.getCertSubject(caCert), caCert, caPriKey);
-
-            KeyPair keyPair = certService.genKeyPair();
-            applicationConfig.setServerPriKey(keyPair.getPrivate());
-            applicationConfig.setServerPubKey(keyPair.getPublic());
-        } catch (Exception e) {
-            log.error("Certificate load error: ", e);
-            applicationConfig.getSettings().setHandleSsl(false);
-        }
-
         if (standalone) {
             start();
         } else {

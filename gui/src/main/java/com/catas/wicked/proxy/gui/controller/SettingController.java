@@ -150,19 +150,6 @@ public class SettingController implements Initializable {
         tab.setGraphic(tabPane);
     }
 
-    /**
-     * initialize all components
-     */
-    public void initServers() {
-        // settingServiceList = new ArrayList<>();
-        // settingServiceList.add(new GeneralSettingService(this));
-        // settingServiceList.add(new ProxySettingService(this));
-        // settingServiceList.add(new SslSettingService(this));
-        // settingServiceList.add(new ExternalProxySettingService(this));
-        // settingServiceList.add(new ThrottleSettingService(this));
-        // settingServiceList.forEach(SettingService::init);
-    }
-
     public void save(ActionEvent event) {
         // valid textFields
         boolean isValidated = true;

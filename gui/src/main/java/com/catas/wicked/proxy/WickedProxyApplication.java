@@ -38,7 +38,6 @@ public class WickedProxyApplication implements ApplicationDelegate {
     @Inject
     private MessageService messageService;
 
-    @Any
     @Inject
     private ProxyServer proxyServer;
 

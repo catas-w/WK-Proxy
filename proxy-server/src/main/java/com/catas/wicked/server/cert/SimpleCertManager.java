@@ -5,15 +5,18 @@ import com.catas.wicked.common.config.CertificateConfig;
 import com.catas.wicked.common.provider.CertInstallProvider;
 import com.catas.wicked.common.provider.CertManager;
 import com.catas.wicked.common.util.AesUtils;
+import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.CommonUtils;
 import com.catas.wicked.common.util.IdUtil;
 import com.catas.wicked.common.util.SystemUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micronaut.context.annotation.Parallel;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.cert.CertificateException;
@@ -63,6 +67,7 @@ public class SimpleCertManager implements CertManager {
 
     private static final int LIMIT = 5;
 
+    @Parallel
     @PostConstruct
     public void init() throws IOException {
         // load custom certs
@@ -79,6 +84,30 @@ public class SimpleCertManager implements CertManager {
         List<CertificateConfig> configs = objectMapper.readValue(certFile, new TypeReference<List<CertificateConfig>>() {});
         log.info("Load custom certs: {}", configs.stream().map(CertificateConfig::getName).collect(Collectors.toList()));
         customCertList.addAll(configs);
+
+        initAppCertConfig(getSelectedCert());
+    }
+
+    private void initAppCertConfig(CertificateConfig certConfig) {
+        try {
+            X509Certificate caCert = getCertById(certConfig.getId());
+            PrivateKey caPriKey = getPriKeyById(certConfig.getId());
+            appConfig.updateRootCertConfigs(getCertSubject(caCert), caCert, caPriKey);
+
+            log.info("Init appCertConfig: {}", certConfig.getName());
+            KeyPair keyPair = certService.genKeyPair();
+            appConfig.setServerPriKey(keyPair.getPrivate());
+            appConfig.setServerPubKey(keyPair.getPublic());
+        } catch (Exception e) {
+            log.error("Error in initAppCertConfig", e);
+            if (certConfig.isDefault()) {
+                AlertUtils.alertLater(Alert.AlertType.ERROR, "Certificate init error!");
+            } else {
+                appConfig.getSettings().setSelectedCert(defaultCert.getId());
+                appConfig.updateSettingsAsync();
+                initAppCertConfig(defaultCert);
+            }
+        }
     }
 
     @Override

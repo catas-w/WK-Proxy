@@ -79,6 +79,7 @@ public class SslSettingService extends AbstractSettingService {
         // import cert dialog
         settingController.setImportCertEvent(actionEvent -> displayImportDialog());
 
+        // refresh selected cert
         certSelectGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue instanceof CertSelectComponent.CertRadioButton certRadioButton) {
                 String certId = certRadioButton.getCertId();

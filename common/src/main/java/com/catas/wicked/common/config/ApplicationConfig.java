@@ -12,6 +12,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslProvider;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
@@ -73,17 +76,27 @@ public class ApplicationConfig implements AutoCloseable {
             log.error("Error loading local configuration.", e);
         }
 
-        // Runtime.getRuntime().addShutdownHook(new Thread(){
-        //     @Override
-        //     public void run() {
-        //         close();
-        //     }
-        // });
-        // test
+        loadSslContext();
         // System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
-        // externalProxyConfig.setProtocol(ProxyProtocol.SOCKS4);
-        // externalProxyConfig.setProxyAddress("127.0.0.1", 10808);
-        // externalProxyConfig.setUsingExternalProxy(true);
+    }
+
+    public void loadSslContext() {
+        ThreadPoolService.getInstance().submit(() -> {
+            try {
+                long start = System.currentTimeMillis();
+                SslContextBuilder contextBuilder = SslContextBuilder.forClient()
+                        .sslProvider(SslProvider.OPENSSL)
+                        .startTls(true)
+                        .protocols("TLSv1.1", "TLSv1.2", "TLSv1")
+                        .trustManager(InsecureTrustManagerFactory.INSTANCE);
+                setClientSslCtx(contextBuilder.build());
+                long end = System.currentTimeMillis();
+                log.info("loadSslContext finished, time cost: {} ms", end - start);
+            } catch (Exception e) {
+                log.error("loadSslContext error: ", e);
+                settings.setHandleSsl(false);
+            }
+        });
     }
 
     private File getLocalConfigFile() throws IOException {

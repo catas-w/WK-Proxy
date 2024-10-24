@@ -4,9 +4,9 @@ import java.util.concurrent.*;
 
 public class ThreadPoolService {
 
-    private static final int CORE_POOL_SIZE = 10;
+    private static final int CORE_POOL_SIZE = 16;
 
-    private static final int MAX_POOL_SIZE = 128;
+    private static final int MAX_POOL_SIZE = 64;
 
     private static final long ALIVE_TIME = 0L;
 
@@ -32,7 +32,7 @@ public class ThreadPoolService {
         service.execute(task);
     }
 
-    public Future<Object> submit(Callable<Object> task) {
+    public Future<?> submit(Runnable task) {
         return service.submit(task);
     }
 
