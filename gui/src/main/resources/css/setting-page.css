@@ -12,13 +12,6 @@
 .setting-tab-pane {
     -fx-padding: 0 0 0 0;
 }
-/*.setting-tab-pane *.tab-label {*/
-/*    -fx-font-size: 11;*/
-/*    -fx-font-weight: NORMAL;*/
-/*    -fx-pref-width: 90px;*/
-/*    -fx-translate-y: 20;*/
-/*    -fx-text-fill: #303030;*/
-/*}*/
 .setting-tab-pane *.tab {
     -fx-pref-height: 70px;
     -fx-pref-width: 80px;
@@ -51,13 +44,14 @@
     -fx-icon-size: 24;
 }
 .setting-tab-pane .setting-icon-pane .label {
-    -fx-pref-width: 80px;
+    -fx-min-width: 100px;
     -fx-text-fill: #5d5d5d;
     -fx-font-size: 8pt;
     -fx-font-weight: normal;
     -fx-text-alignment: CENTER;
     -fx-alignment: CENTER;
     -fx-padding: 5 0 0 0;
+    /*-fx-border-color: brown;*/
 }
 
 
@@ -95,11 +89,13 @@
 
 .setting-tab-pane .jfx-text-field {
     -fx-border-width: 1;
-    -fx-border-color: #b0b0b0;
+    -fx-border-color: rgba(140, 140, 140, 0.70);
     -fx-border-radius: 3px;
+    -fx-pref-height: 35;
+    -fx-pref-width: 140;
     /*-jfx-focus-color: #29c1c1;*/
     /*-jfx-unfocus-color: #4d4d4d;*/
-    -fx-padding: 0.333333em 0 0.333333em 0;
+    -fx-padding: 0.333333em 0 0.333333em 0.5em;
 }
 .setting-tab-pane .jfx-text-field > .input-line {
     /*-fx-background-color: -jfx-unfocus-color;*/
@@ -115,6 +111,15 @@
     -fx-prompt-text-fill: #4D4D4D;
     -fx-border-color: #808080;
 }
+.record-size-input {
+    -fx-padding: 0.333333em 2.5em 0.333333em 0.5em !important;
+}
+.record-size-label {
+    -fx-translate-x: 50;
+    -fx-text-fill: rgba(128, 128, 128, 0.75);
+    -fx-font-size: 15;
+    /*-fx-font-weight: bold;*/
+}
 
 
 /****** text area ******/
@@ -125,11 +130,25 @@
 }
 
 
+/****** checkBox ******/
+.setting-tab-pane .jfx-check-box {
+    -jfx-unchecked-color: #868686;
+    -jfx-checked-color: #009688;
+}
+.setting-tab-pane .jfx-check-box .box {
+    -fx-border-width: 1;
+}
+
 /****** combBox ******/
 .setting-tab-pane .jfx-combo-box {
-    -jfx-focus-color: #29c1c1;
+    -jfx-focus-color: TRANSPARENT;
+    -jfx-unfocus-color: TRANSPARENT;
     /*-jfx-unfocus-color: TRANSPARENT;*/
     -fx-prompt-text-fill: #707070;
+    -fx-pref-height: 35;
+    -fx-pref-width: 140;
+    -fx-border-color: #949494;
+    -fx-border-radius: 5;
 }
 .setting-tab-pane .jfx-combo-box .label{
     -fx-text-fill: #707070;
@@ -166,7 +185,7 @@
 }
 
 .setting-tab-pane .combo-box-popup .list-view .jfx-list-cell:selected .label {
-    -fx-text-fill: #33cbb9;
+    -fx-text-fill: #009688;
     -fx-font-weight: bold;
 }
 
@@ -183,10 +202,10 @@
 
 
 /****** gridPane ******/
-.setting-grid-pane {
-    -fx-background-color: #ffffff;
-    /*-fx-border-color: green;*/
-}
+/*.setting-grid-pane {*/
+/*    -fx-background-color: #ffffff;*/
+/*    !*-fx-border-color: green;*!*/
+/*}*/
 
 .grid-element {
     -fx-pref-height: 40;
@@ -208,7 +227,42 @@
     /*-fx-pref-height: 120;*/
     -fx-pref-height: 140;
 }
+.grid-label {
+    -fx-min-width: 180;
+    -fx-max-width: 180;
+    -fx-pref-height: 40;
+    -fx-alignment: CENTER-RIGHT;
+    /*-fx-font-weight: bold;*/
+    -fx-padding: 0 10 0 0;
 
+    /*-fx-border-color: rgba(165, 42, 42, 0.16);*/
+    /*-fx-border-width: 1;*/
+}
+.setting-tab-pane .grid-sep-label {
+    -fx-text-fill: #a4a4a4;
+    -fx-pref-height: 30;
+    -fx-pref-width: 180;
+    -fx-alignment: BOTTOM_LEFT;
+
+    /*-fx-border-width: 1 0 0 0;*/
+    /*-fx-border-color: #a4a4a4;*/
+}
+.setting-general .grid-label {
+    -fx-min-width: 125;
+    -fx-max-width: 125;
+}
+.setting-server .grid-label {
+    -fx-min-width: 190;
+    -fx-max-width: 190;
+}
+.setting-ssl .grid-label {
+    -fx-min-width: 130;
+    -fx-max-width: 130;
+}
+.setting-external .grid-label {
+    -fx-min-width: 130;
+    -fx-max-width: 130;
+}
 
 /************ certSelect  ************/
 .import-btn {
@@ -226,13 +280,6 @@
     -fx-border-color: #545454;
     -fx-text-fill: #2f2f2f;
 }
-
-/*.preview-btn {*/
-/*    -fx-pref-width: 75;*/
-/*    -fx-max-height: 25;*/
-/*    -fx-background-color: #d2d2d2;*/
-/*    -fx-translate-y: 7;*/
-/*}*/
 .cert-radio-btn {
     -fx-min-width: 120;
 }

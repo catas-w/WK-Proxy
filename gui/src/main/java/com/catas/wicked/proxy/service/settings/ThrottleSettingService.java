@@ -10,7 +10,7 @@ import javafx.scene.control.Labeled;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Singleton
+// @Singleton
 public class ThrottleSettingService extends AbstractSettingService{
 
     @Override

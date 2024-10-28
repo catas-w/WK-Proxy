@@ -7,7 +7,6 @@ import com.catas.wicked.common.constant.ProxyProtocol;
 import com.catas.wicked.proxy.gui.componet.ProxyTypeLabel;
 import com.jfoenix.controls.JFXComboBox;
 import jakarta.inject.Singleton;
-import javafx.scene.layout.Pane;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,21 +27,22 @@ public class ExternalProxySettingService extends AbstractSettingService{
             };
             proxyComboBox.getItems().add(label);
         }
-        proxyComboBox.getSelectionModel().selectedIndexProperty().addListener(((observable, oldValue, newValue) -> {
-            // disable other fields when not using proxy or system proxy
-            boolean disableFields = newValue.intValue() < 2;
-            ((Pane) proxyComboBox.getParent()).getChildren().stream()
-                    .skip(1)
-                    .filter(node -> node != proxyComboBox)
-                    .forEach(node -> node.setDisable(disableFields));
-            if (!disableFields) {
-                addRequiredValidator(settingController.getExProxyHost());
-                addRequiredValidator(settingController.getExProxyPort());
-            } else {
-                removeRequiredValidator(settingController.getExProxyHost());
-                removeRequiredValidator(settingController.getExProxyPort());
-            }
-        }));
+
+        // proxyComboBox.getSelectionModel().selectedIndexProperty().addListener(((observable, oldValue, newValue) -> {
+        //     // disable other fields when not using proxy or system proxy
+        //     boolean disableFields = newValue.intValue() < 2;
+        //     ((Pane) proxyComboBox.getParent()).getChildren().stream()
+        //             .skip(1)
+        //             .filter(node -> node != proxyComboBox)
+        //             .forEach(node -> node.setDisable(disableFields));
+        //     if (!disableFields) {
+        //         addRequiredValidator(settingController.getExProxyHost());
+        //         addRequiredValidator(settingController.getExProxyPort());
+        //     } else {
+        //         removeRequiredValidator(settingController.getExProxyHost());
+        //         removeRequiredValidator(settingController.getExProxyPort());
+        //     }
+        // }));
         proxyComboBox.getSelectionModel().selectFirst();
 
         settingController.getExProxyAuth().selectedProperty().addListener(((observable, oldValue, newValue) -> {

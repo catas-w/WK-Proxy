@@ -21,6 +21,9 @@
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Button?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+
+<?import javafx.scene.layout.StackPane?>
 <AnchorPane prefHeight="500.0" prefWidth="700.0"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.catas.wicked.proxy.gui.controller.SettingController">
@@ -28,158 +31,154 @@
         <URL value="@../../css/setting-page.css"/>
         <URL value="@../../css/common-design.css"/>
     </stylesheets>
-    <JFXTabPane fx:id="settingTabPane" styleClass="setting-tab-pane" side="TOP" tabClosingPolicy="UNAVAILABLE"
+    <JFXTabPane fx:id="settingTabPane" styleClass="setting-tab-pane" tabClosingPolicy="UNAVAILABLE"
              AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0"
              AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0">
         <Tab text="General" fx:id="generalSettingTab" styleClass="setting-general, setting-tab-1" >
             <AnchorPane>
-                <GridPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="15.0"
-                          AnchorPane.topAnchor="15.0" AnchorPane.bottomAnchor="40.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="NEVER" maxWidth="120.0" minWidth="120.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="NEVER"/>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="NEVER"/>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="NEVER"/>
+                <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
+                            AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
+                    <GridPane styleClass="setting-general" vgap="5">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0"/>
+                            <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
+                        </columnConstraints>
+                        <rowConstraints/>
+                        <!-- language -->
+                        <Label text="-- Basic --" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+                        <Label text="Language:" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <JFXComboBox fx:id="languageComboBox" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" />
 
-                        <RowConstraints prefHeight="10.0" vgrow="NEVER"/>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" maxHeight="80" vgrow="SOMETIMES"/>
-                        <RowConstraints prefHeight="10.0" vgrow="NEVER"/>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" maxHeight="80" vgrow="SOMETIMES"/>
-                    </rowConstraints>
-                    <Label text="Language"/>
-                    <Label text="Record Requests" GridPane.rowIndex="1"/>
-                    <Label text="Max-Record Size(M)" GridPane.rowIndex="2"/>
-                    <Label text="Include" GridPane.rowIndex="4"/>
-                    <Label text="Exclude" GridPane.rowIndex="6"/>
+                        <!-- recording -->
+                        <Label text="-- Recording Settings --" styleClass="grid-sep-label" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+                        <Label text="Max-Recording Size:" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <!-- <JFXTextField fx:id="maxSizeField" styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="140.0"/> -->
+                        <StackPane styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="140.0">
+                            <JFXTextField fx:id="maxSizeField" styleClass="record-size-input" maxWidth="140.0"/>
+                            <Label text="Mb" styleClass="record-size-label"/>
+                        </StackPane>
 
-                    <JFXComboBox fx:id="languageComboBox" GridPane.columnIndex="1" />
-                    <JFXToggleButton fx:id="recordBtn" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                    <JFXTextField fx:id="maxSizeField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                    <TextArea fx:id="recordIncludeArea" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                    <TextArea fx:id="recordExcludeArea" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
-                </GridPane>
+                        <Label text="Bypass Domains:" styleClass="grid-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="recordExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </ScrollPane>
             </AnchorPane>
-            <!-- </ScrollPane> -->
         </Tab>
         <Tab text="Proxy" fx:id="proxySettingTab" styleClass="setting-server, setting-tab-2">
             <AnchorPane>
-                <GridPane AnchorPane.leftAnchor="20.0"
-                          AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="NEVER" maxWidth="120.0" minWidth="120.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="45.0" prefHeight="80.0" vgrow="SOMETIMES"/>
-                    </rowConstraints>
-                    <Label text="HTTP-Proxy Port"/>
-                    <Label text="System Proxy" GridPane.rowIndex="1"/>
-                    <Label text="Exclude" GridPane.rowIndex="2"/>
+                <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
+                            AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
+                    <GridPane styleClass="setting-server" vgap="5">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="NEVER" maxWidth="190.0" minWidth="190.0"/>
+                            <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
+                        </columnConstraints>
+                        <!-- Server -->
+                        <Label text="-- Proxy Server --" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+                        <Label text="Port:" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <JFXTextField fx:id="portField" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="140.0"/>
 
-                    <JFXTextField fx:id="portField" GridPane.columnIndex="1" maxWidth="80.0"/>
-                    <JFXToggleButton fx:id="sysProxyBtn" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                    <TextArea fx:id="sysProxyExcludeArea" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                </GridPane>
+                        <Label text="Enable Throttling:" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <JFXToggleButton styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Throttle Preset:" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <JFXComboBox fx:id="throttleComboBox" styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <!-- System Proxy -->
+                        <Label text="-- System Proxy --" styleClass="grid-sep-label" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
+                        <Label text="Enable System Proxy On Launch:" styleClass="grid-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <JFXCheckBox fx:id="sysProxyBtn" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                        <Label text="System Proxy Bypass Domains:" styleClass="grid-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                        <TextArea fx:id="sysProxyExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </ScrollPane>
             </AnchorPane>
         </Tab>
         <Tab text=" SSl " fx:id="sslSettingTab" styleClass="setting-ssl, setting-tab-3">
             <AnchorPane>
-                <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="10.0" AnchorPane.bottomAnchor="20">
-                    <GridPane fx:id="sslGridPane" styleClass="setting-grid-pane">
+                <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
+                            AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
+                    <GridPane fx:id="sslGridPane" styleClass="setting-ssl" vgap="2">
                         <columnConstraints>
-                            <ColumnConstraints hgrow="NEVER" maxWidth="120.0" minWidth="120.0"/>
+                            <ColumnConstraints hgrow="NEVER" maxWidth="130.0" minWidth="130.0"/>
                             <!-- <ColumnConstraints hgrow="SOMETIMES" prefWidth="300" minWidth="100.0" /> -->
                         </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                            <!-- <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/> -->
-                            <!-- <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/> -->
-                            <!-- <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/> -->
-                            <!-- <RowConstraints minHeight="45.0" prefHeight="80.0" vgrow="SOMETIMES"/> -->
-                        </rowConstraints>
-                        <Label text="Handle SSL" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                        <JFXToggleButton fx:id="sslBtn" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <Label text="-- SSl Settings --" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+                        <Label text="Enable SSL Proxying :" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <JFXToggleButton fx:id="sslBtn" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                        <Label text="Exclude Domains" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <TextArea styleClass="grid-element-lg" fx:id="sslExcludeArea" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        <Label text="Bypass Domains :" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextArea styleClass="grid-element-lg" fx:id="sslExcludeArea" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                        <Label styleClass="grid-element" text="Root Certificate" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label text="Root Certificate :" styleClass="grid-label"  GridPane.rowIndex="3" GridPane.columnIndex="0"/>
 
                         <HBox fx:id="importCertBox" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1">
                             <Button fx:id="importCertBtn" styleClass="import-btn" text="Import"/>
                         </HBox>
-
                     </GridPane>
                 </ScrollPane>
-
             </AnchorPane>
         </Tab>
+        <!-- <fx:define> -->
+        <!--     <String fx:id="LABEL_01" fx:value="External&#xD;Proxy"/> -->
+        <!-- </fx:define> -->
         <Tab text="External Proxy" fx:id="externalSettingTab" styleClass="setting-external, setting-tab-4">
             <AnchorPane>
-                <GridPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="NEVER" maxWidth="120.0" minWidth="120.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                    </rowConstraints>
-                    <Label text="Proxy type"/>
-                    <Label text="Address" GridPane.rowIndex="1"/>
-                    <!-- <Label text="Port" GridPane.rowIndex="2"/> -->
-                    <Label text="Proxy Auth" GridPane.rowIndex="2"/>
-                    <Label text="Username" fx:id="exUsernameLabel" visible="false" GridPane.rowIndex="3"/>
-                    <Label text="Password" fx:id="exPasswordLabel" visible="false" GridPane.rowIndex="4"/>
+                <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
+                            AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
+                    <GridPane styleClass="setting-external" vgap="5">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="NEVER" maxWidth="130.0" minWidth="130.0"/>
+                            <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
+                        </columnConstraints>
+                        <!-- External Proxy -->
+                        <Label text="-- External Proxy --" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+                        <Label text="Enable External Proxy:" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <JFXToggleButton styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                    <JFXComboBox fx:id="proxyComboBox" GridPane.columnIndex="1"/>
-                    <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                        <JFXTextField fx:id="exProxyHost" prefWidth="250"/>
-                        <Label text=":">
-                            <HBox.margin>
-                                <Insets right="2.0" left="2.0" top="3.0"/>
-                            </HBox.margin>
-                        </Label>
-                        <JFXTextField fx:id="exProxyPort" prefWidth="80"/>
-                        <GridPane.margin>
-                            <Insets top="12.0"/>
-                        </GridPane.margin>
-                    </HBox>
-                    <!-- <JFXTextField fx:id="exProxyHost" GridPane.columnIndex="1" GridPane.rowIndex="1"/> -->
-                    <!-- <JFXTextField fx:id="exProxyPort" GridPane.columnIndex="1" GridPane.rowIndex="2"/> -->
-                    <JFXToggleButton fx:id="exProxyAuth" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                    <JFXTextField fx:id="exUsername" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                    <JFXTextField fx:id="exPassword" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                </GridPane>
+                        <Label text="Proxy Type:" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <JFXComboBox fx:id="proxyComboBox" styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Proxy Address:" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <HBox styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                            <JFXTextField fx:id="exProxyHost" maxWidth="210" minWidth="210"/>
+                            <Label text=":">
+                                <HBox.margin>
+                                    <Insets right="2.0" left="2.0" bottom="2.0"/>
+                                </HBox.margin>
+                            </Label>
+                            <JFXTextField fx:id="exProxyPort" maxWidth="70"/>
+                            <GridPane.margin>
+                                <Insets top="12.0"/>
+                            </GridPane.margin>
+                        </HBox>
+
+                        <Label text="Requires Password:" styleClass="grid-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <JFXToggleButton fx:id="exProxyAuth" styleClass="grid-element" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                        <Label text="Username:" fx:id="exUsernameLabel" visible="false"
+                               styleClass="grid-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <JFXTextField fx:id="exUsername" visible="false" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1" />
+
+                        <Label text="Password:" fx:id="exPasswordLabel" visible="false"
+                               styleClass="grid-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                        <JFXTextField fx:id="exPassword" visible="false" styleClass="grid-element" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </ScrollPane>
             </AnchorPane>
         </Tab>
-        <Tab text="Throttle" fx:id="throttleSettingTab" styleClass="setting-throttle, setting-tab-5">
+        <Tab text="About" fx:id="infoSettingTab" styleClass="setting-info, setting-tab-5">
             <AnchorPane>
-                <GridPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="15.0"
-                          AnchorPane.topAnchor="15.0" AnchorPane.bottomAnchor="40.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="NEVER" maxWidth="120.0" minWidth="120.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="NEVER"/>
-                        <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="NEVER"/>
-                    </rowConstraints>
-                    <Label text="Throttle Requests"/>
-                    <Label text="Throttle Presets" GridPane.rowIndex="1"/>
-
-                    <JFXToggleButton fx:id="throttleBtn" GridPane.columnIndex="1" />
-                    <JFXComboBox fx:id="throttleComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                </GridPane>
+                <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
+                            AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
+                    <GridPane styleClass="setting-info" vgap="5">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="NEVER" maxWidth="120.0" minWidth="120.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/>
+                        </columnConstraints>
+                    </GridPane>
+                </ScrollPane>
             </AnchorPane>
         </Tab>
     </JFXTabPane>

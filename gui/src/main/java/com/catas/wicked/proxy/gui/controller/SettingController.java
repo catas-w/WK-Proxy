@@ -12,6 +12,7 @@ import com.catas.wicked.proxy.service.settings.SettingService;
 import com.catas.wicked.proxy.service.settings.SslSettingService;
 import com.catas.wicked.server.proxy.ProxyServer;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
@@ -66,8 +67,8 @@ public class SettingController implements Initializable {
     public Label exUsernameLabel;
     public Label exPasswordLabel;
     public JFXComboBox<Labeled> languageComboBox;
-    public JFXToggleButton recordBtn;
-    public TextArea recordIncludeArea;
+    // public JFXToggleButton recordBtn;
+    // public TextArea recordIncludeArea;
     public TextArea recordExcludeArea;
     public TextArea sysProxyExcludeArea;
     public JFXToggleButton sslBtn;
@@ -79,12 +80,12 @@ public class SettingController implements Initializable {
     public Tab proxySettingTab;
     public Tab sslSettingTab;
     public Tab externalSettingTab;
-    public Tab throttleSettingTab;
+    public Tab infoSettingTab;
     public HBox importCertBox;
     public Button importCertBtn;
     public GridPane sslGridPane;
     @FXML
-    private JFXToggleButton sysProxyBtn;
+    private JFXCheckBox sysProxyBtn;
     @FXML
     private JFXButton cancelBtn;
     @FXML
@@ -118,14 +119,19 @@ public class SettingController implements Initializable {
         configTabStyle(proxySettingTab, "fas-hat-cowboy");
         configTabStyle(sslSettingTab, "fas-key");
         configTabStyle(externalSettingTab, "fas-monument");
-        configTabStyle(throttleSettingTab, "fas-hourglass-end");
+        configTabStyle(infoSettingTab, "fas-info-circle");
 
-        // TODO: for all
-        AnchorPane sslAnchorPane = (AnchorPane) sslSettingTab.getContent();
-        ScrollPane scrollPane = (ScrollPane) sslAnchorPane.getChildren().get(0);
-        // sslGridPane.prefWidthProperty().bind(scrollPane.widthProperty());
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setFitToWidth(true);
+        // scroll pane
+        for (Tab tab : List.of(generalSettingTab, proxySettingTab, sslSettingTab)) {
+            AnchorPane sslAnchorPane = (AnchorPane) tab.getContent();
+            Node child = sslAnchorPane.getChildren().get(0);
+            if (child instanceof ScrollPane scrollPane) {
+                // ScrollPane scrollPane = (ScrollPane) ;
+                // sslGridPane.prefWidthProperty().bind(scrollPane.widthProperty());
+                scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+                scrollPane.setFitToWidth(true);
+            }
+        }
     }
 
     private void configTabStyle(Tab tab, String iconCode) {
@@ -273,7 +279,7 @@ public class SettingController implements Initializable {
         }
 
         // clean old
-        final int startRowIndex = 2;
+        final int startRowIndex = 3;
         sslGridPane.getChildren().remove(importCertBox);
         sslGridPane.getChildren().removeIf(item -> item instanceof CertSelectComponent);
 

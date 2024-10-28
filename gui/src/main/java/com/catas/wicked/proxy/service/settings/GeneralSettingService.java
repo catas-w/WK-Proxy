@@ -4,7 +4,6 @@ import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.Settings;
 import jakarta.inject.Singleton;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 
 /**
  * setting service for general-page
@@ -20,33 +19,16 @@ public class GeneralSettingService extends AbstractSettingService {
 
         setIntegerStringConverter(settingController.getMaxSizeField(), 10);
         addRequiredValidator(settingController.getMaxSizeField());
-
-        // make disable-listener work
-        settingController.getRecordBtn().setSelected(true);
-        settingController.getRecordBtn().selectedProperty().addListener(((observable, oldValue, newValue) -> {
-            settingController.getMaxSizeField().setDisable(!newValue);
-            settingController.getRecordIncludeArea().setDisable(!newValue);
-            settingController.getRecordExcludeArea().setDisable(!newValue);
-
-            Pane parent = (Pane) settingController.getRecordBtn().getParent();
-            parent.getChildren().stream()
-                    .filter(node -> node instanceof Label)
-                    .skip(2)
-                    .forEach(node -> {
-                        Label labeled = (Label) node;
-                        labeled.setDisable(!newValue);
-                    });
-        }));
     }
 
     @Override
     public void initValues(ApplicationConfig appConfig) {
         Settings settings = appConfig.getSettings();
         settingController.getLanguageComboBox().getSelectionModel().select(0);
-        settingController.getRecordBtn().setSelected(true);
+        // settingController.getRecordBtn().setSelected(true);
         settingController.getMaxSizeField().setText(String.valueOf(settings.getMaxContentSize()));
 
-        settingController.getRecordIncludeArea().setText(getTextFromList(settings.getRecordIncludeList()));
+        // settingController.getRecordIncludeArea().setText(getTextFromList(settings.getRecordIncludeList()));
         settingController.getRecordExcludeArea().setText(getTextFromList(settings.getRecordExcludeList()));
     }
 
@@ -57,7 +39,7 @@ public class GeneralSettingService extends AbstractSettingService {
         // settings.setRecording(settingController.getRecordBtn().isSelected());
         settings.setMaxContentSize(Integer.parseInt(settingController.getMaxSizeField().getText()));
 
-        settings.setRecordIncludeList(getListFromText(settingController.getRecordIncludeArea().getText()));
+        // settings.setRecordIncludeList(getListFromText(settingController.getRecordIncludeArea().getText()));
         settings.setRecordExcludeList(getListFromText(settingController.getRecordExcludeArea().getText()));
 
     }
