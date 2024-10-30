@@ -302,4 +302,15 @@ public class SettingController implements Initializable {
     public void setImportCertBtnStatus(boolean disabled) {
         importCertBtn.setDisable(disabled);
     }
+
+    public void setUnFocusEvent(Node node, Consumer<Node> consumer) {
+        if (node == null || consumer == null) {
+            return;
+        }
+        node.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                consumer.accept(node);
+            }
+        }));
+    }
 }

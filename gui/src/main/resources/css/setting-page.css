@@ -94,7 +94,7 @@
     -fx-pref-height: 35;
     -fx-pref-width: 140;
     /*-jfx-focus-color: #29c1c1;*/
-    /*-jfx-unfocus-color: #4d4d4d;*/
+    /*-jfx-unfocus-color: #3dde9a;*/
     -fx-padding: 0.333333em 0 0.333333em 0.5em;
 }
 .setting-tab-pane .jfx-text-field > .input-line {
@@ -110,6 +110,10 @@
     -fx-background-color: TRANSPARENT, TRANSPARENT, TRANSPARENT;
     -fx-prompt-text-fill: #4D4D4D;
     -fx-border-color: #808080;
+}
+.setting-tab-pane .jfx-text-field:error {
+    -fx-prompt-text-fill: #4D4D4D;
+    -fx-border-color: #d3140e;
 }
 .record-size-input {
     -fx-padding: 0.333333em 2.5em 0.333333em 0.5em !important;
@@ -305,6 +309,12 @@
     -fx-opacity: 0.6;
 }
 
+
+/************ error label  ************/
+.error-label-container {
+    /*-fx-border-color: #05a607;*/
+    /*-fx-min-width: 400;*/
+}
 .alert-label {
     -fx-text-fill: #b73012;
     /*-fx-pref-width: 200;*/

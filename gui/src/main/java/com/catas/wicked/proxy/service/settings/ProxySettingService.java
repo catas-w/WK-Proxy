@@ -18,8 +18,9 @@ public class ProxySettingService extends AbstractSettingService{
 
     @Override
     public void init() {
-        setIntegerStringConverter(settingController.getPortField(), 9624);
+        // setIntegerStringConverter(settingController.getPortField(), 9624);
         addRequiredValidator(settingController.getPortField());
+        addPositiveNumValidator(settingController.getPortField(), "Illegal port format!");
 
         // throttle
         JFXComboBox<Labeled> throttleComboBox = settingController.getThrottleComboBox();

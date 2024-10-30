@@ -1,5 +1,6 @@
 package com.catas.wicked.proxy.service.settings;
 
+import com.catas.wicked.proxy.gui.componet.validator.PositiveIntegerValidator;
 import com.catas.wicked.proxy.gui.controller.SettingController;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
@@ -7,8 +8,6 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputControl;
 import javafx.util.converter.IntegerStringConverter;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,11 +48,30 @@ public abstract class AbstractSettingService implements SettingService {
             return;
         }
         RequiredFieldValidator validator = new RequiredFieldValidator();
-        // validator.setMessage("Cannot be empty");
-        validator.setMessage("Required!");
-        FontIcon warnIcon = new FontIcon(FontAwesomeSolid.EXCLAMATION_TRIANGLE);
-        warnIcon.getStyleClass().add("error");
-        validator.setIcon(warnIcon);
+        validator.setMessage("Cannot be empty!");
+        // FontIcon warnIcon = new FontIcon(FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        // warnIcon.getStyleClass().add("error");
+        // validator.setIcon(warnIcon);
+        textField.getValidators().add(validator);
+        textField.focusedProperty().addListener((o, oldVal, newVal) -> {
+            if (!newVal) {
+                textField.validate();
+            }
+        });
+    }
+
+    protected void addPositiveNumValidator(JFXTextField textField) {
+        addPositiveNumValidator(textField, null);
+    }
+
+    protected void addPositiveNumValidator(JFXTextField textField, String msg) {
+        if (textField == null) {
+            return;
+        }
+        PositiveIntegerValidator validator = new PositiveIntegerValidator();
+        if (msg != null) {
+            validator.setMessage(msg);
+        }
         textField.getValidators().add(validator);
         textField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if (!newVal) {

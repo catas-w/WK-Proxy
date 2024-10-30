@@ -5,7 +5,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
 
 <?import java.net.URL?>
 <?import com.jfoenix.controls.JFXToggleButton?>
@@ -24,6 +23,7 @@
 <?import com.jfoenix.controls.JFXCheckBox?>
 
 <?import javafx.scene.layout.StackPane?>
+<?import com.catas.wicked.proxy.gui.componet.CustomTextField?>
 <AnchorPane prefHeight="500.0" prefWidth="700.0"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.catas.wicked.proxy.gui.controller.SettingController">
@@ -54,7 +54,7 @@
                         <Label text="Max-Recording Size:" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                         <!-- <JFXTextField fx:id="maxSizeField" styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="140.0"/> -->
                         <StackPane styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="140.0">
-                            <JFXTextField fx:id="maxSizeField" styleClass="record-size-input" maxWidth="140.0"/>
+                            <CustomTextField fx:id="maxSizeField" styleClass="record-size-input" maxWidth="140.0"/>
                             <Label text="Mb" styleClass="record-size-label"/>
                         </StackPane>
 
@@ -76,7 +76,7 @@
                         <!-- Server -->
                         <Label text="-- Proxy Server --" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
                         <Label text="Port:" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <JFXTextField fx:id="portField" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="140.0"/>
+                        <CustomTextField fx:id="portField" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="140.0"/>
 
                         <Label text="Enable Throttling:" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                         <JFXToggleButton styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>

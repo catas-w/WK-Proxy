@@ -2,6 +2,7 @@ package com.catas.wicked.proxy.service.settings;
 
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.Settings;
+import com.jfoenix.controls.JFXTextField;
 import jakarta.inject.Singleton;
 import javafx.scene.control.Label;
 
@@ -17,8 +18,13 @@ public class GeneralSettingService extends AbstractSettingService {
         settingController.getLanguageComboBox().getItems().add(new Label("简体中文"));
         settingController.getLanguageComboBox().getSelectionModel().select(0);
 
-        setIntegerStringConverter(settingController.getMaxSizeField(), 10);
-        addRequiredValidator(settingController.getMaxSizeField());
+        // setIntegerStringConverter(settingController.getMaxSizeField(), 10);
+        JFXTextField maxSizeField = settingController.getMaxSizeField();
+        addRequiredValidator(maxSizeField);
+        addPositiveNumValidator(maxSizeField, "Illegal value!");
+        settingController.setUnFocusEvent(maxSizeField, obj -> {
+            System.out.println("input: " + maxSizeField.getText());
+        });
     }
 
     @Override
