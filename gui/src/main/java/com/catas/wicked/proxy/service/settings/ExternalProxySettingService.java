@@ -15,7 +15,10 @@ public class ExternalProxySettingService extends AbstractSettingService{
 
     @Override
     public void init() {
-        setIntegerStringConverter(settingController.getExProxyPort(), 10808);
+        // setIntegerStringConverter(settingController.getExProxyPort(), 10808);
+        addPositiveNumValidator(settingController.getExProxyPort(), "Illegal port!");
+        addUnDisableRequiredValidator(settingController.getExProxyPort(), "Illegal port!");
+        addUnDisableRequiredValidator(settingController.getExProxyHost(), "Cannot be empty!");
 
         JFXComboBox<ProxyTypeLabel> proxyComboBox = settingController.getProxyComboBox();
         for (ProxyProtocol proxyType : ProxyProtocol.values()) {
@@ -79,7 +82,7 @@ public class ExternalProxySettingService extends AbstractSettingService{
             settings.setExternalProxy(externalProxy);
         }
         ProxyProtocol protocol = settingController.getProxyComboBox().getValue().getProxyType();
-        externalProxy.setUsingExternalProxy(protocol != ProxyProtocol.None);
+        externalProxy.setUsingExternalProxy(protocol != ProxyProtocol.NONE);
         // TODO: bugfix 切换协议后报错
         //  ProxyConnectException: http, none, /127.0.0.1:10808 => www.google.com/<unresolved>:443, disconnected
         externalProxy.setProtocol(protocol);

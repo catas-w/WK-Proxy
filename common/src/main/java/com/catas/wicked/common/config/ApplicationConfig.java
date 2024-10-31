@@ -72,7 +72,7 @@ public class ApplicationConfig implements AutoCloseable {
 
         try {
             loadSettings();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Error loading local configuration.", e);
         }
 

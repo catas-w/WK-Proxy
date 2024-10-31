@@ -56,7 +56,7 @@ public class ProxyHandlerFactory {
                     }
                     return socks5ProxyHandler;
                 }
-                case System -> {
+                case SYSTEM -> {
                     ExternalProxyConfig systemProxy = WebUtils.getSystemProxy(url);
                     return getExternalProxyHandler(systemProxy, url);
                 }

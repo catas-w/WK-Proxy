@@ -176,6 +176,7 @@
 .setting-tab-pane .combo-box-popup .list-view .jfx-list-cell:odd,
 .setting-tab-pane .combo-box-popup .list-view .jfx-list-cell:even {
     -fx-background-color: TRANSPARENT;
+    -fx-pref-height: 35;
     -fx-text-fill: #707070;
 }
 

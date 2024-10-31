@@ -30,23 +30,27 @@ public class CustomTextField extends JFXTextField {
 
     private double errorPaneTranslateY;
 
+    private final CustomTextFieldSkin customSkin = new CustomTextFieldSkin(this, errorPaneTranslateX, errorPaneTranslateY);
+
     public CustomTextField() {
         super();
-        errorPaneTranslateX = 140.0;
-        errorPaneTranslateY = -40.0;
+        errorPaneTranslateX = 0.0;
+        errorPaneTranslateY = 0.0;
     }
 
     @Override
     protected Skin<?> createDefaultSkin() {
-        return new CustomTextFieldSkin(this, errorPaneTranslateX, errorPaneTranslateY);
+        return customSkin;
     }
 
     public void setErrorPaneTranslateX(double errorPaneTranslateX) {
         this.errorPaneTranslateX = errorPaneTranslateX;
+        customSkin.setErrorPaneTranslateX(errorPaneTranslateX);
     }
 
     public void setErrorPaneTranslateY(double errorPaneTranslateY) {
         this.errorPaneTranslateY = errorPaneTranslateY;
+        customSkin.setErrorPaneTranslateY(errorPaneTranslateY);
     }
 
     public static class CustomTextFieldSkin extends TextFieldSkin {
@@ -112,7 +116,7 @@ public class CustomTextField extends JFXTextField {
             final double height = getSkinnable().getHeight();
             linesWrapper.layoutLines(x, y, w, h, height, Math.floor(h));
             // errorContainer.layoutPane(x, height + linesWrapper.focusedLine.getHeight(), w, h);
-            errorContainer.layoutPane(x + 140, height - 40, w, h);
+            errorContainer.layoutPane(x + errorPaneTranslateX.get(), height + errorPaneTranslateY.get(), w, h);
 
             if (getSkinnable().getWidth() > 0) {
                 updateTextPos();

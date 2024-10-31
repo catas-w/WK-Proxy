@@ -1,6 +1,7 @@
 package com.catas.wicked.proxy.service.settings;
 
 import com.catas.wicked.proxy.gui.componet.validator.PositiveIntegerValidator;
+import com.catas.wicked.proxy.gui.componet.validator.RequiredValidator;
 import com.catas.wicked.proxy.gui.controller.SettingController;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
@@ -52,6 +53,19 @@ public abstract class AbstractSettingService implements SettingService {
         // FontIcon warnIcon = new FontIcon(FontAwesomeSolid.EXCLAMATION_TRIANGLE);
         // warnIcon.getStyleClass().add("error");
         // validator.setIcon(warnIcon);
+        textField.getValidators().add(validator);
+        textField.focusedProperty().addListener((o, oldVal, newVal) -> {
+            if (!newVal) {
+                textField.validate();
+            }
+        });
+    }
+
+    protected void addUnDisableRequiredValidator(JFXTextField textField, String msg) {
+        if (textField == null) {
+            return;
+        }
+        RequiredValidator validator = new RequiredValidator(msg);
         textField.getValidators().add(validator);
         textField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if (!newVal) {

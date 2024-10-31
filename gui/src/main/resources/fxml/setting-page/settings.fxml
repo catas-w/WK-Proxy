@@ -54,7 +54,8 @@
                         <Label text="Max-Recording Size:" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                         <!-- <JFXTextField fx:id="maxSizeField" styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="140.0"/> -->
                         <StackPane styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="140.0">
-                            <CustomTextField fx:id="maxSizeField" styleClass="record-size-input" maxWidth="140.0"/>
+                            <CustomTextField errorPaneTranslateX="140.0" errorPaneTranslateY="-40.0"
+                                             fx:id="maxSizeField" styleClass="record-size-input" maxWidth="140.0"/>
                             <Label text="Mb" styleClass="record-size-label"/>
                         </StackPane>
 
@@ -66,7 +67,7 @@
         </Tab>
         <Tab text="Proxy" fx:id="proxySettingTab" styleClass="setting-server, setting-tab-2">
             <AnchorPane>
-                <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
+                <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
                     <GridPane styleClass="setting-server" vgap="5">
                         <columnConstraints>
@@ -76,7 +77,8 @@
                         <!-- Server -->
                         <Label text="-- Proxy Server --" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
                         <Label text="Port:" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <CustomTextField fx:id="portField" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="140.0"/>
+                        <CustomTextField errorPaneTranslateX="140.0" errorPaneTranslateY="-40.0"
+                                         fx:id="portField" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="140.0"/>
 
                         <Label text="Enable Throttling:" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                         <JFXToggleButton styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
@@ -142,13 +144,13 @@
 
                         <Label text="Proxy Address:" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                         <HBox styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1">
-                            <JFXTextField fx:id="exProxyHost" maxWidth="210" minWidth="210"/>
+                            <CustomTextField errorPaneTranslateX="0.0" errorPaneTranslateY="-10.0" fx:id="exProxyHost" maxWidth="210" minWidth="210"/>
                             <Label text=":">
                                 <HBox.margin>
                                     <Insets right="2.0" left="2.0" bottom="2.0"/>
                                 </HBox.margin>
                             </Label>
-                            <JFXTextField fx:id="exProxyPort" maxWidth="70"/>
+                            <CustomTextField errorPaneTranslateX="0.0" errorPaneTranslateY="-10.0" fx:id="exProxyPort" maxWidth="70"/>
                             <GridPane.margin>
                                 <Insets top="12.0"/>
                             </GridPane.margin>

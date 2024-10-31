@@ -150,7 +150,7 @@ public class ExternalProxyTest extends ProxyServerTest {
 
         // set http proxy
         ExternalProxyConfig proxyConfig = new ExternalProxyConfig();
-        proxyConfig.setProtocol(ProxyProtocol.System);
+        proxyConfig.setProtocol(ProxyProtocol.SYSTEM);
         proxyConfig.setUsingExternalProxy(true);
         appConfig.getSettings().setExternalProxy(proxyConfig);
 
