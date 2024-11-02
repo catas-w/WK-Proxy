@@ -37,7 +37,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import lombok.Getter;
@@ -45,7 +44,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -67,8 +65,6 @@ public class SettingController implements Initializable {
     public Label exUsernameLabel;
     public Label exPasswordLabel;
     public JFXComboBox<Labeled> languageComboBox;
-    // public JFXToggleButton recordBtn;
-    // public TextArea recordIncludeArea;
     public TextArea recordExcludeArea;
     public TextArea sysProxyExcludeArea;
     public JFXToggleButton sslBtn;
@@ -156,6 +152,7 @@ public class SettingController implements Initializable {
         tab.setGraphic(tabPane);
     }
 
+    @Deprecated
     public void save(ActionEvent event) {
         // valid textFields
         boolean isValidated = true;
@@ -180,10 +177,11 @@ public class SettingController implements Initializable {
         settingServiceList.forEach(settingService -> settingService.update(appConfig));
 
         // update config file
-        appConfig.updateSettings();
+        appConfig.updateSettingFile();
         cancel(event);
     }
 
+    @Deprecated
     public void cancel(ActionEvent event) {
         if (event == null) {
             return;
@@ -197,7 +195,7 @@ public class SettingController implements Initializable {
         }
     }
 
-
+    @Deprecated
     public void apply(ActionEvent event) {
         save(null);
     }
@@ -243,36 +241,6 @@ public class SettingController implements Initializable {
         buttonBarController.updateThrottleBtn(selected);
     }
 
-    public void loadCertFile(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-
-        // Set file chooser initial directory
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-
-        // Set file extension filters
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"),
-                new FileChooser.ExtensionFilter("All Files", "*.*")
-        );
-
-        // Show the open file dialog
-        File selectedFile = null;
-        List<Window> windows = Stage.getWindows().stream().filter(Window::isShowing).filter(Window::isFocused).toList();
-        for (Window window : windows) {
-            if (window instanceof Stage ) {
-                selectedFile = fileChooser.showOpenDialog(window);
-            }
-        }
-
-        // Check if a file was selected
-        if (selectedFile != null) {
-            System.out.println("File selected: " + selectedFile.getAbsolutePath());
-        } else {
-            System.out.println("File selection canceled.");
-        }
-    }
-
     public void setSelectableCert(List<? extends Node> certList) {
         if (CollectionUtils.isEmpty(certList)) {
             return;
@@ -301,16 +269,5 @@ public class SettingController implements Initializable {
 
     public void setImportCertBtnStatus(boolean disabled) {
         importCertBtn.setDisable(disabled);
-    }
-
-    public void setUnFocusEvent(Node node, Consumer<Node> consumer) {
-        if (node == null || consumer == null) {
-            return;
-        }
-        node.focusedProperty().addListener(((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                consumer.accept(node);
-            }
-        }));
     }
 }

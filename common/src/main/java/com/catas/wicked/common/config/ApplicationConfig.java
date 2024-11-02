@@ -3,6 +3,7 @@ package com.catas.wicked.common.config;
 import com.catas.wicked.common.executor.ScheduledThreadPoolService;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.executor.ThreadPoolService;
+import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.SystemUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -78,6 +79,19 @@ public class ApplicationConfig implements AutoCloseable {
 
         loadSslContext();
         // System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
+
+        // update settings file
+        messageQueue.subscribe(Topic.UPDATE_SETTING_FILE, msg -> {
+            if (msg == null) {
+                return;
+            }
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) {}
+            System.out.println("update settings File");
+            updateSettingFile();
+        });
     }
 
     public void loadSslContext() {
@@ -115,7 +129,7 @@ public class ApplicationConfig implements AutoCloseable {
         settings = objectMapper.readValue(file, Settings.class);
     }
 
-    public void updateSettings() {
+    public void updateSettingFile() {
         try {
             File file = getLocalConfigFile();
             if (!file.exists()) {
@@ -130,7 +144,7 @@ public class ApplicationConfig implements AutoCloseable {
     }
 
     public void updateSettingsAsync() {
-        ThreadPoolService.getInstance().run(this::updateSettings);
+        ThreadPoolService.getInstance().run(this::updateSettingFile);
     }
 
     public int getMaxContentSize() {

@@ -1,22 +1,31 @@
 package com.catas.wicked.proxy.service.settings;
 
+import com.catas.wicked.common.bean.message.BaseMessage;
+import com.catas.wicked.common.pipeline.MessageQueue;
+import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.proxy.gui.componet.validator.PositiveIntegerValidator;
 import com.catas.wicked.proxy.gui.componet.validator.RequiredValidator;
 import com.catas.wicked.proxy.gui.controller.SettingController;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
+import javafx.scene.Node;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputControl;
 import javafx.util.converter.IntegerStringConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
+@Slf4j
 public abstract class AbstractSettingService implements SettingService {
 
     protected SettingController settingController;
+
+    protected MessageQueue messageQueue;
 
     @Override
     public void setSettingController(SettingController settingController) {
@@ -133,5 +142,31 @@ public abstract class AbstractSettingService implements SettingService {
                 .filter(StringUtils::isNotBlank)
                 .toList();
         return list;
+    }
+
+    /**
+     * add unfocused event
+     */
+    protected <T extends Node> void addUnFocusedEvent(T node, Consumer<T> consumer) {
+        if (node == null || consumer == null) {
+            return;
+        }
+        node.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                consumer.accept(node);
+            }
+        }));
+    }
+
+    /**
+     * update settings file by msg
+     */
+    protected void refreshAppSettings() {
+        if (messageQueue != null) {
+            messageQueue.clearMsg(Topic.UPDATE_SETTING_FILE);
+            messageQueue.pushMsg(Topic.UPDATE_SETTING_FILE, new BaseMessage());
+        } else {
+            log.warn("messageQueue is null!");
+        }
     }
 }

@@ -52,7 +52,6 @@
                         <!-- recording -->
                         <Label text="-- Recording Settings --" styleClass="grid-sep-label" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
                         <Label text="Max-Recording Size:" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                        <!-- <JFXTextField fx:id="maxSizeField" styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="140.0"/> -->
                         <StackPane styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="140.0">
                             <CustomTextField errorPaneTranslateX="140.0" errorPaneTranslateY="-40.0"
                                              fx:id="maxSizeField" styleClass="record-size-input" maxWidth="140.0"/>
@@ -60,7 +59,8 @@
                         </StackPane>
 
                         <Label text="Bypass Domains:" styleClass="grid-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                        <TextArea fx:id="recordExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                        <TextArea fx:id="recordExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="4" GridPane.columnIndex="1"
+                                  promptText="eg. **.example.com; **.example.org"/>
                     </GridPane>
                 </ScrollPane>
             </AnchorPane>
@@ -111,7 +111,8 @@
                         <JFXToggleButton fx:id="sslBtn" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                         <Label text="Bypass Domains :" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                        <TextArea styleClass="grid-element-lg" fx:id="sslExcludeArea" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        <TextArea styleClass="grid-element-lg" fx:id="sslExcludeArea" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                  promptText="eg. **.example.com; **.example.org"/>
 
                         <Label text="Root Certificate :" styleClass="grid-label"  GridPane.rowIndex="3" GridPane.columnIndex="0"/>
 
