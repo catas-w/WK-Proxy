@@ -2,7 +2,6 @@ package com.catas.wicked.common.worker;
 
 import com.catas.wicked.BaseTest;
 import com.catas.wicked.common.executor.ThreadPoolService;
-import com.catas.wicked.common.worker.worker.ScheduledManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

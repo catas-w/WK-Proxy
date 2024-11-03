@@ -30,7 +30,8 @@ public class Settings {
      * Server settings
      */
     private int port = 9999;
-    private boolean systemProxy = true;
+    private boolean systemProxy = false;
+    private boolean enableSysProxyOnLaunch;
     private List<String> sysProxyBypassList;
 
     /**

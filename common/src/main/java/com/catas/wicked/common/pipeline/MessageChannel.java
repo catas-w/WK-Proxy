@@ -54,19 +54,21 @@ public class MessageChannel {
      * execute current message by every subscribed consumer
      * @param baseMessage currentMessage
      */
-    public void consume(BaseMessage baseMessage) {
+    public boolean consume(BaseMessage baseMessage) {
         if (consumers.isEmpty()) {
-            log.warn("");
-            return;
+            log.warn("empty consumers");
+            return false;
         }
         for (Consumer<BaseMessage> consumer : consumers) {
             try {
                 consumer.accept(baseMessage);
+                return true;
             } catch (Exception e) {
                 log.error("Exception occurred in consumer of: {}", topic, e);
             } catch (Throwable throwable) {
                 log.error("Error occurred in consumer of: {}", topic, throwable);
             }
         }
+        return false;
     }
 }

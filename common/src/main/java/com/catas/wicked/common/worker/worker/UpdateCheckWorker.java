@@ -1,9 +1,11 @@
 package com.catas.wicked.common.worker.worker;
 
 import com.catas.wicked.common.worker.AbstractScheduledWorker;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Singleton
 public class UpdateCheckWorker extends AbstractScheduledWorker {
 
     @Override

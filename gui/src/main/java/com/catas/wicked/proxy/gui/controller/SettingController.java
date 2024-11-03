@@ -2,7 +2,7 @@ package com.catas.wicked.proxy.gui.controller;
 
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.util.AlertUtils;
-import com.catas.wicked.common.worker.worker.ScheduledManager;
+import com.catas.wicked.common.worker.ScheduledManager;
 import com.catas.wicked.proxy.gui.componet.CertSelectComponent;
 import com.catas.wicked.proxy.gui.componet.ProxyTypeLabel;
 import com.catas.wicked.proxy.service.settings.ExternalProxySettingService;
@@ -81,7 +81,7 @@ public class SettingController implements Initializable {
     public Button importCertBtn;
     public GridPane sslGridPane;
     @FXML
-    private JFXCheckBox sysProxyBtn;
+    private JFXCheckBox sysProxyOnLaunchBtn;
     @FXML
     private JFXButton cancelBtn;
     @FXML

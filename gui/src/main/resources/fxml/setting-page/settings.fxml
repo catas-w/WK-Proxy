@@ -81,15 +81,15 @@
                                          fx:id="portField" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="140.0"/>
 
                         <Label text="Enable Throttling:" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                        <JFXToggleButton styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        <JFXToggleButton fx:id="throttleBtn" styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
                         <Label text="Throttle Preset:" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                        <JFXComboBox fx:id="throttleComboBox" styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        <JFXComboBox disable="true" fx:id="throttleComboBox" styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
                         <!-- System Proxy -->
                         <Label text="-- System Proxy --" styleClass="grid-sep-label" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
                         <Label text="Enable System Proxy On Launch:" styleClass="grid-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                        <JFXCheckBox fx:id="sysProxyBtn" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                        <JFXCheckBox fx:id="sysProxyOnLaunchBtn" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
                         <Label text="System Proxy Bypass Domains:" styleClass="grid-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
                         <TextArea fx:id="sysProxyExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="6" GridPane.columnIndex="1"/>

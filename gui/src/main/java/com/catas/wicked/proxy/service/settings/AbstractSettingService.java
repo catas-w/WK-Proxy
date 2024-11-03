@@ -1,6 +1,7 @@
 package com.catas.wicked.proxy.service.settings;
 
 import com.catas.wicked.common.bean.message.BaseMessage;
+import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.proxy.gui.componet.validator.PositiveIntegerValidator;
@@ -26,6 +27,8 @@ public abstract class AbstractSettingService implements SettingService {
     protected SettingController settingController;
 
     protected MessageQueue messageQueue;
+
+    protected ApplicationConfig applicationConfig;
 
     @Override
     public void setSettingController(SettingController settingController) {

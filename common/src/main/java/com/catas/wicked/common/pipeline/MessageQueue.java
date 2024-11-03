@@ -3,6 +3,7 @@ package com.catas.wicked.common.pipeline;
 import com.catas.wicked.common.bean.message.BaseMessage;
 import com.catas.wicked.common.bean.message.PoisonMessage;
 import com.catas.wicked.common.executor.CommonExecutorService;
+import com.catas.wicked.common.executor.ThreadPoolService;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,22 @@ public class MessageQueue {
                         if (msg instanceof PoisonMessage) {
                             throw new InterruptedException("Quit");
                         }
-                        messageChannel.consume(msg);
+
+                        // retry failed msg
+                        boolean success = messageChannel.consume(msg);
+                        if (!success) {
+                            if (msg.getRetryTimes() > 0) {
+                                msg.setRetryTimes(msg.getRetryTimes() - 1);
+                                ThreadPoolService.getInstance().run(() -> {
+                                    try {
+                                        Thread.sleep(5000);
+                                    } catch (Exception ignored) {}
+                                    messageChannel.pushMsg(msg);
+                                });
+                            } else {
+                                log.error("Msg Failed to consume, topic: {}, msg: {}", topic, msg);
+                            }
+                        }
                     } catch (InterruptedException e) {
                         log.warn("Message listener interrupted: {}", messageChannel.getTopic());
                         break;

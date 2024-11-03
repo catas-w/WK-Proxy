@@ -19,6 +19,8 @@ public class BaseMessage implements Serializable {
 
     private long size;
 
+    private int retryTimes = 3;
+
     public enum MessageType {
         REQUEST,
 

@@ -1,26 +1,46 @@
-package com.catas.wicked.common.worker;
+package com.catas.wicked.common.worker.worker;
 
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.SystemProxyConfig;
 import com.catas.wicked.common.constant.ServerStatus;
 import com.catas.wicked.common.constant.SystemProxyStatus;
+import com.catas.wicked.common.pipeline.MessageQueue;
+import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.provider.SysProxyProvider;
+import com.catas.wicked.common.worker.AbstractScheduledWorker;
 import io.micronaut.core.util.CollectionUtils;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 
 @Slf4j
-public class SystemProxyWorker extends AbstractScheduledWorker{
+@Singleton
+public class SystemProxyWorker extends AbstractScheduledWorker {
 
-    private final ApplicationConfig appConfig;
+    @Inject
+    private ApplicationConfig appConfig;
 
-    private final SysProxyProvider proxyProvider;
+    @Inject
+    private SysProxyProvider proxyProvider;
 
-    public SystemProxyWorker(ApplicationConfig appConfig, SysProxyProvider proxyProvider) {
-        this.appConfig = appConfig;
-        this.proxyProvider = proxyProvider;
+    @Inject
+    private MessageQueue messageQueue;
+
+    // public SystemProxyWorker(ApplicationConfig appConfig, SysProxyProvider proxyProvider) {
+    //     this.appConfig = appConfig;
+    //     this.proxyProvider = proxyProvider;
+    // }
+
+    @PostConstruct
+    public void init() {
+        messageQueue.subscribe(Topic.SET_SYS_PROXY, msg -> {
+            System.out.println("force update sysProxy");
+            invoke();
+        });
     }
 
     @Override

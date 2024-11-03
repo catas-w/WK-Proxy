@@ -1,13 +1,10 @@
-package com.catas.wicked.common.worker.worker;
+package com.catas.wicked.common.worker;
 
-import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.executor.ScheduledThreadPoolService;
 import com.catas.wicked.common.executor.ThreadPoolService;
-import com.catas.wicked.common.provider.SysProxyProvider;
-import com.catas.wicked.common.worker.ScheduledWorker;
-import com.catas.wicked.common.worker.SystemProxyWorker;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,16 +24,18 @@ public class ScheduledManager {
     private final ConcurrentHashMap<String, RunnableScheduledFuture<?>> futureMap = new ConcurrentHashMap<>();
 
     @Inject
-    private ApplicationConfig appConfig;
+    @Named("systemProxyWorker")
+    private ScheduledWorker systemProxyWorker;
 
     @Inject
-    private SysProxyProvider sysProxyProvider;
+    @Named("updateCheckWorker")
+    private ScheduledWorker updateCheckWorker;
 
     @PostConstruct
     public void init() {
         // register default workers
-        register(SYS_PROXY_WORKER, new SystemProxyWorker(appConfig, sysProxyProvider));
-        register(CHECK_UPDATE_WORKER, new UpdateCheckWorker());
+        register(SYS_PROXY_WORKER, systemProxyWorker);
+        register(CHECK_UPDATE_WORKER, updateCheckWorker);
     }
 
     /**
