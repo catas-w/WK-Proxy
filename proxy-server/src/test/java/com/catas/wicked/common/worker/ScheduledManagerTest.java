@@ -19,13 +19,14 @@ public class ScheduledManagerTest extends BaseTest {
             }
 
             @Override
-            protected void doWork(boolean manually) {
+            protected boolean doWork(boolean manually) {
                 // System.out.println("running task");
                 if (manually) {
                     manualCnt.add(1);
                 } else {
                     autoCnt.add(1);
                 }
+                return true;
             }
         };
 
@@ -52,8 +53,9 @@ public class ScheduledManagerTest extends BaseTest {
             }
 
             @Override
-            protected void doWork(boolean manually) {
+            protected boolean doWork(boolean manually) {
                 cnt.add(1);
+                return true;
             }
         };
 
@@ -82,7 +84,7 @@ public class ScheduledManagerTest extends BaseTest {
             }
 
             @Override
-            protected void doWork(boolean manually) {
+            protected boolean doWork(boolean manually) {
                 long time = System.currentTimeMillis() - stat;
                 System.out.println(time + " Manually: " + manually + ", " + Thread.currentThread().getName());
                 totalCnt.add(1);
@@ -92,6 +94,7 @@ public class ScheduledManagerTest extends BaseTest {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException ignored) {}
+                return true;
             }
         };
 

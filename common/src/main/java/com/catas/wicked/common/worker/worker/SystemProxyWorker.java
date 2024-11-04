@@ -1,9 +1,11 @@
 package com.catas.wicked.common.worker.worker;
 
+import com.catas.wicked.common.bean.message.RetryMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.SystemProxyConfig;
 import com.catas.wicked.common.constant.ServerStatus;
 import com.catas.wicked.common.constant.SystemProxyStatus;
+import com.catas.wicked.common.executor.ThreadPoolService;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.provider.SysProxyProvider;
@@ -30,26 +32,31 @@ public class SystemProxyWorker extends AbstractScheduledWorker {
     @Inject
     private MessageQueue messageQueue;
 
-    // public SystemProxyWorker(ApplicationConfig appConfig, SysProxyProvider proxyProvider) {
-    //     this.appConfig = appConfig;
-    //     this.proxyProvider = proxyProvider;
-    // }
-
     @PostConstruct
     public void init() {
         messageQueue.subscribe(Topic.SET_SYS_PROXY, msg -> {
-            System.out.println("force update sysProxy");
-            invoke();
+            log.info("Force updating sysProxy");
+            boolean res = invoke();
+            if (!res && msg instanceof RetryMessage retryMessage) {
+                retryMessage.reduce();
+                ThreadPoolService.getInstance().run(() -> {
+                    log.info("retry force update sysProxy: " + msg);
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ignored) {}
+                    messageQueue.pushMsg(Topic.SET_SYS_PROXY, msg);
+                });
+            }
         });
     }
 
     @Override
-    protected void doWork(boolean manually) {
+    protected boolean doWork(boolean manually) {
         // server is not running
         if (appConfig.getObservableConfig().getServerStatus() != ServerStatus.RUNNING) {
             log.warn("Server is not running");
             appConfig.getObservableConfig().setSystemProxyStatus(SystemProxyStatus.DISABLED);
-            return;
+            return false;
         }
 
         if (manually) {
@@ -58,6 +65,7 @@ public class SystemProxyWorker extends AbstractScheduledWorker {
         } else {
             autoUpdateSysProxy();
         }
+        return true;
     }
 
     private void autoUpdateSysProxy() {

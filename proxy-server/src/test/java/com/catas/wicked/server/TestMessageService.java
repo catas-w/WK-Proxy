@@ -1,6 +1,6 @@
 package com.catas.wicked.server;
 
-import com.catas.wicked.common.bean.message.BaseMessage;
+import com.catas.wicked.common.bean.message.Message;
 import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.bean.message.ResponseMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
@@ -31,7 +31,7 @@ public class TestMessageService {
         messageQueue.subscribe(Topic.UPDATE_MSG, this::processUpdate);
     }
 
-    private void processUpdate(BaseMessage msg) {
+    private void processUpdate(Message msg) {
         if (msg instanceof RequestMessage updateMsg) {
             log.info("Process requestId={}", updateMsg.getRequestId());
             RequestMessage requestMessage = requestCache.get(updateMsg.getRequestId());
@@ -78,7 +78,7 @@ public class TestMessageService {
      * record request and response msg
      * @param msg requestMessage/responseMessage
      */
-    private void processMsg(BaseMessage msg) {
+    private void processMsg(Message msg) {
         if (msg instanceof RequestMessage requestMessage) {
             switch (requestMessage.getType()) {
                 case REQUEST -> {

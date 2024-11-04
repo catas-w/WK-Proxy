@@ -5,6 +5,7 @@ import com.catas.wicked.common.bean.StatsData;
 import com.catas.wicked.common.bean.TimeStatsData;
 import com.catas.wicked.common.bean.message.BaseMessage;
 import com.catas.wicked.common.bean.message.DeleteMessage;
+import com.catas.wicked.common.bean.message.Message;
 import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.bean.message.ResponseMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
@@ -170,7 +171,7 @@ public class MessageService {
      * update info for existed requestMsg/responseMsg
      * @param msg updateMsg
      */
-    private void processUpdate(BaseMessage msg) {
+    private void processUpdate(Message msg) {
         // TODO 更新 current request
         if (msg instanceof RequestMessage updateMsg) {
             RequestMessage requestMessage = requestCache.get(updateMsg.getRequestId());
@@ -225,7 +226,7 @@ public class MessageService {
      * record request and response msg
      * @param msg requestMessage/responseMessage
      */
-    private void processMsg(BaseMessage msg) {
+    private void processMsg(Message msg) {
         if (msg instanceof RequestMessage requestMessage) {
             switch (requestMessage.getType()) {
                 case REQUEST -> {

@@ -19,13 +19,14 @@ public class SchedulerWorkerTest {
             }
 
             @Override
-            protected void doWork(boolean manually) {
+            protected boolean doWork(boolean manually) {
                 // long cost = System.currentTimeMillis() - time;
                 // System.out.println("Running task: " + cnt[0] + " manually: " + manually + " time: " + cost);
                 cnt[0]++;
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException ignored) {}
+                return true;
             }
         };
 

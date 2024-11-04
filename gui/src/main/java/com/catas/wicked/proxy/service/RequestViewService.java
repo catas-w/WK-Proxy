@@ -98,7 +98,7 @@ public class RequestViewService {
                     log.warn("consumer not exist");
                 }
             } else {
-                log.warn("cannot to process message type: {}", msg.getType());
+                log.warn("cannot to process message type: {}", msg);
             }
         });
     }

@@ -166,8 +166,7 @@ public abstract class AbstractSettingService implements SettingService {
      */
     protected void refreshAppSettings() {
         if (messageQueue != null) {
-            messageQueue.clearMsg(Topic.UPDATE_SETTING_FILE);
-            messageQueue.pushMsg(Topic.UPDATE_SETTING_FILE, new BaseMessage());
+            messageQueue.clearAndPushMsg(Topic.UPDATE_SETTING_FILE, new BaseMessage());
         } else {
             log.warn("messageQueue is null!");
         }

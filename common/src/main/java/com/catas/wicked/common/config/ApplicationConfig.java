@@ -1,6 +1,6 @@
 package com.catas.wicked.common.config;
 
-import com.catas.wicked.common.bean.message.BaseMessage;
+import com.catas.wicked.common.bean.message.RetryMessage;
 import com.catas.wicked.common.executor.ScheduledThreadPoolService;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.executor.ThreadPoolService;
@@ -90,7 +90,7 @@ public class ApplicationConfig implements AutoCloseable {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ignored) {}
-            System.out.println("update settings File");
+            // System.out.println("update settings File");
             updateSettingFile();
         });
     }
@@ -131,7 +131,7 @@ public class ApplicationConfig implements AutoCloseable {
         if (settings.isEnableSysProxyOnLaunch()) {
             // force update systemProxy
             settings.setSystemProxy(true);
-            messageQueue.pushMsg(Topic.SET_SYS_PROXY, new BaseMessage());
+            messageQueue.pushMsg(Topic.SET_SYS_PROXY, new RetryMessage());
         }
     }
 

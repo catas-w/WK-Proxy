@@ -1,7 +1,8 @@
 package com.catas.wicked.common.pipeline;
 
-import com.catas.wicked.common.bean.message.BaseMessage;
+import com.catas.wicked.common.bean.message.Message;
 import com.catas.wicked.common.bean.message.PoisonMessage;
+import com.catas.wicked.common.bean.message.RetryMessage;
 import com.catas.wicked.common.executor.CommonExecutorService;
 import com.catas.wicked.common.executor.ThreadPoolService;
 import jakarta.annotation.PostConstruct;
@@ -41,21 +42,23 @@ public class MessageQueue {
                 log.info("Start listening to topic: {}", messageChannel.getTopic());
                 while (true) {
                     try {
-                        BaseMessage msg = messageChannel.getMsg();
+                        Message msg = messageChannel.getMsg();
                         if (msg instanceof PoisonMessage) {
                             throw new InterruptedException("Quit");
                         }
 
-                        // retry failed msg
+                        // consume
                         boolean success = messageChannel.consume(msg);
-                        if (!success) {
-                            if (msg.getRetryTimes() > 0) {
-                                msg.setRetryTimes(msg.getRetryTimes() - 1);
+
+                        // retry if failed on retryMsg
+                        if (!success && msg instanceof RetryMessage retryMessage) {
+                            if (retryMessage.getRetryTimes() > 0) {
+                                retryMessage.reduce();
                                 ThreadPoolService.getInstance().run(() -> {
                                     try {
-                                        Thread.sleep(5000);
+                                        Thread.sleep(3000);
                                     } catch (Exception ignored) {}
-                                    messageChannel.pushMsg(msg);
+                                    messageChannel.pushMsg(retryMessage);
                                 });
                             } else {
                                 log.error("Msg Failed to consume, topic: {}, msg: {}", topic, msg);
@@ -76,7 +79,7 @@ public class MessageQueue {
      * @param topic topic
      * @param consumer consumer function
      */
-    public void subscribe(Topic topic, Consumer<BaseMessage> consumer) {
+    public void subscribe(Topic topic, Consumer<Message> consumer) {
         if (consumer == null || topic == null) {
             throw new RuntimeException("topic or consumer cannot be null.");
         }
@@ -94,8 +97,14 @@ public class MessageQueue {
      * @param topic topic
      * @param message message
      */
-    public void pushMsg(Topic topic, BaseMessage message) {
+    public void pushMsg(Topic topic, Message message) {
         MessageChannel messageChannel = channelMap.get(topic);
+        messageChannel.pushMsg(message);
+    }
+
+    public void clearAndPushMsg(Topic topic, Message message) {
+        MessageChannel messageChannel = channelMap.get(topic);
+        messageChannel.clear();
         messageChannel.pushMsg(message);
     }
 

@@ -9,8 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UpdateCheckWorker extends AbstractScheduledWorker {
 
     @Override
-    protected void doWork(boolean manually) {
+    protected boolean doWork(boolean manually) {
         log.info("Checking update...");
+        return true;
     }
 
     @Override

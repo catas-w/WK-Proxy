@@ -15,7 +15,7 @@ public interface ScheduledWorker extends Runnable {
     /**
      * execute task manually
      */
-    void invoke();
+    boolean invoke();
 
     /**
      * time delay for auto execution

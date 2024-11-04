@@ -1,12 +1,13 @@
 package com.catas.wicked.common.pipeline;
 
-import com.catas.wicked.common.bean.message.BaseMessage;
+import com.catas.wicked.common.bean.message.Message;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 
 /**
@@ -16,9 +17,11 @@ import java.util.function.Consumer;
 public class MessageChannel {
 
     private final Topic topic;
-    private final BlockingQueue<BaseMessage> queue;
+    private final BlockingQueue<Message> queue;
 
-    private final List<Consumer<BaseMessage>> consumers;
+    private final List<Consumer<Message>> consumers;
+
+    private final Semaphore semaphore = new Semaphore(0);
 
     public MessageChannel(Topic topic) {
         this.topic = topic;
@@ -30,11 +33,11 @@ public class MessageChannel {
         return topic;
     }
 
-    public void pushMsg(BaseMessage message) {
+    public void pushMsg(Message message) {
         queue.add(message);
     }
 
-    public BaseMessage getMsg() throws InterruptedException {
+    public Message getMsg() throws InterruptedException {
         return queue.take();
     }
 
@@ -46,22 +49,31 @@ public class MessageChannel {
      * subscribe consumer to current channel
      * @param consumer function, not null
      */
-    public void addConsumer(Consumer<BaseMessage> consumer) {
+    public void addConsumer(Consumer<Message> consumer) {
         consumers.add(consumer);
+        if (semaphore.availablePermits() == 0) {
+            semaphore.release();
+        }
     }
 
     /**
      * execute current message by every subscribed consumer
-     * @param baseMessage currentMessage
      */
-    public boolean consume(BaseMessage baseMessage) {
+    public boolean consume(Message msg) {
         if (consumers.isEmpty()) {
             log.warn("empty consumers");
-            return false;
-        }
-        for (Consumer<BaseMessage> consumer : consumers) {
             try {
-                consumer.accept(baseMessage);
+                // wait until any consumer added
+                semaphore.acquire(1);
+            } catch (InterruptedException e) {
+                log.error("Error in acquire messageChannel semaphore", e);
+                return false;
+            }
+        }
+
+        for (Consumer<Message> consumer : consumers) {
+            try {
+                consumer.accept(msg);
                 return true;
             } catch (Exception e) {
                 log.error("Exception occurred in consumer of: {}", topic, e);

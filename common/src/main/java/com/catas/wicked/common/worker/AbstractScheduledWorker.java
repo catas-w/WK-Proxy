@@ -28,8 +28,8 @@ public abstract class AbstractScheduledWorker implements ScheduledWorker {
     }
 
     @Override
-    public void invoke() {
-        getLockAndRun(true);
+    public boolean invoke() {
+        return getLockAndRun(true);
     }
 
     @Override
@@ -41,16 +41,17 @@ public abstract class AbstractScheduledWorker implements ScheduledWorker {
         getLockAndRun(false);
     }
 
-    private void getLockAndRun(boolean manually) {
+    private boolean getLockAndRun(boolean manually) {
         long timeout = manually ? getLockTimeout() : 0;
         if (!tryLock(timeout)) {
             log.warn("Worker failed to get lock for: {} ms", timeout);
-            return;
+            return false;
         }
         try {
-            doWork(manually);
+            return doWork(manually);
         } catch (Exception e) {
             log.error("Error in executing worker: ", e);
+            return false;
         } finally {
             lock.set(LOCK_STATUS.FREE);
         }
@@ -76,7 +77,7 @@ public abstract class AbstractScheduledWorker implements ScheduledWorker {
         return false;
     }
 
-    protected abstract void doWork(boolean manually);
+    protected abstract boolean doWork(boolean manually);
 
     protected long getSpinDelay() {
         return spinDelay;

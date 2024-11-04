@@ -85,8 +85,8 @@ public class ScheduledManager {
     public void invoke(String name) {
         checkWorkerExist(name);
         ScheduledWorker worker = workerMap.get(name);
-        worker.invoke();
-        log.info("Manually invoked worker: {}", name);
+        boolean res = worker.invoke();
+        log.info("Manually invoked worker: {}, success: {}", name, res);
     }
 
     public void invokeAsync(String name) {
