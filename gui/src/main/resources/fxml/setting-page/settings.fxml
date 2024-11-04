@@ -92,7 +92,8 @@
                         <JFXCheckBox fx:id="sysProxyOnLaunchBtn" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
                         <Label text="System Proxy Bypass Domains:" styleClass="grid-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-                        <TextArea fx:id="sysProxyExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                        <TextArea fx:id="sysProxyExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="6" GridPane.columnIndex="1"
+                                  promptText="eg. **.example.com; **.example.org"/>
                     </GridPane>
                 </ScrollPane>
             </AnchorPane>

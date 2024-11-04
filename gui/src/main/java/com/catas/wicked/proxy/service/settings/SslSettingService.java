@@ -4,6 +4,7 @@ import com.catas.wicked.common.bean.HeaderEntry;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.CertificateConfig;
 import com.catas.wicked.common.config.Settings;
+import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.provider.CertManager;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.TableUtils;
@@ -24,7 +25,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -55,26 +56,51 @@ public class SslSettingService extends AbstractSettingService {
     @Inject
     private CertManager certManager;
 
-    @Inject
     private ApplicationConfig appConfig;
+
+    @Inject
+    public void setApplicationConfig(ApplicationConfig applicationConfig) {
+        this.appConfig = applicationConfig;
+    }
+
+    @Inject
+    public void setMessageQueue(MessageQueue messageQueue) {
+        this.messageQueue = messageQueue;
+    }
 
     @Override
     public void init() {
-        // bugfix: make disable-listener work
+        Settings settings = appConfig.getSettings();
+
+        // enable ssl
         settingController.getSslBtn().setSelected(true);
-
         settingController.getSslBtn().selectedProperty().addListener(((observable, oldValue, newValue) -> {
-            settingController.getSslExcludeArea().setDisable(!newValue);
+            // set disable
+            settingController.getSslGridPane().getChildren().forEach(node -> {
+                Integer rowIndex = GridPane.getRowIndex(node);
+                // rowIndex 默认为 0, 当未指定时设置为 0
+                if (rowIndex == null) {
+                    rowIndex = 0;
+                }
+                if (rowIndex > 1) {
+                    node.setDisable(!newValue);
+                }
+            });
 
-            Pane parent = (Pane) settingController.getSslBtn().getParent();
-            parent.getChildren().stream()
-                    .filter(node -> node instanceof Label)
-                    .skip(1)
-                    .forEach(node -> {
-                        Label labeled = (Label) node;
-                        labeled.setDisable(!newValue);
-                    });
+            // update settings
+            settings.setHandleSsl(settingController.getSslBtn().isSelected());
+            settingController.updateSslBtn(newValue);
+            refreshAppSettings();
         }));
+
+        // exclude list
+        addUnFocusedEvent(settingController.getSslExcludeArea(), area -> {
+            List<String> list = getListFromText(area.getText());
+            if (!Objects.equals(list, settings.getSslExcludeList())) {
+                settings.setSslExcludeList(list);
+                refreshAppSettings();
+            }
+        });
 
         // import cert dialog
         settingController.setImportCertEvent(actionEvent -> displayImportDialog());
@@ -84,7 +110,8 @@ public class SslSettingService extends AbstractSettingService {
             if (newValue instanceof CertSelectComponent.CertRadioButton certRadioButton) {
                 String certId = certRadioButton.getCertId();
                 appConfig.getSettings().setSelectedCert(certId);
-                appConfig.updateSettingsAsync();
+                // appConfig.updateSettingsAsync();
+                refreshAppSettings();
 
                 try {
                     // update root certificate settings
@@ -96,7 +123,8 @@ public class SslSettingService extends AbstractSettingService {
                     // rollback
                     if (oldValue instanceof CertSelectComponent.CertRadioButton oldButton) {
                         appConfig.getSettings().setSelectedCert(oldButton.getCertId());
-                        appConfig.updateSettingsAsync();
+                        // appConfig.updateSettingsAsync();
+                        refreshAppSettings();
                     }
                 }
             }
@@ -106,7 +134,6 @@ public class SslSettingService extends AbstractSettingService {
     @Override
     public void initValues(ApplicationConfig appConfig) {
         Settings settings = appConfig.getSettings();
-        settingController.getSslBtn().setSelected(settings.isHandleSsl());
 
         // init certificates
         List<CertificateConfig> certConfigs = certManager.getCertList();
@@ -145,6 +172,9 @@ public class SslSettingService extends AbstractSettingService {
         }
         settingController.setSelectableCert(certList);
         settingController.setImportCertBtnStatus(certConfigs.size() >= MAX_CERT_SIZE);
+
+        // enable ssl
+        settingController.getSslBtn().setSelected(settings.isHandleSsl());
 
         // exclude list
         settingController.getSslExcludeArea().setText(getTextFromList(settings.getSslExcludeList()));

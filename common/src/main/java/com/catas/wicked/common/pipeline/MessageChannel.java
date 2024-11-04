@@ -45,6 +45,10 @@ public class MessageChannel {
         queue.clear();
     }
 
+    public int getSize() {
+        return queue.size();
+    }
+
     /**
      * subscribe consumer to current channel
      * @param consumer function, not null

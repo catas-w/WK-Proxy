@@ -285,4 +285,8 @@ public class ButtonBarController implements Initializable {
     public void updateThrottleBtn(boolean selected) {
         throttleBtn.setSelected(selected);
     }
+
+    public void updateSSlBtn(boolean selected) {
+        sslBtn.setSelected(selected);
+    }
 }

@@ -241,6 +241,10 @@ public class SettingController implements Initializable {
         buttonBarController.updateThrottleBtn(selected);
     }
 
+    public void updateSslBtn(boolean selected) {
+        buttonBarController.updateSSlBtn(selected);
+    }
+
     public void setSelectableCert(List<? extends Node> certList) {
         if (CollectionUtils.isEmpty(certList)) {
             return;

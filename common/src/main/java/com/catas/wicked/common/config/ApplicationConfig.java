@@ -90,7 +90,8 @@ public class ApplicationConfig implements AutoCloseable {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ignored) {}
-            // System.out.println("update settings File");
+            // TODO
+            System.out.println("update settings File " + System.currentTimeMillis());
             updateSettingFile();
         });
     }
