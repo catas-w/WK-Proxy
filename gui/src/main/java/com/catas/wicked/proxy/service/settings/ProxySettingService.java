@@ -7,12 +7,11 @@ import com.catas.wicked.common.constant.WorkerConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.WebUtils;
+import com.catas.wicked.proxy.gui.componet.ThrottleTypeLabel;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -70,13 +69,18 @@ public class ProxySettingService extends AbstractSettingService{
 
         // throttle
         JFXToggleButton throttleBtn = settingController.getThrottleBtn();
-        JFXComboBox<Labeled> throttleComboBox = settingController.getThrottleComboBox();
+        JFXComboBox<ThrottleTypeLabel> throttleComboBox = settingController.getThrottleComboBox();
         throttleComboBox.setDisable(!settings.isThrottle());
         for (ThrottlePreset preset : ThrottlePreset.values()) {
-            throttleComboBox.getItems().add(new Label(preset.name()));
+            throttleComboBox.getItems().add(new ThrottleTypeLabel(preset.getDesc()) {
+                @Override
+                public ThrottlePreset getThrottlePreset() {
+                    return preset;
+                }
+            });
         }
         throttleComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            settings.setThrottlePreset(ThrottlePreset.valueOf(newValue.getText()));
+            settings.setThrottlePreset(newValue.getThrottlePreset());
             refreshAppSettings();
         });
 
@@ -116,7 +120,7 @@ public class ProxySettingService extends AbstractSettingService{
         // throttle
         settingController.getThrottleBtn().setSelected(settings.isThrottle());
         ThrottlePreset preset = settings.getThrottlePreset();
-        JFXComboBox<Labeled> throttleComboBox = settingController.getThrottleComboBox();
+        JFXComboBox<ThrottleTypeLabel> throttleComboBox = settingController.getThrottleComboBox();
         if (preset == null) {
             throttleComboBox.getSelectionModel().select(0);
         } else {

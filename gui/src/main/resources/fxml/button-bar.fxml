@@ -37,7 +37,7 @@
             <tooltip>
                 <Tooltip text="Handle SSL" showDelay="500ms" />
             </tooltip>
-            <FontIcon iconColor="#68cbc8" iconLiteral="fas-mask" iconSize="18"/>
+            <FontIcon iconColor="#616161" iconLiteral="fas-mask" iconSize="18"/>
         </JFXToggleNode>
         <JFXToggleNode fx:id="sysProxyBtn" prefWidth="200.0" textOverrun="CLIP" onAction="#onSysProxy">
             <VBox.margin>

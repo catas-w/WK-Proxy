@@ -1,5 +1,6 @@
 package com.catas.wicked.common.config;
 
+import com.catas.wicked.common.bean.message.BaseMessage;
 import com.catas.wicked.common.bean.message.RetryMessage;
 import com.catas.wicked.common.executor.ScheduledThreadPoolService;
 import com.catas.wicked.common.pipeline.MessageQueue;
@@ -128,6 +129,7 @@ public class ApplicationConfig implements AutoCloseable {
             return;
         }
 
+        // TODO catch field error
         settings = objectMapper.readValue(file, Settings.class);
         if (settings.isEnableSysProxyOnLaunch()) {
             // force update systemProxy
@@ -151,7 +153,7 @@ public class ApplicationConfig implements AutoCloseable {
     }
 
     public void updateSettingsAsync() {
-        ThreadPoolService.getInstance().run(this::updateSettingFile);
+        messageQueue.clearAndPushMsg(Topic.UPDATE_SETTING_FILE, new BaseMessage());
     }
 
     public int getMaxContentSize() {

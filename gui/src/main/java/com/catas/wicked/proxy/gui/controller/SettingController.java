@@ -5,6 +5,7 @@ import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.worker.ScheduledManager;
 import com.catas.wicked.proxy.gui.componet.CertSelectComponent;
 import com.catas.wicked.proxy.gui.componet.ProxyTypeLabel;
+import com.catas.wicked.proxy.gui.componet.ThrottleTypeLabel;
 import com.catas.wicked.proxy.service.settings.ExternalProxySettingService;
 import com.catas.wicked.proxy.service.settings.GeneralSettingService;
 import com.catas.wicked.proxy.service.settings.ProxySettingService;
@@ -56,6 +57,7 @@ import java.util.function.Consumer;
 // @RequiredArgsConstructor(onConstructor_={@Inject})
 public class SettingController implements Initializable {
 
+    public JFXToggleButton exProxyBtn;
     public JFXComboBox<ProxyTypeLabel> proxyComboBox;
     public JFXTextField exProxyHost;
     public JFXTextField exProxyPort;
@@ -70,7 +72,7 @@ public class SettingController implements Initializable {
     public JFXToggleButton sslBtn;
     public TextArea sslExcludeArea;
     public JFXToggleButton throttleBtn;
-    public JFXComboBox<Labeled> throttleComboBox;
+    public JFXComboBox<ThrottleTypeLabel> throttleComboBox;
 
     public Tab generalSettingTab;
     public Tab proxySettingTab;
@@ -80,6 +82,7 @@ public class SettingController implements Initializable {
     public HBox importCertBox;
     public Button importCertBtn;
     public GridPane sslGridPane;
+    public GridPane exProxyGridPane;
     @FXML
     private JFXCheckBox sysProxyOnLaunchBtn;
     @FXML

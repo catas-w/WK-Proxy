@@ -142,6 +142,7 @@ public class ButtonBarController implements Initializable {
             Color color = newValue ? COLOR_ACTIVE : COLOR_INACTIVE;
             icon.setIconColor(color);
             appConfig.getSettings().setHandleSsl(newValue);
+            appConfig.updateSettingsAsync();
 
             String toolTip = newValue ? "Stop Handling SSL" : "Handle SSL";
             sslBtn.getTooltip().setText(toolTip);
@@ -154,6 +155,7 @@ public class ButtonBarController implements Initializable {
             Color color = newValue ? COLOR_ACTIVE : COLOR_INACTIVE;
             icon.setIconColor(color);
             appConfig.getSettings().setThrottle(newValue);
+            appConfig.updateSettingsAsync();
 
             String toolTip = newValue ? "Stop Throttling" : "Start Throttling";
             throttleBtn.getTooltip().setText(toolTip);

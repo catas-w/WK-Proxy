@@ -131,7 +131,7 @@
             <AnchorPane>
                 <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
-                    <GridPane styleClass="setting-external" vgap="5">
+                    <GridPane fx:id="exProxyGridPane" styleClass="setting-external" vgap="5">
                         <columnConstraints>
                             <ColumnConstraints hgrow="NEVER" maxWidth="130.0" minWidth="130.0"/>
                             <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
@@ -139,7 +139,7 @@
                         <!-- External Proxy -->
                         <Label text="-- External Proxy --" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
                         <Label text="Enable External Proxy:" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <JFXToggleButton styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        <JFXToggleButton fx:id="exProxyBtn" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                         <Label text="Proxy Type:" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                         <JFXComboBox fx:id="proxyComboBox" styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>

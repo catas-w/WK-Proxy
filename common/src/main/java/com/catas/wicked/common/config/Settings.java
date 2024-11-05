@@ -12,11 +12,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Settings {
 
-    public enum CertType {
-        BUILT_IN,
-        CUSTOM,
-    }
-
     /**
      * General settings
      */
@@ -39,7 +34,6 @@ public class Settings {
      */
     // @JsonIgnore
     private boolean handleSsl = false;
-    private CertType certType = CertType.BUILT_IN;
     private String selectedCert;
 
     private List<String> sslExcludeList;
@@ -47,6 +41,7 @@ public class Settings {
     /**
      * External proxy settings
      */
+    private boolean enableExProxy;
     private ExternalProxyConfig externalProxy;
 
     /**

@@ -168,6 +168,8 @@ public class SslSettingService extends AbstractSettingService {
                     installCert(config.getId());
                 });
             }
+
+            component.setDisable(!settings.isHandleSsl());
             certList.add(component);
         }
         settingController.setSelectableCert(certList);

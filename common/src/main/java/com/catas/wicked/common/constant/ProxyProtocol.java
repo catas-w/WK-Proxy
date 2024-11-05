@@ -1,19 +1,27 @@
 package com.catas.wicked.common.constant;
 
+import lombok.Getter;
+
+@Getter
 public enum ProxyProtocol {
-    NONE("None"),
-    SYSTEM("System Proxy"),
-    HTTP("HTTP"),
-    SOCKS4("SOCKS4"),
-    SOCKS5("SOCKS5");
+    NONE("None", -1, false),
+    SYSTEM("System Proxy", -1, false),
+    HTTP("HTTP", 0, true),
+    SOCKS4("SOCKS4", 1, true),
+    SOCKS5("SOCKS5", 2, true);
 
     private final String name;
+    private final int ordinal;
+    private final boolean active;
 
-    ProxyProtocol(String name) {
+    ProxyProtocol(String name, int ordinal, boolean active) {
         this.name = name;
+        this.ordinal = ordinal;
+        this.active = active;
     }
 
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
     }
 }

@@ -15,14 +15,14 @@ public class ThrottleSettingService extends AbstractSettingService{
 
     @Override
     public void init() {
-        JFXComboBox<Labeled> throttleComboBox = settingController.getThrottleComboBox();
-        for (ThrottlePreset preset : ThrottlePreset.values()) {
-            throttleComboBox.getItems().add(new Label(preset.name()));
-        }
+        // JFXComboBox<Labeled> throttleComboBox = settingController.getThrottleComboBox();
+        // for (ThrottlePreset preset : ThrottlePreset.values()) {
+        //     throttleComboBox.getItems().add(new Label(preset.name()));
+        // }
 
-        settingController.getThrottleBtn().selectedProperty().addListener(((observable, oldValue, newValue) -> {
-            throttleComboBox.setDisable(!newValue);
-        }));
+        // settingController.getThrottleBtn().selectedProperty().addListener(((observable, oldValue, newValue) -> {
+        //     throttleComboBox.setDisable(!newValue);
+        // }));
 
         // settingController.getThrottleBtn().selectedProperty().bindBidirectional(
         //         buttonBarController.throttleBtn.selectedProperty());
@@ -30,17 +30,17 @@ public class ThrottleSettingService extends AbstractSettingService{
 
     @Override
     public void initValues(ApplicationConfig appConfig) {
-        Settings settings = appConfig.getSettings();
-        settingController.getThrottleBtn().setSelected(settings.isThrottle());
-
-        ThrottlePreset preset = settings.getThrottlePreset();
-        JFXComboBox<Labeled> throttleComboBox = settingController.getThrottleComboBox();
-        throttleComboBox.setDisable(!settings.isThrottle());
-        if (preset == null) {
-            throttleComboBox.getSelectionModel().select(0);
-        } else {
-            throttleComboBox.getSelectionModel().select(preset.ordinal());
-        }
+        // Settings settings = appConfig.getSettings();
+        // settingController.getThrottleBtn().setSelected(settings.isThrottle());
+        //
+        // ThrottlePreset preset = settings.getThrottlePreset();
+        // JFXComboBox<Labeled> throttleComboBox = settingController.getThrottleComboBox();
+        // throttleComboBox.setDisable(!settings.isThrottle());
+        // if (preset == null) {
+        //     throttleComboBox.getSelectionModel().select(0);
+        // } else {
+        //     throttleComboBox.getSelectionModel().select(preset.ordinal());
+        // }
     }
 
     @Override

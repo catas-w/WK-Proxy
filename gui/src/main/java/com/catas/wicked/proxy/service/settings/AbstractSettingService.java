@@ -73,6 +73,9 @@ public abstract class AbstractSettingService implements SettingService {
         });
     }
 
+    /**
+     * not validate if textField is disabled
+     */
     protected void addUnDisableRequiredValidator(JFXTextField textField, String msg) {
         if (textField == null) {
             return;
