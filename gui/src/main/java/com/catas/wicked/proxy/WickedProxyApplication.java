@@ -19,6 +19,9 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.inject.Singleton;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 @Slf4j
 // @Import(packages = {
 //         "com.catas.wicked.server.proxy",
@@ -54,7 +57,12 @@ public class WickedProxyApplication implements ApplicationDelegate {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Locale locale = Locale.SIMPLIFIED_CHINESE;
+        ResourceBundle bundle = ResourceBundle.getBundle("lang.messages", locale);
+
         FXMLLoader loader = loaderFactory.get(WickedProxyApplication.class.getResource("/fxml/application.fxml"));
+        loader.setResources(bundle);
+
         Parent root = loader.load();
         // Scene scene = new Scene(root, 1000, 680);
         Scene scene = new Scene(root, 1100, 750);

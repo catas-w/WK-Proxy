@@ -34,7 +34,7 @@
     <JFXTabPane fx:id="settingTabPane" styleClass="setting-tab-pane" tabClosingPolicy="UNAVAILABLE"
              AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0"
              AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0">
-        <Tab text="General" fx:id="generalSettingTab" styleClass="setting-general, setting-tab-1" >
+        <Tab text="%general-tab.label" fx:id="generalSettingTab" styleClass="setting-general, setting-tab-1" >
             <AnchorPane>
                 <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
@@ -45,27 +45,27 @@
                         </columnConstraints>
                         <rowConstraints/>
                         <!-- language -->
-                        <Label text="-- Basic --" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
-                        <Label text="Language:" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label text="%language-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+                        <Label text="%language.label" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                         <JFXComboBox fx:id="languageComboBox" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" />
 
                         <!-- recording -->
-                        <Label text="-- Recording Settings --" styleClass="grid-sep-label" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
-                        <Label text="Max-Recording Size:" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label text="%record-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+                        <Label text="%record-size.label" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                         <StackPane styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="140.0">
                             <CustomTextField errorPaneTranslateX="140.0" errorPaneTranslateY="-40.0"
                                              fx:id="maxSizeField" styleClass="record-size-input" maxWidth="140.0"/>
                             <Label text="Mb" styleClass="record-size-label"/>
                         </StackPane>
 
-                        <Label text="Bypass Domains:" styleClass="grid-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <Label text="%record-bypass.label" styleClass="grid-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
                         <TextArea fx:id="recordExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="4" GridPane.columnIndex="1"
                                   promptText="eg. **.example.com; **.example.org"/>
                     </GridPane>
                 </ScrollPane>
             </AnchorPane>
         </Tab>
-        <Tab text="Proxy" fx:id="proxySettingTab" styleClass="setting-server, setting-tab-2">
+        <Tab text="%proxy-tab.label" fx:id="proxySettingTab" styleClass="setting-server, setting-tab-2">
             <AnchorPane>
                 <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
@@ -75,30 +75,30 @@
                             <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
                         </columnConstraints>
                         <!-- Server -->
-                        <Label text="-- Proxy Server --" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
-                        <Label text="Port:" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label text="%proxy-server-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+                        <Label text="%port.label" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                         <CustomTextField errorPaneTranslateX="140.0" errorPaneTranslateY="-40.0"
                                          fx:id="portField" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="140.0"/>
 
-                        <Label text="Enable Throttling:" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label text="%throttle.label" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                         <JFXToggleButton fx:id="throttleBtn" styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                        <Label text="Throttle Preset:" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label text="%throttle-preset.label" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                         <JFXComboBox disable="true" fx:id="throttleComboBox" styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
                         <!-- System Proxy -->
-                        <Label text="-- System Proxy --" styleClass="grid-sep-label" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
-                        <Label text="Enable System Proxy On Launch:" styleClass="grid-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <Label text="%sys-proxy-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
+                        <Label text="%enable-sys-proxy.label" styleClass="grid-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
                         <JFXCheckBox fx:id="sysProxyOnLaunchBtn" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-                        <Label text="System Proxy Bypass Domains:" styleClass="grid-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                        <Label text="%sys-proxy-bypass.label" styleClass="grid-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
                         <TextArea fx:id="sysProxyExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="6" GridPane.columnIndex="1"
                                   promptText="eg. **.example.com; **.example.org"/>
                     </GridPane>
                 </ScrollPane>
             </AnchorPane>
         </Tab>
-        <Tab text=" SSl " fx:id="sslSettingTab" styleClass="setting-ssl, setting-tab-3">
+        <Tab text="%ssl-tab.label" fx:id="sslSettingTab" styleClass="setting-ssl, setting-tab-3">
             <AnchorPane>
                 <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
@@ -107,18 +107,18 @@
                             <ColumnConstraints hgrow="NEVER" maxWidth="130.0" minWidth="130.0"/>
                             <!-- <ColumnConstraints hgrow="SOMETIMES" prefWidth="300" minWidth="100.0" /> -->
                         </columnConstraints>
-                        <Label text="-- SSl Settings --" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
-                        <Label text="Enable SSL Proxying :" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label text="%ssl-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+                        <Label text="%enable-ssl.label" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                         <JFXToggleButton fx:id="sslBtn" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                        <Label text="Bypass Domains :" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label text="%ssl-bypass.label" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                         <TextArea styleClass="grid-element-lg" fx:id="sslExcludeArea" GridPane.rowIndex="2" GridPane.columnIndex="1"
                                   promptText="eg. **.example.com; **.example.org"/>
 
-                        <Label text="Root Certificate :" styleClass="grid-label"  GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label text="%root-cert.label" styleClass="grid-label"  GridPane.rowIndex="3" GridPane.columnIndex="0"/>
 
                         <HBox fx:id="importCertBox" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1">
-                            <Button fx:id="importCertBtn" styleClass="import-btn" text="Import"/>
+                            <Button fx:id="importCertBtn" styleClass="import-btn" text="%import-cert.label"/>
                         </HBox>
                     </GridPane>
                 </ScrollPane>
@@ -127,7 +127,7 @@
         <!-- <fx:define> -->
         <!--     <String fx:id="LABEL_01" fx:value="External&#xD;Proxy"/> -->
         <!-- </fx:define> -->
-        <Tab text="External Proxy" fx:id="externalSettingTab" styleClass="setting-external, setting-tab-4">
+        <Tab text="%ex-proxy-tab.label" fx:id="externalSettingTab" styleClass="setting-external, setting-tab-4">
             <AnchorPane>
                 <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
@@ -137,14 +137,14 @@
                             <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
                         </columnConstraints>
                         <!-- External Proxy -->
-                        <Label text="-- External Proxy --" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
-                        <Label text="Enable External Proxy:" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label text="%ex-proxy-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+                        <Label text="%enable-ex-proxy.label" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                         <JFXToggleButton fx:id="exProxyBtn" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                        <Label text="Proxy Type:" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label text="%ex-proxy-type.label" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                         <JFXComboBox fx:id="proxyComboBox" styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                        <Label text="Proxy Address:" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label text="%ex-proxy-addr.label" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                         <HBox styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1">
                             <CustomTextField errorPaneTranslateX="0.0" errorPaneTranslateY="-10.0" fx:id="exProxyHost" maxWidth="210" minWidth="210"/>
                             <Label text=":">
@@ -158,21 +158,21 @@
                             </GridPane.margin>
                         </HBox>
 
-                        <Label text="Requires Password:" styleClass="grid-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <Label text="%ex-proxy-auth.label" styleClass="grid-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
                         <JFXToggleButton fx:id="exProxyAuth" styleClass="grid-element" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
-                        <Label text="Username:" fx:id="exUsernameLabel" visible="false"
+                        <Label text="%ex-proxy-username.label" fx:id="exUsernameLabel" visible="false"
                                styleClass="grid-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
                         <JFXTextField fx:id="exUsername" visible="false" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1" />
 
-                        <Label text="Password:" fx:id="exPasswordLabel" visible="false"
+                        <Label text="%ex-proxy-pwd.label" fx:id="exPasswordLabel" visible="false"
                                styleClass="grid-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
                         <JFXTextField fx:id="exPassword" visible="false" styleClass="grid-element" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
                     </GridPane>
                 </ScrollPane>
             </AnchorPane>
         </Tab>
-        <Tab text="About" fx:id="infoSettingTab" styleClass="setting-info, setting-tab-5">
+        <Tab text="%about-tab.label" fx:id="infoSettingTab" styleClass="setting-info, setting-tab-5">
             <AnchorPane>
                 <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">

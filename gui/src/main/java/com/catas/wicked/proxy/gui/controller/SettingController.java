@@ -109,6 +109,9 @@ public class SettingController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Locale locale = Locale.SIMPLIFIED_CHINESE;
+        // String message = messageSource.getMessage("button.label", "null00", locale);
+
         // initServers();
         settingServiceList.forEach(settingService -> settingService.setSettingController(this));
         settingServiceList.forEach(SettingService::init);

@@ -60,9 +60,6 @@ public class ButtonBarController implements Initializable {
     public JFXButton resendBtn;
     public JFXToggleNode throttleBtn;
     public JFXToggleNode sysProxyBtn;
-    public MenuItem exportBtn;
-    public MenuItem aboutBtn;
-    public MenuItem quitBtn;
     public JFXButton clearBtn;
 
     private Dialog<Node> settingPage;
@@ -91,9 +88,12 @@ public class ButtonBarController implements Initializable {
     @Setter
     private MessageService messageService;
 
+    private String settingDialogTitle = "Settings";
+
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        settingDialogTitle = resourceBundle.getString("setting-dialog.title");
         // listen on current request
         appConfig.getObservableConfig().currentRequestIdProperty().addListener((observable, oldValue, newValue) -> {
             // System.out.println("reqId: " + newValue);
@@ -131,9 +131,11 @@ public class ButtonBarController implements Initializable {
             }
             appConfig.getSettings().setRecording(newValue);
 
-            String toolTip = newValue ? "Stop Recording" : "Record Requests";
+            // String toolTip = newValue ? "Stop Recording" : "Record Requests";
+            String toolTip = resourceBundle.getString(newValue ? "record-btn.disable.tooltip": "record-btn.enable.tooltip");
             recordBtn.getTooltip().setText(toolTip);
         });
+        // System.out.println(resourceBundle.getString("record-btn.tooltip"));
         recordBtn.setSelected(true);
 
         // toggle handle ssl button
@@ -144,7 +146,8 @@ public class ButtonBarController implements Initializable {
             appConfig.getSettings().setHandleSsl(newValue);
             appConfig.updateSettingsAsync();
 
-            String toolTip = newValue ? "Stop Handling SSL" : "Handle SSL";
+            // String toolTip = newValue ? "Stop Handling SSL" : "Handle SSL";
+            String toolTip = resourceBundle.getString(newValue ? "ssl-btn.disable.tooltip": "ssl-btn.enable.tooltip");
             sslBtn.getTooltip().setText(toolTip);
         });
         sslBtn.setSelected(appConfig.getSettings().isHandleSsl());
@@ -157,7 +160,8 @@ public class ButtonBarController implements Initializable {
             appConfig.getSettings().setThrottle(newValue);
             appConfig.updateSettingsAsync();
 
-            String toolTip = newValue ? "Stop Throttling" : "Start Throttling";
+            // String toolTip = newValue ? "Stop Throttling" : "Start Throttling";
+            String toolTip = resourceBundle.getString(newValue ? "throttle-btn.disable.tooltip": "throttle-btn.enable.tooltip");
             throttleBtn.getTooltip().setText(toolTip);
         });
         throttleBtn.setSelected(appConfig.getSettings().isThrottle());
@@ -191,7 +195,7 @@ public class ButtonBarController implements Initializable {
             settingController.setButtonBarController(this);
 
             settingPage = new Dialog<>();
-            settingPage.setTitle("Settings");
+            settingPage.setTitle(this.settingDialogTitle);
             settingPage.initModality(Modality.APPLICATION_MODAL);
             DialogPane dialogPane = settingPage.getDialogPane();
             dialogPane.setContent(settingScene);
