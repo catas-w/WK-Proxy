@@ -5,7 +5,7 @@ import com.catas.wicked.common.config.ExternalProxyConfig;
 import com.catas.wicked.common.config.Settings;
 import com.catas.wicked.common.constant.ProxyProtocol;
 import com.catas.wicked.common.pipeline.MessageQueue;
-import com.catas.wicked.proxy.gui.componet.ProxyTypeLabel;
+import com.catas.wicked.proxy.gui.componet.EnumLabel;
 import com.jfoenix.controls.JFXComboBox;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -81,23 +81,19 @@ public class ExternalProxySettingService extends AbstractSettingService{
         });
 
         // comboBox
-        JFXComboBox<ProxyTypeLabel> proxyComboBox = settingController.getProxyComboBox();
+        JFXComboBox<EnumLabel<ProxyProtocol>> proxyComboBox = settingController.getProxyComboBox();
         for (ProxyProtocol proxyType : ProxyProtocol.values()) {
             if (proxyType.isActive()) {
-                ProxyTypeLabel label = new ProxyTypeLabel(proxyType.getName()) {
-                    @Override
-                    public ProxyProtocol getProxyType() {
-                        return proxyType;
-                    }
-                };
-                proxyComboBox.getItems().add(label);
+                proxyComboBox.getItems().add(new EnumLabel<>(proxyType, proxyType::getName));
             }
         }
         proxyComboBox.getSelectionModel().selectFirst();
         proxyComboBox.valueProperty().addListener(((observable, oldValue, newValue) -> {
-            ProxyProtocol protocol = newValue.getProxyType();
-            settings.getExternalProxy().setProtocol(protocol);
-            refreshAppSettings();
+            // ProxyProtocol protocol = newValue.getProxyType();
+            if (newValue != null) {
+                settings.getExternalProxy().setProtocol(newValue.getEnum());
+                refreshAppSettings();
+            }
         }));
 
         // external proxy auth
@@ -131,17 +127,28 @@ public class ExternalProxySettingService extends AbstractSettingService{
     @Override
     public void initValues(ApplicationConfig appConfig) {
         // external proxy settings tab
-        ExternalProxyConfig externalProxy = appConfig.getSettings().getExternalProxy();
+        Settings settings = appConfig.getSettings();
+        settingController.getExProxyBtn().setSelected(settings.isEnableExProxy());
+
+        JFXComboBox<EnumLabel<ProxyProtocol>> proxyComboBox = settingController.getProxyComboBox();
+        ExternalProxyConfig externalProxy = settings.getExternalProxy();
         if (externalProxy != null) {
-            settingController.getProxyComboBox().getSelectionModel().select(externalProxy.getProtocol() == null ?
-                    0 : externalProxy.getProtocol().getOrdinal());
+            // proxyComboBox.getSelectionModel().select(externalProxy.getProtocol() == null ?
+            //         0 : externalProxy.getProtocol().getOrdinal());
+            for (EnumLabel<ProxyProtocol> item : proxyComboBox.getItems()) {
+                if (item.getEnum() == externalProxy.getProtocol()) {
+                    proxyComboBox.getSelectionModel().select(item);
+                    break;
+                }
+            }
+
             settingController.getExProxyHost().setText(externalProxy.getHost());
             settingController.getExProxyPort().setText(String.valueOf(externalProxy.getPort()));
             settingController.getExProxyAuth().setSelected(externalProxy.isProxyAuth());
             settingController.getExUsername().setText(externalProxy.getUsername());
             settingController.getExPassword().setText(externalProxy.getPassword());
         } else {
-            settingController.getProxyComboBox().getSelectionModel().select(0);
+            proxyComboBox.getSelectionModel().select(0);
         }
     }
 
@@ -153,8 +160,8 @@ public class ExternalProxySettingService extends AbstractSettingService{
             externalProxy = new ExternalProxyConfig();
             settings.setExternalProxy(externalProxy);
         }
-        ProxyProtocol protocol = settingController.getProxyComboBox().getValue().getProxyType();
-        externalProxy.setUsingExternalProxy(protocol != ProxyProtocol.NONE);
+        ProxyProtocol protocol = settingController.getProxyComboBox().getValue().getEnum();
+        // externalProxy.setUsingExternalProxy(protocol != ProxyProtocol.NONE);
         // TODO: bugfix 切换协议后报错
         //  ProxyConnectException: http, none, /127.0.0.1:10808 => www.google.com/<unresolved>:443, disconnected
         externalProxy.setProtocol(protocol);

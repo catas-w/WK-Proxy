@@ -1,5 +1,7 @@
 package com.catas.wicked.common.constant;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
@@ -46,5 +48,22 @@ public enum ThrottlePreset {
         this.readLimit = readLimit;
         this.checkInterval = 15000;
         this.maxTime = 1000;
+    }
+
+    @JsonValue
+    public String getValue() {
+        return name();
+    }
+
+    @JsonCreator
+    public static ThrottlePreset fromValue(String value) {
+        for (ThrottlePreset item : ThrottlePreset.values()) {
+            if (item.name().equalsIgnoreCase(value)) {
+                return item;
+            }
+        }
+
+        // default value
+        return SLOW_2G;
     }
 }

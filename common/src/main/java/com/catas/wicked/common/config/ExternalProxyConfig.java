@@ -10,7 +10,7 @@ import java.net.SocketAddress;
 @Data
 public class ExternalProxyConfig {
 
-    private ProxyProtocol protocol;
+    private ProxyProtocol protocol = ProxyProtocol.HTTP;
 
     private String host;
     private int port;
@@ -21,6 +21,7 @@ public class ExternalProxyConfig {
 
     private String password;
 
+    @Deprecated
     private boolean usingExternalProxy;
 
     private boolean proxyAuth;

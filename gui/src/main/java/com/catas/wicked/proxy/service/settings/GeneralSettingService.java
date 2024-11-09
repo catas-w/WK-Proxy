@@ -2,11 +2,12 @@ package com.catas.wicked.proxy.service.settings;
 
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.Settings;
+import com.catas.wicked.common.constant.LanguagePreset;
 import com.catas.wicked.common.pipeline.MessageQueue;
+import com.catas.wicked.proxy.gui.componet.EnumLabel;
 import com.jfoenix.controls.JFXTextField;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import javafx.scene.control.Label;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -29,16 +30,21 @@ public class GeneralSettingService extends AbstractSettingService {
 
     @Override
     public void init() {
-        settingController.getLanguageComboBox().getItems().add(new Label("English"));
-        settingController.getLanguageComboBox().getItems().add(new Label("简体中文"));
+        // settingController.getLanguageComboBox().getItems().add(new Label("English"));
+        // settingController.getLanguageComboBox().getItems().add(new Label("简体中文"));
+        for (LanguagePreset value : LanguagePreset.values()) {
+            settingController.getLanguageComboBox().getItems().add(new EnumLabel<>(value, value::getDesc));
+        }
         settingController.getLanguageComboBox().getSelectionModel().select(0);
         Settings settings = applicationConfig.getSettings();
 
         // update language
         settingController.getLanguageComboBox().valueProperty().addListener((observable, oldValue, newValue) -> {
-            String selectLang = newValue.getText();
-            settings.setLanguage(selectLang);
-            refreshAppSettings();
+            if (newValue != null) {
+                settings.setLanguage(newValue.getEnum());
+                System.out.println("selected lang: " + newValue.getEnum());
+                refreshAppSettings();
+            }
         });
 
         // update maxSizeField
@@ -71,7 +77,13 @@ public class GeneralSettingService extends AbstractSettingService {
     @Override
     public void initValues(ApplicationConfig appConfig) {
         Settings settings = appConfig.getSettings();
-        settingController.getLanguageComboBox().getSelectionModel().select(0);
+        for (EnumLabel<LanguagePreset> item : settingController.getLanguageComboBox().getItems()) {
+            if (item.getEnum() == settings.getLanguage()) {
+                settingController.getLanguageComboBox().getSelectionModel().select(item);
+                break;
+            }
+        }
+
         settingController.getMaxSizeField().setText(String.valueOf(settings.getMaxContentSize()));
 
         settingController.getRecordExcludeArea().setText(getTextFromList(settings.getRecordExcludeList()));
@@ -80,7 +92,7 @@ public class GeneralSettingService extends AbstractSettingService {
     @Override
     public void update(ApplicationConfig appConfig) {
         Settings settings = appConfig.getSettings();
-        settings.setLanguage(settingController.getLanguageComboBox().getSelectionModel().getSelectedItem().getText());
+        settings.setLanguage(settingController.getLanguageComboBox().getSelectionModel().getSelectedItem().getEnum());
         settings.setMaxContentSize(Integer.parseInt(settingController.getMaxSizeField().getText()));
 
         // settings.setRecordIncludeList(getListFromText(settingController.getRecordIncludeArea().getText()));

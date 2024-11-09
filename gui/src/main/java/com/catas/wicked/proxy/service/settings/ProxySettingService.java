@@ -7,7 +7,7 @@ import com.catas.wicked.common.constant.WorkerConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.WebUtils;
-import com.catas.wicked.proxy.gui.componet.ThrottleTypeLabel;
+import com.catas.wicked.proxy.gui.componet.EnumLabel;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 import jakarta.inject.Inject;
@@ -69,19 +69,17 @@ public class ProxySettingService extends AbstractSettingService{
 
         // throttle
         JFXToggleButton throttleBtn = settingController.getThrottleBtn();
-        JFXComboBox<ThrottleTypeLabel> throttleComboBox = settingController.getThrottleComboBox();
+        JFXComboBox<EnumLabel<ThrottlePreset>> throttleComboBox = settingController.getThrottleComboBox();
         throttleComboBox.setDisable(!settings.isThrottle());
         for (ThrottlePreset preset : ThrottlePreset.values()) {
-            throttleComboBox.getItems().add(new ThrottleTypeLabel(preset.getDesc()) {
-                @Override
-                public ThrottlePreset getThrottlePreset() {
-                    return preset;
-                }
-            });
+            throttleComboBox.getItems().add(new EnumLabel<>(preset, preset::getDesc));
         }
         throttleComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            settings.setThrottlePreset(newValue.getThrottlePreset());
-            refreshAppSettings();
+            // settings.setThrottlePreset(newValue.getThrottlePreset());
+            if (newValue != null) {
+                settings.setThrottlePreset(newValue.getEnum());
+                refreshAppSettings();
+            }
         });
 
         settingController.getThrottleBtn().setSelected(settings.isThrottle());
@@ -120,11 +118,17 @@ public class ProxySettingService extends AbstractSettingService{
         // throttle
         settingController.getThrottleBtn().setSelected(settings.isThrottle());
         ThrottlePreset preset = settings.getThrottlePreset();
-        JFXComboBox<ThrottleTypeLabel> throttleComboBox = settingController.getThrottleComboBox();
+        JFXComboBox<EnumLabel<ThrottlePreset>> throttleComboBox = settingController.getThrottleComboBox();
         if (preset == null) {
             throttleComboBox.getSelectionModel().select(0);
         } else {
-            throttleComboBox.getSelectionModel().select(preset.ordinal());
+            // throttleComboBox.getSelectionModel().select(preset.ordinal());
+            for (EnumLabel<ThrottlePreset> item : throttleComboBox.getItems()) {
+                if (item.getEnum() == preset) {
+                    throttleComboBox.getSelectionModel().select(item);
+                    break;
+                }
+            }
         }
     }
 

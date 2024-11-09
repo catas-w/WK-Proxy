@@ -140,7 +140,7 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
         }
         assert requestInfo != null;
         requestInfo.setUsingExternalProxy(appConfig.getSettings().getExternalProxy() != null &&
-                appConfig.getSettings().getExternalProxy().isUsingExternalProxy());
+                appConfig.getSettings().isEnableExProxy());
         requestInfo.setRequestId(idGenerator.nextId());
         // requestInfo.setRecording(appConfig.getSettings().isRecording());
         requestInfo.setRecording(needRecord(appConfig, requestInfo, request));

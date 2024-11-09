@@ -1,5 +1,7 @@
 package com.catas.wicked.common.constant;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
@@ -20,8 +22,20 @@ public enum ProxyProtocol {
         this.active = active;
     }
 
-    @Override
-    public String toString() {
+    @JsonValue
+    public String getValue() {
         return name;
+    }
+
+    @JsonCreator
+    public static ProxyProtocol fromValue(String value) {
+        for (ProxyProtocol item : ProxyProtocol.values()) {
+            if (item.getName().equalsIgnoreCase(value)) {
+                return item;
+            }
+        }
+
+        // default value
+        return HTTP;
     }
 }

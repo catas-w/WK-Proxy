@@ -74,6 +74,8 @@ public class ExternalProxyTest extends ProxyServerTest {
         proxyConfig.setHost("127.0.0.1");
         proxyConfig.setPort(10809);
         proxyConfig.setProtocol(ProxyProtocol.HTTP);
+
+        // TODO use settings.isEnableExProxy()
         proxyConfig.setUsingExternalProxy(true);
         appConfig.getSettings().setExternalProxy(proxyConfig);
 

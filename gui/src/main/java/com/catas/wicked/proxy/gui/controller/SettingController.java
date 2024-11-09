@@ -1,11 +1,13 @@
 package com.catas.wicked.proxy.gui.controller;
 
 import com.catas.wicked.common.config.ApplicationConfig;
+import com.catas.wicked.common.constant.LanguagePreset;
+import com.catas.wicked.common.constant.ProxyProtocol;
+import com.catas.wicked.common.constant.ThrottlePreset;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.worker.ScheduledManager;
 import com.catas.wicked.proxy.gui.componet.CertSelectComponent;
-import com.catas.wicked.proxy.gui.componet.ProxyTypeLabel;
-import com.catas.wicked.proxy.gui.componet.ThrottleTypeLabel;
+import com.catas.wicked.proxy.gui.componet.EnumLabel;
 import com.catas.wicked.proxy.service.settings.ExternalProxySettingService;
 import com.catas.wicked.proxy.service.settings.GeneralSettingService;
 import com.catas.wicked.proxy.service.settings.ProxySettingService;
@@ -28,7 +30,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -58,7 +59,7 @@ import java.util.function.Consumer;
 public class SettingController implements Initializable {
 
     public JFXToggleButton exProxyBtn;
-    public JFXComboBox<ProxyTypeLabel> proxyComboBox;
+    public JFXComboBox<EnumLabel<ProxyProtocol>> proxyComboBox;
     public JFXTextField exProxyHost;
     public JFXTextField exProxyPort;
     public JFXTextField exUsername;
@@ -66,13 +67,13 @@ public class SettingController implements Initializable {
     public JFXToggleButton exProxyAuth;
     public Label exUsernameLabel;
     public Label exPasswordLabel;
-    public JFXComboBox<Labeled> languageComboBox;
+    public JFXComboBox<EnumLabel<LanguagePreset>> languageComboBox;
     public TextArea recordExcludeArea;
     public TextArea sysProxyExcludeArea;
     public JFXToggleButton sslBtn;
     public TextArea sslExcludeArea;
     public JFXToggleButton throttleBtn;
-    public JFXComboBox<ThrottleTypeLabel> throttleComboBox;
+    public JFXComboBox<EnumLabel<ThrottlePreset>> throttleComboBox;
 
     public Tab generalSettingTab;
     public Tab proxySettingTab;

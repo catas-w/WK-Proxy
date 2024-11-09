@@ -1,5 +1,6 @@
 package com.catas.wicked.common.config;
 
+import com.catas.wicked.common.constant.LanguagePreset;
 import com.catas.wicked.common.constant.ThrottlePreset;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -15,7 +16,7 @@ public class Settings {
     /**
      * General settings
      */
-    private String language;
+    private LanguagePreset language = LanguagePreset.ENGLISH;
     private boolean recording = true;
     private int maxContentSize = 10;
     private List<String> recordIncludeList;
