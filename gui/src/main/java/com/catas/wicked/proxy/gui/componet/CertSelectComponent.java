@@ -97,8 +97,12 @@ public class CertSelectComponent extends HBox {
         }
     }
 
-    public void setOperateToolTip(String toolTip) {
+    public void setOperateTooltip(String toolTip) {
         this.operateBtn.getTooltip().setText(toolTip);
+    }
+
+    public void setPreviewTooltip(String tooltip) {
+        this.previewBtn.getTooltip().setText(tooltip);
     }
 
     public void setPreviewEvent(Consumer<ActionEvent> consumer) {

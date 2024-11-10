@@ -1,10 +1,13 @@
 package com.catas.wicked.common.factory;
 
+import com.catas.wicked.common.config.ApplicationConfig;
+import com.catas.wicked.common.provider.ResourceMessageProvider;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Parallel;
 import io.micronaut.context.i18n.ResourceBundleMessageSource;
 import jakarta.inject.Singleton;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,6 +24,18 @@ public class MessageSourceFactory {
     @Singleton
     public ResourceBundleMessageSource messageSource() {
         return new ResourceBundleMessageSource("lang.messages");
+    }
+
+    @Bean
+    @Singleton
+    public ResourceMessageProvider messageProvider(ResourceBundleMessageSource messageSource, ApplicationConfig appConfig) {
+        return code -> {
+            if (StringUtils.isBlank(code)) {
+                return null;
+            }
+            Locale locale = appConfig.getSettings().getLanguage().getLocale();
+            return messageSource.getMessage(code, "", locale);
+        };
     }
 
     private ResourceBundle getResourceBundle(Locale locale) {

@@ -5,6 +5,7 @@ import com.catas.wicked.common.config.Settings;
 import com.catas.wicked.common.constant.LanguagePreset;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.proxy.gui.componet.EnumLabel;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -30,19 +31,23 @@ public class GeneralSettingService extends AbstractSettingService {
 
     @Override
     public void init() {
-        // settingController.getLanguageComboBox().getItems().add(new Label("English"));
-        // settingController.getLanguageComboBox().getItems().add(new Label("简体中文"));
-        for (LanguagePreset value : LanguagePreset.values()) {
-            settingController.getLanguageComboBox().getItems().add(new EnumLabel<>(value, value::getDesc));
-        }
-        settingController.getLanguageComboBox().getSelectionModel().select(0);
         Settings settings = applicationConfig.getSettings();
 
+        // languageComboBox.getSelectionModel().select(0);
+
         // update language
-        settingController.getLanguageComboBox().valueProperty().addListener((observable, oldValue, newValue) -> {
+        JFXComboBox<EnumLabel<LanguagePreset>> languageComboBox = settingController.getLanguageComboBox();
+        for (LanguagePreset value : LanguagePreset.values()) {
+            EnumLabel<LanguagePreset> enumLabel = new EnumLabel<>(value, value::getDesc);
+            languageComboBox.getItems().add(enumLabel);
+            if (value == settings.getLanguage()) {
+                languageComboBox.getSelectionModel().select(enumLabel);
+            }
+        }
+        languageComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 settings.setLanguage(newValue.getEnum());
-                System.out.println("selected lang: " + newValue.getEnum());
+                settingController.getLangAlertLabel().setVisible(true);
                 refreshAppSettings();
             }
         });

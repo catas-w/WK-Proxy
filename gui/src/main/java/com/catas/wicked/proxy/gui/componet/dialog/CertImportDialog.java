@@ -1,5 +1,6 @@
 package com.catas.wicked.proxy.gui.componet.dialog;
 
+import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.SystemUtils;
 import com.jfoenix.controls.JFXButton;
 import javafx.geometry.Insets;
@@ -38,12 +39,15 @@ public class CertImportDialog extends Dialog<Pair<CertImportDialog.CertImportDat
 
     private final CertImportData importPriKeyData = new CertImportData();
 
-    public CertImportDialog() {
-        setTitle("Import Certificate");
+    private final ResourceMessageProvider resourceMessageProvider;
+
+    public CertImportDialog(ResourceMessageProvider resourceMessageProvider) {
+        this.resourceMessageProvider = resourceMessageProvider;
+        setTitle(resourceMessageProvider.getMessage("cert-import.title"));
 
         // buttons
-        okButton = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-        cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        okButton = new ButtonType(resourceMessageProvider.getMessage("save.label"), ButtonBar.ButtonData.OK_DONE);
+        cancelBtn = new ButtonType(resourceMessageProvider.getMessage("cancel.label"), ButtonBar.ButtonData.CANCEL_CLOSE);
         getDialogPane().getButtonTypes().addAll(okButton, cancelBtn);
 
         VBox vBox = new VBox();
@@ -51,13 +55,23 @@ public class CertImportDialog extends Dialog<Pair<CertImportDialog.CertImportDat
         vBox.setPrefHeight(400);
 
         // private key input
-        certArea = createInputComponent(vBox, "Paste Certificate (PEM):", importCertData);
+        certArea = createInputComponent(vBox, resourceMessageProvider.getMessage("cert-paste-pem.label"), importCertData);
         certArea.setWrapText(true);
-        certArea.setPromptText("Input certificate starts with: -----BEGIN CERTIFICATE-----");
+        certArea.setPromptText("""
+                Format:\r
+                -----BEGIN CERTIFICATE-----\r
+                ******\r
+                -----END CERTIFICATE-----
+                """);
 
-        priKeyTextArea = createInputComponent(vBox, "Paste Private Key (PEM):", importPriKeyData);
+        priKeyTextArea = createInputComponent(vBox, resourceMessageProvider.getMessage("pri-key-paste-pem.label"), importPriKeyData);
         priKeyTextArea.setWrapText(true);
-        priKeyTextArea.setPromptText("Input private key starts with: -----BEGIN PRIVATE KEY-----");
+        priKeyTextArea.setPromptText("""
+                Format:\r
+                -----BEGIN PRIVATE KEY-----\r
+                ******\r
+                -----END PRIVATE KEY-----
+                """);
 
         // dialog
         getDialogPane().setContent(vBox);
@@ -111,7 +125,7 @@ public class CertImportDialog extends Dialog<Pair<CertImportDialog.CertImportDat
         TextArea textArea = new TextArea();
 
         // select file button
-        JFXButton selectBtn = new JFXButton("Select");
+        JFXButton selectBtn = new JFXButton(resourceMessageProvider.getMessage("select.label"));
         FontIcon icon = new FontIcon();
         icon.setIconLiteral("fas-file-upload");
         selectBtn.setGraphic(icon);

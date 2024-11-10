@@ -6,6 +6,7 @@ import com.catas.wicked.common.config.CertificateConfig;
 import com.catas.wicked.common.config.Settings;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.provider.CertManager;
+import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.TableUtils;
 import com.catas.wicked.proxy.gui.componet.CertSelectComponent;
@@ -56,6 +57,8 @@ public class SslSettingService extends AbstractSettingService {
     @Inject
     private CertManager certManager;
 
+    private ResourceMessageProvider resourceMessageProvider;
+
     private ApplicationConfig appConfig;
 
     @Inject
@@ -66,6 +69,11 @@ public class SslSettingService extends AbstractSettingService {
     @Inject
     public void setMessageQueue(MessageQueue messageQueue) {
         this.messageQueue = messageQueue;
+    }
+
+    @Inject
+    public void setResourceMessageProvider(ResourceMessageProvider resourceMessageProvider) {
+        this.resourceMessageProvider = resourceMessageProvider;
     }
 
     @Override
@@ -146,6 +154,7 @@ public class SslSettingService extends AbstractSettingService {
             CertSelectComponent component = new CertSelectComponent(config.getName(), config.getId(), iconStr);
             component.setToggleGroup(certSelectGroup);
             component.setPreviewEvent(actionEvent -> displayPreviewDialog(config.getId()));
+            component.setPreviewTooltip(resourceMessageProvider.getMessage("cert-preview.tooltip"));
 
             if (StringUtils.equals(selectedCertId, config.getId())) {
                 component.setSelected(true);
@@ -155,15 +164,17 @@ public class SslSettingService extends AbstractSettingService {
                     component.setSelected(true);
                 }
                 component.setOperateEvent(actionEvent -> saveCert(config));
-                component.setOperateToolTip("Export");
+                component.setOperateTooltip(resourceMessageProvider.getMessage("cert-export.tooltip"));
             } else {
                 component.setOperateEvent(actionEvent -> deleteCert(config.getId()));
-                component.setOperateToolTip("Delete");
+                component.setOperateTooltip(resourceMessageProvider.getMessage("cert-delete.tooltip"));
             }
 
             // set install cert action
             if (!certManager.checkInstalled(config.getId())) {
-                component.setAlertLabel("Certificate not installed!", "Click to install.");
+                String alertLabel = resourceMessageProvider.getMessage("cert-install-alert.label");
+                String clickLabel = resourceMessageProvider.getMessage("cert-install-click.label");
+                component.setAlertLabel(alertLabel, clickLabel);
                 component.setOnClickLabelAction(event -> {
                     installCert(config.getId());
                 });
@@ -195,7 +206,7 @@ public class SslSettingService extends AbstractSettingService {
      * import cert dialog
      */
     private void displayImportDialog() {
-        CertImportDialog dialog = new CertImportDialog();
+        CertImportDialog dialog = new CertImportDialog(resourceMessageProvider);
 
         dialog.showAndWait().ifPresent(result -> {
             CertImportDialog.CertImportData certData = result.getKey();
@@ -289,7 +300,7 @@ public class SslSettingService extends AbstractSettingService {
      */
     private void installCert(String certId) {
         boolean confirmed = AlertUtils.confirm("Warning",
-                "Confirm installation of the certificate? This action requires administrator privileges");
+                resourceMessageProvider.getMessage("cert-install-confirm.label"));
         if (!confirmed) {
             return;
         }
@@ -307,7 +318,7 @@ public class SslSettingService extends AbstractSettingService {
      * delete cert event
      */
     private void deleteCert(String certId) {
-        boolean confirmed = AlertUtils.confirm("Warning", "Delete this certificate?");
+        boolean confirmed = AlertUtils.confirm("Warning", resourceMessageProvider.getMessage("cert-delete-confirm.label"));
         if (!confirmed) {
             return;
         }

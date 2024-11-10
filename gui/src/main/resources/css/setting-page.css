@@ -268,6 +268,14 @@
     -fx-min-width: 130;
     -fx-max-width: 130;
 }
+.lang-alert-label {
+    -fx-text-fill: #b73012;
+    /*-fx-border-color: green;*/
+    /*-fx-border-width: 1;*/
+    -fx-pref-height: 40;
+    -fx-min-width: 250;
+    -fx-max-width: 250;
+}
 
 /************ certSelect  ************/
 .import-btn {

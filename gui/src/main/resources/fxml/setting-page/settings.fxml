@@ -24,6 +24,7 @@
 
 <?import javafx.scene.layout.StackPane?>
 <?import com.catas.wicked.proxy.gui.componet.CustomTextField?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <AnchorPane prefHeight="500.0" prefWidth="700.0"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.catas.wicked.proxy.gui.controller.SettingController">
@@ -47,7 +48,16 @@
                         <!-- language -->
                         <Label text="%language-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
                         <Label text="%language.label" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <JFXComboBox fx:id="languageComboBox" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                        <!-- <JFXComboBox fx:id="languageComboBox" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" /> -->
+                        <HBox GridPane.rowIndex="1" GridPane.columnIndex="1">
+                            <JFXComboBox fx:id="languageComboBox" styleClass="grid-element"/>
+                            <Label fx:id="langAlertLabel" visible="false" text="%language-alert.label"
+                                   styleClass="alert-label, lang-alert-label">
+                                <graphic>
+                                    <FontIcon iconLiteral="fas-exclamation-triangle"/>
+                                </graphic>
+                            </Label>
+                        </HBox>
 
                         <!-- recording -->
                         <Label text="%record-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="2" GridPane.columnSpan="2"/>

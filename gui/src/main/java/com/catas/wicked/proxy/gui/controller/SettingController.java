@@ -19,6 +19,7 @@ import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
+import io.micronaut.context.i18n.ResourceBundleMessageSource;
 import io.micronaut.core.util.CollectionUtils;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -48,6 +49,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -84,6 +86,7 @@ public class SettingController implements Initializable {
     public Button importCertBtn;
     public GridPane sslGridPane;
     public GridPane exProxyGridPane;
+    public Label langAlertLabel;
     @FXML
     private JFXCheckBox sysProxyOnLaunchBtn;
     @FXML
@@ -108,10 +111,18 @@ public class SettingController implements Initializable {
     @Inject
     private List<SettingService> settingServiceList;
 
+    @Inject
+    private ResourceBundleMessageSource messageSource;
+
+    private String getMessage(String code) {
+        return messageSource.getMessage(code, "", Locale.SIMPLIFIED_CHINESE);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Locale locale = Locale.SIMPLIFIED_CHINESE;
-        // String message = messageSource.getMessage("button.label", "null00", locale);
+        Locale locale = Locale.SIMPLIFIED_CHINESE;
+        String message = messageSource.getMessage("button.label", "null00", locale);
+        String message1 = getMessage("button.label");
 
         // initServers();
         settingServiceList.forEach(settingService -> settingService.setSettingController(this));
