@@ -43,6 +43,37 @@ public class ScheduledManagerTest extends BaseTest {
     }
 
     @Test
+    public void testPause() throws InterruptedException {
+        Count autoCnt = new Count();
+        ScheduledManager manager = new ScheduledManager();
+        ScheduledWorker worker = new AbstractScheduledWorker() {
+            @Override
+            public long getDelay() {
+                return 1000;
+            }
+
+            @Override
+            protected boolean doWork(boolean manually) {
+                System.out.println("---------- running task ----------- " + System.currentTimeMillis());
+                autoCnt.add(1);
+                return true;
+            }
+        };
+
+        String worker1 = "worker1";
+        manager.register(worker1, worker);
+        Thread.sleep(2500);
+
+        manager.pause(worker1);
+        Thread.sleep(2800);
+
+        manager.resume(worker1);
+        Thread.sleep(1800);
+
+        Assertions.assertEquals(5, autoCnt.count);
+    }
+
+    @Test
     public void testManagerErrors() {
         Count cnt = new Count();
         ScheduledManager manager = new ScheduledManager();

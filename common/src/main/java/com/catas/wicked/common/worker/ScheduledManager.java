@@ -79,6 +79,28 @@ public class ScheduledManager {
         log.info("Cancelled worker: {} with success: {}.", name, res);
     }
 
+    public void pause(String name) {
+        try {
+            checkWorkerExist(name);
+        } catch (IllegalArgumentException ignored) {
+            log.error("Worker not exist: {}", name);
+            return;
+        }
+        ScheduledWorker worker = workerMap.get(name);
+        worker.pause();
+    }
+
+    public void resume(String name) {
+        try {
+            checkWorkerExist(name);
+        } catch (IllegalArgumentException ignored) {
+            log.error("Worker not exist: {}", name);
+            return;
+        }
+        ScheduledWorker worker = workerMap.get(name);
+        worker.start();
+    }
+
     /**
      * invoke task once
      */

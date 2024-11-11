@@ -123,30 +123,32 @@
                         <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" prefWidth="100"/>
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints maxHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES"/>
+                        <RowConstraints maxHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES"/>
+                        <RowConstraints maxHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES"/>
+                        <RowConstraints maxHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES"/>
+                        <RowConstraints maxHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES"/>
                     </rowConstraints>
-                    <children>
-                        <Label text="Type" styleClass="grid-header" GridPane.rowIndex="0"/>
-                        <Label text="Duration" styleClass="grid-header" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
-                        <Label text="Request send" GridPane.rowIndex="1" />
-                        <Label text="Waiting for response" GridPane.rowIndex="2" />
-                        <Label text="Response accept" GridPane.rowIndex="3" />
-                        <Label text="Total" GridPane.rowIndex="4" />
 
-                        <TimeSplitPane displayOrder="0" displayColor="#0090de" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-                        <TimeSplitPane displayOrder="1" displayColor="#02b250" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                        <TimeSplitPane displayOrder="2" displayColor="#dc9000" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-                        <Pane style="-fx-background-color: #c2c2c2" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    <Label text="%type.label" styleClass="grid-header" GridPane.rowIndex="0"/>
+                    <Label text="%duration.label" styleClass="grid-header" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                    <Label text="%req-send.label" GridPane.rowIndex="1"/>
+                    <Label text="%resp-wait.label" GridPane.rowIndex="2"/>
+                    <Label text="%resp-accept.label" GridPane.rowIndex="3"/>
+                    <Label text="%total-time.label" GridPane.rowIndex="4"/>
 
-                        <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
-                        <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
-                        <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
-                        <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
-                    </children>
+                    <TimeSplitPane displayOrder="0" displayColor="#0090de" GridPane.rowIndex="1"
+                                   GridPane.columnIndex="1"/>
+                    <TimeSplitPane displayOrder="1" displayColor="#02b250" GridPane.rowIndex="2"
+                                   GridPane.columnIndex="1"/>
+                    <TimeSplitPane displayOrder="2" displayColor="#dc9000" GridPane.rowIndex="3"
+                                   GridPane.columnIndex="1"/>
+                    <Pane style="-fx-background-color: #c2c2c2" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                    <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                    <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+                    <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+                    <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
                 </GridPane>
                 <MessageLabel fx:id="timingMsgLabel" visible="false" text="Empty"/>
             </AnchorPane>

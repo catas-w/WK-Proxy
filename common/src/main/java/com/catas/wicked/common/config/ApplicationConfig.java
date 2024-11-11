@@ -84,14 +84,12 @@ public class ApplicationConfig implements AutoCloseable {
 
         // update settings file
         messageQueue.subscribe(Topic.UPDATE_SETTING_FILE, msg -> {
-            if (msg == null) {
-                return;
-            }
-
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             } catch (InterruptedException ignored) {}
-            // TODO
+
+            // update once
+            messageQueue.clearMsg(Topic.UPDATE_SETTING_FILE);
             System.out.println("update settings File " + System.currentTimeMillis());
             updateSettingFile();
         });

@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ScheduledThreadPoolService {
 
-    private static final int CORE_SIZE = 10;
+    private static final int CORE_SIZE = 20;
     private static final String PREFIX = "common-scheduled-thread-";
 
     private final ScheduledThreadPoolExecutor service;
@@ -25,7 +25,7 @@ public class ScheduledThreadPoolService {
     }
 
     public ScheduledFuture<?> submit(Runnable task, long initialDelay, long delay, TimeUnit timeUnit) {
-        return service.scheduleAtFixedRate(task, initialDelay, delay, timeUnit);
+        return service.scheduleWithFixedDelay(task, initialDelay, delay, timeUnit);
     }
 
     public ScheduledFuture<?> submit(Runnable task, long delay) {

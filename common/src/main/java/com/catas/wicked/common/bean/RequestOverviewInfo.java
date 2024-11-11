@@ -1,5 +1,6 @@
 package com.catas.wicked.common.bean;
 
+import com.catas.wicked.common.provider.ResourceMessageProvider;
 import jakarta.inject.Singleton;
 import lombok.Getter;
 
@@ -7,7 +8,9 @@ import lombok.Getter;
 @Singleton
 public class RequestOverviewInfo {
 
-    private final PairEntry url = new PairEntry("Url");
+    private final ResourceMessageProvider resourceMessageProvider;
+
+    private final PairEntry url = new PairEntry("URL");
     private final PairEntry method = new PairEntry("Method");
     private final PairEntry status = new PairEntry("Status");
     private final PairEntry protocol = new PairEntry("Protocol");
@@ -27,4 +30,31 @@ public class RequestOverviewInfo {
     private final PairEntry requestSize = new PairEntry("Request size");
     private final PairEntry responseSize = new PairEntry("Response size");
     private final PairEntry averageSpeed = new PairEntry("Average speed");
+
+    public RequestOverviewInfo(ResourceMessageProvider resourceMessageProvider) {
+        this.resourceMessageProvider = resourceMessageProvider;
+        refreshKey();
+    }
+
+    private void refreshKey() {
+        method.setKey(resourceMessageProvider.getMessage("method.label"));
+        status.setKey(resourceMessageProvider.getMessage("status.label"));
+        protocol.setKey(resourceMessageProvider.getMessage("protocol.label"));
+        remoteHost.setKey(resourceMessageProvider.getMessage("remote-host.label"));
+        remotePort.setKey(resourceMessageProvider.getMessage("remote-port.label"));
+        clientHost.setKey(resourceMessageProvider.getMessage("client-host.label"));
+        clientPort.setKey(resourceMessageProvider.getMessage("client-port.label"));
+
+        timeCost.setKey(resourceMessageProvider.getMessage("time-cost.label"));
+        requestTime.setKey(resourceMessageProvider.getMessage("req-time-cost.label"));
+        requestStart.setKey(resourceMessageProvider.getMessage("req-start-time.label"));
+        requestEnd.setKey(resourceMessageProvider.getMessage("req-end-time.label"));
+        respTime.setKey(resourceMessageProvider.getMessage("resp-time-cost.label"));
+        respStart.setKey(resourceMessageProvider.getMessage("resp-start-time.label"));
+        respEnd.setKey(resourceMessageProvider.getMessage("resp-end-time.label"));
+
+        requestSize.setKey(resourceMessageProvider.getMessage("req-size.label"));
+        responseSize.setKey(resourceMessageProvider.getMessage("resp-size.label"));
+        averageSpeed.setKey(resourceMessageProvider.getMessage("avg-speed.label"));
+    }
 }

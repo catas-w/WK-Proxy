@@ -2,6 +2,7 @@ package com.catas.wicked.common.worker;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
@@ -13,18 +14,24 @@ public abstract class AbstractScheduledWorker implements ScheduledWorker {
     }
 
     private final AtomicReference<LOCK_STATUS> lock = new AtomicReference<>(LOCK_STATUS.FREE);
-    private boolean running;
+    private volatile boolean running;
     protected long spinDelay = 100L;
     protected long lockTimeout = 2 * 1000L;
 
+    private final Semaphore semaphore = new Semaphore(0);
+
     @Override
     public void start() {
-        running = true;
+        if (!running) {
+            running = true;
+            semaphore.release();
+        }
     }
 
     @Override
     public void pause() {
         running = false;
+        semaphore.drainPermits();
     }
 
     @Override
@@ -34,11 +41,15 @@ public abstract class AbstractScheduledWorker implements ScheduledWorker {
 
     @Override
     public void run() {
-        if (!this.running) {
-            log.warn("Task is paused");
-            return;
+        try {
+            semaphore.acquire();
+            getLockAndRun(false);
+        } catch (InterruptedException ignored) {
+        } finally {
+            if (this.running) {
+                semaphore.release();
+            }
         }
-        getLockAndRun(false);
     }
 
     private boolean getLockAndRun(boolean manually) {
@@ -61,7 +72,7 @@ public abstract class AbstractScheduledWorker implements ScheduledWorker {
         if (lock.compareAndSet(LOCK_STATUS.FREE, LOCK_STATUS.LOCKED)) {
             return true;
         }
-        System.out.println(getSpinDelay());
+        // System.out.println(getSpinDelay());
         if (timeout <= getSpinDelay()) {
             return false;
         }
