@@ -345,3 +345,20 @@
 .click-label:hover {
     -fx-opacity: 0.65;
 }
+
+
+/************ link label  ************/
+.link-label {
+    -fx-pref-height: 20;
+    -fx-pref-width: 80;
+}
+.link {
+    -fx-pref-height: 20;
+    -fx-pref-width: 300;
+    -fx-underline: true;
+    -fx-text-fill: #0f6ae1;
+    -fx-border-width: 0;
+}
+.link:hover {
+    -fx-opacity: 0.65;
+}

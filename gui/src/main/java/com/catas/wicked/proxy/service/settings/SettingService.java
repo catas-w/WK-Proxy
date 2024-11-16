@@ -18,7 +18,8 @@ public interface SettingService {
     /**
      * perform update setting values
      */
-    void update(ApplicationConfig appConfig);
+    @Deprecated
+    default void update(ApplicationConfig appConfig) {}
 
     void setSettingController(SettingController settingController);
 }

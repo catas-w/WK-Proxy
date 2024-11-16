@@ -40,6 +40,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Singleton
 public class ApplicationConfig implements AutoCloseable {
 
+    public static final String APP_VERSION = "1.0.6";
+
     private String host = "127.0.0.1";
 
     private Integer defaultThreadNumber = 2;
