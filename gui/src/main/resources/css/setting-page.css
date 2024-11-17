@@ -207,10 +207,13 @@
 
 
 /****** gridPane ******/
-/*.setting-grid-pane {*/
-/*    -fx-background-color: #ffffff;*/
-/*    !*-fx-border-color: green;*!*/
-/*}*/
+/*.setting-anchor-pane,*/
+.setting-grid-pane {
+    /*-fx-background-color: rgba(220, 101, 101, 0.56);*/
+    /*-fx-border-color: green;*/
+    /*-fx-border-width: 1;*/
+}
+
 
 .grid-element {
     -fx-pref-height: 40;

@@ -19,7 +19,6 @@ import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
-import io.micronaut.context.i18n.ResourceBundleMessageSource;
 import io.micronaut.core.util.CollectionUtils;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -50,7 +49,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -115,19 +113,9 @@ public class SettingController implements Initializable {
     @Inject
     private List<SettingService> settingServiceList;
 
-    @Inject
-    private ResourceBundleMessageSource messageSource;
-
-    private String getMessage(String code) {
-        return messageSource.getMessage(code, "", Locale.SIMPLIFIED_CHINESE);
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Locale locale = Locale.SIMPLIFIED_CHINESE;
-        String message = messageSource.getMessage("button.label", "null00", locale);
-        String message1 = getMessage("button.label");
-
         // initServers();
         settingServiceList.forEach(settingService -> settingService.setSettingController(this));
         settingServiceList.forEach(SettingService::init);
@@ -140,16 +128,32 @@ public class SettingController implements Initializable {
         configTabStyle(infoSettingTab, "fas-info-circle");
 
         // scroll pane
-        for (Tab tab : List.of(generalSettingTab, proxySettingTab, sslSettingTab)) {
-            AnchorPane sslAnchorPane = (AnchorPane) tab.getContent();
-            Node child = sslAnchorPane.getChildren().get(0);
+        for (Tab tab : List.of(generalSettingTab, proxySettingTab, sslSettingTab, infoSettingTab)) {
+            AnchorPane anchorPane = (AnchorPane) tab.getContent();
+            Node child = anchorPane.getChildren().get(0);
             if (child instanceof ScrollPane scrollPane) {
-                // ScrollPane scrollPane = (ScrollPane) ;
-                // sslGridPane.prefWidthProperty().bind(scrollPane.widthProperty());
                 scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
                 scrollPane.setFitToWidth(true);
             }
         }
+
+        // adjust height
+        settingTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            AnchorPane anchorPane = (AnchorPane) newValue.getContent();
+            for (Node child : anchorPane.getChildren()) {
+                if (child instanceof ScrollPane scrollPane) {
+                    if (scrollPane.getContent() instanceof GridPane gridPane) {
+                        double targetHeight = gridPane.heightProperty().get();
+                        System.out.println("target height: " + targetHeight);
+                        buttonBarController.adjustSettingDialogHeight(targetHeight + 100.0, 500);
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     private void configTabStyle(Tab tab, String iconCode) {
@@ -236,6 +240,7 @@ public class SettingController implements Initializable {
     /**
      * reset current page
      */
+    @Deprecated
     public void reset() {
         Tab selectedTab = settingTabPane.getSelectionModel().getSelectedItem();
         List<String> styleList = selectedTab.getStyleClass()

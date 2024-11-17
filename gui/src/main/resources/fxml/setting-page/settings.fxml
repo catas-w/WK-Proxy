@@ -32,7 +32,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Hyperlink?>
-<AnchorPane prefHeight="500.0" prefWidth="700.0"
+<AnchorPane prefWidth="700.0"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.catas.wicked.proxy.gui.controller.SettingController">
     <stylesheets>
@@ -42,11 +42,11 @@
     <JFXTabPane fx:id="settingTabPane" styleClass="setting-tab-pane" tabClosingPolicy="UNAVAILABLE"
              AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0"
              AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0">
-        <Tab text="%general-tab.label" fx:id="generalSettingTab" styleClass="setting-general, setting-tab-1" >
-            <AnchorPane>
+        <Tab text="%general-tab.label" fx:id="generalSettingTab" styleClass="setting-general, setting-tab" >
+            <AnchorPane styleClass="setting-anchor-pane">
                 <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
-                    <GridPane styleClass="setting-general" vgap="5">
+                    <GridPane styleClass="setting-general, setting-grid-pane" vgap="5">
                         <columnConstraints>
                             <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0"/>
                             <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
@@ -82,11 +82,11 @@
                 </ScrollPane>
             </AnchorPane>
         </Tab>
-        <Tab text="%proxy-tab.label" fx:id="proxySettingTab" styleClass="setting-server, setting-tab-2">
+        <Tab text="%proxy-tab.label" fx:id="proxySettingTab" styleClass="setting-server, setting-tab">
             <AnchorPane>
                 <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
-                    <GridPane styleClass="setting-server" vgap="5">
+                    <GridPane styleClass="setting-server, setting-grid-pane" vgap="5">
                         <columnConstraints>
                             <ColumnConstraints hgrow="NEVER" maxWidth="190.0" minWidth="190.0"/>
                             <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
@@ -115,11 +115,11 @@
                 </ScrollPane>
             </AnchorPane>
         </Tab>
-        <Tab text="%ssl-tab.label" fx:id="sslSettingTab" styleClass="setting-ssl, setting-tab-3">
+        <Tab text="%ssl-tab.label" fx:id="sslSettingTab" styleClass="setting-ssl, setting-tab">
             <AnchorPane>
                 <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
-                    <GridPane fx:id="sslGridPane" styleClass="setting-ssl" vgap="2">
+                    <GridPane fx:id="sslGridPane" styleClass="setting-ssl, setting-grid-pane" vgap="2">
                         <columnConstraints>
                             <ColumnConstraints hgrow="NEVER" maxWidth="130.0" minWidth="130.0"/>
                             <!-- <ColumnConstraints hgrow="SOMETIMES" prefWidth="300" minWidth="100.0" /> -->
@@ -144,11 +144,11 @@
         <!-- <fx:define> -->
         <!--     <String fx:id="LABEL_01" fx:value="External&#xD;Proxy"/> -->
         <!-- </fx:define> -->
-        <Tab text="%ex-proxy-tab.label" fx:id="externalSettingTab" styleClass="setting-external, setting-tab-4">
+        <Tab text="%ex-proxy-tab.label" fx:id="externalSettingTab" styleClass="setting-external, setting-tab">
             <AnchorPane>
                 <ScrollPane AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="5.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
-                    <GridPane fx:id="exProxyGridPane" styleClass="setting-external" vgap="5">
+                    <GridPane fx:id="exProxyGridPane" styleClass="setting-external, setting-grid-pane" vgap="5">
                         <columnConstraints>
                             <ColumnConstraints hgrow="NEVER" maxWidth="130.0" minWidth="130.0"/>
                             <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
@@ -189,58 +189,55 @@
                 </ScrollPane>
             </AnchorPane>
         </Tab>
-        <Tab text="%about-tab.label" fx:id="infoSettingTab" styleClass="setting-info, setting-tab-5">
+        <Tab text="%about-tab.label" fx:id="infoSettingTab" styleClass="setting-info, setting-tab">
             <AnchorPane>
-                <ImageView AnchorPane.leftAnchor="55.0" AnchorPane.topAnchor="59.0" fitHeight="160" fitWidth="160">
+                <ImageView AnchorPane.leftAnchor="55.0" AnchorPane.topAnchor="45.0" AnchorPane.bottomAnchor="45"
+                           fitHeight="160" fitWidth="160">
                     <Image url="@../../image/wk-icon.1.png"/>
                 </ImageView>
-                <GridPane styleClass="setting-info" vgap="5">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="NEVER" maxWidth="255.0" minWidth="255.0"/>
-                        <ColumnConstraints hgrow="ALWAYS" maxWidth="450" minWidth="100.0" prefWidth="400"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <!-- <RowConstraints prefHeight="30.0" vgrow="SOMETIMES"/> -->
-                        <!-- <RowConstraints prefHeight="50.0" vgrow="SOMETIMES"/> -->
-                        <!-- <RowConstraints prefHeight="20.0" vgrow="SOMETIMES"/> -->
-                        <!-- <RowConstraints prefHeight="20.0" vgrow="SOMETIMES"/> -->
-                        <!-- <RowConstraints prefHeight="20.0" vgrow="SOMETIMES"/> -->
-                        <!-- <RowConstraints prefHeight="45.0" vgrow="SOMETIMES"/> -->
-                    </rowConstraints>
-                    <Label prefHeight="45.0" text="WK Proxy" textFill="#707a7c"
-                           GridPane.rowIndex="1" GridPane.columnIndex="1">
-                        <font>
-                            <Font name="System Bold" size="26.0"/>
-                        </font>
-                    </Label>
-                    <VBox prefHeight="55.0" GridPane.rowIndex="2" GridPane.columnIndex="1">
-                        <Label fx:id="appVersionLabel" prefHeight="25.0" text="Version" textFill="#949090">
-                            <opaqueInsets>
-                                <Insets left="5.0"/>
-                            </opaqueInsets>
+                <ScrollPane AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
+                            AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
+                    <GridPane styleClass="setting-grid-pane" vgap="5">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="NEVER" maxWidth="255.0" minWidth="255.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="450" minWidth="100.0" prefWidth="400"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints prefHeight="25.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <Label prefHeight="45.0" text="WK Proxy" textFill="#707a7c"
+                               GridPane.rowIndex="1" GridPane.columnIndex="1">
+                            <font>
+                                <Font name="System Bold" size="26.0"/>
+                            </font>
                         </Label>
-                        <Label prefHeight="20.0" text="Apache License" textFill="#949090"/>
-                        <!-- <GridPane.margin> -->
-                        <!--     <Insets left="10.0"/> -->
-                        <!-- </GridPane.margin> -->
-                    </VBox>
+                        <VBox prefHeight="55.0" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                            <Label fx:id="appVersionLabel" prefHeight="25.0" text="Version" textFill="#949090">
+                                <opaqueInsets>
+                                    <Insets left="5.0"/>
+                                </opaqueInsets>
+                            </Label>
+                            <Label prefHeight="20.0" text="Apache License" textFill="#949090"/>
+                            <!-- <GridPane.margin> -->
+                            <!--     <Insets left="10.0"/> -->
+                            <!-- </GridPane.margin> -->
+                        </VBox>
 
-                    <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="3" GridPane.columnIndex="1">
-                        <Label styleClass="link-label" text="GitHub:"/>
-                        <Hyperlink fx:id="githubLink" styleClass="link" text="https://github.com/catas-w/HumBird-Proxy"/>
-                    </HBox>
-                    <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="4" GridPane.columnIndex="1">
-                        <Label styleClass="link-label" text="Twitter/X:"/>
-                        <Hyperlink fx:id="twitterLink" styleClass="link" text="https://x.com"/>
-                    </HBox>
-                    <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="5" GridPane.columnIndex="1" >
-                        <Label styleClass="link-label" text="%email-link.label"/>
-                        <Label styleClass="link" text="catas1900@gmail.com"/>
-                    </HBox>
-
-                    <Separator prefHeight="50" GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.columnSpan="2"/>
-                </GridPane>
+                        <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                            <Label styleClass="link-label" text="GitHub:"/>
+                            <Hyperlink fx:id="githubLink" styleClass="link" text="https://github.com/catas-w/HumBird-Proxy"/>
+                        </HBox>
+                        <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                            <Label styleClass="link-label" text="Twitter/X:"/>
+                            <Hyperlink fx:id="twitterLink" styleClass="link" text="https://x.com"/>
+                        </HBox>
+                        <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="5" GridPane.columnIndex="1" >
+                            <Label styleClass="link-label" text="%email-link.label"/>
+                            <Label styleClass="link" text="catas1900@gmail.com"/>
+                        </HBox>
+                        <!-- <Separator prefHeight="50" GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.columnSpan="2"/> -->
+                    </GridPane>
+                </ScrollPane>
             </AnchorPane>
         </Tab>
     </JFXTabPane>

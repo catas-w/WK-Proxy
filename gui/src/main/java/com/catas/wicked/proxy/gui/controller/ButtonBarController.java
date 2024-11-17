@@ -27,9 +27,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
-import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -207,7 +207,38 @@ public class ButtonBarController implements Initializable {
         }
 
         settingController.initValues();
+        adjustSettingDialogHeight(400, 500);
         settingPage.showAndWait();
+    }
+
+    public void adjustSettingDialogHeight(double targetHeight, long durationMillis) {
+        if (settingPage == null || settingPage.getDialogPane() == null) {
+            return;
+        }
+
+        settingPage.getDialogPane().setPrefHeight(targetHeight);
+        settingPage.getDialogPane().setMaxHeight(targetHeight);
+        Stage stage = (Stage) settingPage.getDialogPane().getScene().getWindow();
+        stage.sizeToScene();
+
+        // double count = (durationMillis * 60.0) / 1000;
+        // final double count = 20;
+        // double delta = (targetHeight - stage.getHeight()) / count;
+        // Timer animTimer = new Timer();
+        // animTimer.scheduleAtFixedRate(new TimerTask() {
+        //     int i = 0;
+        //
+        //     @Override
+        //     public void run() {
+        //         if (i < count) {
+        //             stage.setHeight(stage.getHeight() + delta);
+        //         } else {
+        //             this.cancel();
+        //         }
+        //         i++;
+        //     }
+        //
+        // }, 100, 10);
     }
 
     /**
