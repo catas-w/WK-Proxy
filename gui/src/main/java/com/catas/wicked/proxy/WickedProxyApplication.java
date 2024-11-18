@@ -8,12 +8,12 @@ import com.catas.wicked.proxy.gui.controller.AppController;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.provider.StageProvider;
 import com.catas.wicked.server.proxy.ProxyServer;
-import io.micronaut.context.annotation.Any;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Inject;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -72,6 +72,7 @@ public class WickedProxyApplication implements ApplicationDelegate {
             stageProvider.initStage(primaryStage);
         }
 
+        primaryStage.getIcons().add(new Image(String.valueOf(WickedProxyApplication.class.getResource("/image/wk-proxy.2.ico"))));
         primaryStage.setScene(scene);
         primaryStage.show();
     }
