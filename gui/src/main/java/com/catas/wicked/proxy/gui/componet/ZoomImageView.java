@@ -1,11 +1,8 @@
 package com.catas.wicked.proxy.gui.componet;
 
 import com.catas.wicked.common.util.ImageUtils;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
@@ -61,6 +58,12 @@ public class ZoomImageView extends ScrollPane {
         borderPane.prefWidthProperty().bind(this.widthProperty().subtract(4.0));
         borderPane.prefHeightProperty().bind(this.heightProperty().subtract(4.0));
         // init();
+
+        zoomWithScroll();
+    }
+
+    public Image getImage() {
+        return image;
     }
 
     public void setImage(Image image, String mimeType) {
@@ -77,13 +80,14 @@ public class ZoomImageView extends ScrollPane {
         } else {
             this.image = new Image(inputStream);
         }
+        if (this.image.isError()) {
+            throw new RuntimeException("Image load error.");
+        }
         // this.image = new Image(inputStream);
         this.mimeType = mimeType;
         this.imageData = inputStream;
         this.imageData.reset();
-        if (this.image.isError()) {
-            throw new RuntimeException("Image load error.");
-        }
+        
         init();
     }
 
@@ -111,30 +115,30 @@ public class ZoomImageView extends ScrollPane {
             imageView.setFitHeight(this.getHeight());
         }
 
-        zoomWithScroll();
+        // zoomWithScroll();
+        this.zoomProperty.set(100);
     }
 
     private void zoomWithScroll() {
-        // TODO: clean previous listeners
-        zoomProperty.addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                imageView.setFitHeight(image.getHeight() * (zoomProperty.get() / 100));
+        zoomProperty.addListener(observable -> imageView.setFitHeight(getImage().getHeight() * (zoomProperty.get() / 100)));
+
+        this.addEventFilter(ScrollEvent.ANY, event -> {
+            if (!event.isControlDown()) {
+                return;
+            }
+            if (event.getDeltaY() > 0 && zoomProperty.get() < 400) {
+                zoomProperty.set(zoomProperty.get() * 1.1);
+            } else if (event.getDeltaY() < 0 && zoomProperty.get() > 25) {
+                zoomProperty.set(zoomProperty.get() * 0.9);
             }
         });
 
-        this.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
-            @Override
-            public void handle(ScrollEvent event) {
-                if (!event.isControlDown()) {
-                    return;
-                }
-                if (event.getDeltaY() > 0 && zoomProperty.get() < 400) {
-                    zoomProperty.set(zoomProperty.get() * 1.1);
-                } else if (event.getDeltaY() < 0 && zoomProperty.get() > 25) {
-                    zoomProperty.set(zoomProperty.get() * 0.9);
-                }
-            }
+        // Listen for ZoomEvents (pinch gestures)
+        this.setOnZoom(event -> {
+            zoomProperty.set(zoomProperty.get() * event.getZoomFactor());
+
+            // Consume the event to prevent further propagation
+            event.consume();
         });
     }
 
