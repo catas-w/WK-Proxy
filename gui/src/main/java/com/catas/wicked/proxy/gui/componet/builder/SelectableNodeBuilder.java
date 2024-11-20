@@ -1,4 +1,4 @@
-package com.catas.wicked.proxy.gui.componet;
+package com.catas.wicked.proxy.gui.componet.builder;
 
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.cells.editors.base.EditorNodeBuilder;
@@ -51,7 +51,7 @@ public class SelectableNodeBuilder implements EditorNodeBuilder<String> {
         if (value == null || value.length() == 0) {
             return new Label();
         }
-        textField = value == null ? new JFXTextField() : new JFXTextField(value);
+        textField = new JFXTextField(value);
         textField.setEditable(false);
         textField.setOnKeyPressed(keyEventsHandler);
         // textField.getValidators().addAll(validators);

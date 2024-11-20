@@ -80,6 +80,7 @@
     -fx-table-cell-border-color: transparent;
     -fx-selection-bar: transparent;
     /*-fx-selection-bar-non-focused: salmon;*/
+    -fx-font-size: 13px;
 }
 .table-view:focused{
     /*-fx-background-color: transparent;*/
@@ -313,4 +314,13 @@
 .side-bar .combo-box-popup .list-view .jfx-list-cell:selected .label {
     -fx-text-fill: #33cbb9;
     -fx-font-weight: bold;
+}
+
+/******* editor column *********/
+.editor-text-area {
+    -fx-border-width: 0;
+    -fx-background-color: TRANSPARENT;
+    -fx-padding: 0 0 -5 0;
+    -fx-font-size: 13px;
+    -fx-min-height: 13px;
 }

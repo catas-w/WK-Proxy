@@ -10,8 +10,8 @@ import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.TableUtils;
 import com.catas.wicked.proxy.gui.componet.CertSelectComponent;
-import com.catas.wicked.proxy.gui.componet.SelectableNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.SelectableTableCell;
+import com.catas.wicked.proxy.gui.componet.builder.TextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.dialog.CertImportDialog;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -240,6 +240,7 @@ public class SslSettingService extends AbstractSettingService {
 
         // tableView
         TableView<HeaderEntry> tableView = new TableView<>();
+        tableView.setEditable(true);
         // set key column
         TableColumn<HeaderEntry, String> keyColumn = new TableColumn<>();
         keyColumn.setText("Name");
@@ -257,7 +258,7 @@ public class SslSettingService extends AbstractSettingService {
         valColumn.setEditable(true);
         valColumn.setCellValueFactory(new PropertyValueFactory<>("val"));
         valColumn.setCellFactory((TableColumn<HeaderEntry, String> param) -> {
-            return new SelectableTableCell<>(new SelectableNodeBuilder(), valColumn);
+            return new SelectableTableCell<>(new TextAreaEditorNodeBuilder(valColumn), valColumn);
         });
         tableView.getColumns().setAll(keyColumn, valColumn);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);

@@ -8,10 +8,10 @@ import com.catas.wicked.common.util.TableUtils;
 import com.catas.wicked.proxy.gui.componet.OverviewTreeTableCell;
 import com.catas.wicked.proxy.gui.componet.SelectableTableCell;
 import com.catas.wicked.proxy.gui.componet.MessageLabel;
-import com.catas.wicked.proxy.gui.componet.SelectableNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.SelectableTreeTableCell;
 import com.catas.wicked.proxy.gui.componet.SideBar;
 import com.catas.wicked.proxy.gui.componet.ZoomImageView;
+import com.catas.wicked.proxy.gui.componet.builder.TextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.highlight.CodeStyleLabel;
 import com.catas.wicked.proxy.gui.componet.richtext.DisplayCodeArea;
 import com.catas.wicked.proxy.render.ContextMenuFactory;
@@ -39,13 +39,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.skin.TableHeaderRow;
 import javafx.scene.layout.GridPane;
-import javafx.util.Callback;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -210,7 +208,7 @@ public class DetailTabController implements Initializable {
         valueColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<PairEntry, String> param) ->
                 new ReadOnlyStringWrapper(param.getValue().getValue().getVal()));
         valueColumn.setCellFactory((TreeTableColumn<PairEntry, String> param) ->
-                new SelectableTreeTableCell(new SelectableNodeBuilder(), valueColumn));
+                new SelectableTreeTableCell(new TextAreaEditorNodeBuilder(valueColumn), valueColumn));
 
         Platform.runLater(() -> {
             tableView.getColumns().addAll(nameColumn, valueColumn);
@@ -234,6 +232,7 @@ public class DetailTabController implements Initializable {
     /**
      * initialize tableView for headers
      */
+    @SuppressWarnings("unchecked")
     private void initTableView(TableView<HeaderEntry> tableView) {
         tableView.setEditable(true);
 
@@ -248,7 +247,7 @@ public class DetailTabController implements Initializable {
         // TableUtils.setTableCellFactory(keyColumn, true);
         keyColumn.setCellFactory((TableColumn<HeaderEntry, String> param) -> {
             SelectableTableCell<HeaderEntry> cell =
-                    new SelectableTableCell<>(new SelectableNodeBuilder(), keyColumn);
+                    new SelectableTableCell<>(new TextAreaEditorNodeBuilder(keyColumn), keyColumn);
             cell.addTextStyle("headers-key");
             return cell;
         });
@@ -260,9 +259,8 @@ public class DetailTabController implements Initializable {
         valColumn.setSortable(false);
         valColumn.setEditable(true);
         valColumn.setCellValueFactory(new PropertyValueFactory<>("val"));
-        valColumn.setCellFactory((TableColumn<HeaderEntry, String> param) -> {
-            return new SelectableTableCell<>(new SelectableNodeBuilder(), valColumn);
-        });
+        valColumn.setCellFactory((TableColumn<HeaderEntry, String> param) ->
+                new SelectableTableCell<>(new TextAreaEditorNodeBuilder(valColumn), valColumn));
 
         tableView.getColumns().setAll(keyColumn, valColumn);
 

@@ -365,3 +365,13 @@
 .link:hover {
     -fx-opacity: 0.65;
 }
+
+
+/******* editor column *********/
+.editor-text-area {
+    -fx-border-width: 0;
+    -fx-background-color: TRANSPARENT;
+    -fx-padding: 0 0 -5 0;
+    -fx-font-size: 13px;
+    -fx-min-height: 13px;
+}
