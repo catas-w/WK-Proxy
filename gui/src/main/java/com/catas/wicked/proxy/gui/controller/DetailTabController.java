@@ -363,20 +363,6 @@ public class DetailTabController implements Initializable {
                 pane.maxHeightProperty().set(Double.POSITIVE_INFINITY);
                 if (splitPane.getItems().size() == 2) {
                     splitPane.setDividerPositions(dividerPositionMap.get(splitPane));
-                } else if (splitPane.getItems().size() == 3) {
-                    // TODO bug: titledPane-1 expanded, titledPane-2,3 closed, tiledPane-3 cannot expand
-                    int expandedNum = getExpandedNum(splitPane);
-                    System.out.println("Expanded num: " + expandedNum);
-                    if (expandedNum != 2) {
-                        midTitleCollapse = false;
-                        splitPane.setDividerPositions(0.33333, 0.66666);
-                        return;
-                    }
-                    if (!reqParamPane.isExpanded()) {
-                        ObservableList<SplitPane.Divider> dividers = splitPane.getDividers();
-                        dividers.get(0).setPosition(0.5);
-                        dividers.get(1).setPosition(0.5);
-                    }
                 }
             } else {
                 // close
@@ -384,11 +370,6 @@ public class DetailTabController implements Initializable {
                     dividerPositionMap.put(splitPane, splitPane.getDividerPositions().clone());
                 }
                 pane.maxHeightProperty().set(Double.NEGATIVE_INFINITY);
-                if (splitPane.getItems().size() == 3) {
-                    if (getExpandedNum(splitPane) == 2 && !reqParamPane.isExpanded()) {
-                        midTitleCollapse = true;
-                    }
-                }
             }
         });
     }

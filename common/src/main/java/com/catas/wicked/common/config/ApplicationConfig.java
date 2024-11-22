@@ -92,7 +92,7 @@ public class ApplicationConfig implements AutoCloseable {
 
             // update once
             messageQueue.clearMsg(Topic.UPDATE_SETTING_FILE);
-            System.out.println("update settings File " + System.currentTimeMillis());
+            // System.out.println("update settings File " + System.currentTimeMillis());
             updateSettingFile();
         });
     }

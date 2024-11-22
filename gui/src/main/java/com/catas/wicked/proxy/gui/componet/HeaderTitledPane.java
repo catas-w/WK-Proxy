@@ -76,32 +76,25 @@ public class HeaderTitledPane extends TitledPane {
         checkBox = new JFXCheckBox();
         checkBox.textProperty().bindBidirectional(checkBoxTitleProperty());
         checkBox.getStyleClass().add(CHECKBOX_STYLE);
-        checkBox.selectedProperty().addListener(new InvalidationListener() {
-            private int lastVisibleIndex = 0;
-
-            @Override
-            public void invalidated(Observable observable) {
-                Node content = getContent();
-                if (content instanceof AnchorPane anchorPane) {
-                    ObservableList<Node> children = anchorPane.getChildren();
-                    if (children.size() < 2) {
-                        return;
+        checkBox.selectedProperty().addListener(observable -> {
+            Node content = getContent();
+            if (content instanceof AnchorPane anchorPane) {
+                ObservableList<Node> children = anchorPane.getChildren();
+                if (children.size() < 2) {
+                    return;
+                }
+                BooleanProperty selected = (BooleanProperty) observable;
+                for (int i = 0; i < children.size(); i++) {
+                    // ignore message label
+                    if (children.get(i) instanceof MessageLabel) {
+                        continue;
                     }
-                    BooleanProperty selected = (BooleanProperty) observable;
-                    for (int i = 0; i < children.size(); i++) {
-                        // ignore message label
-                        if (children.get(i) instanceof MessageLabel) {
-                            continue;
-                        }
-                        if (i == checkIndex.get()) {
-                            children.get(i).setVisible(selected.get());
-                        } else {
-                            children.get(i).setVisible(!selected.get());
-                        }
-
+                    if (i == checkIndex.get()) {
+                        children.get(i).setVisible(selected.get());
+                    } else {
+                        children.get(i).setVisible(!selected.get());
                     }
                 }
-
             }
         });
         checkBox.visibleProperty().bind(this.expandedProperty());

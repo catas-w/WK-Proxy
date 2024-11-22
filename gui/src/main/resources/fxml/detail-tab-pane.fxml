@@ -39,7 +39,7 @@
         <Tab text="  Request  " fx:id="requestTab">
             <AnchorPane styleClass="tab-anchor-pane">
                 <SplitPane fx:id="reqSplitPane" styleClass="vertical-split-pane" dividerPositions="0.45" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <HeaderTitledPane fx:id="reqHeaderPane" animated="true" maxHeight="Infinity" text="Headers" VBox.vgrow="ALWAYS">
+                    <HeaderTitledPane fx:id="reqHeaderPane" animated="false" maxHeight="Infinity" text="Headers" VBox.vgrow="ALWAYS">
                         <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="code-anchor-pane">
                             <DisplayCodeArea fx:id="reqHeaderArea" codeStyle="HEADER" visible="false"/>
 
@@ -87,7 +87,7 @@
         <Tab text="  Response  " fx:id="respTab">
             <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="tab-anchor-pane">
                 <SplitPane fx:id="respSplitPane" styleClass="vertical-split-pane" dividerPositions="0.45" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <HeaderTitledPane fx:id="respHeaderPane" checkBoxTitle="Origin" checkIndex="0" animated="false" maxHeight="Infinity" text="Headers" VBox.vgrow="ALWAYS">
+                    <HeaderTitledPane fx:id="respHeaderPane" checkBoxTitle="Raw" checkIndex="0" animated="false" maxHeight="Infinity" text="Headers" VBox.vgrow="ALWAYS">
                         <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="code-anchor-pane">
                             <DisplayCodeArea fx:id="respHeaderArea" codeStyle="HEADER" visible="false"/>
 
