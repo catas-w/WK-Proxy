@@ -106,7 +106,7 @@ public class ServerPostRecorder extends ChannelDuplexHandler {
         String url = WebUtils.getHostname(requestInfo) + "/" + ProxyConstant.UNPARSED_ALIAS;
         RequestMessage requestMessage = new RequestMessage(url);
         requestMessage.setMethod("UNKNOWN");
-        requestMessage.setHeaders(new HashMap<>());
+        requestMessage.setHeaders(new LinkedHashMap<>());
         requestMessage.setEncrypted(true);
         setRequestMsgInfo(requestInfo, requestMessage);
         messageQueue.pushMsg(Topic.UPDATE_MSG, requestMessage);

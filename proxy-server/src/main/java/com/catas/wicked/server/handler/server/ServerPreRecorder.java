@@ -139,8 +139,7 @@ public class ServerPreRecorder extends ChannelInboundHandlerAdapter {
             String url = WebUtils.getHostname(requestInfo) + "/" + ProxyConstant.UNPARSED_ALIAS;
             RequestMessage requestMessage = new RequestMessage(url);
             requestMessage.setMethod("-");
-            // TODO order use linkedHashMap
-            requestMessage.setHeaders(new HashMap<>());
+            requestMessage.setHeaders(new LinkedHashMap<>());
             requestMessage.setEncrypted(true);
             setRequestMsgInfo(requestInfo, requestMessage);
             messageQueue.pushMsg(Topic.RECORD, requestMessage);

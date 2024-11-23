@@ -129,8 +129,13 @@ public class ApplicationConfig implements AutoCloseable {
             return;
         }
 
-        // TODO catch field error
-        settings = objectMapper.readValue(file, Settings.class);
+        try {
+            settings = objectMapper.readValue(file, Settings.class);
+        } catch (Throwable e) {
+            log.error("Error in loading settingsFile");
+            settings = new Settings();
+        }
+
         if (settings.isEnableSysProxyOnLaunch()) {
             // force update systemProxy
             settings.setSystemProxy(true);
@@ -146,7 +151,7 @@ public class ApplicationConfig implements AutoCloseable {
                 file.createNewFile();
             }
             objectMapper.writeValue(file, settings);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Error updating local config.", e);
             AlertUtils.alertWarning("Error in updating settings.");
         }

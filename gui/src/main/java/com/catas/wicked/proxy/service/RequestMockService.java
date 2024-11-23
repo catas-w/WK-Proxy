@@ -10,7 +10,7 @@ import jakarta.inject.Singleton;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -186,7 +186,7 @@ public class RequestMockService {
     }
 
     private Map<String, String> getHeaders(List<String> headersList, int index) {
-        HashMap<String, String> map = new HashMap<>();
+        Map<String, String> map = new LinkedHashMap<>();
         for (String line : headersList) {
             int idx = line.indexOf(':');
             String key = line.substring(0, idx);

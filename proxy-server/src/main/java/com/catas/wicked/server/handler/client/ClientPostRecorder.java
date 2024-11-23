@@ -15,10 +15,9 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.AttributeKey;
-import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -87,7 +86,7 @@ public class ClientPostRecorder extends ChannelDuplexHandler {
         HttpResponseStatus status = resp.status();
 
         ResponseMessage responseMessage = new ResponseMessage();
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new LinkedHashMap<>();
         headers.entries().forEach(entry -> {
             map.put(entry.getKey(), entry.getValue());
         });

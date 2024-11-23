@@ -12,8 +12,11 @@ public class ExternalProxyConfig {
 
     private ProxyProtocol protocol = ProxyProtocol.HTTP;
 
-    private String host;
-    private int port;
+    private String host = "127.0.0.1";
+
+    // @JsonDeserialize(using = Settings.SafeIntegerDeserializer.class)
+    private Integer port;
+
     @JsonIgnore
     private SocketAddress socketAddress;
 
@@ -31,7 +34,15 @@ public class ExternalProxyConfig {
     }
 
     public void setProxyAddress() {
-        setProxyAddress(host, port);
+        setProxyAddress(host, getPort());
+    }
+
+    public Integer getPort() {
+        return port == null ? 0 : port;
+    }
+
+    public String getHost() {
+        return "127.0.0.1";
     }
 
     public SocketAddress getSocketAddress() {

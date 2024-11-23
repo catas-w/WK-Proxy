@@ -119,7 +119,7 @@ public class ButtonBarController implements Initializable {
             }
         });
 
-        // toggle record button TODO: wrap in component
+        // toggle record button
         recordBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
             FontIcon icon = (FontIcon) recordBtn.getGraphic();
             if (newValue) {

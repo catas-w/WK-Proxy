@@ -88,7 +88,6 @@ public class ProxySettingService extends AbstractSettingService{
                 throttleComboBox.setDisable(!newValue);
                 settings.setThrottle(newValue);
                 refreshAppSettings();
-                // TODO
                 settingController.updateThrottleBtn(settings.isThrottle());
             }
         }));
