@@ -190,9 +190,9 @@
         </Tab>
         <Tab text="%about-tab.label" fx:id="infoSettingTab" styleClass="setting-info, setting-tab">
             <AnchorPane>
-                <ImageView AnchorPane.leftAnchor="55.0" AnchorPane.topAnchor="45.0" AnchorPane.bottomAnchor="45"
-                           fitHeight="160" fitWidth="160">
-                    <Image url="@../../image/wk-icon.1.png"/>
+                <ImageView AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="35.0"
+                           fitHeight="200" fitWidth="200">
+                    <Image url="@../../image/wk-proxy.2.png"/>
                 </ImageView>
                 <ScrollPane AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">

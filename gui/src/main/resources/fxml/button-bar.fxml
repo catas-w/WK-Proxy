@@ -130,7 +130,7 @@
                         <FontIcon iconLiteral="fas-book-reader" iconSize="18" />
                     </graphic>
                 </MenuItem>
-                <MenuItem fx:id="aboutBtn" text="%about-btn.label">
+                <MenuItem fx:id="aboutBtn" onAction="#displayAboutPage" text="%about-btn.label">
                     <graphic>
                         <FontIcon iconLiteral="fas-info-circle" iconSize="18" />
                     </graphic>

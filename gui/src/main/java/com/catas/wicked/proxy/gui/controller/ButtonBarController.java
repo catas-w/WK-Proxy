@@ -190,25 +190,37 @@ public class ButtonBarController implements Initializable {
         });
     }
 
+    public void displayAboutPage() {
+        if (settingPage == null) {
+            initSettingPage();
+        }
+        settingController.getSettingTabPane().getSelectionModel().select(settingController.getInfoSettingTab());
+        displaySettingPage();
+    }
+
     public void displaySettingPage() {
         if (settingPage == null) {
-            settingController.setButtonBarController(this);
-
-            settingPage = new Dialog<>();
-            settingPage.setTitle(this.settingDialogTitle);
-            settingPage.initModality(Modality.APPLICATION_MODAL);
-            DialogPane dialogPane = settingPage.getDialogPane();
-            dialogPane.setContent(settingScene);
-            dialogPane.getStylesheets().add(
-                    Objects.requireNonNull(getClass().getResource("/css/dialog.css")).toExternalForm());
-            dialogPane.getStyleClass().add("myDialog");
-            Window window = dialogPane.getScene().getWindow();
-            window.setOnCloseRequest(e -> window.hide());
+            initSettingPage();
         }
 
         settingController.initValues();
         adjustSettingDialogHeight(400, 500);
         settingPage.showAndWait();
+    }
+
+    private void initSettingPage() {
+        settingController.setButtonBarController(this);
+
+        settingPage = new Dialog<>();
+        settingPage.setTitle(this.settingDialogTitle);
+        settingPage.initModality(Modality.APPLICATION_MODAL);
+        DialogPane dialogPane = settingPage.getDialogPane();
+        dialogPane.setContent(settingScene);
+        dialogPane.getStylesheets().add(
+                Objects.requireNonNull(getClass().getResource("/css/dialog.css")).toExternalForm());
+        dialogPane.getStyleClass().add("myDialog");
+        Window window = dialogPane.getScene().getWindow();
+        window.setOnCloseRequest(e -> window.hide());
     }
 
     public void adjustSettingDialogHeight(double targetHeight, long durationMillis) {
@@ -220,25 +232,6 @@ public class ButtonBarController implements Initializable {
         settingPage.getDialogPane().setMaxHeight(targetHeight);
         Stage stage = (Stage) settingPage.getDialogPane().getScene().getWindow();
         stage.sizeToScene();
-
-        // double count = (durationMillis * 60.0) / 1000;
-        // final double count = 20;
-        // double delta = (targetHeight - stage.getHeight()) / count;
-        // Timer animTimer = new Timer();
-        // animTimer.scheduleAtFixedRate(new TimerTask() {
-        //     int i = 0;
-        //
-        //     @Override
-        //     public void run() {
-        //         if (i < count) {
-        //             stage.setHeight(stage.getHeight() + delta);
-        //         } else {
-        //             this.cancel();
-        //         }
-        //         i++;
-        //     }
-        //
-        // }, 100, 10);
     }
 
     /**
