@@ -7,7 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ObservableConfig {
+public class AppObservableConfig {
 
     /**
      * status of proxy server
@@ -18,7 +18,7 @@ public class ObservableConfig {
 
     private final SimpleStringProperty currentRequestId = new SimpleStringProperty(null);
 
-    public ObservableConfig() {
+    public AppObservableConfig() {
         serverStatus.addListener((observable, oldValue, newValue) -> {
             // TODO display alert
             log.info("Observable Server status: " + newValue);

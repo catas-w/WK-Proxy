@@ -47,6 +47,7 @@ public class ProxySettingService extends AbstractSettingService{
             int newPort = Integer.parseInt(settingController.getPortField().getText());
             int oldPort = settings.getPort();
 
+            System.out.println("update port: " + newPort + " - " + oldPort);
             // restart server if port changed
             if (oldPort != newPort) {
                 // check pot available
@@ -58,6 +59,7 @@ public class ProxySettingService extends AbstractSettingService{
                 try {
                     settingController.getProxyServer().shutdown();
                     settingController.getProxyServer().start();
+                    refreshAppSettings();
                 } catch (Exception e) {
                     log.error("Error in restarting proxy server.", e);
                     AlertUtils.alertWarning("Port " + newPort + " is unavailable");

@@ -40,7 +40,7 @@ public class Settings {
      * Server settings
      */
     @JsonDeserialize(using = SafeIntegerDeserializer.class)
-    private Integer port = 9966;
+    private Integer port;
 
     @JsonDeserialize(using = SafeBooleanDeserializer.class)
     private boolean systemProxy = false;
@@ -91,6 +91,10 @@ public class Settings {
 
     public String getSelectedCert() {
         return selectedCert == null ? "_default_" : selectedCert;
+    }
+
+    public ExternalProxyConfig getExternalProxy() {
+        return externalProxy == null ? new ExternalProxyConfig() : externalProxy ;
     }
 
     static class SafeIntegerDeserializer extends JsonDeserializer<Integer> {

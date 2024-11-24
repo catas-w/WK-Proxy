@@ -4,8 +4,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox fx:id="rootVBox" styleClass="root-vbox" minWidth="500.0" minHeight="500" style="-fx-border-radius: 5;"
       xmlns="http://javafx.com/javafx/11.0.14-internal"
@@ -29,21 +28,22 @@
         </SplitPane>
     </HBox>
     <HBox styleClass="bottom-bar" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-        <padding>
-            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
-        </padding>
-        <Label maxWidth="-1.0" text="Wicked Proxy" HBox.hgrow="ALWAYS">
-            <font>
-                <Font size="11.0" fx:id="x3"/>
-            </font>
-            <textFill>
-                <Color red="0.625" green="0.625" blue="0.625" fx:id="x4"/>
-            </textFill>
+        <Label text="Proxy Server: " styleClass="display-label">
             <HBox.margin>
-                <Insets left="5.0"/>
+                <Insets left="12.0" right="5"/>
             </HBox.margin>
         </Label>
-        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS"/>
-        <Label font="$x3" maxWidth="-1.0" text="v1.0.0" textFill="$x4" HBox.hgrow="NEVER"/>
+        <FontIcon fx:id="serverStatusIcon" iconLiteral="fas-circle" styleClass="server-icon"/>
+        <Label fx:id="serverStatusLabel" text="127.0.0.1:9966" styleClass="display-label">
+            <HBox.margin>
+                <Insets left="2.0"/>
+            </HBox.margin>
+        </Label>
+        <Pane HBox.hgrow="ALWAYS"/>
+        <Label fx:id="versionLabel" text="v1.0.0" styleClass="display-label" HBox.hgrow="NEVER">
+            <HBox.margin>
+                <Insets right="10.0"/>
+            </HBox.margin>
+        </Label>
     </HBox>
 </VBox>

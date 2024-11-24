@@ -190,6 +190,14 @@ public class ButtonBarController implements Initializable {
         });
     }
 
+    public void displayProxySettingPage() {
+        if (settingPage == null) {
+            initSettingPage();
+        }
+        settingController.getSettingTabPane().getSelectionModel().select(settingController.getProxySettingTab());
+        displaySettingPage();
+    }
+
     public void displayAboutPage() {
         if (settingPage == null) {
             initSettingPage();
@@ -208,6 +216,9 @@ public class ButtonBarController implements Initializable {
         settingPage.showAndWait();
     }
 
+    /**
+     * init settings page
+     */
     private void initSettingPage() {
         settingController.setButtonBarController(this);
 

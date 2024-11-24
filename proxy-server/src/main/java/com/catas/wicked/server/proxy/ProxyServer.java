@@ -4,6 +4,7 @@ import com.catas.wicked.common.constant.ServerStatus;
 import com.catas.wicked.common.executor.ThreadPoolService;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.config.ApplicationConfig;
+import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.server.handler.server.ServerChannelInitializer;
 import io.micronaut.context.annotation.Parallel;
 import io.netty.bootstrap.ServerBootstrap;
@@ -40,7 +41,7 @@ public class ProxyServer {
     }
 
     public void start() {
-        log.info("--- Proxy server Starting ---");
+        log.info("--- Proxy server Starting on: {} ---", applicationConfig.getSettings().getPort());
         setStatus(ServerStatus.INIT);
         NioEventLoopGroup workGroup = new NioEventLoopGroup(2);
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -86,21 +87,26 @@ public class ProxyServer {
         }
     }
 
-    @Parallel
     @PostConstruct
     private void init() {
-        setStatus(ServerStatus.HALTED);
+        setStatus(ServerStatus.INIT);
         if (standalone) {
             start();
         } else {
             ThreadPoolService.getInstance().run(() -> {
                 System.out.println("Starting");
                 try {
+                    boolean portAvailable = WebUtils.isPortAvailable(applicationConfig.getSettings().getPort());
+                    if (!portAvailable) {
+                        throw new RuntimeException();
+                    }
                     start();
                 } catch (Exception e) {
                     log.error("Error in starting proxy server.", e);
-                    String msg = "Port: " + applicationConfig.getSettings().getPort() + " is unavailable, change port in settings";
-                    AlertUtils.alertLater(Alert.AlertType.ERROR, msg);
+                    setStatus(ServerStatus.HALTED);
+                    // TODO delay
+                    // String msg = "Port: " + applicationConfig.getSettings().getPort() + " is unavailable, change port in settings";
+                    // AlertUtils.alertLater(Alert.AlertType.ERROR, msg);
                 }
             });
         }

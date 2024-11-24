@@ -61,7 +61,7 @@ public class ApplicationConfig implements AutoCloseable {
     private PrivateKey serverPriKey;
     private PublicKey serverPubKey;
 
-    private final ObservableConfig observableConfig = new ObservableConfig();
+    private final AppObservableConfig observableConfig = new AppObservableConfig();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final AtomicBoolean shutDownFlag = new AtomicBoolean(false);
 

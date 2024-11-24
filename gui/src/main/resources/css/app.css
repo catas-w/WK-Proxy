@@ -76,6 +76,24 @@
     -fx-border-color: #C2C2C2BC;
     -fx-border-width: 0.5 0 0 0;
 }
+.bottom-bar .display-label {
+    -fx-font-size: 12;
+    -fx-text-fill: rgb(128, 128, 128);
+}
+.bottom-bar .display-label.error {
+    -fx-text-fill: rgba(210, 56, 43, 0.9);
+    -fx-underline: true;
+}
+.bottom-bar .display-label.error:hover {
+    -fx-opacity: 0.65;
+}
+.bottom-bar .server-icon.healthy {
+    -fx-icon-color: rgba(81, 185, 76, 0.81);
+}
+.bottom-bar .server-icon.error {
+    -fx-icon-color: rgba(210, 56, 43, 0.9);
+}
+
 
 /******* custom toolBar *******/
 .custom-title-bar {
