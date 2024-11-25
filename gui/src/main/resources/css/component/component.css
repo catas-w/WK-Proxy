@@ -4,7 +4,8 @@
     -fx-border-width: 1 0 1 0;
     /*-fx-pref-height: 25px;*/
 }
-.side-bar .button {
+.side-bar .button,
+.side-bar .jfx-toggle-node {
     -fx-background-color: TRANSPARENT;
     -fx-border-width: 0 0 2 0;
     -fx-border-color: TRANSPARENT;
@@ -13,7 +14,14 @@
     -fx-background-radius: 0;
     -fx-pref-width: 60px;
     -fx-text-fill: #707070;
+
+    -jfx-toggle-color: TRANSPARENT;
+    -jfx-untoggle-color: TRANSPARENT;
 }
+.side-bar .jfx-toggle-node:selected {
+    -fx-background-color: TRANSPARENT;
+}
+
 .side-bar .jfx-combo-box {
     -fx-background-color: TRANSPARENT;
     -fx-border-width: 0 0 2 0;
@@ -28,6 +36,7 @@
     -jfx-rippler-fill: #33cbb9;
 }
 .side-bar .button:hover,
+.side-bar .jfx-toggle-node:hover,
 .side-bar .jfx-combo-box:hover {
     -fx-background-color: rgba(255, 255, 255, 0.9);
     /*-fx-border-width: 0 0 2 2;*/
@@ -38,9 +47,10 @@
 .collapse-btn {
     -fx-background-radius: 12 0 0 12;
     -fx-border-radius: 12 0 0 12;
-    -fx-padding: 4 0 2 0;
+    -fx-padding: 2 0 2 0;
     -fx-border-width: 1 0 1 0;
     -fx-border-color: TRANSPARENT;
+    -fx-translate-y: 2.5;
 }
 .collapse-btn:hover {
     -fx-background-color: rgba(255, 255, 255, 0.9);

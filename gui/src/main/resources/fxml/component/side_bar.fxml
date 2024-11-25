@@ -7,6 +7,7 @@
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.paint.Color?>
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXToggleNode?>
 <fx:root styleClass="side-bar" type="javafx.scene.layout.HBox"
          xmlns="http://javafx.com/javafx/11.0.14-internal"
          xmlns:fx="http://javafx.com/fxml/1">
@@ -15,14 +16,12 @@
     </stylesheets>
     <JFXButton fx:id="collapseBtn" styleClass="collapse-btn" maxWidth="24.0" minWidth="24.0" textOverrun="CLIP">
         <graphic>
-            <FontIcon iconColor="#808080" iconLiteral="fas-angle-double-right" iconSize="12" />
+            <FontIcon iconColor="#808080" iconLiteral="fas-chevron-right" iconSize="12" />
         </graphic>
     </JFXButton>
-    <JFXButton fx:id="wrapBtn" styleClass="" maxWidth="28.0" minWidth="28.0" textOverrun="CLIP">
-        <graphic>
-            <FontIcon iconColor="#808080" iconLiteral="fas-outdent" iconSize="12" />
-        </graphic>
-    </JFXButton>
+    <JFXToggleNode fx:id="wrapBtn" styleClass="" maxWidth="28.0" minWidth="28.0" textOverrun="CLIP">
+        <FontIcon iconColor="#808080" iconLiteral="fas-outdent" iconSize="12"/>
+    </JFXToggleNode>
     <effect>
         <DropShadow fx:id="shadow" height="15" width="15" offsetY="2">
             <color>

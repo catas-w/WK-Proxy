@@ -3,7 +3,9 @@ package com.catas.wicked.proxy.gui.componet;
 import com.catas.wicked.common.constant.CodeStyle;
 import com.catas.wicked.proxy.gui.componet.highlight.CodeStyleLabeled;
 import com.catas.wicked.proxy.gui.componet.richtext.DisplayCodeArea;
+import com.jfoenix.controls.JFXToggleNode;
 import javafx.animation.Animation;
+import javafx.animation.RotateTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -59,20 +61,16 @@ public class SideBar extends HBox {
     private Button collapseBtn;
 
     @FXML
-    private Button wrapBtn;
+    private JFXToggleNode wrapBtn;
 
     @FXML
     private DropShadow shadow;
 
     private CodeStyle codeStyle;
 
-    private Strategy strategy;
-
     private DisplayCodeArea targetCodeArea;
 
     private static final String SELECTED_STYLE = "selected";
-
-    private boolean wrapText;
 
     public SideBar() {
         URL resource = getClass().getResource("/fxml/component/side_bar.fxml");
@@ -87,16 +85,16 @@ public class SideBar extends HBox {
         }
 
         collapseBtn.setOnAction(new SideBarEventHandler(collapseBtn, this));
-        wrapBtn.setOnAction(event -> {
-            this.wrapText = !wrapText;
+
+        wrapBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
             if (targetCodeArea != null) {
-                targetCodeArea.setWrapText(wrapText);
+                targetCodeArea.setWrapText(newValue);
             }
-            if (wrapText) {
-                ((FontIcon) wrapBtn.getGraphic()).setIconColor(Color.web("#616161"));
-            } else {
-                ((FontIcon) wrapBtn.getGraphic()).setIconColor(Color.web("#33cbb9"));
-            }
+            String color = newValue ? "#33cbb9" : "#616161";
+            ((FontIcon) wrapBtn.getGraphic()).setIconColor(Color.web(color));
         });
 
         ObservableList<Node> children = getChildren();
@@ -143,7 +141,6 @@ public class SideBar extends HBox {
      * set strategy
      */
     public void setStrategy(Strategy strategy) {
-        this.strategy = strategy;
 
         if (strategy.preset == null) {
             this.setVisible(false);
@@ -225,10 +222,20 @@ public class SideBar extends HBox {
         private static final String EXPAND_ICON = "fas-angle-double-left";
         private static final double DURATION = 500;
 
+        private RotateTransition rotateTransition;
+
         public SideBarEventHandler(Button collapseBtn, SideBar sideBar) {
             this.collapseBtn = collapseBtn;
             this.sideBar = sideBar;
             this.minWidth = collapseBtn.getMinWidth();
+        }
+
+        private void rotateIcon(FontIcon icon) {
+            RotateTransition rotateTransition = new RotateTransition(Duration.millis(300), icon);
+            rotateTransition.setByAngle(180); // Rotate by 180 degrees
+            rotateTransition.setCycleCount(1); // Number of rotations
+            rotateTransition.setAutoReverse(false);
+            rotateTransition.play();
         }
 
         @Override
@@ -254,18 +261,16 @@ public class SideBar extends HBox {
                 }
             };
 
-            hideSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
-                @Override public void handle(ActionEvent actionEvent) {
-                    collapsed = true;
-                    sideBar.setTranslateX(expandedWidth - minWidth);
-                    // for (Node child : sideBar.getChildren()) {
-                    //     if (child != collapseBtn) {
-                    //         child.setVisible(false);
-                    //     }
-                    // }
-                    FontIcon icon = (FontIcon) collapseBtn.getGraphic();
-                    icon.setIconLiteral(EXPAND_ICON);
-                }
+            hideSidebar.onFinishedProperty().set(actionEvent -> {
+                collapsed = true;
+                sideBar.setTranslateX(expandedWidth - minWidth);
+                // for (Node child : sideBar.getChildren()) {
+                //     if (child != collapseBtn) {
+                //         child.setVisible(false);
+                //     }
+                // }
+                FontIcon icon = (FontIcon) collapseBtn.getGraphic();
+                rotateIcon(icon);
             });
 
             // expand animation
@@ -288,7 +293,7 @@ public class SideBar extends HBox {
             showSidebar.onFinishedProperty().set(actionEvent -> {
                 sideBar.setTranslateX(0);
                 FontIcon icon = (FontIcon) collapseBtn.getGraphic();
-                icon.setIconLiteral(COLLAPSE_ICON);
+                rotateIcon(icon);
             });
 
             if (showSidebar.statusProperty().get() == Animation.Status.STOPPED

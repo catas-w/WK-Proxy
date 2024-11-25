@@ -56,7 +56,7 @@
                                         <TableView fx:id="reqContentTable" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                                         <ZoomImageView fx:id="reqImageView" visible="false" />
 
-                                        <SideBar fx:id="reqContentSideBar" prefHeight="25" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
+                                        <SideBar fx:id="reqContentSideBar" prefHeight="25" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
                                             <CodeStyleButton text="Parsed" codeStyle="MULTIPART_FORM" styleClass="selected"/>
                                             <CodeStyleButton text="Parsed" codeStyle="QUERY_FORM" styleClass="selected"/>
                                             <!-- hide in form-data -->
@@ -70,7 +70,7 @@
                                     <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="code-anchor-pane">
                                         <DisplayCodeArea fx:id="reqParamArea" codeStyle="HEADER" />
 
-                                        <SideBar fx:id="reqQuerySideBar" prefHeight="25" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
+                                        <SideBar fx:id="reqQuerySideBar" prefHeight="25" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
                                             <CodeStyleButton text="Parsed" codeStyle="QUERY_FORM" styleClass="selected"/>
                                             <CodeStyleButton text="Origin" codeStyle="origin"/>
                                             <CodeStyleButton text="Hex" codeStyle="hex"/>
@@ -100,7 +100,7 @@
                             <DisplayCodeArea fx:id="respContentArea" codeStyle="XML" />
                             <ZoomImageView fx:id="respImageView" />
 
-                            <SideBar fx:id="respSideBar" prefHeight="25" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
+                            <SideBar fx:id="respSideBar" prefHeight="25" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
                                 <!-- <JFXButton text="Text" /> -->
                                 <JFXComboBox fx:id="respComboBox" styleClass="selected"/>
                                 <CodeStyleButton text="Origin" codeStyle="origin"/>

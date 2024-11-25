@@ -294,6 +294,7 @@
     -fx-text-fill: #707070;
 }
 .side-bar .combo-box-popup .list-view {
+    -fx-translate-y: -25;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
     -fx-background-color: rgb(255, 255, 255, 0.75);
