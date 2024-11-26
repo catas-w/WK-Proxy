@@ -201,6 +201,7 @@ public class SideBar extends HBox {
                 comboBox.getStyleClass().remove(SELECTED_STYLE);
                 for (CodeStyleLabeled item : labelComboBox.getItems()) {
                     if (this.codeStyle == item.targetCodeStyle()) {
+                        // fixme java.lang.IndexOutOfBoundsException
                         comboBox.getStyleClass().add(SELECTED_STYLE);
                         Platform.runLater(() -> {
                             labelComboBox.getSelectionModel().select(item);

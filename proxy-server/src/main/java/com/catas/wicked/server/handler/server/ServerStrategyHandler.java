@@ -289,7 +289,7 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
         Settings settings = appConfig.getSettings();
         ThrottlePreset preset = settings.getThrottlePreset();
         if (preset == null) {
-            preset = ThrottlePreset.REGULAR_3G;
+            preset = ThrottlePreset.SLOW_2G;
         }
         return new ChannelTrafficShapingHandler(preset.getWriteLimit(), preset.getReadLimit(),
                 preset.getCheckInterval(), preset.getMaxTime());

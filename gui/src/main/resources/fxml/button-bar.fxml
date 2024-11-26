@@ -75,17 +75,7 @@
                 <Tooltip text="%clear-btn.tooltip" showDelay="500ms" />
             </tooltip>
         </JFXButton>
-        <!-- <JFXButton fx:id="removeAllBtn" onAction="#deleteAll" prefWidth="200.0" textOverrun="CLIP"> -->
-        <!--     <graphic> -->
-        <!--         <FontIcon iconColor="#616161" iconLiteral="fas-trash-alt" iconSize="18" /> -->
-        <!--     </graphic> -->
-        <!--     <VBox.margin> -->
-        <!--         <Insets top="20.0" /> -->
-        <!--     </VBox.margin> -->
-        <!--     <tooltip> -->
-        <!--         <Tooltip text="Delete Requests And Structure" /> -->
-        <!--     </tooltip> -->
-        <!-- </JFXButton> -->
+
         <CustomButton fx:id="resendBtn" onAction="#resendRequest" prefWidth="200.0" textOverrun="CLIP" disable="true">
             <graphic>
                 <FontIcon iconColor="#616161" iconLiteral="fas-redo-alt" iconSize="18" />

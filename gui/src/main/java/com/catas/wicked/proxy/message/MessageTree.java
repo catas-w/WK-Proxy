@@ -90,7 +90,6 @@ public class MessageTree {
         // expand child if children size = 1
         treeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue && treeItem.getChildren().size() == 1) {
-                // System.out.println("Expand");
                 for (TreeItem<RequestCell> child : treeItem.getChildren()) {
                     child.expandedProperty().set(true);
                 }

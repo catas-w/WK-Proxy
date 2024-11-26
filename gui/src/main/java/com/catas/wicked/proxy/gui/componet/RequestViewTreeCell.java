@@ -144,7 +144,7 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
                 // pathIcon.setIconColor(Color.valueOf("#8C9C9E"));
                 pathIcon.setIconSize(14);
             }
-            if (requestCell.getPath().startsWith("http")) {
+            if (requestCell.getPath() != null && requestCell.getPath().startsWith("http")) {
                 pathIcon.setIconLiteral("fas-globe-africa");
             } else {
                 pathIcon.setIconLiteral("fas-folder-minus");

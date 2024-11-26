@@ -2,6 +2,7 @@ package com.catas.wicked.proxy.gui.controller;
 
 import com.catas.wicked.common.bean.RequestCell;
 import com.catas.wicked.common.bean.message.DeleteMessage;
+import com.catas.wicked.common.bean.message.RenderMessage;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.proxy.gui.componet.FilterableTreeItem;
@@ -105,6 +106,31 @@ public class RequestViewController implements Initializable {
         reqListView.setCellFactory(listView -> cellFactory.createListCell(listView));
         reqTreeView.setContextMenu(contextMenu);
         reqListView.setContextMenu(contextMenu);
+
+        // update detail tab
+        reqTreeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            RequestCell requestCell = newValue.getValue();
+            // System.out.println("selected: " + requestCell);
+            if (requestCell != null) {
+                if (requestCell.isLeaf()) {
+                    requestViewService.updateRequestTab(requestCell.getRequestId());
+                    messageService.selectRequestItem(requestCell.getRequestId(), true);
+                } else {
+                    requestViewService.updateRequestTab(RenderMessage.PATH_MSG + requestCell.getFullPath());
+                    reqListView.getSelectionModel().clearSelection();
+                }
+            }
+        });
+
+        reqListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                requestViewService.updateRequestTab(newValue.getRequestId());
+                messageService.selectRequestItem(newValue.getRequestId(), false);
+            }
+        });
 
         toggleRequestView();
         bindKeyboardDeleteEvent();

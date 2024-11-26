@@ -19,10 +19,6 @@ public class AppObservableConfig {
     private final SimpleStringProperty currentRequestId = new SimpleStringProperty(null);
 
     public AppObservableConfig() {
-        serverStatus.addListener((observable, oldValue, newValue) -> {
-            // TODO display alert
-            log.info("Observable Server status: " + newValue);
-        });
     }
 
     public ServerStatus getServerStatus() {
