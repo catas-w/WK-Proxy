@@ -249,6 +249,7 @@ public class RequestViewController implements Initializable {
         // send msg
         deleteMessage.setRequestCell(requestCell);
         messageQueue.pushMsg(Topic.RECORD, deleteMessage);
+        requestViewService.updateRequestTab(null);
     }
 
     /**

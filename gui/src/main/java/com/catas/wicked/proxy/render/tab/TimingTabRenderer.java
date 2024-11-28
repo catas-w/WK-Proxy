@@ -33,6 +33,7 @@ public class TimingTabRenderer extends AbstractTabRenderer {
         // System.out.println("--render timing --");
         detailTabController.getTimingMsgLabel().setVisible(renderMsg.isEmpty());
         if (renderMsg.isEmpty()) {
+            setEmptyMsgLabel(detailTabController.getTimingMsgLabel());
             return;
         }
         if (renderMsg.isPath()) {

@@ -150,7 +150,7 @@
                     <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
                     <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
                 </GridPane>
-                <MessageLabel fx:id="timingMsgLabel" visible="false" text="Empty"/>
+                <MessageLabel fx:id="timingMsgLabel" text="Empty"/>
             </AnchorPane>
         </Tab>
         <!-- <Tab text="   Test   " disable="true"> -->

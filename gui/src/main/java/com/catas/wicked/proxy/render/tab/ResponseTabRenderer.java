@@ -46,14 +46,15 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
             return;
         }
         detailTabController.showRequestOnlyTabs();
+        // fix NPE because "request" is null
         RequestMessage request = requestCache.get(renderMsg.getRequestId());
-        displayResponse(request.getResponse());
+        displayResponse(request == null ? null : request.getResponse());
     }
 
     public void displayResponse(ResponseMessage response) {
         if (response == null) {
             detailTabController.getRespContentArea().replaceText("<Waiting For Response...>");
-            setMsgLabel(detailTabController.getRespContentMsgLabel(), "<Waiting for response...>");
+            setMsgLabel(detailTabController.getRespContentMsgLabel(), "Empty");
             return;
         }
         // headers
@@ -69,6 +70,7 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
         byte[] parsedContent = WebUtils.parseContent(response.getHeaders(), response.getContent());
         if (parsedContent.length == 0) {
             detailTabController.getRespContentMsgLabel().setVisible(true);
+            setMsgLabel(detailTabController.getRespContentMsgLabel(), "Empty");
             // detailTabController.getRespDataPane().setExpanded(false);
             return;
         }
