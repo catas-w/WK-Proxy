@@ -272,9 +272,8 @@ public class DetailTabController implements Initializable {
         // selection
         // tableView.getSelectionModel().setCellSelectionEnabled(true);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        // tableView.getSelectionModel().clearAndSelect(0);
 
-        tableView.setContextMenu(ContextMenuFactory.getTableViewContextMenu(tableView));
+        // tableView.setContextMenu(ContextMenuFactory.getTableViewContextMenu(tableView));
 
         // clearSelection when lose focus
         tableView.focusedProperty().addListener((obs, oldVal, newVal) -> {

@@ -22,13 +22,6 @@
     -fx-background-radius: 6 6 6 6, 6 6 6 6, 6 6 6 6;
 }
 
-.context-menu {
-    -fx-background-color: TRANSPARENT;
-    -fx-background-insets: 0, 1, 2;
-    -fx-background-radius: 6 6 6 6, 6 6 6 6, 6 6 6 6;
-    /*    -fx-padding: 0.666667em 0.083333em 0.666667em 0.083333em;  8 1 8 1 */
-    -fx-padding: 0.0em 0.083333em 0.0em 0.083333em; /* 4 1 8 1 */
-}
 
 .view-button  > .arrow-button {
     -fx-padding: 0;

@@ -60,8 +60,8 @@
         <fx:define>
             <ContextMenu fx:id="contextMenu" prefWidth="75" styleClass="req-context-menu">
                 <items>
-                    <MenuItem text="Remove" onAction="#removeItem"/>
-                    <MenuItem text="Resend"/>
+                    <MenuItem text="%delete.label" onAction="#removeItem" disable="true"/>
+                    <MenuItem text="%resend.label" disable="true"/>
                 </items>
             </ContextMenu>
         </fx:define>

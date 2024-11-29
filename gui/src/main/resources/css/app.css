@@ -50,18 +50,24 @@
 /*}*/
 
 
-/******* RequestView - Context-menu *********/
+/******* Context-menu *********/
 .context-menu {
-    -fx-background-color: TRANSPARENT;
+    /*-fx-background-color: TRANSPARENT;*/
+    -fx-background-color: rgba(255, 255, 255, 0.95);
     -fx-padding: 0.3em 0.0em 0.3em 0.0em;
-    -fx-background-radius: 4 4 4 4, 4 4 4 4, 4 4 4 4;
+    -fx-background-radius: 6;
+    -fx-pref-width: 140;
 }
 .menu-item {
-    -fx-background-color: #ffffff;
+    -fx-background-color: TRANSPARENT;
     -fx-padding: 0.2em 3.0em 0.2em 0.3em;
 }
+.menu-item .label {
+    -fx-text-fill: #3b3b3b;
+    -fx-font-size: 12;
+}
 .menu-item:focused {
-    -fx-background-color: #cccccc;
+    -fx-background-color: #29c1c1;
 }
 .menu-item:focused .label {
     -fx-text-fill: #000000;

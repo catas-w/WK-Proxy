@@ -227,8 +227,8 @@ public class ButtonBarController implements Initializable {
         settingPage.initModality(Modality.APPLICATION_MODAL);
         DialogPane dialogPane = settingPage.getDialogPane();
         dialogPane.setContent(settingScene);
-        dialogPane.getStylesheets().add(
-                Objects.requireNonNull(getClass().getResource("/css/dialog.css")).toExternalForm());
+        dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/dialog.css")).toExternalForm());
+        dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/app.css")).toExternalForm());
         dialogPane.getStyleClass().add("myDialog");
         Window window = dialogPane.getScene().getWindow();
         window.setOnCloseRequest(e -> window.hide());

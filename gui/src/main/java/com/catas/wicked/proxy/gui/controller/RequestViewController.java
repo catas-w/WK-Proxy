@@ -104,14 +104,19 @@ public class RequestViewController implements Initializable {
 
         reqTreeView.setCellFactory(treeView -> cellFactory.createTreeCell(treeView));
         reqListView.setCellFactory(listView -> cellFactory.createListCell(listView));
+
+        // context menu
         reqTreeView.setContextMenu(contextMenu);
         reqListView.setContextMenu(contextMenu);
 
         // update detail tab
         reqTreeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
+                System.out.println("selected null1");
+                contextMenu.getItems().forEach(menuItem -> menuItem.setDisable(true));
                 return;
             }
+            contextMenu.getItems().forEach(menuItem -> menuItem.setDisable(false));
             RequestCell requestCell = newValue.getValue();
             // System.out.println("selected: " + requestCell);
             if (requestCell != null) {
@@ -127,8 +132,12 @@ public class RequestViewController implements Initializable {
 
         reqListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
+                contextMenu.getItems().forEach(menuItem -> menuItem.setDisable(false));
                 requestViewService.updateRequestTab(newValue.getRequestId());
                 messageService.selectRequestItem(newValue.getRequestId(), false);
+            } else {
+                System.out.println("selected null2");
+                contextMenu.getItems().forEach(menuItem -> menuItem.setDisable(true));
             }
         });
 
