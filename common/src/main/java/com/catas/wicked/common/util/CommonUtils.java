@@ -1,6 +1,7 @@
 package com.catas.wicked.common.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -46,5 +47,23 @@ public class CommonUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error in get SHA256 hash.", e);
         }
+    }
+
+    public static String wrapText(String content) {
+        return wrapText(content, 64);
+    }
+
+    public static String wrapText(String content, int length) {
+        if (StringUtils.isEmpty(content) || length <= 0 || length > content.length()) {
+            return content;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < content.length(); i++) {
+            builder.append(content.charAt(i));
+            if (i > 0 && i % length == 0) {
+                builder.append('\n');
+            }
+        }
+        return builder.toString();
     }
 }

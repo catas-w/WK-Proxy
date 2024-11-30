@@ -1,10 +1,11 @@
 package com.catas.wicked.server.cert;
 
+import com.catas.wicked.common.util.CommonUtils;
 import com.catas.wicked.server.cert.spi.CertGenerator;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -49,6 +50,8 @@ public class CertService {
     private final KeyFactory keyFactory;
 
     private CertGenerator certGenerator;
+
+    public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Inject
     public void setCertGenerator(CertGenerator certGenerator) {
@@ -228,8 +231,7 @@ public class CertService {
      * @param subject 主题信息
      */
     public void generateCACertFile(Path basePath, String subject) throws Exception {
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date notBeforeDate = formatter.parse(START_DATE);
+        Date notBeforeDate = dateFormat.parse(START_DATE);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(notBeforeDate);
@@ -242,38 +244,43 @@ public class CertService {
         PrivateKey privateKey = keyPair.getPrivate();
 
         String privateKeyStr = Base64.getEncoder().encodeToString(privateKey.getEncoded());
-        String pKeyFileContent = String.format(PRIVATE_FILE_PATTERN, wrap(privateKeyStr));
+        String pKeyFileContent = String.format(PRIVATE_FILE_PATTERN, CommonUtils.wrapText(privateKeyStr));
         FileUtils.write(basePath.resolve("private.key").toFile(), pKeyFileContent, StandardCharsets.UTF_8);
 
-
-        X509Certificate cert =
-                certGenerator.generateCaCert(subject, notBeforeDate, notAfterDate, keyPair);
+        X509Certificate cert = certGenerator.generateCaCert(subject, notBeforeDate, notAfterDate, keyPair);
 
         byte[] encoded = cert.getEncoded();
         String certStr = Base64.getEncoder().encodeToString(encoded);
-        String certFileContent = String.format(CERT_FILE_PATTERN, wrap(certStr));
+        String certFileContent = String.format(CERT_FILE_PATTERN, CommonUtils.wrapText(certStr));
 
         FileUtils.write(basePath.resolve("cert.crt").toFile(), certFileContent, StandardCharsets.UTF_8);
     }
 
-    public String formatPEM(String str, String pattern) {
-        return String.format(pattern, wrap(str));
+    /**
+     * 生产根证书和私钥到字符串
+     * @return priKey, cert
+     */
+    public Pair<String, String> generateCaCertPEM(String subject, String notBefore) throws Exception {
+        Date notBeforeDate = dateFormat.parse(notBefore);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(notBeforeDate);
+        calendar.add(Calendar.YEAR, 30);
+        Date notAfterDate = calendar.getTime();
+
+        KeyPair keyPair = genKeyPair();
+        PrivateKey privateKey = keyPair.getPrivate();
+        String privateKeyStr = Base64.getEncoder().encodeToString(privateKey.getEncoded());
+        String priKeyPEM = String.format(PRIVATE_FILE_PATTERN, CommonUtils.wrapText(privateKeyStr));
+
+        X509Certificate cert = certGenerator.generateCaCert(subject, notBeforeDate, notAfterDate, keyPair);
+        String certStr = Base64.getEncoder().encodeToString(cert.getEncoded());
+        String certPEM = String.format(CERT_FILE_PATTERN, CommonUtils.wrapText(certStr));
+
+        return Pair.of(priKeyPEM, certPEM);
     }
 
-    private String wrap(String content) {
-        if (StringUtils.isEmpty(content)) {
-            return content;
-        }
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < content.length(); i++) {
-            builder.append(content.charAt(i));
-            if (i > 0 && i % 64 == 0) {
-                builder.append('\n');
-            }
-        }
-        // if (builder.charAt(builder.length() - 1) != '\n') {
-        //     builder.append('\n');
-        // }
-        return builder.toString();
+    public String formatPEM(String str, String pattern) {
+        return String.format(pattern, CommonUtils.wrapText(str));
     }
 }

@@ -37,4 +37,6 @@ public interface CertManager {
     boolean checkInstalled(String certId);
 
     void installCert(String certId) throws Exception;
+
+    CertificateConfig getDefaultCert();
 }

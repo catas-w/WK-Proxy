@@ -4,8 +4,10 @@ import com.catas.wicked.BaseTest;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.CertificateConfig;
 import com.catas.wicked.common.config.Settings;
+import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.provider.CertManager;
 import com.catas.wicked.common.util.CommonUtils;
+import com.catas.wicked.server.cert.spi.BouncyCastleCertGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,12 +86,14 @@ public class SimpleCertManagerTest extends BaseTest {
     public void setUp() throws Exception {
         certManager = new SimpleCertManager();
         certService = new CertService();
+        certService.setCertGenerator(new BouncyCastleCertGenerator());
         setPrivateField(certManager, "certService", certService);
 
 
         ApplicationConfig appConfig = new ApplicationConfig();
         Settings settings = new Settings();
         appConfig.setSettings(settings);
+        appConfig.setMessageQueue(new MessageQueue());
         setPrivateField(certManager, "appConfig", appConfig);
 
         ((SimpleCertManager) certManager).init();
@@ -235,5 +239,11 @@ public class SimpleCertManagerTest extends BaseTest {
         Map<String, String> certInfo = certManager.getCertInfo(selectedCert.getId());
         System.out.println(certInfo);
         Assertions.assertNotNull(certInfo);
+    }
+
+    @Test
+    public void testLoadDefaultCert() {
+        CertificateConfig defaultCert = certManager.getDefaultCert();
+        Assertions.assertNotNull(defaultCert);
     }
 }

@@ -20,6 +20,7 @@ import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.crypto.SecretKey;
 import java.io.ByteArrayInputStream;
@@ -60,8 +61,13 @@ public class SimpleCertManager implements CertManager {
 
     private final List<CertificateConfig> customCertList = new ArrayList<>();
 
-    private final CertificateConfig defaultCert = DefaultCertHolder.INSTANCE;
+    private CertificateConfig defaultCert;
 
+    private static final String DEFAULT_CERT_FILE = "default-cert.data";
+    public static final String DEFAULT_CERT_ID = "_default_";
+    public static final String DEFAULT_CERT_NAME = "Built-in";
+    private static final String DEFAULT_START_DATE = "2024-01-01";
+    private static final String DEFAULT_SUBJECT = "C=CN, ST=Shanghai, L=Shanghai, O=Catas, CN=catas.org";
     private static final String KEY = "yz7EZiJZ5/bPmoq6/UrqDQ==";
     private static final SecretKey secretKey = AesUtils.stringToSecretKey(KEY);
 
@@ -103,9 +109,9 @@ public class SimpleCertManager implements CertManager {
             if (certConfig.isDefault()) {
                 AlertUtils.alertLater(Alert.AlertType.ERROR, "Certificate init error!");
             } else {
-                appConfig.getSettings().setSelectedCert(defaultCert.getId());
+                appConfig.getSettings().setSelectedCert(getDefaultCert().getId());
                 appConfig.updateSettingsAsync();
-                initAppCertConfig(defaultCert);
+                initAppCertConfig(getDefaultCert());
             }
         }
     }
@@ -177,7 +183,7 @@ public class SimpleCertManager implements CertManager {
     @Override
     public List<CertificateConfig> getCertList() {
         List<CertificateConfig> list = new ArrayList<>();
-        list.add(defaultCert);
+        list.add(getDefaultCert());
         list.addAll(customCertList);
         return list;
     }
@@ -188,7 +194,7 @@ public class SimpleCertManager implements CertManager {
         CertificateConfig selectedCert = getCertConfigById(id);
         if (selectedCert == null) {
             log.warn("Selected cert is null: {}", id);
-            return defaultCert;
+            return getDefaultCert();
         }
         return selectedCert;
     }
@@ -211,8 +217,8 @@ public class SimpleCertManager implements CertManager {
         if (certId == null) {
             return null;
         }
-        if (certId.equals(defaultCert.getId())) {
-            return defaultCert;
+        if (certId.equals(DEFAULT_CERT_ID)) {
+            return getDefaultCert();
         }
         return customCertList.stream().filter(cert -> cert.getId().equals(certId)).findFirst().orElse(null);
     }
@@ -348,6 +354,60 @@ public class SimpleCertManager implements CertManager {
         return SystemUtils.getStoragePath("certs.data").toFile();
     }
 
+    @Override
+    public CertificateConfig getDefaultCert() {
+        if (this.defaultCert != null) {
+            return this.defaultCert;
+        }
+
+        File defaultCertFile = SystemUtils.getStoragePath(DEFAULT_CERT_FILE).toFile();
+        if (!defaultCertFile.exists()) {
+            defaultCertFile.getParentFile().mkdirs();
+        }
+        if (defaultCertFile.exists()) {
+            try {
+                CertificateConfig config = objectMapper.readValue(defaultCertFile, CertificateConfig.class);
+                assert config != null;
+                log.info("read default cert:" + config);
+
+                config.setCert(AesUtils.decrypt(config.getCert(), secretKey));
+                config.setPrivateKey(AesUtils.decrypt(config.getPrivateKey(), secretKey));
+                assert DEFAULT_CERT_ID.equals(config.getId()) && DEFAULT_CERT_NAME.equals(config.getName())
+                        && StringUtils.isNotBlank(config.getCert()) && StringUtils.isNotBlank(config.getPrivateKey());
+                return config;
+            } catch (Exception e) {
+                log.error("Error loading default cert.", e);
+            }
+        }
+
+        // generate default cert
+        try {
+            Pair<String, String> pair = certService.generateCaCertPEM(DEFAULT_SUBJECT, DEFAULT_START_DATE);
+            String certPEM = pair.getRight();
+            String priKeyPEM = pair.getLeft();
+            CertificateConfig config = CertificateConfig.builder()
+                    .id(DEFAULT_CERT_ID)
+                    .name(DEFAULT_CERT_NAME)
+                    .cert(AesUtils.encrypt(certPEM, secretKey))
+                    .privateKey(AesUtils.encrypt(priKeyPEM, secretKey))
+                    .isDefault(true)
+                    .build();
+
+            // save to file
+            log.info("to save default cert-file:" + config);
+            objectMapper.writeValue(defaultCertFile, config);
+
+            config.setCert(certPEM);
+            config.setPrivateKey(priKeyPEM);
+            this.defaultCert = config;
+            return config;
+        } catch (Exception e) {
+            log.error("Error in generating default-cert data.", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Deprecated
     static class DefaultCertHolder {
         private final static String DEFAULT_CERT = """
             -----BEGIN CERTIFICATE-----
@@ -402,7 +462,7 @@ public class SimpleCertManager implements CertManager {
             -----END PRIVATE KEY-----
             """;
 
-        public static final CertificateConfig INSTANCE = CertificateConfig.builder()
+        private static final CertificateConfig INSTANCE = CertificateConfig.builder()
                 .id("_default_")
                 .name("Built-in")
                 .cert(DEFAULT_CERT)
