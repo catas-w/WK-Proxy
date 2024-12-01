@@ -104,7 +104,6 @@ public class ProxyServer {
                 } catch (Exception e) {
                     log.error("Error in starting proxy server.", e);
                     setStatus(ServerStatus.HALTED);
-                    // TODO delay
                     // String msg = "Port: " + applicationConfig.getSettings().getPort() + " is unavailable, change port in settings";
                     // AlertUtils.alertLater(Alert.AlertType.ERROR, msg);
                 }

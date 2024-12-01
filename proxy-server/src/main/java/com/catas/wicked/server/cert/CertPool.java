@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+@Deprecated
 @Singleton
 public class CertPool {
     private final Map<Integer, Map<String, X509Certificate>> certCache = new WeakHashMap<>();
@@ -23,11 +24,7 @@ public class CertPool {
             throws Exception {
         X509Certificate cert = null;
         if (host != null) {
-            Map<String, X509Certificate> portCertCache = certCache.get(port);
-            if (portCertCache == null) {
-                portCertCache = new HashMap<>();
-                certCache.put(port, portCertCache);
-            }
+            Map<String, X509Certificate> portCertCache = certCache.computeIfAbsent(port, k -> new HashMap<>());
             String key = host.trim().toLowerCase();
             if (portCertCache.containsKey(key)) {
                 return portCertCache.get(key);

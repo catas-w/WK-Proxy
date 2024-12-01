@@ -203,16 +203,28 @@ public class ButtonBarController implements Initializable {
             initSettingPage();
         }
         settingController.getSettingTabPane().getSelectionModel().select(settingController.getInfoSettingTab());
-        displaySettingPage();
+        displaySettingPage(320);
+    }
+
+    public void displaySSlSettingPage() {
+        if (settingPage == null) {
+            initSettingPage();
+        }
+        settingController.getSettingTabPane().getSelectionModel().select(settingController.getSslSettingTab());
+        displaySettingPage(500);
     }
 
     public void displaySettingPage() {
+        displaySettingPage(400);
+    }
+
+    public void displaySettingPage(long targetHeight) {
         if (settingPage == null) {
             initSettingPage();
         }
 
         settingController.initValues();
-        adjustSettingDialogHeight(400, 500);
+        adjustSettingDialogHeight(targetHeight);
         settingPage.showAndWait();
     }
 
@@ -234,7 +246,7 @@ public class ButtonBarController implements Initializable {
         window.setOnCloseRequest(e -> window.hide());
     }
 
-    public void adjustSettingDialogHeight(double targetHeight, long durationMillis) {
+    public void adjustSettingDialogHeight(double targetHeight) {
         if (settingPage == null || settingPage.getDialogPane() == null) {
             return;
         }

@@ -8,9 +8,9 @@ import com.catas.wicked.common.constant.ProxyConstant;
 import com.catas.wicked.common.constant.ConnectionStatus;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.ThrottlePreset;
+import com.catas.wicked.common.provider.CertManager;
 import com.catas.wicked.common.util.AntMatcherUtils;
 import com.catas.wicked.common.util.WebUtils;
-import com.catas.wicked.server.cert.CertPool;
 import com.catas.wicked.server.strategy.Handler;
 import com.catas.wicked.server.strategy.StrategyList;
 import com.catas.wicked.server.strategy.StrategyManager;
@@ -66,7 +66,9 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
 
     private ConnectionStatus status;
 
-    private final CertPool certPool;
+    // private final CertPool certPool;
+
+    private final CertManager certManager;
 
     private IdGenerator idGenerator;
 
@@ -77,12 +79,13 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
     private final AttributeKey<ProxyRequestInfo> requestInfoAttributeKey = AttributeKey.valueOf("requestInfo");
 
     public ServerStrategyHandler(ApplicationConfig applicationConfig,
-                                 CertPool certPool,
+                                 CertManager certManager,
                                  IdGenerator idGenerator,
                                  StrategyList strategyList,
                                  StrategyManager strategyManager) {
         this.appConfig = applicationConfig;
-        this.certPool = certPool;
+        // this.certPool = certPool;
+        this.certManager = certManager;
         this.status = ConnectionStatus.INIT;
         this.idGenerator = idGenerator;
         this.strategyList = strategyList;
@@ -211,7 +214,7 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
                 int port = ((InetSocketAddress) ctx.channel().localAddress()).getPort();
                 String originHost = requestInfo.getHost();
                 SslContext sslCtx = SslContextBuilder.forServer(
-                        appConfig.getServerPriKey(), certPool.getCert(port, originHost)).build();
+                        appConfig.getServerPriKey(), certManager.getServerCert(port, originHost)).build();
                 strategyList.setRequire(Handler.HTTP_CODEC.name(), true);
                 strategyList.setRequire(Handler.SSL_HANDLER.name(), true);
                 strategyList.setSupplier(Handler.SSL_HANDLER.name(), () -> sslCtx.newHandler(ctx.alloc()));

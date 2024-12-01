@@ -126,6 +126,7 @@ public class SslSettingService extends AbstractSettingService {
                     X509Certificate caCert = certManager.getCertById(certId);
                     PrivateKey caPriKey = certManager.getPriKeyById(certId);
                     appConfig.updateRootCertConfigs(certManager.getCertSubject(caCert), caCert, caPriKey);
+                    certManager.checkSelectedCertInstalled();
                 } catch (Exception e) {
                     log.error("Error in updating root certificate: {}", certId, e);
                     // rollback

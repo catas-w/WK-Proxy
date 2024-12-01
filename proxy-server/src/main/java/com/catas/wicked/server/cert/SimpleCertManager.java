@@ -37,8 +37,10 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 
 import static com.catas.wicked.common.constant.ProxyConstant.CERT_FILE_PATTERN;
@@ -60,6 +62,8 @@ public class SimpleCertManager implements CertManager {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final List<CertificateConfig> customCertList = new ArrayList<>();
+
+    private final Map<Integer, Map<String, X509Certificate>> serverCertCache = new WeakHashMap<>();
 
     private CertificateConfig defaultCert;
 
@@ -99,6 +103,7 @@ public class SimpleCertManager implements CertManager {
             X509Certificate caCert = getCertById(certConfig.getId());
             PrivateKey caPriKey = getPriKeyById(certConfig.getId());
             appConfig.updateRootCertConfigs(getCertSubject(caCert), caCert, caPriKey);
+            checkSelectedCertInstalled();
 
             log.info("Init appCertConfig: {}", certConfig.getName());
             KeyPair keyPair = certService.genKeyPair();
@@ -331,6 +336,14 @@ public class SimpleCertManager implements CertManager {
     }
 
     @Override
+    public void checkSelectedCertInstalled() {
+        String certId = appConfig.getSettings().getSelectedCert();
+        boolean res = checkInstalled(certId);
+        log.info("checkSelectedCertInstalled result: " + res);
+        appConfig.getObservableConfig().setCertInstalledStatus(res);
+    }
+
+    @Override
     public void installCert(String certId) throws Exception {
         String certPEM = getCertPEM(certId);
         if (StringUtils.isBlank(certId)) {
@@ -405,6 +418,24 @@ public class SimpleCertManager implements CertManager {
             log.error("Error in generating default-cert data.", e);
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public X509Certificate getServerCert(Integer port, String host) throws Exception {
+        if (StringUtils.isBlank(host)) {
+            return null;
+        }
+        X509Certificate cert;
+        Map<String, X509Certificate> portCertCache = serverCertCache.computeIfAbsent(port, k -> new HashMap<>());
+        String key = host.trim().toLowerCase();
+        if (portCertCache.containsKey(key)) {
+            return portCertCache.get(key);
+        } else {
+            cert = certService.genCert(appConfig.getIssuer(), appConfig.getCaPriKey(),
+                    appConfig.getCaNotBefore(), appConfig.getCaNotAfter(), appConfig.getServerPubKey(), key);
+            portCertCache.put(key, cert);
+        }
+        return cert;
     }
 
     @Deprecated

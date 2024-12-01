@@ -2,6 +2,7 @@ package com.catas.wicked.common.worker;
 
 import com.catas.wicked.common.executor.ScheduledThreadPoolService;
 import com.catas.wicked.common.executor.ThreadPoolService;
+import com.catas.wicked.common.worker.worker.CertCheckWorker;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -13,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import static com.catas.wicked.common.constant.WorkerConstant.CHECK_CERT_WORKER;
 import static com.catas.wicked.common.constant.WorkerConstant.CHECK_UPDATE_WORKER;
 import static com.catas.wicked.common.constant.WorkerConstant.SYS_PROXY_WORKER;
 
@@ -31,11 +33,16 @@ public class ScheduledManager {
     @Named("updateCheckWorker")
     private ScheduledWorker updateCheckWorker;
 
+    @Inject
+    @Named("certCheckWorker")
+    private CertCheckWorker certCheckWorker;
+
     @PostConstruct
     public void init() {
         // register default workers
         register(SYS_PROXY_WORKER, systemProxyWorker);
         register(CHECK_UPDATE_WORKER, updateCheckWorker);
+        register(CHECK_CERT_WORKER, certCheckWorker);
     }
 
     /**

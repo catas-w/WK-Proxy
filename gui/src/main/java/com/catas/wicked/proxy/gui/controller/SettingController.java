@@ -148,7 +148,7 @@ public class SettingController implements Initializable {
                     if (scrollPane.getContent() instanceof GridPane gridPane) {
                         double targetHeight = gridPane.heightProperty().get();
                         // System.out.println("target height: " + targetHeight);
-                        buttonBarController.adjustSettingDialogHeight(targetHeight + 100.0, 500);
+                        buttonBarController.adjustSettingDialogHeight(targetHeight + 100.0);
                         break;
                     }
                 }

@@ -36,7 +36,11 @@ public interface CertManager {
 
     boolean checkInstalled(String certId);
 
+    void checkSelectedCertInstalled();
+
     void installCert(String certId) throws Exception;
 
     CertificateConfig getDefaultCert();
+
+    X509Certificate getServerCert(Integer port, String host) throws Exception;
 }

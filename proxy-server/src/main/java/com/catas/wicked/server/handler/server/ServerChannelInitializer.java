@@ -3,7 +3,7 @@ package com.catas.wicked.server.handler.server;
 import com.catas.wicked.common.bean.IdGenerator;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.pipeline.MessageQueue;
-import com.catas.wicked.server.cert.CertPool;
+import com.catas.wicked.common.provider.CertManager;
 import com.catas.wicked.server.handler.RearHttpAggregator;
 import com.catas.wicked.server.strategy.DefaultSkipPredicate;
 import com.catas.wicked.server.strategy.StrategyList;
@@ -27,13 +27,13 @@ public class ServerChannelInitializer extends ChannelInitializer {
     private ApplicationConfig appConfig;
 
     @Inject
-    private CertPool certPool;
-
-    @Inject
     private MessageQueue messageQueue;
 
     @Inject
     private IdGenerator idGenerator;
+
+    @Inject
+    private CertManager certManager;
 
     @Inject
     @Named("tail")
@@ -54,7 +54,7 @@ public class ServerChannelInitializer extends ChannelInitializer {
         list.add(SSL_HANDLER.name(), false, () -> null);
         list.add(HTTP_CODEC.name(), true, HttpServerCodec::new);
         list.addAnchored(SERVER_STRATEGY.name(), () -> new ServerStrategyHandler(
-                appConfig, certPool, idGenerator, defaultStrategyList(), strategyManager));
+                appConfig, certManager, idGenerator, defaultStrategyList(), strategyManager));
         list.addAnchored(PREV_RECORDER.name(), () -> new ServerPreRecorder(appConfig, messageQueue));
         list.add(THROTTLE_HANDLER.name(), false, () -> null);
         list.addAnchored(SERVER_PROCESSOR.name(), () -> new ServerProcessHandler(appConfig, messageQueue, strategyManager));

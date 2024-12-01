@@ -21,14 +21,15 @@ import java.util.ResourceBundle;
 public class AppController implements Initializable {
 
     @FXML
+    private FontIcon certStatusIcon;
+    @FXML
+    private Label certStatusLabel;
+    @FXML
     private FontIcon serverStatusIcon;
-
     @FXML
     private Label serverStatusLabel;
-
     @FXML
     private Label versionLabel;
-
     @FXML
     @Getter
     private VBox rootVBox;
@@ -45,13 +46,13 @@ public class AppController implements Initializable {
 
         // update server status label
         refreshServerStatusDisplay(appConfig.getObservableConfig().getServerStatus());
-        appConfig.getObservableConfig().serverStatusProperty().addListener(((observable, oldValue, newValue) -> {
+        appConfig.getObservableConfig().serverStatusProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 return;
             }
-            System.out.println("refresh server status: " + newValue);
+            // System.out.println("refresh server status: " + newValue);
             refreshServerStatusDisplay(newValue);
-        }));
+        });
 
         serverStatusLabel.setOnMouseClicked(event -> {
             if (!serverStatusLabel.getStyleClass().contains("error")) {
@@ -59,6 +60,21 @@ public class AppController implements Initializable {
             }
 
             buttonBarController.displayProxySettingPage();
+        });
+
+        // cert status
+        appConfig.getObservableConfig().certInstalledStatusProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println(newValue);
+            if (newValue == null) {
+                return;
+            }
+            certStatusIcon.setVisible(!newValue);
+            certStatusLabel.setVisible(!newValue);
+        });
+
+        certStatusLabel.setOnMouseClicked(event -> {
+            System.out.println("displayCertSettings");
+            buttonBarController.displaySSlSettingPage();
         });
     }
 
