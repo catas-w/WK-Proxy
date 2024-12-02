@@ -31,6 +31,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Tooltip?>
 <AnchorPane prefWidth="700.0"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.catas.wicked.proxy.gui.controller.SettingController">
@@ -54,7 +55,6 @@
                         <!-- language -->
                         <Label text="%language-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
                         <Label text="%language.label" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <!-- <JFXComboBox fx:id="languageComboBox" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1" /> -->
                         <HBox GridPane.rowIndex="1" GridPane.columnIndex="1">
                             <JFXComboBox fx:id="languageComboBox" styleClass="grid-element"/>
                             <Label fx:id="langAlertLabel" visible="false" text="%language-alert.label"
@@ -67,16 +67,32 @@
 
                         <!-- recording -->
                         <Label text="%record-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
-                        <Label text="%record-size.label" styleClass="grid-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label text="%record-size.label" styleClass="grid-label" contentDisplay="RIGHT"
+                               GridPane.rowIndex="3" GridPane.columnIndex="0">
+                            <graphic>
+                                <FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%record-size.tooltip" showDelay="500ms"/>
+                            </tooltip>
+                        </Label>
                         <StackPane styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="140.0">
                             <CustomTextField errorPaneTranslateX="140.0" errorPaneTranslateY="-40.0"
                                              fx:id="maxSizeField" styleClass="record-size-input" maxWidth="140.0"/>
                             <Label text="Mb" styleClass="record-size-label"/>
                         </StackPane>
 
-                        <Label text="%record-bypass.label" styleClass="grid-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <Label text="%record-bypass.label" styleClass="grid-label" contentDisplay="RIGHT"
+                               GridPane.rowIndex="4" GridPane.columnIndex="0">
+                            <graphic>
+                                <FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%ant-path.tooltip" showDelay="500ms"/>
+                            </tooltip>
+                        </Label>
                         <TextArea fx:id="recordExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="4" GridPane.columnIndex="1"
-                                  promptText="eg. **.example.com; **.example.org"/>
+                                  promptText="*.test.com/**; **.org/**"/>
                     </GridPane>
                 </ScrollPane>
             </AnchorPane>
@@ -107,9 +123,17 @@
                         <Label text="%enable-sys-proxy.label" styleClass="grid-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
                         <JFXCheckBox fx:id="sysProxyOnLaunchBtn" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-                        <Label text="%sys-proxy-bypass.label" styleClass="grid-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                        <Label text="%sys-proxy-bypass.label" styleClass="grid-label" contentDisplay="RIGHT"
+                               GridPane.rowIndex="6" GridPane.columnIndex="0">
+                            <graphic>
+                                <FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%host-path.tooltip" showDelay="500ms"/>
+                            </tooltip>
+                        </Label>
                         <TextArea fx:id="sysProxyExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="6" GridPane.columnIndex="1"
-                                  promptText="eg. **.example.com; **.example.org"/>
+                                  promptText="*.test.com; 127.0.0.1;"/>
                     </GridPane>
                 </ScrollPane>
             </AnchorPane>
@@ -120,18 +144,34 @@
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
                     <GridPane fx:id="sslGridPane" styleClass="setting-ssl, setting-grid-pane" vgap="2">
                         <columnConstraints>
-                            <ColumnConstraints hgrow="NEVER" maxWidth="130.0" minWidth="130.0"/>
+                            <ColumnConstraints hgrow="NEVER" maxWidth="135.0" minWidth="135.0"/>
                             <!-- <ColumnConstraints hgrow="SOMETIMES" prefWidth="300" minWidth="100.0" /> -->
                         </columnConstraints>
                         <Label text="%ssl-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
                         <Label text="%enable-ssl.label" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                         <JFXToggleButton fx:id="sslBtn" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                        <Label text="%ssl-bypass.label" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label text="%ssl-bypass.label" styleClass="grid-label" contentDisplay="RIGHT"
+                               GridPane.rowIndex="2" GridPane.columnIndex="0">
+                            <graphic>
+                                <FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%ant-path.tooltip" showDelay="500ms"/>
+                            </tooltip>
+                        </Label>
                         <TextArea styleClass="grid-element-lg" fx:id="sslExcludeArea" GridPane.rowIndex="2" GridPane.columnIndex="1"
-                                  promptText="eg. **.example.com; **.example.org"/>
+                                  promptText="*.test.com/**; **.org/**"/>
 
-                        <Label text="%root-cert.label" styleClass="grid-label"  GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label text="%root-cert.label" styleClass="grid-label" contentDisplay="RIGHT"
+                               GridPane.rowIndex="3" GridPane.columnIndex="0">
+                            <graphic>
+                                <FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%root-cert.tooltip" showDelay="500ms"/>
+                            </tooltip>
+                        </Label>
 
                         <HBox fx:id="importCertBox" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1">
                             <Button fx:id="importCertBtn" styleClass="import-btn" text="%import-cert.label"/>
@@ -154,7 +194,15 @@
                         </columnConstraints>
                         <!-- External Proxy -->
                         <Label text="%ex-proxy-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
-                        <Label text="%enable-ex-proxy.label" styleClass="grid-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label text="%enable-ex-proxy.label" styleClass="grid-label" contentDisplay="RIGHT"
+                               GridPane.rowIndex="1" GridPane.columnIndex="0">
+                            <graphic>
+                                <FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%ex-proxy.tooltip" showDelay="500ms"/>
+                            </tooltip>
+                        </Label>
                         <JFXToggleButton fx:id="exProxyBtn" styleClass="grid-element" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                         <Label text="%ex-proxy-type.label" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>

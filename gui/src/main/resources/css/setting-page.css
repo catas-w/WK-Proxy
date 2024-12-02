@@ -264,8 +264,8 @@
     -fx-max-width: 190;
 }
 .setting-ssl .grid-label {
-    -fx-min-width: 130;
-    -fx-max-width: 130;
+    -fx-min-width: 135;
+    -fx-max-width: 135;
 }
 .setting-external .grid-label {
     -fx-min-width: 130;
@@ -374,4 +374,11 @@
     -fx-padding: 0 0 -5 0;
     -fx-font-size: 13px;
     -fx-min-height: 13px;
+}
+
+
+/******* tooltip-icon *********/
+.tooltip-icon {
+    -fx-icon-color: #a9a9a9;
+    /*-fx-icon-size: 24;*/
 }
