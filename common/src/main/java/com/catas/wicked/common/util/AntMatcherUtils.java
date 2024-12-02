@@ -11,19 +11,19 @@ public class AntMatcherUtils {
     private static final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
 
-    public static boolean matches(String pattern, String source) {
+    public static boolean matches(String pattern, String target) {
         if (!pattern.startsWith(WebUtils.HTTP_PREFIX) && !pattern.startsWith(WebUtils.HTTPS_PREFIX)) {
-            source = WebUtils.removeProtocol(source);
+            target = WebUtils.removeProtocol(target);
         }
-        return antPathMatcher.matches(pattern, source);
+        return antPathMatcher.matches(pattern, target);
     }
 
-    public static boolean matches(List<String> patterns, String source) {
-        if (source == null || patterns == null || patterns.isEmpty()) {
+    public static boolean matchAny(List<String> patterns, String target) {
+        if (target == null || patterns == null || patterns.isEmpty()) {
             return false;
         }
         for (String pattern : patterns) {
-            if (matches(pattern, source)) {
+            if (matches(pattern, target)) {
                 return true;
             }
         }

@@ -43,13 +43,17 @@ public class WhiteListTest extends ProxyServerTest {
         Assert.assertTrue(AntMatcherUtils.matches("httpbin.org/**", "https://httpbin.org/"));
         Assert.assertTrue(AntMatcherUtils.matches("httpbin.org/**", "https://httpbin.org/12/23"));
 
-        Assert.assertFalse(AntMatcherUtils.matches(List.of(), "1234"));
-        Assert.assertFalse(AntMatcherUtils.matches(List.of("test.com", "test.com/12"), "page"));
-        Assert.assertTrue(AntMatcherUtils.matches(List.of("test.com", "test.com/12"), "test.com"));
-        Assert.assertTrue(AntMatcherUtils.matches(List.of("test.com", "test.com/12"), "https://test.com"));
-        Assert.assertTrue(AntMatcherUtils.matches(List.of("test.com/**", "test"), "https://test.com"));
-        Assert.assertTrue(AntMatcherUtils.matches(List.of("test.com/**", "test"), "https://test.com/1/2/3/4"));
-        Assert.assertTrue(AntMatcherUtils.matches(List.of("org", "test.com/**", "test"), "https://test.com/1/4"));
+        Assert.assertTrue(AntMatcherUtils.matches("test.com", "https://test.com"));
+        Assert.assertTrue(AntMatcherUtils.matches("**.test.com", "https://ab.test.com"));
+        Assert.assertTrue(AntMatcherUtils.matches("test.com/**", "https://test.com/12/23"));
+
+        Assert.assertFalse(AntMatcherUtils.matchAny(List.of(), "1234"));
+        Assert.assertFalse(AntMatcherUtils.matchAny(List.of("test.com", "test.com/12"), "page"));
+        Assert.assertTrue(AntMatcherUtils.matchAny(List.of("test.com", "test.com/12"), "test.com"));
+        Assert.assertTrue(AntMatcherUtils.matchAny(List.of("test.com", "test.com/12"), "https://test.com"));
+        Assert.assertTrue(AntMatcherUtils.matchAny(List.of("test.com/**", "test"), "https://test.com"));
+        Assert.assertTrue(AntMatcherUtils.matchAny(List.of("test.com/**", "test"), "https://test.com/1/2/3/4"));
+        Assert.assertTrue(AntMatcherUtils.matchAny(List.of("org", "test.com/**", "test"), "https://test.com/1/4"));
     }
 
     @Test

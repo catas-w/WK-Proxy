@@ -30,6 +30,7 @@ public class Settings {
     @JsonDeserialize(using = SafeIntegerDeserializer.class)
     private Integer maxContentSize = 10;
 
+    @Deprecated
     @JsonDeserialize(using = SafeJsonListDeserializer.class)
     private List<String> recordIncludeList;
 

@@ -270,11 +270,11 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
         boolean res = true;
         String uri = request.uri();
         uri = WebUtils.completeUri(uri, requestInfo);
-        if (CollectionUtils.isNotEmpty(settings.getRecordIncludeList())) {
-            res = AntMatcherUtils.matches(settings.getRecordIncludeList(), uri);
-        }
+        // if (CollectionUtils.isNotEmpty(settings.getRecordIncludeList())) {
+        //     res = AntMatcherUtils.matches(settings.getRecordIncludeList(), uri);
+        // }
         if (CollectionUtils.isNotEmpty(settings.getRecordExcludeList())) {
-            res = !AntMatcherUtils.matches(settings.getRecordExcludeList(), uri);
+            res = !AntMatcherUtils.matchAny(settings.getRecordExcludeList(), uri);
         }
         return res;
     }
@@ -284,8 +284,9 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
         if (!settings.isHandleSsl()) {
             return false;
         }
-        return CollectionUtils.isEmpty(settings.getSslExcludeList()) ||
-                !settings.getSslExcludeList().contains(requestInfo.getHost());
+
+        return CollectionUtils.isEmpty(settings.getSslExcludeList())
+                || !AntMatcherUtils.matchAny(settings.getSslExcludeList(), requestInfo.getHost());
     }
 
     private ChannelTrafficShapingHandler getThrottleHandler(ApplicationConfig appConfig) {
