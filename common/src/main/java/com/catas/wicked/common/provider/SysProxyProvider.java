@@ -17,6 +17,11 @@ public interface SysProxyProvider {
     void setSysProxyConfig();
 
     /**
+     * clearSysProxy
+     */
+    void clearSysProxy();
+
+    /**
      * get system proxy bypass domains in current os
      */
     List<String> getBypassDomains();

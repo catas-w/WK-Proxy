@@ -1,5 +1,6 @@
 package com.catas.wicked.common.worker.worker;
 
+import com.catas.wicked.common.bean.message.QuitMessage;
 import com.catas.wicked.common.bean.message.RetryMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.SystemProxyConfig;
@@ -36,6 +37,16 @@ public class SystemProxyWorker extends AbstractScheduledWorker {
     public void init() {
         messageQueue.subscribe(Topic.SET_SYS_PROXY, msg -> {
             log.info("Force updating sysProxy");
+            // quit
+            if (msg instanceof QuitMessage) {
+                // System.out.println("clear proxy!!!");
+                if (appConfig.getSettings().isSystemProxy()) {
+                    proxyProvider.clearSysProxy();
+                }
+                return;
+            }
+
+            // refresh
             boolean res = invoke();
             if (!res && msg instanceof RetryMessage retryMessage) {
                 retryMessage.reduce();

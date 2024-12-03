@@ -58,8 +58,17 @@ public class WinSysProxyProvider implements SysProxyProvider {
 
     @Override
     public void setSysProxyConfig() {
-        String proxyServer = String.format("%s:%s", appConfig.getHost(), appConfig.getSettings().getPort());
         boolean enabled = appConfig.getSettings().isSystemProxy();
+        setSysProxy(enabled);
+    }
+
+    @Override
+    public void clearSysProxy() {
+        setSysProxy(false);
+    }
+
+    private void setSysProxy(boolean enabled) {
+        String proxyServer = String.format("%s:%s", appConfig.getHost(), appConfig.getSettings().getPort());
         String enableProxy = enabled ? "1" : "0";
 
         try {

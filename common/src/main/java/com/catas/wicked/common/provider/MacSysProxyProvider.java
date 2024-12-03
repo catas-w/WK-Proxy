@@ -66,6 +66,16 @@ public class MacSysProxyProvider implements SysProxyProvider {
 
     @Override
     public void setSysProxyConfig() {
+        boolean enabled = appConfig.getSettings().isSystemProxy();
+        setSysProxy(enabled);
+    }
+
+    @Override
+    public void clearSysProxy() {
+        setSysProxy(false);
+    }
+
+    private void setSysProxy(boolean enabled) {
         List<String> networkServices = getNetworkServices();
         if (networkServices.isEmpty()) {
             log.error("No available network services");
@@ -74,7 +84,6 @@ public class MacSysProxyProvider implements SysProxyProvider {
 
         String host = appConfig.getHost();
         int port = appConfig.getSettings().getPort();
-        boolean enabled = appConfig.getSettings().isSystemProxy();
         try {
             for (String networkService : networkServices) {
                 for (String proxyType : PROXY_TYPES) {

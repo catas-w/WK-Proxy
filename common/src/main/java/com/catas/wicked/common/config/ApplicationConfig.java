@@ -1,6 +1,7 @@
 package com.catas.wicked.common.config;
 
 import com.catas.wicked.common.bean.message.BaseMessage;
+import com.catas.wicked.common.bean.message.QuitMessage;
 import com.catas.wicked.common.bean.message.RetryMessage;
 import com.catas.wicked.common.executor.ScheduledThreadPoolService;
 import com.catas.wicked.common.pipeline.MessageQueue;
@@ -184,13 +185,22 @@ public class ApplicationConfig implements AutoCloseable {
 
     public void shutDownApplication() {
         shutDownFlag.compareAndSet(false, true);
+
+        // wait to clear sysProxy
+        if (settings.isSystemProxy()) {
+            messageQueue.pushMsg(Topic.SET_SYS_PROXY, new QuitMessage());
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ignored) {}
+        }
+
         if (!(proxyLoopGroup.isShutdown() || proxyLoopGroup.isShuttingDown())) {
             proxyLoopGroup.shutdownGracefully();
         }
 
-        messageQueue.shutdown();
         ThreadPoolService.getInstance().shutdown();
         ScheduledThreadPoolService.getInstance().shutdown();
+        messageQueue.shutdown();
     }
 
     public void setHandleSSL(boolean status) {
