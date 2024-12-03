@@ -21,6 +21,8 @@ public class AppObservableConfig {
 
     private final SimpleBooleanProperty certInstalledStatus = new SimpleBooleanProperty(true);
 
+    private final SimpleBooleanProperty handlingSSL = new SimpleBooleanProperty(false);
+
     public AppObservableConfig() {
     }
 
@@ -70,5 +72,17 @@ public class AppObservableConfig {
 
     public void setCertInstalledStatus(boolean certInstalledStatus) {
         this.certInstalledStatus.set(certInstalledStatus);
+    }
+
+    public boolean isHandlingSSL() {
+        return handlingSSL.get();
+    }
+
+    public SimpleBooleanProperty handlingSSLProperty() {
+        return handlingSSL;
+    }
+
+    public void setHandlingSSL(boolean handlingSSL) {
+        this.handlingSSL.set(handlingSSL);
     }
 }

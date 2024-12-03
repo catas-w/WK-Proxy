@@ -42,7 +42,7 @@ public class AppController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        versionLabel.setText("version " + ApplicationConfig.APP_VERSION);
+        // versionLabel.setText("version " + ApplicationConfig.APP_VERSION);
 
         // update server status label
         refreshServerStatusDisplay(appConfig.getObservableConfig().getServerStatus());
@@ -64,16 +64,23 @@ public class AppController implements Initializable {
 
         // cert status
         appConfig.getObservableConfig().certInstalledStatusProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue);
             if (newValue == null) {
                 return;
             }
-            certStatusIcon.setVisible(!newValue);
-            certStatusLabel.setVisible(!newValue);
+            boolean handleSsl = appConfig.getObservableConfig().isHandlingSSL();
+            certStatusIcon.setVisible(!newValue && handleSsl);
+            certStatusLabel.setVisible(!newValue && handleSsl);
+        });
+        appConfig.getObservableConfig().handlingSSLProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            boolean certInstalled = appConfig.getObservableConfig().isCertInstalledStatus();
+            certStatusIcon.setVisible(newValue && !certInstalled);
+            certStatusLabel.setVisible(newValue && !certInstalled);
         });
 
         certStatusLabel.setOnMouseClicked(event -> {
-            System.out.println("displayCertSettings");
             buttonBarController.displaySSlSettingPage();
         });
     }

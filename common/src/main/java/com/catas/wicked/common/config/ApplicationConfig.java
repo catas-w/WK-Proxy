@@ -111,7 +111,7 @@ public class ApplicationConfig implements AutoCloseable {
                 log.info("loadSslContext finished, time cost: {} ms", end - start);
             } catch (Exception e) {
                 log.error("loadSslContext error: ", e);
-                settings.setHandleSsl(false);
+                setHandleSSL(false);
             }
         });
     }
@@ -136,6 +136,7 @@ public class ApplicationConfig implements AutoCloseable {
             settings = new Settings();
         }
 
+        observableConfig.setHandlingSSL(settings.isHandleSsl());
         if (settings.isEnableSysProxyOnLaunch()) {
             // force update systemProxy
             settings.setSystemProxy(true);
@@ -190,6 +191,11 @@ public class ApplicationConfig implements AutoCloseable {
         messageQueue.shutdown();
         ThreadPoolService.getInstance().shutdown();
         ScheduledThreadPoolService.getInstance().shutdown();
+    }
+
+    public void setHandleSSL(boolean status) {
+        this.settings.setHandleSsl(status);
+        observableConfig.setHandlingSSL(status);
     }
 
     @PreDestroy

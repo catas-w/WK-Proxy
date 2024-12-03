@@ -30,6 +30,6 @@ public class CertCheckWorker extends AbstractScheduledWorker {
 
     @Override
     public long getInitDelay() {
-        return 5 * 1000;
+        return 6 * 1000;
     }
 }

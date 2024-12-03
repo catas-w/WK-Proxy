@@ -40,21 +40,21 @@
             </HBox.margin>
         </Label>
 
-        <FontIcon fx:id="certStatusIcon" visible="false" iconLiteral="fas-exclamation-circle" styleClass="server-icon, error">
+        <Pane HBox.hgrow="ALWAYS"/>
+        <FontIcon fx:id="certStatusIcon" visible="false" iconLiteral="fas-exclamation-triangle" iconSize="11" styleClass="server-icon, error">
             <HBox.margin>
-                <Insets left="8.0"/>
+                <Insets left="2.0"/>
             </HBox.margin>
         </FontIcon>
         <Label fx:id="certStatusLabel" visible="false" text="Root Certificate is Not Installed" styleClass="display-label, error">
             <HBox.margin>
-                <Insets left="2.0"/>
+                <Insets right="8.0"/>
             </HBox.margin>
         </Label>
-        <Pane HBox.hgrow="ALWAYS"/>
-        <Label fx:id="versionLabel" text="v1.0.0" styleClass="display-label" HBox.hgrow="NEVER">
-            <HBox.margin>
-                <Insets right="10.0"/>
-            </HBox.margin>
-        </Label>
+        <!-- <Label fx:id="versionLabel" text="v1.0.0" styleClass="display-label" HBox.hgrow="NEVER"> -->
+        <!--     <HBox.margin> -->
+        <!--         <Insets right="10.0"/> -->
+        <!--     </HBox.margin> -->
+        <!-- </Label> -->
     </HBox>
 </VBox>

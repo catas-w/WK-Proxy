@@ -96,7 +96,7 @@ public class SslSettingService extends AbstractSettingService {
             });
 
             // update settings
-            settings.setHandleSsl(settingController.getSslBtn().isSelected());
+            appConfig.setHandleSSL(settingController.getSslBtn().isSelected());
             settingController.updateSslBtn(newValue);
             refreshAppSettings();
         }));
@@ -196,11 +196,6 @@ public class SslSettingService extends AbstractSettingService {
 
     @Override
     public void update(ApplicationConfig appConfig) {
-        Settings settings = appConfig.getSettings();
-        settings.setHandleSsl(settingController.getSslBtn().isSelected());
-
-        // update selected cert
-        settings.setSslExcludeList(getListFromText(settingController.getSslExcludeArea().getText()));
     }
 
     /**

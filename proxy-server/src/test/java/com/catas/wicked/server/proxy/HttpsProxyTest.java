@@ -66,7 +66,7 @@ public class HttpsProxyTest extends ProxyServerTest {
     public void testRecordUnhandledHttps() throws Exception {
         List<RequestModel> list = mockDataUtil.loadRequestModel("https-data.json");
         Assert.assertNotNull(list);
-        appConfig.getSettings().setHandleSsl(false);
+        appConfig.setHandleSSL(false);
 
         for (int i = 0; i < list.size(); i++) {
             RequestModel requestModel = list.get(i);

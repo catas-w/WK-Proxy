@@ -143,7 +143,7 @@ public class ButtonBarController implements Initializable {
             FontIcon icon = (FontIcon) sslBtn.getGraphic();
             Color color = newValue ? COLOR_ACTIVE : COLOR_INACTIVE;
             icon.setIconColor(color);
-            appConfig.getSettings().setHandleSsl(newValue);
+            appConfig.setHandleSSL(newValue);
             appConfig.updateSettingsAsync();
 
             // String toolTip = newValue ? "Stop Handling SSL" : "Handle SSL";

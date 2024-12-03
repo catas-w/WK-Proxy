@@ -109,7 +109,7 @@ public class MessageQueue {
     }
 
     public void shutdown() {
-        // System.out.println("Quit mq");
+        log.info("-- Quit mq --");
         for (MessageChannel channel : channelMap.values()) {
             if (channel != null) {
                 channel.pushMsg(new PoisonMessage());
