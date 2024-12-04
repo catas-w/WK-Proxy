@@ -2,7 +2,6 @@ package com.catas.wicked.server.proxy;
 
 import com.catas.wicked.common.constant.ServerStatus;
 import com.catas.wicked.common.executor.ThreadPoolService;
-import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.server.handler.server.ServerChannelInitializer;
@@ -19,7 +18,6 @@ import io.netty.util.internal.logging.JdkLoggerFactory;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

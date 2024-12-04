@@ -62,6 +62,11 @@
 .menu-item .ikonli-font-icon {
     -fx-icon-color: rgba(77, 77, 77, 0.77);
 }
+.main-menu-btn .label {
+    -fx-font-family: "MiSans Demibold";
+    -fx-text-fill: rgba(77, 77, 77, 0.77);
+}
+
 
 /********** toggle-node **********/
 .jfx-toggle-node {

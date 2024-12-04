@@ -30,6 +30,7 @@ import java.util.Objects;
 public class CertImportDialog extends Dialog<Pair<CertImportDialog.CertImportData, CertImportDialog.CertImportData>> {
 
     private static final String CSS_FILE = "/css/cert-dialog.css";
+    private static final String APP_CSS_FILE = "/css/app.css";
     private final ButtonType okButton;
     private final ButtonType cancelBtn;
     private final TextArea certArea;
@@ -79,6 +80,7 @@ public class CertImportDialog extends Dialog<Pair<CertImportDialog.CertImportDat
         getDialogPane().lookupButton(okButton).getStyleClass().add("ok-btn");
         getDialogPane().lookupButton(cancelBtn).getStyleClass().add("cancel-btn");
         getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource(CSS_FILE)).toExternalForm());
+        getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource(APP_CSS_FILE)).toExternalForm());
 
         // listener on text
         getDialogPane().lookupButton(okButton).setDisable(true);

@@ -1,9 +1,18 @@
-
-.menu-bar {
+@font-face {
+    font-family: "MiSans Normal";
+    src: url("/font/MiSans-Normal.ttf");
+}
+@font-face {
+    font-family: "MiSans Demibold";
+    src: url("/font/MiSans-Demibold.ttf");
+}
+.root {
     -fx-background-color: TRANSPARENT;
+    -fx-font-family: "MiSans Normal";
+    -fx-font-size: 12;
 }
 
-.root {
+.menu-bar {
     -fx-background-color: TRANSPARENT;
 }
 

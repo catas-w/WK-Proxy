@@ -132,10 +132,10 @@
 
                     <Label text="%type.label" styleClass="grid-header" GridPane.rowIndex="0"/>
                     <Label text="%duration.label" styleClass="grid-header" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
-                    <Label text="%req-send.label" GridPane.rowIndex="1"/>
-                    <Label text="%resp-wait.label" GridPane.rowIndex="2"/>
-                    <Label text="%resp-accept.label" GridPane.rowIndex="3"/>
-                    <Label text="%total-time.label" GridPane.rowIndex="4"/>
+                    <Label text="%req-send.label" styleClass="timing-header" GridPane.rowIndex="1"/>
+                    <Label text="%resp-wait.label" styleClass="timing-header" GridPane.rowIndex="2"/>
+                    <Label text="%resp-accept.label" styleClass="timing-header" GridPane.rowIndex="3"/>
+                    <Label text="%total-time.label" styleClass="timing-header" GridPane.rowIndex="4"/>
 
                     <TimeSplitPane displayOrder="0" displayColor="#0090de" GridPane.rowIndex="1"
                                    GridPane.columnIndex="1"/>

@@ -68,7 +68,7 @@ public class TextAreaEditorNodeBuilder implements EditorNodeBuilder<String> {
         textArea.setSkin(new EditorTextAreaSkin(textArea));
 
         text = new Text();
-        text.setStyle("-fx-font-size: 13px;");
+        // text.setStyle("-fx-font-size: 13px;");
         text.wrappingWidthProperty().bind(tableColumn.widthProperty());
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
             computeHeight();

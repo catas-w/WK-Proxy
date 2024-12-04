@@ -132,9 +132,9 @@
                 </MenuItem>
             </items>
 
-            <font>
-                <Font name="System Bold" size="12.0" />
-            </font>
+            <!-- <font> -->
+            <!--     <Font name="MiSans Demibold" size="12.0" /> -->
+            <!-- </font> -->
             <graphic>
                 <FontIcon iconColor="#616161" iconLiteral="fas-cog" iconSize="18" />
             </graphic>

@@ -15,6 +15,7 @@
     -fx-border-width: 0 0 0 0;
     -fx-border-color: #efefef;
     -fx-font-weight: BOLD;
+    -fx-font-family: "MiSans Demibold";
     /*-fx-background-insets: 0, 1, 2;*/
     /*-fx-background-radius: 5 5 5 5, 5 5 5 5, 5 5 5 5;*/
     -fx-padding: 0.1em 0.5em 0.25em 0.25em; /* 2 10 3 10 */
@@ -106,7 +107,8 @@
 }
 .table-view .column-header .label {
     -fx-alignment: CENTER;
-    -fx-text-fill: gray;
+    -fx-text-fill: rgb(128, 128, 128);
+    -fx-font-family: "MiSans Demibold";
 }
 .table-view .table-cell{
     -fx-text-fill: black;
@@ -138,10 +140,11 @@
     -fx-border-width: 0px;
 }
 .table-cell .headers-key {
-    /*-fx-text-fill: #792f22 !important;*/
-    /*-fx-fill: #b9422c;*/
     -fx-fill: #565656;
     -fx-font-weight: 700;
+    /*-fx-font-family: "System";*/
+    -fx-font-size: 12;
+    -fx-font-family: "MiSans Demibold";
     /*-fx-text-alignment: right !important;*/
     /*-fx-wrap-text: true;*/
 }
@@ -153,6 +156,8 @@
 .tree-table-view .tree-table-key {
     -fx-text-fill: #565656;
     -fx-font-weight: 700;
+    /*-fx-font-size: 12;*/
+    -fx-font-family: "MiSans Demibold";
 }
 .tree-table-view{
     -fx-background-color: transparent;
@@ -183,7 +188,8 @@
 }
 .tree-table-view .column-header .label {
     -fx-alignment: CENTER;
-    -fx-text-fill: gray;
+    -fx-text-fill: rgb(128, 128, 128);
+    -fx-font-family: "MiSans Demibold";
 }
 .tree-table-view .column-header-background .filler {
     -fx-background-color: TRANSPARENT;
@@ -266,7 +272,8 @@
     /*-fx-border-width: 1;*/
     -fx-text-fill: #8f8f8f;
     -fx-font-weight: 700;
-    -fx-font-size: 12;
+    -fx-font-family: "MiSans Demibold";
+    -fx-font-size: 11;
     -jfx-disable-visual-focus: true;
     -fx-translate-x: 15;
     -fx-translate-y: 1;
@@ -274,6 +281,7 @@
 .header-check-box:selected {
     -fx-text-fill: #26b1b6;
     -fx-font-weight: 700;
+    -fx-font-family: "MiSans Demibold";
 }
 .header-check-box .box {
     -fx-pref-height: 12;
@@ -326,6 +334,7 @@
 .side-bar .combo-box-popup .list-view .jfx-list-cell:selected .label {
     -fx-text-fill: #33cbb9;
     -fx-font-weight: bold;
+    -fx-font-family: "MiSans Demibold";
 }
 
 /******* editor column *********/
@@ -333,6 +342,6 @@
     -fx-border-width: 0;
     -fx-background-color: TRANSPARENT;
     -fx-padding: 0 0 -5 0;
-    -fx-font-size: 13px;
+    /*-fx-font-size: 13px;*/
     -fx-min-height: 13px;
 }

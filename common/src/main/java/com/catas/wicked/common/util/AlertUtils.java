@@ -22,6 +22,7 @@ public class AlertUtils {
         alert.setTitle(type.name());
         alert.setHeaderText(null);
         alert.setContentText(msg);
+        alert.getDialogPane().setStyle("-fx-font-family: 'MiSans Normal'");
         alert.showAndWait();
     }
 
@@ -50,6 +51,7 @@ public class AlertUtils {
         alert.setTitle(title);
         alert.setHeaderText(null); // Optional: You can set a header or keep it null
         alert.setContentText(message);
+        alert.getDialogPane().setStyle("-fx-font-family: 'MiSans Normal'");
 
         // Show the alert and wait for user response
         Optional<ButtonType> result = alert.showAndWait();

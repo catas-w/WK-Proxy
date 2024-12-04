@@ -192,6 +192,7 @@
 .setting-tab-pane .combo-box-popup .list-view .jfx-list-cell:selected .label {
     -fx-text-fill: #009688;
     -fx-font-weight: bold;
+    -fx-font-family: "MiSans Demibold";
 }
 
 
@@ -340,6 +341,7 @@
 .click-label {
     -fx-text-fill: #b73012;
     -fx-font-weight: bold;
+    -fx-font-family: "MiSans Demibold";
     -fx-underline: true;
     /*-fx-pref-width: 200;*/
     -fx-padding: 0 0 0 2;

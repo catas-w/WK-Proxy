@@ -255,7 +255,7 @@
                         <Label prefHeight="45.0" text="WK Proxy" textFill="#707a7c"
                                GridPane.rowIndex="1" GridPane.columnIndex="1">
                             <font>
-                                <Font name="System Bold" size="26.0"/>
+                                <Font name="MiSans Demibold" size="26.0"/>
                             </font>
                         </Label>
                         <VBox prefHeight="55.0" GridPane.rowIndex="2" GridPane.columnIndex="1">

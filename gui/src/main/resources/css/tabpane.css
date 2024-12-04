@@ -52,6 +52,7 @@
 .jfx-tab-pane .headers-region .tab .tab-container .tab-label {
     -fx-text-fill: rgba(75, 75, 75, 0.87);
     -fx-font-weight: BOLD;
+    -fx-font-family: "MiSans Demibold";
     /*-fx-padding: 6 10 6 10;*/
     -fx-font-size: 12;
 }
@@ -123,6 +124,12 @@
     -fx-border-width: 0;
 }
 .grid-header {
-    -fx-text-fill: gray;
-    -fx-font-weight: 700;
+    -fx-text-fill: rgb(128, 128, 128);
+    /*-fx-font-weight: 700;*/
+    -fx-font-family: "MiSans Demibold";
+}
+.timing-header {
+    -fx-text-fill: #565656;
+    /*-fx-font-weight: 700;*/
+    -fx-font-family: "MiSans Demibold";
 }

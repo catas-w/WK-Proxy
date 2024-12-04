@@ -198,6 +198,7 @@ public class DetailTabController implements Initializable {
         nameColumn.setSortable(false);
         final String titleStyle = "tree-table-key";
         nameColumn.getStyleClass().add(titleStyle);
+        nameColumn.getStyleClass().add("headers-key");
         nameColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<PairEntry, String> param) ->
                 new ReadOnlyStringWrapper(param.getValue().getValue().getKey()));
         nameColumn.setCellFactory((TreeTableColumn<PairEntry, String> param) ->
@@ -205,6 +206,7 @@ public class DetailTabController implements Initializable {
 
         TreeTableColumn<PairEntry, String> valueColumn = new TreeTableColumn<>("Value");
         valueColumn.setSortable(false );
+        nameColumn.getStyleClass().add("headers-value");
         valueColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<PairEntry, String> param) ->
                 new ReadOnlyStringWrapper(param.getValue().getValue().getVal()));
         valueColumn.setCellFactory((TreeTableColumn<PairEntry, String> param) ->
