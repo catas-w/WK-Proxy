@@ -21,9 +21,10 @@
 }
 
 /*************** Rich text ***************/
+.main-selection {
+    -fx-fill: #adb4b4;
+}
 .display-code-area .text {
-    /*-fx-font-family: "JetBrains Mono";*/
-    /*-fx-font-weight: 500;*/
     -fx-font-size: 12;
     -fx-font-family: "MiSans Normal";
     /*-fx-spacing: 4;*/

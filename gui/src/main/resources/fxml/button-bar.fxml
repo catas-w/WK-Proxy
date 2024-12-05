@@ -110,22 +110,22 @@
         <Pane VBox.vgrow="ALWAYS" />
         <CustomMenuButton fx:id="mainMenuButton" mnemonicParsing="false" popupSide="TOP" styleClass="main-menu-btn">
             <items>
-                <MenuItem fx:id="settingBtn" onAction="#displaySettingPage" text="%setting-btn.label">
+                <MenuItem fx:id="settingBtn" styleClass="main-menu-item" onAction="#displaySettingPage" text="%setting-btn.label">
                     <graphic>
                         <FontIcon iconLiteral="fas-cogs" iconSize="18" />
                     </graphic>
                 </MenuItem>
-                <MenuItem fx:id="releaseBtn" text="%release-btn.label">
+                <MenuItem fx:id="releaseBtn" styleClass="main-menu-item" text="%release-btn.label">
                     <graphic>
                         <FontIcon iconLiteral="fas-book-reader" iconSize="18" />
                     </graphic>
                 </MenuItem>
-                <MenuItem fx:id="aboutBtn" onAction="#displayAboutPage" text="%about-btn.label">
+                <MenuItem fx:id="aboutBtn" styleClass="main-menu-item" onAction="#displayAboutPage" text="%about-btn.label">
                     <graphic>
                         <FontIcon iconLiteral="fas-info-circle" iconSize="18" />
                     </graphic>
                 </MenuItem>
-                <MenuItem fx:id="quitBtn" onAction="#exit" text="%quit-btn.label">
+                <MenuItem fx:id="quitBtn" styleClass="main-menu-item" onAction="#exit" text="%quit-btn.label">
                     <graphic>
                         <FontIcon iconLiteral="fas-sign-in-alt" iconSize="18" />
                     </graphic>
