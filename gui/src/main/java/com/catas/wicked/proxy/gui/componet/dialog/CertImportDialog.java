@@ -25,6 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.Optional;
+
+import static com.catas.wicked.common.constant.ProxyConstant.CERT_FILE_PATTERN;
+import static com.catas.wicked.common.constant.ProxyConstant.PRIVATE_FILE_PATTERN;
 
 @Slf4j
 public class CertImportDialog extends Dialog<Pair<CertImportDialog.CertImportData, CertImportDialog.CertImportData>> {
@@ -58,21 +62,11 @@ public class CertImportDialog extends Dialog<Pair<CertImportDialog.CertImportDat
         // private key input
         certArea = createInputComponent(vBox, resourceMessageProvider.getMessage("cert-paste-pem.label"), importCertData);
         certArea.setWrapText(true);
-        certArea.setPromptText("""
-                Format:\r
-                -----BEGIN CERTIFICATE-----\r
-                ******\r
-                -----END CERTIFICATE-----
-                """);
+        certArea.setPromptText(String.format(CERT_FILE_PATTERN, "********"));
 
         priKeyTextArea = createInputComponent(vBox, resourceMessageProvider.getMessage("pri-key-paste-pem.label"), importPriKeyData);
         priKeyTextArea.setWrapText(true);
-        priKeyTextArea.setPromptText("""
-                Format:\r
-                -----BEGIN PRIVATE KEY-----\r
-                ******\r
-                -----END PRIVATE KEY-----
-                """);
+        priKeyTextArea.setPromptText(String.format(PRIVATE_FILE_PATTERN, "********"));
 
         // dialog
         getDialogPane().setContent(vBox);
@@ -93,10 +87,18 @@ public class CertImportDialog extends Dialog<Pair<CertImportDialog.CertImportDat
         setResultConverter(dialogButton -> {
             if (dialogButton == okButton) {
                 if (importCertData.dataType == DataType.TEXT) {
-                    importCertData.setText(certArea.getText());
+                    String certText = Optional.ofNullable(certArea.getText()).map(String::strip).orElse("");
+                    if (!certText.startsWith("-----BEGIN CERTIFICATE-----")) {
+                        certText = String.format(CERT_FILE_PATTERN, certText);
+                    }
+                    importCertData.setText(certText);
                 }
                 if (importPriKeyData.dataType == DataType.TEXT) {
-                    importPriKeyData.setText(priKeyTextArea.getText());
+                    String priKeyText = Optional.ofNullable(priKeyTextArea.getText()).map(String::strip).orElse("");
+                    if (!priKeyText.startsWith("-----BEGIN PRIVATE KEY-----")) {
+                        priKeyText = String.format(PRIVATE_FILE_PATTERN, priKeyText);
+                    }
+                    importPriKeyData.setText(priKeyText);
                 }
                 return new Pair<>(importCertData, importPriKeyData);
             }

@@ -4,6 +4,7 @@ import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.CertificateConfig;
 import com.catas.wicked.common.provider.CertInstallProvider;
 import com.catas.wicked.common.provider.CertManager;
+import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.AesUtils;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.CommonUtils;
@@ -58,6 +59,9 @@ public class SimpleCertManager implements CertManager {
 
     @Inject
     private CertInstallProvider certInstallProvider;
+
+    @Inject
+    private ResourceMessageProvider resourceMessageProvider;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -124,7 +128,7 @@ public class SimpleCertManager implements CertManager {
     @Override
     public CertificateConfig importCert(InputStream certInputStream, InputStream priKeyInputStream) {
         if (customCertList.size() > LIMIT) {
-            throw new RuntimeException("Certificate number has reached limit");
+            throw new RuntimeException(resourceMessageProvider.getMessage("cert-out-number.alert"));
         }
         if (certInputStream == null) {
             throw new IllegalArgumentException();
@@ -134,20 +138,20 @@ public class SimpleCertManager implements CertManager {
             try {
                 cert = certService.loadCert(certInputStream);
             } catch (IllegalArgumentException | CertificateException ex) {
-                throw new RuntimeException("Certificate Parsed Error!");
+                throw new RuntimeException(resourceMessageProvider.getMessage("cert-parsed-error.alert"));
             }
 
             PrivateKey privateKey = null;
             try {
                 privateKey = certService.loadPriKey(priKeyInputStream);
             } catch (IllegalArgumentException | InvalidKeySpecException e) {
-                throw new RuntimeException("Private Key Parsed Error!");
+                throw new RuntimeException(resourceMessageProvider.getMessage("pri-key-parsed-error.alert"));
             }
 
             // check match
             boolean certMatchingPriKey = isCertMatchingPriKey(cert, privateKey);
             if (!certMatchingPriKey) {
-                throw new RuntimeException("Certificate and Private Key not match!");
+                throw new RuntimeException(resourceMessageProvider.getMessage("cert-key-not-match.alert"));
             }
 
             String subject = certService.getSubject(cert);
@@ -179,9 +183,9 @@ public class SimpleCertManager implements CertManager {
         } catch (RuntimeException e) {
             throw e;
         } catch (CertificateException e) {
-            throw new RuntimeException("Certificate format incorrect!", e);
+            throw new RuntimeException(resourceMessageProvider.getMessage("cert-format-error.alert"), e);
         } catch (Exception e) {
-            throw new RuntimeException("Certificate load error!", e);
+            throw new RuntimeException(resourceMessageProvider.getMessage("cert-load-error.alert"), e);
         }
     }
 

@@ -155,7 +155,7 @@ public class SslSettingService extends AbstractSettingService {
             CertSelectComponent component = new CertSelectComponent(config.getName(), config.getId(), iconStr);
             component.setToggleGroup(certSelectGroup);
             component.setPreviewEvent(actionEvent -> displayPreviewDialog(config.getId()));
-            component.setPreviewTooltip(resourceMessageProvider.getMessage("cert-preview.tooltip"));
+            component.setPreviewTooltip( ("cert-preview.tooltip"));
 
             if (StringUtils.equals(selectedCertId, config.getId())) {
                 component.setSelected(true);
