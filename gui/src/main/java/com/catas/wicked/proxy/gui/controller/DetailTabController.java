@@ -11,10 +11,10 @@ import com.catas.wicked.proxy.gui.componet.MessageLabel;
 import com.catas.wicked.proxy.gui.componet.SelectableTreeTableCell;
 import com.catas.wicked.proxy.gui.componet.SideBar;
 import com.catas.wicked.proxy.gui.componet.ZoomImageView;
+import com.catas.wicked.proxy.gui.componet.builder.PairTextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.builder.TextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.highlight.CodeStyleLabel;
 import com.catas.wicked.proxy.gui.componet.richtext.DisplayCodeArea;
-import com.catas.wicked.proxy.render.ContextMenuFactory;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTreeTableView;
@@ -24,6 +24,7 @@ import jakarta.inject.Singleton;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -204,13 +205,21 @@ public class DetailTabController implements Initializable {
         nameColumn.setCellFactory((TreeTableColumn<PairEntry, String> param) ->
                 new OverviewTreeTableCell());
 
-        TreeTableColumn<PairEntry, String> valueColumn = new TreeTableColumn<>("Value");
+        // TreeTableColumn<PairEntry, String> valueColumn = new TreeTableColumn<>("Value");
+        // valueColumn.setSortable(false );
+        // nameColumn.getStyleClass().add("headers-value");
+        // valueColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<PairEntry, String> param) ->
+        //         new ReadOnlyStringWrapper(param.getValue().getValue().getVal()));
+        // valueColumn.setCellFactory((TreeTableColumn<PairEntry, String> param) ->
+        //         new SelectableTreeTableCell(new TextAreaEditorNodeBuilder(valueColumn), valueColumn));
+
+        TreeTableColumn<PairEntry, PairEntry> valueColumn = new TreeTableColumn<>("Value");
         valueColumn.setSortable(false );
         nameColumn.getStyleClass().add("headers-value");
-        valueColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<PairEntry, String> param) ->
-                new ReadOnlyStringWrapper(param.getValue().getValue().getVal()));
-        valueColumn.setCellFactory((TreeTableColumn<PairEntry, String> param) ->
-                new SelectableTreeTableCell(new TextAreaEditorNodeBuilder(valueColumn), valueColumn));
+        valueColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<PairEntry, PairEntry> param) ->
+                new SimpleObjectProperty<PairEntry>(param.getValue().getValue()));
+        valueColumn.setCellFactory((TreeTableColumn<PairEntry, PairEntry> param) ->
+                new SelectableTreeTableCell(new PairTextAreaEditorNodeBuilder(valueColumn), valueColumn));
 
         Platform.runLater(() -> {
             tableView.getColumns().addAll(nameColumn, valueColumn);

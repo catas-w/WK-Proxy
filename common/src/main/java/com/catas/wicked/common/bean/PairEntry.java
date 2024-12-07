@@ -4,16 +4,32 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * data module for tableView
  */
 public class PairEntry extends RecursiveTreeObject<PairEntry> {
 
+    @Getter
+    @AllArgsConstructor
+    public enum ColumnStyle {
+
+        OK("ok"),
+        PENDING("pending"),
+        ERROR("error"),
+        ;
+
+        private final String styleClass;
+    }
+
     private StringProperty key;
     private StringProperty val;
     private FloatProperty time;
     private StringProperty tooltip;
+
+    private final StringProperty columnStyleClass = new SimpleStringProperty(null);
 
     public PairEntry(String key, String val) {
         this.key = new SimpleStringProperty(key);
@@ -65,5 +81,17 @@ public class PairEntry extends RecursiveTreeObject<PairEntry> {
 
     public void setTooltip(String tooltip) {
         this.tooltip.set(tooltip);
+    }
+
+    public String getColumnStyleClass() {
+        return columnStyleClass.get();
+    }
+
+    public StringProperty columnStyleClassProperty() {
+        return columnStyleClass;
+    }
+
+    public void setColumnStyleClass(String columnStyleClass) {
+        this.columnStyleClass.set(columnStyleClass);
     }
 }

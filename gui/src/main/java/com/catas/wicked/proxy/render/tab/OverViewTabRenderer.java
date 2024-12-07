@@ -143,7 +143,14 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
             method = "-";
         }
         ResponseMessage response = request.getResponse();
-        String code = response == null ? "Waiting" : response.getStatusStr() + " " + response.getReasonPhrase();
+        String code = response == null ? "Pending" : response.getStatusStr() + " " + response.getReasonPhrase();
+
+        // set status-column style
+        if (response == null) {
+            requestOverviewInfo.getStatus().setColumnStyleClass(PairEntry.ColumnStyle.PENDING.getStyleClass());
+        } else {
+            requestOverviewInfo.getStatus().setColumnStyleClass(PairEntry.ColumnStyle.OK.getStyleClass());
+        }
 
         // basic
         requestOverviewInfo.getUrl().setVal(url);
@@ -205,7 +212,9 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getUrl()));
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getMethod()));
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getProtocol()));
-        reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getStatus()));
+
+        TreeItem<PairEntry> statusItem = new TreeItem<>(requestOverviewInfo.getStatus());
+        reqNode.getChildren().add(statusItem);
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getRemoteHost()));
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getRemotePort()));
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getClientHost()));
