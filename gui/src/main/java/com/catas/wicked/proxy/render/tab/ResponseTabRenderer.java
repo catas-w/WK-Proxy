@@ -48,13 +48,20 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
         detailTabController.showRequestOnlyTabs();
         // fix NPE because "request" is null
         RequestMessage request = requestCache.get(renderMsg.getRequestId());
-        displayResponse(request == null ? null : request.getResponse());
+        displayResponse(request);
     }
 
-    public void displayResponse(ResponseMessage response) {
-        if (response == null) {
-            detailTabController.getRespContentArea().replaceText("<Waiting For Response...>");
+    public void displayResponse(RequestMessage request) {
+        if (request == null) {
+            setMsgLabel(detailTabController.getRespHeaderMsgLabel(), "Empty");
             setMsgLabel(detailTabController.getRespContentMsgLabel(), "Empty");
+            return;
+        }
+        ResponseMessage response = request.getResponse();
+        if (response == null) {
+            // detailTabController.getRespContentArea().replaceText("<Pending...>");
+            setMsgLabel(detailTabController.getRespHeaderMsgLabel(), "Pending...");
+            setMsgLabel(detailTabController.getRespContentMsgLabel(), "Pending...");
             return;
         }
         // headers

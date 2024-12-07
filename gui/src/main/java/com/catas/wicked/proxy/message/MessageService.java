@@ -148,7 +148,6 @@ public class MessageService {
      * @param requestId requestId
      * @param fromTreeView source
      */
-    @Deprecated
     public void selectRequestItem(String requestId, boolean fromTreeView) {
         if (requestId == null) {
             return;

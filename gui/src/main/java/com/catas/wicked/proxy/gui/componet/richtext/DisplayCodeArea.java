@@ -39,7 +39,7 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
 
     private CodeArea codeArea;
 
-    private StringProperty codeStyle = new SimpleStringProperty(CodeStyle.PLAIN.name());
+    private final StringProperty codeStyle = new SimpleStringProperty(CodeStyle.PLAIN.name());
 
     private static final String STYLE = "display-code-area";
 
@@ -141,7 +141,7 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
         }
         // StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(formatText);
         Platform.runLater(() -> {
-            // TODO 防止在主线程中执行 highlight
+            // TODO: 防止在主线程中执行 highlight
             codeArea.setStyleSpans(0, highlighter.computeHighlight(codeArea.getText()));
         });
     }

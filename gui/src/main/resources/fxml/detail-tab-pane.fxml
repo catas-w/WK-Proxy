@@ -68,7 +68,7 @@
                                 </Tab>
                                 <Tab text="Query Params">
                                     <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="code-anchor-pane">
-                                        <DisplayCodeArea fx:id="reqParamArea" codeStyle="HEADER" />
+                                        <DisplayCodeArea fx:id="reqParamArea" codeStyle="QUERY_FORM" />
 
                                         <SideBar fx:id="reqQuerySideBar" prefHeight="25" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
                                             <CodeStyleButton text="Parsed" codeStyle="QUERY_FORM" styleClass="selected"/>

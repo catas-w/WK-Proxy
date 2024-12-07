@@ -298,7 +298,7 @@ public class DetailTabController implements Initializable {
             comboBox.getItems().add(new CodeStyleLabel("Json", CodeStyle.JSON));
             comboBox.getItems().add(new CodeStyleLabel("Html", CodeStyle.HTML));
             comboBox.getItems().add(new CodeStyleLabel("Xml", CodeStyle.XML));
-            comboBox.getItems().add(new CodeStyleLabel("Javascript", CodeStyle.JAVASCRIPT));
+            // comboBox.getItems().add(new CodeStyleLabel("Javascript", CodeStyle.JAVASCRIPT));
 
             comboBox.valueProperty().addListener(new ChangeListener<Labeled>() {
                 @Override

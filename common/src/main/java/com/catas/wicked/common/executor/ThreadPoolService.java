@@ -6,9 +6,9 @@ public class ThreadPoolService {
 
     private static final int CORE_POOL_SIZE = 16;
 
-    private static final int MAX_POOL_SIZE = 64;
+    private static final int MAX_POOL_SIZE = 100;
 
-    private static final long ALIVE_TIME = 0L;
+    private static final long ALIVE_TIME = 60;
 
     private final ExecutorService service;
 

@@ -81,7 +81,7 @@ public class RequestTabRenderer extends AbstractTabRenderer {
         // display request content
         ContentType contentType = WebUtils.getContentType(headers);
         byte[] content = WebUtils.parseContent(request.getHeaders(), request.getBody());
-        Node target = null;
+        Node target;
         // if (contentType != null && (ContentType.MULTIPART_FORM_DATA.getMimeType().equals(contentType.getMimeType()) ||
         //         ContentType.APPLICATION_FORM_URLENCODED.getMimeType().equals(contentType.getMimeType()))) {
         //     target = detailTabController.getReqContentTable();
