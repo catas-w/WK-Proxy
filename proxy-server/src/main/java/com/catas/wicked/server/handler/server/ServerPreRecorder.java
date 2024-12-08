@@ -9,8 +9,9 @@ import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.util.WebUtils;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
@@ -20,14 +21,13 @@ import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 
 @Slf4j
-public class ServerPreRecorder extends ChannelInboundHandlerAdapter {
+public class ServerPreRecorder extends ChannelDuplexHandler {
 
     private final ApplicationConfig appConfig;
 
@@ -42,6 +42,12 @@ public class ServerPreRecorder extends ChannelInboundHandlerAdapter {
         this.appConfig = appConfig;
         this.messageQueue = messageQueue;
         curRequestId = new AtomicReference<>("initId");
+    }
+
+    @Override
+    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+        // ProxyRequestInfo requestInfo = ctx.channel().attr(requestInfoAttributeKey).get();
+        super.write(ctx, msg, promise);
     }
 
     @Override

@@ -143,13 +143,19 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
             method = "-";
         }
         ResponseMessage response = request.getResponse();
-        String code = response == null ? "Pending" : response.getStatusStr() + " " + response.getReasonPhrase();
+        String code;
+        // String code = response == null ? "Pending" : response.getStatusStr() + " " + response.getReasonPhrase();
 
         // set status-column style
         if (response == null) {
             requestOverviewInfo.getStatus().setColumnStyle(PairEntry.ColumnStyle.PENDING);
+            code = "Pending";
+        } else if (response.getStatus() != null && response.getStatus() == -1) {
+            requestOverviewInfo.getStatus().setColumnStyle(PairEntry.ColumnStyle.ERROR);
+            code = response.getReasonPhrase();
         } else {
             requestOverviewInfo.getStatus().setColumnStyle(PairEntry.ColumnStyle.OK);
+            code = response.getStatusStr() + " " + response.getReasonPhrase();
         }
 
         // basic

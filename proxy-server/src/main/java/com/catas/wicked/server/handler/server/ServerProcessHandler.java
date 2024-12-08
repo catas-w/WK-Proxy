@@ -1,10 +1,12 @@
 package com.catas.wicked.server.handler.server;
 
 import com.catas.wicked.common.bean.ProxyRequestInfo;
+import com.catas.wicked.common.bean.message.ResponseMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.ClientStatus;
 import com.catas.wicked.common.constant.ProxyConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
+import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.util.ProxyHandlerFactory;
 import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.server.handler.client.ClientChannelInitializer;
@@ -14,6 +16,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
@@ -142,12 +145,14 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
                     Throwable cause = future.cause();
                     log.error("Error in creating proxy client channel", cause);
                     ClientStatus.Status targetStatus;
-                    if (cause instanceof SocketException) {
+                    if (cause instanceof ClosedChannelException) {
+                        targetStatus = ClientStatus.Status.CLOSED;
+                    } else if (cause instanceof ConnectTimeoutException) {
+                        targetStatus = ClientStatus.Status.TIMEOUT;
+                    } else if (cause instanceof SocketException) {
                         targetStatus = ClientStatus.Status.CONNECT_ERR;
                     } else if (cause instanceof UnknownHostException) {
                         targetStatus = ClientStatus.Status.ADDR_NOTFOUND;
-                    } else if (cause instanceof ClosedChannelException){
-                        targetStatus = ClientStatus.Status.CLOSED;
                     } else {
                         // javax.net.ssl.SSLPeerUnverifiedException
                         System.out.println(cause);
@@ -157,14 +162,25 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
 
                     ctx.fireChannelRead(msg);
                     synchronized (requestList) {
-                        // requestList.forEach(ReferenceCountUtil::release);
-                        // requestList.clear();
                         requestList.forEach(ctx::fireChannelRead);
                     }
 
                     HttpResponse response = new DefaultFullHttpResponse(
                             HttpVersion.HTTP_1_1, HttpResponseStatus.GATEWAY_TIMEOUT);
                     ctx.writeAndFlush(response);
+
+                    ClientStatus clientStatus = requestInfo.getClientStatus();
+                    if (!clientStatus.isSuccess()) {
+                        ResponseMessage responseMsg = new ResponseMessage();
+                        responseMsg.setRequestId(requestInfo.getRequestId());
+                        responseMsg.setStartTime(System.currentTimeMillis());
+                        responseMsg.setEndTime(System.currentTimeMillis());
+                        responseMsg.setSize(0);
+                        responseMsg.setStatus(-1);
+                        responseMsg.setReasonPhrase(clientStatus.getStatus().name());
+                        messageQueue.pushMsg(Topic.RECORD, responseMsg);
+                    }
+
                     future.channel().close();
                     ctx.channel().close();
                 }
@@ -195,7 +211,6 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         // TODO channel close - log
         log.error("Server channel unexpected error, closing...", cause);
-        cause.printStackTrace();
         if (channelFuture != null) {
             channelFuture.channel().close();
         }

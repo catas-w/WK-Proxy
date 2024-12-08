@@ -39,7 +39,7 @@ public class ProxyServerTest {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(10 * 1000)
                 .setConnectionRequestTimeout(10 * 1000)
-                .setProxy(new HttpHost("127.0.0.1", 9999))
+                .setProxy(new HttpHost("127.0.0.1", 9966))
                 .build();
 
         httpClient = HttpClients.custom()
