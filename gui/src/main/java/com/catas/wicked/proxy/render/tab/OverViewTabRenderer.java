@@ -147,9 +147,9 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
 
         // set status-column style
         if (response == null) {
-            requestOverviewInfo.getStatus().setColumnStyleClass(PairEntry.ColumnStyle.PENDING.getStyleClass());
+            requestOverviewInfo.getStatus().setColumnStyle(PairEntry.ColumnStyle.PENDING);
         } else {
-            requestOverviewInfo.getStatus().setColumnStyleClass(PairEntry.ColumnStyle.OK.getStyleClass());
+            requestOverviewInfo.getStatus().setColumnStyle(PairEntry.ColumnStyle.OK);
         }
 
         // basic

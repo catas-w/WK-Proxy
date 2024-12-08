@@ -2,6 +2,8 @@ package com.catas.wicked.common.bean;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.FloatProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import lombok.AllArgsConstructor;
@@ -16,12 +18,22 @@ public class PairEntry extends RecursiveTreeObject<PairEntry> {
     @AllArgsConstructor
     public enum ColumnStyle {
 
-        OK("ok"),
-        PENDING("pending"),
-        ERROR("error"),
+        OK("ok", "fas-check-circle"),
+        PENDING("pending", "fas-minus-circle"),
+        ERROR("error", "fas-times-circle"),
         ;
 
         private final String styleClass;
+        private final String iconStr;
+
+        public static ColumnStyle getByStyle(String style) {
+            for (ColumnStyle value : ColumnStyle.values()) {
+                if (value.getStyleClass().equals(style)) {
+                    return value;
+                }
+            }
+            return null;
+        }
     }
 
     private StringProperty key;
@@ -29,7 +41,7 @@ public class PairEntry extends RecursiveTreeObject<PairEntry> {
     private FloatProperty time;
     private StringProperty tooltip;
 
-    private final StringProperty columnStyleClass = new SimpleStringProperty(null);
+    private final SimpleObjectProperty<ColumnStyle> columnStyle = new SimpleObjectProperty<>(null);
 
     public PairEntry(String key, String val) {
         this.key = new SimpleStringProperty(key);
@@ -83,15 +95,15 @@ public class PairEntry extends RecursiveTreeObject<PairEntry> {
         this.tooltip.set(tooltip);
     }
 
-    public String getColumnStyleClass() {
-        return columnStyleClass.get();
+    public ColumnStyle getColumnStyle() {
+        return columnStyle.get();
     }
 
-    public StringProperty columnStyleClassProperty() {
-        return columnStyleClass;
+    public SimpleObjectProperty<ColumnStyle> columnStyleProperty() {
+        return columnStyle;
     }
 
-    public void setColumnStyleClass(String columnStyleClass) {
-        this.columnStyleClass.set(columnStyleClass);
+    public void setColumnStyle(ColumnStyle columnStyle) {
+        this.columnStyle.set(columnStyle);
     }
 }

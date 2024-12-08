@@ -3,9 +3,12 @@ package com.catas.wicked.proxy.gui.componet;
 import com.catas.wicked.common.bean.PairEntry;
 import com.jfoenix.controls.cells.editors.base.EditorNodeBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
+import javafx.geometry.Insets;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +19,8 @@ import java.util.List;
 public class SelectableTreeTableCell extends GenericEditableTreeTableCell<PairEntry, PairEntry> {
 
     private final Text text;
+
+    private PairEntry.ColumnStyle columnStyle;
 
     public SelectableTreeTableCell(EditorNodeBuilder builder, TreeTableColumn<PairEntry, PairEntry> valColumn) {
         super(builder);
@@ -30,8 +35,9 @@ public class SelectableTreeTableCell extends GenericEditableTreeTableCell<PairEn
     @Override
     public void cancelEdit() {
         super.cancelEdit();
-        setGraphic(text);
-        setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        // setGraphic(text);
+        // setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        refreshGraphic();
     }
 
     @Override
@@ -43,16 +49,31 @@ public class SelectableTreeTableCell extends GenericEditableTreeTableCell<PairEn
             // toggle style
             List<String> styleList = Arrays.stream(PairEntry.ColumnStyle.values()).map(PairEntry.ColumnStyle::getStyleClass).toList();
             text.getStyleClass().removeIf(styleList::contains);
-            if (item.getColumnStyleClass() != null) {
-                text.getStyleClass().add(item.getColumnStyleClass());
-            }
 
-            setGraphic(text);
-            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            // set icon
+            this.columnStyle = item.getColumnStyle();
+            refreshGraphic();
         }
     }
 
-    public void addTextStyle(String style) {
-        this.text.getStyleClass().add(style);
+    private void refreshGraphic() {
+        if (columnStyle != null) {
+            text.getStyleClass().add(columnStyle.getStyleClass());
+
+            HBox hBox = new HBox();
+            hBox.getStyleClass().add("overview-table-value-box");
+
+            FontIcon icon = new FontIcon(columnStyle.getIconStr());
+            icon.getStyleClass().add(columnStyle.getStyleClass());
+
+            hBox.getChildren().addAll(icon, text);
+            HBox.setMargin(icon, new Insets(2, 4, 2, 0));
+
+            setGraphic(hBox);
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        } else {
+            setGraphic(text);
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        }
     }
 }

@@ -216,26 +216,40 @@
     /*-fx-max-width: 300;*/
 }
 
-.tree-table-view .tree-table-cell .overview-table-value-text {
-    /*-fx-text-fill: #0033ff;*/
-    /*-fx-font-family: "MiSans Demibold";*/
-    /*-fx-fill: #414141;*/
-}
+
 .tree-table-view .tree-table-cell .overview-table-value-text.ok {
-    -fx-font-family: "MiSans Demibold";
-    -fx-fill: #363636;
+    /*-fx-font-family: "MiSans Demibold";*/
+    -fx-fill: #212121;
 }
 .tree-table-view .tree-table-cell .overview-table-value-text.pending {
     -fx-font-family: "MiSans Demibold";
     -fx-fill: #a8a8a8;
 }
 .tree-table-view .tree-table-cell .overview-table-value-text.error {
-    -fx-font-family: "MiSans Demibold";
-    -fx-fill: #ce2b2b;
+    /*-fx-font-family: "MiSans Demibold";*/
+    -fx-fill: #212121;
 }
 .tree-table-view .overview-table-value:odd,
 .tree-table-view .overview-table-value:even {
     /*-fx-background-color: rgba(59, 220, 207, 0.21);*/
+}
+
+.overview-table-value-box {
+    /*-fx-max-width: 30px !important;*/
+    /*-fx-border-color: brown;*/
+    /*-fx-border-width: 1;*/
+}
+.overview-table-value-box .ikonli-font-icon {
+    -fx-icon-size: 12;
+}
+.overview-table-value-box .ikonli-font-icon.ok {
+    -fx-icon-color: #3eb352;
+}
+.overview-table-value-box .ikonli-font-icon.pending {
+    -fx-icon-color: #dab330;
+}
+.overview-table-value-box .ikonli-font-icon.error {
+    -fx-icon-color: #ce2b2b;
 }
 
 /*************** treeTableView button ***************/
