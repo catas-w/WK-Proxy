@@ -272,7 +272,7 @@
 
                         <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="3" GridPane.columnIndex="1">
                             <Label styleClass="link-label" text="GitHub:"/>
-                            <Hyperlink fx:id="githubLink" styleClass="link" text="https://github.com/catas-w/HumBird-Proxy"/>
+                            <Hyperlink fx:id="githubLink" styleClass="link" text="https://github.com/catas-w/WK-Proxy"/>
                         </HBox>
                         <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="4" GridPane.columnIndex="1">
                             <Label styleClass="link-label" text="Twitter/X:"/>

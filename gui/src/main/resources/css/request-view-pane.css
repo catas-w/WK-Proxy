@@ -36,6 +36,11 @@
     -fx-background-insets: 0;
     -fx-background-color: TRANSPARENT;
 }
+.tree-view .corner {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-width: 0;
+}
+
 .tree-view:custom-focused .tree-cell:filled:selected,
 .tree-view:focused .tree-cell:filled:selected {
     -fx-background-color: rgba(12, 204, 204, 0.5);
@@ -113,6 +118,10 @@
 .list-view {
     -fx-background-insets: 0;
     -fx-background-color: TRANSPARENT;
+}
+.list-view .corner {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-width: 0;
 }
 .list-cell:selected .req-method-label {
     -fx-opacity: 1;

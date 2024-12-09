@@ -12,6 +12,7 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.catas.wicked.proxy.gui.controller.RequestViewController">
     <stylesheets>
+        <URL value="@../css/app.css"/>
         <URL value="@/css/common-design.css" />
         <URL value="@/css/request-view-pane.css" />
     </stylesheets>

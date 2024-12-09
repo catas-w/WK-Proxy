@@ -170,10 +170,10 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
 
         // timing
         requestOverviewInfo.getTimeCost().setVal(response == null ? "-": response.getEndTime() - request.getStartTime() + " ms");
-        requestOverviewInfo.getRequestTime().setVal(request.getStartTime() + "-" + request.getEndTime());
+        requestOverviewInfo.getRequestTime().setVal(request.getEndTime() - request.getStartTime() + " ms");
         requestOverviewInfo.getRequestStart().setVal(dateFormat.format(new Date(request.getStartTime())));
         requestOverviewInfo.getRequestEnd().setVal(dateFormat.format(new Date(request.getEndTime())));
-        requestOverviewInfo.getRespTime().setVal(response == null ? "-": response.getStartTime() + " - " + response.getEndTime());
+        requestOverviewInfo.getRespTime().setVal(response == null ? "-": response.getEndTime() - response.getStartTime() + " ms");
         requestOverviewInfo.getRespStart().setVal(response == null ? "-": dateFormat.format(new Date(response.getStartTime())));
         requestOverviewInfo.getRespEnd().setVal(response == null ? "-": dateFormat.format(new Date(response.getEndTime())));
 

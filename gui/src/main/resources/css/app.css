@@ -35,6 +35,11 @@
     -fx-background-color: #bababa;
     -fx-background-radius: 5em;
 }
+.scroll-pane .corner {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-width: 0;
+    /*-fx-border-color: cyan;*/
+}
 /*.scroll-bar .increment-button {*/
 /*    visibility: hidden;*/
 /*    !*-fx-opacity: 0;*!*/
