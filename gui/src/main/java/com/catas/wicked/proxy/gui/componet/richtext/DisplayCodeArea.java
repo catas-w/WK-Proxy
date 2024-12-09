@@ -159,7 +159,7 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
         this.getStyleClass().add(STYLE);
         codeArea.setEditable(false);
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.setContextMenu(new CodeAreaContextMenu());
+        codeArea.setContextMenu(new CodeAreaContextMenu(this.codeArea));
 
         // this.visibleParagraphStyler =new VisibleParagraphStyler<>(codeArea, getCurrentHighlighter());
         // codeArea.getVisibleParagraphs().addModificationObserver(visibleParagraphStyler);
