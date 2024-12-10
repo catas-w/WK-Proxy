@@ -36,7 +36,7 @@ public class AboutSettingService extends AbstractSettingService{
 
     @Override
     public void init() {
-        String version = resourceMessageProvider.getMessage("version.label") + " " + ApplicationConfig.APP_VERSION;
+        String version = resourceMessageProvider.getMessage("version.label") + " " + applicationConfig.getAppVersion();
         settingController.getAppVersionLabel().setText(version);
 
         settingController.getGithubLink().setText(REPO_LINK);

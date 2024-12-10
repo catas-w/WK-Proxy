@@ -42,7 +42,7 @@
     -fx-icon-color: rgba(77, 77, 77, 0.77);
 }
 .main-menu-btn .context-menu {
-    -fx-background-color: rgba(255, 255, 255, 0.8);
+    -fx-background-color: rgba(255, 255, 255, 0.95);
     -fx-background-insets: 0, 1, 2;
     -fx-background-radius: 6 6 6 6, 6 6 6 6, 6 6 6 6;
     /*    -fx-padding: 0.666667em 0.083333em 0.666667em 0.083333em;  8 1 8 1 */
@@ -60,7 +60,7 @@
 }
 
 .main-menu-btn .label {
-    -fx-font-family: "MiSans Demibold";
+    /*-fx-font-family: "MiSans Demibold";*/
     -fx-text-fill: rgba(77, 77, 77, 0.77);
 }
 

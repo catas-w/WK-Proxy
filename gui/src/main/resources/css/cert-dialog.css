@@ -99,3 +99,33 @@
     -fx-icon-color: rgba(157, 157, 157, 0.7);
     -fx-icon-size: 15;
 }
+
+
+/******* table-view ******/
+.table-view{
+    -fx-background-color: #ffffff;
+    -fx-table-cell-border-color: transparent;
+    -fx-selection-bar: transparent;
+    -fx-font-size: 13px;
+
+    -fx-border-width: 1;
+    -fx-border-color: #c0c0c0;
+    -fx-border-radius: 5 5 5 5;
+}
+.table-view .column-header-background{
+    -fx-background-color: #ffffff;
+    -fx-max-height: 20;
+    -fx-pref-height: 20;
+    -fx-min-height: 0;
+}
+.table-view .column-header-background .filler {
+    -fx-background-color: TRANSPARENT;
+}
+.table-view .column-header {
+    -fx-background-color: #ffffff;
+}
+.table-view .column-header .label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: rgb(128, 128, 128);
+    -fx-font-family: "MiSans Demibold";
+}

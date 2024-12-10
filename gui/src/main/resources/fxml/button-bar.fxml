@@ -5,7 +5,6 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import org.kordamp.ikonli.javafx.*?>
 
 <?import com.catas.wicked.proxy.gui.componet.CustomToggleNode?>
@@ -98,7 +97,7 @@
                 <Tooltip text="%locate-btn.tooltip" />
             </tooltip>
         </CustomButton>
-        <CustomButton fx:id="markerBtn" onAction="#mockTreeItem" prefWidth="200.0" textOverrun="CLIP">
+        <CustomButton fx:id="markerBtn" onAction="#mockTreeItem" prefWidth="200.0" textOverrun="CLIP" visible="true">
             <graphic>
                 <FontIcon iconColor="#616161" iconLiteral="fas-marker" iconSize="18" />
             </graphic>

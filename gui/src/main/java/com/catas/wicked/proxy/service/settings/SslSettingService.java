@@ -155,7 +155,7 @@ public class SslSettingService extends AbstractSettingService {
             CertSelectComponent component = new CertSelectComponent(config.getName(), config.getId(), iconStr);
             component.setToggleGroup(certSelectGroup);
             component.setPreviewEvent(actionEvent -> displayPreviewDialog(config.getId()));
-            component.setPreviewTooltip( ("cert-preview.tooltip"));
+            component.setPreviewTooltip(resourceMessageProvider.getMessage("cert-preview.tooltip"));
 
             if (StringUtils.equals(selectedCertId, config.getId())) {
                 component.setSelected(true);
@@ -253,9 +253,8 @@ public class SslSettingService extends AbstractSettingService {
         valColumn.setSortable(false);
         valColumn.setEditable(true);
         valColumn.setCellValueFactory(new PropertyValueFactory<>("val"));
-        valColumn.setCellFactory((TableColumn<HeaderEntry, String> param) -> {
-            return new SelectableTableCell<>(new TextAreaEditorNodeBuilder(valColumn), valColumn);
-        });
+        valColumn.setCellFactory((TableColumn<HeaderEntry, String> param) ->
+                new SelectableTableCell<>(new TextAreaEditorNodeBuilder(valColumn), valColumn));
         tableView.getColumns().setAll(keyColumn, valColumn);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
@@ -278,7 +277,7 @@ public class SslSettingService extends AbstractSettingService {
 
         VBox vBox = new VBox();
         vBox.setPrefWidth(460);
-        vBox.setPrefHeight(500);
+        vBox.setPrefHeight(460);
         vBox.getChildren().addAll(label, tableView);
 
         // dialog
@@ -287,6 +286,8 @@ public class SslSettingService extends AbstractSettingService {
         dialog.getDialogPane().lookupButton(cancelBtn).getStyleClass().add("cancel-btn");
         dialog.getDialogPane().getStylesheets()
                 .add(Objects.requireNonNull(getClass().getResource("/css/cert-dialog.css")).toExternalForm());
+        dialog.getDialogPane().getStylesheets()
+                .add(Objects.requireNonNull(getClass().getResource("/css/app.css")).toExternalForm());
 
         dialog.showAndWait();
     }
