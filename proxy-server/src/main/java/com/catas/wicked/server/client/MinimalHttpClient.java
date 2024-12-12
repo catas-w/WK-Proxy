@@ -15,6 +15,7 @@ import io.netty.handler.codec.http.DefaultLastHttpContent;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpVersion;
@@ -37,6 +38,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 
+import static com.catas.wicked.common.constant.NettyConstant.AGGREGATOR;
 import static com.catas.wicked.common.constant.NettyConstant.CLIENT_PROCESSOR;
 import static com.catas.wicked.common.constant.NettyConstant.EXTERNAL_PROXY;
 import static com.catas.wicked.common.constant.NettyConstant.HTTP_CODEC;
@@ -48,6 +50,7 @@ import static com.catas.wicked.common.constant.NettyConstant.SSL_HANDLER;
 @Slf4j
 public class MinimalHttpClient implements AutoCloseable {
 
+    public static final int MAX_CONTENT_SIZE = 10 * 1024 * 1024;
     private String uri;
     private HttpMethod method;
     private Map<String, String> headers;
@@ -56,6 +59,7 @@ public class MinimalHttpClient implements AutoCloseable {
     private ExternalProxyConfig proxyConfig;
     private int timeout = 60 * 1000;
     private HttpVersion httpVersion = HttpVersion.HTTP_1_1;
+    private boolean fetchFullResponse;
 
     private ChannelFuture channelFuture;
     HttpResponse httpResponse;
@@ -111,6 +115,9 @@ public class MinimalHttpClient implements AutoCloseable {
                             ch.pipeline().addLast(SSL_HANDLER, context.newHandler(ch.alloc()));
                         }
                         ch.pipeline().addLast(HTTP_CODEC, new HttpClientCodec());
+                        if (fetchFullResponse) {
+                            ch.pipeline().addLast(AGGREGATOR, new HttpObjectAggregator(MAX_CONTENT_SIZE));
+                        }
                         ch.pipeline().addLast(CLIENT_PROCESSOR, new MinimalClientHandler(client));
                     }
                 });
@@ -230,6 +237,14 @@ public class MinimalHttpClient implements AutoCloseable {
         return httpVersion;
     }
 
+    public boolean isFetchFullResponse() {
+        return fetchFullResponse;
+    }
+
+    public void setFetchFullResponse(boolean fetchFullResponse) {
+        this.fetchFullResponse = fetchFullResponse;
+    }
+
     public void setHttpVersion(HttpVersion httpVersion) {
         this.httpVersion = httpVersion;
     }
@@ -286,6 +301,11 @@ public class MinimalHttpClient implements AutoCloseable {
 
         public Builder httpVersion(String httpVersion) {
             httpClient.setHttpVersion(HttpVersion.valueOf(httpVersion));
+            return this;
+        }
+
+        public Builder fullResponse(boolean fullResponse) {
+            httpClient.setFetchFullResponse(fullResponse);
             return this;
         }
     }

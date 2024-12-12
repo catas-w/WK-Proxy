@@ -114,7 +114,7 @@
                         <FontIcon iconLiteral="fas-cogs" iconSize="18" />
                     </graphic>
                 </MenuItem>
-                <MenuItem fx:id="releaseBtn" styleClass="main-menu-item" text="%release-btn.label">
+                <MenuItem fx:id="checkUpdateBtn" styleClass="main-menu-item" onAction="#checkUpdate" text="%release-btn.label">
                     <graphic>
                         <FontIcon iconLiteral="fas-book-reader" iconSize="18" />
                     </graphic>
@@ -131,9 +131,6 @@
                 </MenuItem>
             </items>
 
-            <!-- <font> -->
-            <!--     <Font name="MiSans Demibold" size="12.0" /> -->
-            <!-- </font> -->
             <graphic>
                 <FontIcon iconColor="#616161" iconLiteral="fas-cog" iconSize="18" />
             </graphic>
@@ -142,6 +139,10 @@
             </VBox.margin>
         </CustomMenuButton>
     </VBox>
+
+    <fx:define>
+        <fx:include source="app-update-dialog.fxml"/>
+    </fx:define>
 
     <fx:define>
         <fx:include fx:id="settingScene" source="setting-page/settings.fxml"/>

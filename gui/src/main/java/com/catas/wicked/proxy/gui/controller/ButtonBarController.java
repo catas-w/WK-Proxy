@@ -27,6 +27,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -61,6 +62,11 @@ public class ButtonBarController implements Initializable {
     public JFXToggleNode throttleBtn;
     public JFXToggleNode sysProxyBtn;
     public JFXButton clearBtn;
+    public MenuItem checkUpdateBtn;
+    // @FXML
+    // private JFXButton closeUpdateDialogBtn;
+    // public JFXProgressBar updateProgressBar;
+    // public JFXDialogLayout dialogLayout;
 
     private Dialog<Node> settingPage;
 
@@ -84,6 +90,9 @@ public class ButtonBarController implements Initializable {
 
     @Inject
     private SettingController settingController;
+
+    @Inject
+    private AppUpdateController appUpdateController;
 
     @Setter
     private MessageService messageService;
@@ -244,6 +253,13 @@ public class ButtonBarController implements Initializable {
         dialogPane.getStyleClass().add("myDialog");
         Window window = dialogPane.getScene().getWindow();
         window.setOnCloseRequest(e -> window.hide());
+    }
+
+    public void checkUpdate() {
+        if (appUpdateController.getAlert() == null) {
+            appUpdateController.initAlert(recordBtn.getScene().getWindow());
+        }
+        appUpdateController.showAlert();
     }
 
     public void adjustSettingDialogHeight(double targetHeight) {

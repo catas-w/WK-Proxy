@@ -1,0 +1,56 @@
+
+.jfx-dialog-layout {
+    -fx-text-fill: rgba(0, 0, 0, 0.87);
+    -fx-pref-width: 400;
+    -fx-pref-height: 100;
+    /*-fx-background-radius: 6 6 6 6;*/
+}
+
+.jfx-dialog-layout > .jfx-layout-heading {
+    -fx-alignment: center-left;
+    -fx-font-weight: BOLD;
+    -fx-padding: 10 24 10 24;
+}
+
+.jfx-dialog-layout > .jfx-layout-actions {
+    -fx-alignment: center-right;
+    -fx-hgap: 8;
+    -fx-padding: 8 8 8 8;
+}
+
+.jfx-dialog-layout > .jfx-layout-actions .jfx-button {
+    -fx-pref-height: 28;
+    -fx-max-height: 28;
+    -fx-min-width: 100;
+    -fx-padding: 2;
+}
+.jfx-dialog-layout > .jfx-layout-actions .jfx-button:hover {
+    -fx-opacity: 0.75;
+}
+
+.jfx-dialog-layout > .jfx-layout-body {
+    -fx-alignment: center-left;
+    -fx-padding: 0 0 10 10;
+    -fx-pref-width: 400;
+}
+
+.jfx-dialog-layout > .jfx-layout-body .label {
+    -fx-text-fill: #757575;
+    -fx-font-size: 16.0;
+    -fx-wrap-text: true;
+}
+
+
+.jfx-progress-bar {
+    -fx-progress-color: #29c1c1;
+    -fx-stroke-width: 3;
+}
+
+.main-hbox {
+    /*-fx-border-color: red;*/
+    /*-fx-border-width: 1;*/
+}
+.main-hbox .v-box {
+    /*-fx-border-color: #04292a;*/
+    /*-fx-border-width: 1;*/
+}

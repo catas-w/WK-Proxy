@@ -1,9 +1,9 @@
 package com.catas.wicked.server.client;
 
-import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.LastHttpContent;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 
 @Slf4j
-public class MinimalClientHandler extends ChannelDuplexHandler {
+public class MinimalClientHandler extends ChannelInboundHandlerAdapter {
 
     private final MinimalHttpClient client;
     private HttpResponse response;
@@ -44,7 +44,15 @@ public class MinimalClientHandler extends ChannelDuplexHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         super.channelRead(ctx, msg);
-        if (msg instanceof HttpResponse httpResponse){
+        if (msg instanceof FullHttpResponse fullHttpResponse) {
+            response = fullHttpResponse;
+            synchronized (client) {
+                if (client.responsePromise != null) {
+                    client.responsePromise.setSuccess(response);
+                }
+            }
+            client.close();
+        } else if (msg instanceof HttpResponse httpResponse){
             // System.out.println("Receiving: " + httpResponse);
             response = new DefaultFullHttpResponse(httpResponse.protocolVersion(), httpResponse.status());
         } else if (msg instanceof LastHttpContent) {
@@ -56,11 +64,6 @@ public class MinimalClientHandler extends ChannelDuplexHandler {
             }
             client.close();
         }
-    }
-
-    @Override
-    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        super.write(ctx, msg, promise);
     }
 
     @Override

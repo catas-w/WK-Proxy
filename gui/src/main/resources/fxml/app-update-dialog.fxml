@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<JFXDialogLayout xmlns="http://javafx.com/javafx"
+                 xmlns:fx="http://javafx.com/fxml"
+                 fx:controller="com.catas.wicked.proxy.gui.controller.AppUpdateController"
+                 >
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+        <URL value="@../css/update-dialog.css" />
+    </stylesheets>
+    <JFXDialogLayout fx:id="dialogLayout">
+        <heading>
+            <Label text="Check for Update"/>
+        </heading>
+        <body>
+            <HBox styleClass="main-hbox">
+                <ImageView fitHeight="100" fitWidth="100">
+                    <Image url="@../image/wk-proxy.2.png"/>
+                </ImageView>
+                <VBox styleClass="v-box">
+                    <Label text="Checking for Update...">
+                        <VBox.margin>
+                            <Insets top="10.0" bottom="15"/>
+                        </VBox.margin>
+                    </Label>
+                    <JFXProgressBar fx:id="updateProgressBar" prefWidth="250"/>
+                    <!-- <JFXSpinner/> -->
+                </VBox>
+            </HBox>
+        </body>
+        <actions>
+            <JFXButton fx:id="closeUpdateDialogBtn" text="%cancel.label">
+            </JFXButton>
+        </actions>
+    </JFXDialogLayout>
+</JFXDialogLayout>
