@@ -133,3 +133,19 @@
     -fx-pref-height: 26;
     -fx-border-width: 0;
 }
+
+
+/******* alert dialog *******/
+.custom-alert {
+    -fx-background-color: #ffffff;
+    -fx-font-family: "MiSans Normal";
+    -fx-padding: 10;
+}
+.custom-alert .button {
+    -fx-background-color: #d0d0d0;
+    -fx-background-radius: 5 5 5 5;
+}
+.custom-alert .button:hover {
+    -fx-background-color: #8a8a8a;
+    -fx-text-fill: #111111;
+}

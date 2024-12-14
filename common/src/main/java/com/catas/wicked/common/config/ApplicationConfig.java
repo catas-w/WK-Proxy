@@ -109,7 +109,7 @@ public class ApplicationConfig implements AutoCloseable {
     }
 
     public void loadSslContext() {
-        ThreadPoolService.getInstance().submit(() -> {
+        ThreadPoolService.getInstance().run(() -> {
             try {
                 long start = System.currentTimeMillis();
                 SslContextBuilder contextBuilder = SslContextBuilder.forClient()

@@ -138,7 +138,7 @@ public class MinimalHttpClient implements AutoCloseable {
             } else {
                 log.error("Error in minimal httpClient.", future.cause());
                 channelFuture.channel().close();
-                throw new RuntimeException(future.cause());
+                // throw new RuntimeException(future.cause());
             }
         });
     }

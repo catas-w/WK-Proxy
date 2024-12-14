@@ -19,13 +19,13 @@
 }
 
 .jfx-dialog-layout > .jfx-layout-actions .jfx-button {
-    -fx-pref-height: 28;
-    -fx-max-height: 28;
+    -fx-pref-height: 20;
+    -fx-max-height: 20;
     -fx-min-width: 100;
     -fx-padding: 2;
 }
 .jfx-dialog-layout > .jfx-layout-actions .jfx-button:hover {
-    -fx-opacity: 0.75;
+    -fx-background-color: #8a8a8a;
 }
 
 .jfx-dialog-layout > .jfx-layout-body {

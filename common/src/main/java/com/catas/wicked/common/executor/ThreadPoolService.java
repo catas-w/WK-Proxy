@@ -32,7 +32,11 @@ public class ThreadPoolService {
         service.execute(task);
     }
 
-    public Future<?> submit(Runnable task) {
+    public void submit(Runnable task) {
+        service.submit(task);
+    }
+
+    public <T> Future<T> submit(Callable<T> task) {
         return service.submit(task);
     }
 
