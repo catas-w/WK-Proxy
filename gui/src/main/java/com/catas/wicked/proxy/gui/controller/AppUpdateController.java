@@ -3,18 +3,15 @@ package com.catas.wicked.proxy.gui.controller;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.executor.ThreadPoolService;
 import com.catas.wicked.common.provider.ResourceMessageProvider;
+import com.catas.wicked.common.provider.VersionCheckProvider;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.CommonUtils;
 import com.catas.wicked.proxy.gui.componet.skin.CustomJFXProgressBarSkin;
-import com.catas.wicked.server.client.MinimalHttpClient;
 import com.jfoenix.animation.alert.JFXAlertAnimation;
 import com.jfoenix.controls.JFXAlert;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXProgressBar;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.animation.KeyFrame;
@@ -34,15 +31,11 @@ import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Singleton
@@ -69,6 +62,9 @@ public class AppUpdateController implements Initializable {
 
     @Inject
     private ResourceMessageProvider messageProvider;
+
+    @Inject
+    private VersionCheckProvider versionCheckProvider;
 
     public static final String RELEASE_URL = "https://github.com/catas-w/WK-Proxy/releases/latest";
 
@@ -118,51 +114,27 @@ public class AppUpdateController implements Initializable {
     }
 
     private void checkUpdate() {
-        Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("Accept-Encoding", "gzip, deflate, br");
-        headerMap.put("Accept", "*/*");
-        headerMap.put("Host", "GitHub.com");
-        headerMap.put("Connection", "keep-alive");
-        LinkedHashMap<String, String> headersMap = new LinkedHashMap<>();
-
         try {
-            MinimalHttpClient client = MinimalHttpClient.builder()
-                    .uri(RELEASE_URL)
-                    .method(HttpMethod.GET)
-                    .headers(headerMap)
-                    .fullResponse(true)
-                    .build();
-            client.execute();
-            HttpResponse response = client.response();
-            HttpHeaders headers = response.headers();
-            headers.forEach(item -> {
-                headersMap.put(item.getKey(), item.getValue());
-            });
+            // make animation run for a while
+            Thread.sleep(500);
+
+            Pair<String, String> res = versionCheckProvider.fetchLatestVersion();
+            String version = res.getLeft();
+            String appVersion = "Wk-Proxy " + version;
+            if (CommonUtils.compareVersions(appConfig.getAppVersion(), version) >= 0) {
+                AlertUtils.alertLater(Alert.AlertType.INFORMATION,
+                        appVersion + " " + messageProvider.getMessage("check-update.latest-version.label"));
+            } else {
+                String info = messageProvider.getMessage("check-update.new-release.label") + " " + version;
+                Platform.runLater(() -> {
+                    displayDownloadDialog(info, res.getRight());
+                });
+            }
         } catch (Exception e) {
             log.error("Error in fetching update information.", e);
             AlertUtils.alertLater(Alert.AlertType.ERROR, messageProvider.getMessage("check-update.error.label"));
         } finally {
             closeAlert();
-        }
-
-        String location = headersMap.getOrDefault("Location", "");
-        Pattern pattern = Pattern.compile("tag/(.+)");
-        Matcher matcher = pattern.matcher(location);
-
-        if (matcher.find()) {
-            String version = matcher.group(1);
-            String appVersion = "Wk-Proxy " + matcher.group(1);
-            if (CommonUtils.compareVersions(appConfig.getAppVersion(), version) >= 0) {
-                AlertUtils.alertLater(Alert.AlertType.INFORMATION,
-                        appVersion + messageProvider.getMessage("check-update.latest-version.label"));
-            } else {
-                String info = messageProvider.getMessage("check-update.new-release.label") + " " + version;
-                Platform.runLater(() -> {
-                    displayDownloadDialog(info, location);
-                });
-            }
-        } else {
-            AlertUtils.alertWarning(messageProvider.getMessage("check-update.error.label"));
         }
     }
 

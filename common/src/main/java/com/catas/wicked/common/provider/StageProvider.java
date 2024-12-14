@@ -1,4 +1,4 @@
-package com.catas.wicked.proxy.provider;
+package com.catas.wicked.common.provider;
 
 import javafx.stage.Stage;
 

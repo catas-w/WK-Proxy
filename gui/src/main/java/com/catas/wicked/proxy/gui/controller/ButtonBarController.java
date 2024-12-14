@@ -46,7 +46,6 @@ import java.util.ResourceBundle;
 
 import static com.catas.wicked.common.constant.StyleConstant.COLOR_ACTIVE;
 import static com.catas.wicked.common.constant.StyleConstant.COLOR_INACTIVE;
-import static com.catas.wicked.common.constant.StyleConstant.COLOR_RED;
 import static com.catas.wicked.common.constant.StyleConstant.COLOR_SUSPEND;
 
 @Slf4j
@@ -63,10 +62,6 @@ public class ButtonBarController implements Initializable {
     public JFXToggleNode sysProxyBtn;
     public JFXButton clearBtn;
     public MenuItem checkUpdateBtn;
-    // @FXML
-    // private JFXButton closeUpdateDialogBtn;
-    // public JFXProgressBar updateProgressBar;
-    // public JFXDialogLayout dialogLayout;
 
     private Dialog<Node> settingPage;
 
@@ -133,7 +128,7 @@ public class ButtonBarController implements Initializable {
             FontIcon icon = (FontIcon) recordBtn.getGraphic();
             if (newValue) {
                 icon.setIconLiteral("fas-record-vinyl");
-                icon.setIconColor(COLOR_RED);
+                icon.setIconColor(COLOR_ACTIVE);
             } else {
                 icon.setIconLiteral("far-play-circle");
                 icon.setIconColor(COLOR_INACTIVE);
@@ -191,12 +186,27 @@ public class ButtonBarController implements Initializable {
                 icon.setIconColor(COLOR_SUSPEND);
             }
         });
+
+        bindUpdateBadge();
     }
 
     public void mockTreeItem() {
         markerBtn.setOnAction(event -> {
             requestMockService.mockRequest();
         });
+    }
+
+    public void bindUpdateBadge() {
+        Node updateBadge = checkUpdateBtn.getGraphic().lookup(".check-update-badge");
+        System.out.println(updateBadge);
+        if (updateBadge != null) {
+            appConfig.getObservableConfig().hasNewVersionProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == null) {
+                    return;
+                }
+                updateBadge.setVisible(newValue);
+            });
+        }
     }
 
     public void displayProxySettingPage() {
@@ -259,6 +269,7 @@ public class ButtonBarController implements Initializable {
         if (appUpdateController.getAlert() == null) {
             appUpdateController.initAlert(recordBtn.getScene().getWindow());
         }
+        appConfig.getObservableConfig().setHasNewVersion(false);
         appUpdateController.showAlert();
     }
 

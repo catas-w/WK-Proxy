@@ -116,7 +116,10 @@
                 </MenuItem>
                 <MenuItem fx:id="checkUpdateBtn" styleClass="main-menu-item" onAction="#checkUpdate" text="%release-btn.label">
                     <graphic>
-                        <FontIcon iconLiteral="fas-book-reader" iconSize="18" />
+                        <HBox>
+                            <FontIcon iconLiteral="fas-book-reader" iconSize="18"/>
+                            <FontIcon iconLiteral="fas-circle" visible="false" styleClass="check-update-badge"/>
+                        </HBox>
                     </graphic>
                 </MenuItem>
                 <MenuItem fx:id="aboutBtn" styleClass="main-menu-item" onAction="#displayAboutPage" text="%about-btn.label">

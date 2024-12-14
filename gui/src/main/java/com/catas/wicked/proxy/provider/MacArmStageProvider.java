@@ -5,6 +5,7 @@ import com.catas.wicked.common.constant.BlurOption;
 import com.catas.wicked.common.jna.FoundationLibrary;
 import com.catas.wicked.common.jna.WindowBlurLibrary;
 import com.catas.wicked.common.provider.MacArmCondition;
+import com.catas.wicked.common.provider.StageProvider;
 import com.catas.wicked.proxy.gui.controller.AppController;
 import com.sun.javafx.stage.WindowHelper;
 import com.sun.javafx.tk.quantum.WindowStage;

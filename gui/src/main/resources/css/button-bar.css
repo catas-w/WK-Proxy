@@ -64,6 +64,11 @@
     -fx-text-fill: rgba(77, 77, 77, 0.77);
 }
 
+.check-update-badge.ikonli-font-icon {
+    -fx-icon-color: rgb(227, 0, 0) !important;
+    -fx-icon-size: 10;
+    -fx-translate-x: 2;
+}
 
 /********** toggle-node **********/
 .jfx-toggle-node {

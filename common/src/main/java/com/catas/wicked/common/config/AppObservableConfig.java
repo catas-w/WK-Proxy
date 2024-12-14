@@ -23,6 +23,8 @@ public class AppObservableConfig {
 
     private final SimpleBooleanProperty handlingSSL = new SimpleBooleanProperty(false);
 
+    private final SimpleBooleanProperty hasNewVersion = new SimpleBooleanProperty(false);
+
     public AppObservableConfig() {
     }
 
@@ -84,5 +86,17 @@ public class AppObservableConfig {
 
     public void setHandlingSSL(boolean handlingSSL) {
         this.handlingSSL.set(handlingSSL);
+    }
+
+    public boolean isHasNewVersion() {
+        return hasNewVersion.get();
+    }
+
+    public SimpleBooleanProperty hasNewVersionProperty() {
+        return hasNewVersion;
+    }
+
+    public void setHasNewVersion(boolean hasNewVersion) {
+        this.hasNewVersion.set(hasNewVersion);
     }
 }

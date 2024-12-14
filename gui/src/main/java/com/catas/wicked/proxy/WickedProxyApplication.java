@@ -6,7 +6,7 @@ import app.supernaut.fx.fxml.FxmlLoaderFactory;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.proxy.gui.controller.AppController;
 import com.catas.wicked.proxy.message.MessageService;
-import com.catas.wicked.proxy.provider.StageProvider;
+import com.catas.wicked.common.provider.StageProvider;
 import com.catas.wicked.server.proxy.ProxyServer;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Inject;
