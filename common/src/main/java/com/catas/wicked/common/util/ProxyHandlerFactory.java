@@ -6,6 +6,8 @@ import io.netty.handler.proxy.ProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
 
+import java.util.Optional;
+
 
 /**
  * To create external proxy handler for http-clients
@@ -26,8 +28,8 @@ public class ProxyHandlerFactory {
                     if (proxyConfig.isProxyAuth()) {
                         httpProxyHandler = new HttpProxyHandler(
                                 proxyConfig.getSocketAddress(),
-                                proxyConfig.getUsername(),
-                                proxyConfig.getPassword());
+                                Optional.ofNullable(proxyConfig.getUsername()).orElse(""),
+                                Optional.ofNullable(proxyConfig.getPassword()).orElse("")); // fix: NPE
                     } else {
                         httpProxyHandler = new HttpProxyHandler(proxyConfig.getSocketAddress());
                     }

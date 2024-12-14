@@ -35,7 +35,7 @@ public class AlertUtils {
 
     public static void alertLater(Alert.AlertType type, String msg) {
         Platform.runLater(() -> {
-            alert(type, msg, msg);
+            alert(type, null, msg);
         });
     }
 
