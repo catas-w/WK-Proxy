@@ -136,7 +136,6 @@ public class RequestViewController implements Initializable {
                 requestViewService.updateRequestTab(newValue.getRequestId());
                 messageService.selectRequestItem(newValue.getRequestId(), false);
             } else {
-                System.out.println("selected null2");
                 contextMenu.getItems().forEach(menuItem -> menuItem.setDisable(true));
             }
         });

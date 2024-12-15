@@ -66,7 +66,7 @@ public class ClientChannelInitializer extends ChannelInitializer {
         list.add(SSL_HANDLER.name(), false, () -> null);
         list.add(HTTP_CODEC.name(), false, HttpClientCodec::new);
         list.add(CLIENT_PROCESSOR.name(), true, true,
-                () -> new ClientProcessHandler(serverChannel));
+                () -> new ClientProcessHandler(serverChannel, messageQueue));
         list.add(HTTP_AGGREGATOR.name(), false,
                 () -> new RearHttpAggregator(appConfig.getMaxContentSize()));
         list.add(POST_RECORDER.name(), true, true,

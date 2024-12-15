@@ -23,6 +23,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Dialog;
@@ -52,46 +53,47 @@ import static com.catas.wicked.common.constant.StyleConstant.COLOR_SUSPEND;
 @Singleton
 public class ButtonBarController implements Initializable {
 
-    public Node settingScene;
-    public JFXButton markerBtn;
-    public JFXToggleNode recordBtn;
-    public JFXToggleNode sslBtn;
-    public JFXButton locateBtn;
-    public JFXButton resendBtn;
-    public JFXToggleNode throttleBtn;
-    public JFXToggleNode sysProxyBtn;
-    public JFXButton clearBtn;
-    public MenuItem checkUpdateBtn;
-
-    private Dialog<Node> settingPage;
+    @FXML
+    private Node settingScene;
+    @FXML
+    private JFXButton markerBtn;
+    @FXML
+    private JFXToggleNode recordBtn;
+    @FXML
+    private JFXToggleNode sslBtn;
+    @FXML
+    private JFXButton locateBtn;
+    @FXML
+    private JFXButton resendBtn;
+    @FXML
+    private JFXToggleNode throttleBtn;
+    @FXML
+    private JFXToggleNode sysProxyBtn;
+    @FXML
+    private JFXButton clearBtn;
+    @FXML
+    private MenuItem checkUpdateBtn;
 
     @Inject
     private MessageQueue messageQueue;
-
     @Inject
     private ApplicationConfig appConfig;
-
     @Inject
     private Cache<String, RequestMessage> requestCache;
-
     @Inject
     private RequestMockService requestMockService;
-
     @Inject
     private RequestViewController requestViewController;
-
     @Inject
     private ScheduledManager scheduledManager;
-
     @Inject
     private SettingController settingController;
-
     @Inject
     private AppUpdateController appUpdateController;
 
     @Setter
     private MessageService messageService;
-
+    private Dialog<Node> settingPage;
     private String settingDialogTitle = "Settings";
 
     @SneakyThrows
@@ -198,7 +200,6 @@ public class ButtonBarController implements Initializable {
 
     public void bindUpdateBadge() {
         Node updateBadge = checkUpdateBtn.getGraphic().lookup(".check-update-badge");
-        System.out.println(updateBadge);
         if (updateBadge != null) {
             appConfig.getObservableConfig().hasNewVersionProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue == null) {

@@ -52,7 +52,6 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
 
     private ChannelFuture channelFuture;
 
-    // TODO: ConcurrentLinkedQueue
     private final List<Object> requestList;
 
     private final MessageQueue messageQueue;
@@ -155,7 +154,7 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
                         targetStatus = ClientStatus.Status.ADDR_NOTFOUND;
                     } else {
                         // javax.net.ssl.SSLPeerUnverifiedException
-                        System.out.println(cause);
+                        log.error("Unknown client error: ", cause);
                         targetStatus = ClientStatus.Status.UNKNOWN_ERR;
                     }
                     requestInfo.updateClientStatus(targetStatus, cause.getMessage());
@@ -177,7 +176,7 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
                         responseMsg.setEndTime(System.currentTimeMillis());
                         responseMsg.setSize(0);
                         responseMsg.setStatus(-1);
-                        responseMsg.setReasonPhrase(clientStatus.getStatus().name());
+                        responseMsg.setReasonPhrase(clientStatus.getStatus().getDesc());
                         messageQueue.pushMsg(Topic.RECORD, responseMsg);
                     }
 
