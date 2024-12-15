@@ -190,6 +190,9 @@ public class MessageService {
             if (updateMsg.getHeaders() != null) {
                 requestMessage.getHeaders().putAll(updateMsg.getHeaders());
             }
+            if (StringUtils.isNoneEmpty(updateMsg.getRemoteAddress())) {
+                requestMessage.setRemoteAddress(updateMsg.getRemoteAddress());
+            }
             requestCache.put(requestMessage.getRequestId(), requestMessage);
 
             // update time in treeNode

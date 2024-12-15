@@ -1,12 +1,10 @@
 package com.catas.wicked.proxy.gui.componet;
 
 import com.catas.wicked.common.bean.RequestCell;
-import com.catas.wicked.proxy.service.RequestViewService;
 import javafx.animation.FadeTransition;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
@@ -18,19 +16,13 @@ public class RequestViewListCell<T> extends ListCell<T> {
     private StackPane selectedPane = new StackPane();
     private Label methodLabel;
     private FadeTransition fadeTransition;
-    private FadeTransition showTransition;
     private RequestCell requestCell;
-    private RequestViewService requestViewService;
     private final static String DEFAULT_STYLE_CLASS = "req-list-cell";
 
     public RequestViewListCell(ListView<RequestCell> listView) {
         this.getStyleClass().add(DEFAULT_STYLE_CLASS);
         selectedPane.getStyleClass().add("req-cell-bar");
         selectedPane.setMouseTransparent(true);
-    }
-
-    public void setRequestViewService(RequestViewService requestViewService) {
-        this.requestViewService = requestViewService;
     }
 
     /**
@@ -46,7 +38,6 @@ public class RequestViewListCell<T> extends ListCell<T> {
             fadeTransition.setFromValue(1.0);
             fadeTransition.setToValue(0.0);
         }
-        // showTransition.play();
         fadeTransition.play();
     }
 
@@ -80,7 +71,6 @@ public class RequestViewListCell<T> extends ListCell<T> {
 
     private void updateDisplay(T item, boolean empty) {
         if (item == null || empty) {
-            // hbox = null;
             setText(null);
             setGraphic(null);
         } else {

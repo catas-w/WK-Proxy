@@ -15,6 +15,7 @@ public class RequestOverviewInfo {
     private final PairEntry status = new PairEntry("Status");
     private final PairEntry protocol = new PairEntry("Protocol");
     private final PairEntry remoteHost = new PairEntry("Remote Host");
+    private final PairEntry remoteAddr = new PairEntry("Remote Address");
     private final PairEntry remotePort = new PairEntry("Remote Port");
     private final PairEntry clientHost = new PairEntry("Client Host");
     private final PairEntry clientPort = new PairEntry("Client Port");
@@ -41,6 +42,7 @@ public class RequestOverviewInfo {
         status.setKey(resourceMessageProvider.getMessage("status.label"));
         protocol.setKey(resourceMessageProvider.getMessage("protocol.label"));
         remoteHost.setKey(resourceMessageProvider.getMessage("remote-host.label"));
+        remoteAddr.setKey(resourceMessageProvider.getMessage("remote-addr.label"));
         remotePort.setKey(resourceMessageProvider.getMessage("remote-port.label"));
         clientHost.setKey(resourceMessageProvider.getMessage("client-host.label"));
         clientPort.setKey(resourceMessageProvider.getMessage("client-port.label"));

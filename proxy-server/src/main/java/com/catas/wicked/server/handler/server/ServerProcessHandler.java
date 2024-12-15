@@ -32,6 +32,8 @@ import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.channels.ClosedChannelException;
@@ -124,6 +126,14 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
             channelFuture.addListener((ChannelFutureListener) future -> {
                 if (future.isSuccess()) {
                     requestInfo.updateClientStatus(ClientStatus.Status.FINISHED);
+
+                    // remote address
+                    SocketAddress address = future.channel().remoteAddress();
+                    if (address instanceof InetSocketAddress inetSocketAddress) {
+                        // System.out.println(inetSocketAddress.getAddress().getHostAddress());
+                        requestInfo.setRemoteAddress(inetSocketAddress.getAddress().getHostAddress());
+                    }
+
                     ReferenceCountUtil.retain(msg);
                     future.channel().writeAndFlush(msg);
                     ctx.fireChannelRead(msg);

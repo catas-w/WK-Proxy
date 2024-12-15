@@ -129,8 +129,6 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
     }
 
     public void displayOverView(RequestMessage request) {
-        TreeTableView<PairEntry> overviewTable = detailTabController.getOverviewTable();
-        // if (overviewTable.getColumns() == null || overviewTable.getColumns().isEmpty()) {
         if (requestRoot == null) {
             initRequestRoot();
         }
@@ -158,12 +156,14 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
             code = response.getStatusStr() + " " + response.getReasonPhrase();
         }
 
+        System.out.println(request.getRemoteHost() + " === " + request.getRemoteAddress());
         // basic
         requestOverviewInfo.getUrl().setVal(url);
         requestOverviewInfo.getMethod().setVal(method);
         requestOverviewInfo.getStatus().setVal(code);
         requestOverviewInfo.getProtocol().setVal(protocol);
         requestOverviewInfo.getRemoteHost().setVal(request.getRemoteHost());
+        requestOverviewInfo.getRemoteAddr().setVal(request.getRemoteAddress() == null ? "-": request.getRemoteAddress());
         requestOverviewInfo.getRemotePort().setVal(String.valueOf(request.getRemotePort()));
         requestOverviewInfo.getClientHost().setVal(request.getLocalAddress());
         requestOverviewInfo.getClientPort().setVal(String.valueOf(request.getLocalPort()));
@@ -222,6 +222,7 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         TreeItem<PairEntry> statusItem = new TreeItem<>(requestOverviewInfo.getStatus());
         reqNode.getChildren().add(statusItem);
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getRemoteHost()));
+        reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getRemoteAddr()));
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getRemotePort()));
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getClientHost()));
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getClientPort()));

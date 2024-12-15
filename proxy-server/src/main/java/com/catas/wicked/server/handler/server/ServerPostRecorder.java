@@ -89,7 +89,7 @@ public class ServerPostRecorder extends ChannelDuplexHandler {
         requestMsg.setSize(requestInfo.getRequestSize());
         requestMsg.setRemoteHost(requestInfo.getHost());
         requestMsg.setRemotePort(requestInfo.getPort());
-        // requestMsg.setRemoteAddress(requestInfo.getRemoteAddress());
+        requestMsg.setRemoteAddress(requestInfo.getRemoteAddress());
         requestMsg.setLocalAddress(requestInfo.getLocalAddress());
         requestMsg.setLocalPort(requestInfo.getLocalPort());
         requestMsg.setClientStatus(requestInfo.getClientStatus().copy());
