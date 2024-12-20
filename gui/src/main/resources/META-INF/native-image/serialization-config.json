@@ -16,6 +16,12 @@
       "name":"com.catas.wicked.common.bean.message.ResponseMessage"
     },
     {
+      "name":"com.catas.wicked.common.constant.ClientStatus"
+    },
+    {
+      "name":"com.catas.wicked.common.constant.ClientStatus$Status"
+    },
+    {
       "name":"java.lang.Enum"
     },
     {
@@ -34,38 +40,9 @@
       "name":"java.util.HashMap"
     },
     {
-      "name":"java.util.concurrent.locks.AbstractOwnableSynchronizer"
-    },
-    {
-      "name":"java.util.concurrent.locks.AbstractQueuedSynchronizer"
-    },
-    {
-      "name":"java.util.concurrent.locks.ReentrantLock"
-    },
-    {
-      "name":"java.util.concurrent.locks.ReentrantLock$NonfairSync"
-    },
-    {
-      "name":"java.util.concurrent.locks.ReentrantLock$Sync"
-    },
-    {
-      "name":"org.ehcache.impl.internal.concurrent.ConcurrentHashMap"
-    },
-    {
-      "name":"org.ehcache.impl.internal.concurrent.ConcurrentHashMap$Segment"
-    },
-    {
-      "name":"org.ehcache.impl.internal.concurrent.ConcurrentHashMap$Segment[]"
-    },
-    {
-      "name":"org.ehcache.impl.persistence.FileBasedStateRepository$Tuple"
-    },
-    {
-      "name":"org.ehcache.impl.serialization.TransientStateHolder"
+      "name":"java.util.LinkedHashMap"
     }
   ],
   "lambdaCapturingTypes":[
-  ],
-  "proxies":[
   ]
 }

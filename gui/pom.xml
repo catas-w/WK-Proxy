@@ -64,6 +64,8 @@
                         <option>--add-opens</option>
                         <option>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</option>
                         <option>--add-opens</option>
+                        <option>javafx.controls/javafx.scene.control=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
                         <option>javafx.base/com.sun.javafx.binding=ALL-UNNAMED</option>
                         <option>--add-opens</option>
                         <option>javafx.base/com.sun.javafx.event=ALL-UNNAMED</option>
@@ -81,6 +83,16 @@
                         <option>javafx.base/com.sun.javafx.event=com.jfoenix</option>
                         <option>--add-opens</option>
                         <option>java.base/java.lang.reflect=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
+                        <option>javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
+                        <option>javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
+                        <option>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
+                        <option>javafx.graphics/com.sun.javafx.scene.control.skin=ALL-UNNAMED</option>
+                        <option>--add-opens</option>
+                        <option>javafx.controls/com.sun.javafx.scene.control.skin=ALL-UNNAMED</option>
 
                         <!-- system proxy -->
                         <option>-Djava.net.useSystemProxies=true</option>
@@ -95,25 +107,66 @@
                 <configuration>
                     <mainClass>com.catas.wicked.proxy.WickedProxyApplication</mainClass>
                     <linkerArgs>
-                        <arg>management_ext.lib</arg>
-                        <arg>psapi.lib</arg>
+                        <!-- <arg>management_ext.lib</arg> -->
+                        <!-- <arg>psapi.lib</arg> -->
                     </linkerArgs>
+                    <graalvmHome>/Library/Java/JavaVirtualMachines/graalvm-svm-java17-darwin-m1-gluon-22.1.0.1-Final/Contents/Home</graalvmHome>
+                    <!-- <graalvmHome>/Library/Java/JavaVirtualMachines/graalvm-java23-darwin-aarch64-gluon-23+25.1-dev/Contents/Home</graalvmHome> -->
                     <reflectionList>com.catas.wicked.proxy.WickedProxyApplication</reflectionList>
                     <nativeImageArgs>
+                        <arg>-H:+JNI</arg>
+                        <arg>-H:ExcludeResources='.*/libjnidispatch.a'</arg>
+                        <arg>--allow-incomplete-classpath</arg>
                         <arg>--initialize-at-build-time=org.slf4j.LoggerFactory</arg>
                         <arg>--initialize-at-build-time=org.slf4j.jul.JDK14LoggerAdapter</arg>
 
                         <arg>--initialize-at-build-time=com.sun.beans.introspect.ClassInfo</arg>
                         <arg>--initialize-at-build-time=java.beans.Introspector</arg>
 
-                        <arg>--initialize-at-run-time=io.netty.util.AbstractReferenceCounted</arg>
-                        <!-- <arg>&#45;&#45;initialize-at-run-time=io.netty.channel.epoll</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-run-time=io.netty.handler.ssl</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-run-time=io.netty.channel.unix</arg> -->
+                        <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeNoCleanerDirectByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator</arg>
+                        <arg>--trace-class-initialization=io.netty.buffer.UnpooledByteBufAllocator</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.PooledSlicedByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.PooledByteBufAllocator</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.PooledUnsafeDirectByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.AbstractReferenceCountedByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.ByteBufUtil</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.PooledByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.ByteBufAllocator</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.AbstractPooledDerivedByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.UnpooledUnsafeNoCleanerDirectByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.UnpooledHeapByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.UnpooledDirectByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.UnpooledUnsafeDirectByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.PooledSlicedByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.PooledUnsafeDirectByteBuf</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.Unpooled</arg>
+                        <arg>--initialize-at-run-time=io.netty.buffer.AbstractReferenceCountedByteBuf</arg>
 
-                        <arg>--add-opens java.base/java.lang.reflect=ALL-UNNAMED</arg>
-                        <arg>--add-opens java.base/java.lang=ALL-UNNAMED</arg>
-                        <arg>-Djava.net.useSystemProxies=true</arg>
+
+                        <arg>--initialize-at-run-time=io.netty.util.internal.logging.Log4JLogger</arg>
+                        <arg>--initialize-at-run-time=io.netty.util.AbstractReferenceCounted</arg>
+
+                        <arg>--initialize-at-run-time=io.netty.handler.ssl.ReferenceCountedOpenSslEngine</arg>
+                        <arg>--initialize-at-run-time=io.netty.handler.ssl.OpenSslAsyncPrivateKeyMethod</arg>
+                        <arg>--initialize-at-run-time=io.netty.handler.ssl.JdkNpnApplicationProtocolNegotiator</arg>
+                        <arg>--initialize-at-run-time=io.netty.handler.ssl.ConscryptAlpnSslEngine</arg>
+                        <arg>--initialize-at-run-time=io.netty.handler.ssl.JettyNpnSslEngine</arg>
+                        <arg>--initialize-at-run-time=io.netty.handler.ssl.OpenSslPrivateKeyMethod</arg>
+                        <arg>--initialize-at-run-time=io.netty.handler.ssl.PemPrivateKey</arg>
+                        <arg>--initialize-at-run-time=io.netty.handler.ssl.PemValue</arg>
+                        <arg>--initialize-at-run-time=io.netty.handler.ssl.OpenSsl</arg>
+                        <arg>--initialize-at-run-time=io.netty.handler.codec.http.HttpObjectAggregator</arg>
+                        <arg>--initialize-at-run-time=io.netty.handler.codec.ReplayingDecoderByteBuf</arg>
+
+                        <arg>--initialize-at-run-time=io.netty.internal.tcnative.SSLPrivateKeyMethod</arg>
+                        <arg>--initialize-at-run-time=io.netty.internal.tcnative.CertificateCompressionAlgo</arg>
+                        <arg>--initialize-at-run-time=io.netty.internal.tcnative.CertieVerifier</arg>
+                        <arg>--initialize-at-run-time=io.netty.internal.tcnative.SSL</arg>
+                        <arg>--initialize-at-run-time=io.netty.internal.tcnative.yncSSLPrivateKeyMethod</arg>
+                        <arg>--initialize-at-run-time=io.netty.internal.tcnativtificateCompressionAlgo</arg>
+                        <arg>--initialize-at-run-time=io.netty.internal.tcnative.AsyncSSLPrivateKeyMethod</arg>
+                        <arg>--initialize-at-run-time=io.netty.internal.tcnative.CertificateVerifier</arg>
 
                         <arg>--initialize-at-build-time=io.netty.util.internal.logging.Slf4JLoggerFactory</arg>
                         <arg>--initialize-at-build-time=io.netty.channel.MultithreadEventLoopGroup</arg>

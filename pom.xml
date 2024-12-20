@@ -34,6 +34,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <!-- <maven.compiler.release>21</maven.compiler.release> -->
         <maven.compiler.plgin.version>3.8.1</maven.compiler.plgin.version>
         <maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
         <maven.dependency.plugin.version>3.1.2</maven.dependency.plugin.version>

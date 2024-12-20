@@ -6,7 +6,13 @@
   "name":"[D"
 },
 {
+  "name":"[Lio.micronaut.context.annotation.Requires$Family;"
+},
+{
   "name":"[Ljava.lang.String;"
+},
+{
+  "name":"[Ljavafx.collections.transformation.SortedList$Element;"
 },
 {
   "name":"[Lsun.security.pkcs.SignerInfo;"
@@ -14,6 +20,39 @@
 {
   "name":"app.supernaut.fx.internal.OpenJfxProxyApplication",
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"apple.security.AppleProvider",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.bean.$PathOverviewInfo$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.bean.$PathOverviewInfo$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.bean.$RequestOverviewInfo$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.bean.$RequestOverviewInfo$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.bean.HeaderEntry",
+  "methods":[
+    {"name":"keyProperty","parameterTypes":[] }, 
+    {"name":"valProperty","parameterTypes":[] }
+  ],
+  "queriedMethods":[
+    {"name":"getKey","parameterTypes":[] }, 
+    {"name":"getVal","parameterTypes":[] }, 
+    {"name":"setKey","parameterTypes":["java.lang.String"] }, 
+    {"name":"setVal","parameterTypes":["java.lang.String"] }
+  ]
 },
 {
   "name":"com.catas.wicked.common.bean.message.BaseMessage"
@@ -25,7 +64,18 @@
   "name":"com.catas.wicked.common.bean.message.RequestMessage"
 },
 {
+  "name":"com.catas.wicked.common.bean.message.ResponseMessage"
+},
+{
+  "name":"com.catas.wicked.common.config.$ApplicationConfig$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.catas.wicked.common.config.$ApplicationConfig$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.config.$CacheConfiguration$CacheManager0$Definition",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -33,7 +83,15 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.catas.wicked.common.config.$CacheConfiguration$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.catas.wicked.common.config.$CacheConfiguration$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.config.$CacheConfiguration$RequestCache1$Definition",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -42,46 +100,273 @@
 },
 {
   "name":"com.catas.wicked.common.config.ApplicationConfig",
+  "fields":[{"name":"messageQueue"}]
+},
+{
+  "name":"com.catas.wicked.common.config.CertificateConfig",
+  "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "fields":[{"name":"messageQueue"}],
-  "methods":[{"name":"init","parameterTypes":[] }]
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setCert","parameterTypes":["java.lang.String"] }, 
+    {"name":"setDefault","parameterTypes":["boolean"] }, 
+    {"name":"setId","parameterTypes":["java.lang.String"] }, 
+    {"name":"setName","parameterTypes":["java.lang.String"] }, 
+    {"name":"setPrivateKey","parameterTypes":["java.lang.String"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.common.config.ExternalProxyConfig",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getHost","parameterTypes":[] }, 
+    {"name":"getPassword","parameterTypes":[] }, 
+    {"name":"getPort","parameterTypes":[] }, 
+    {"name":"getProtocol","parameterTypes":[] }, 
+    {"name":"getUsername","parameterTypes":[] }, 
+    {"name":"isProxyAuth","parameterTypes":[] }, 
+    {"name":"isUsingExternalProxy","parameterTypes":[] }, 
+    {"name":"setHost","parameterTypes":["java.lang.String"] }, 
+    {"name":"setPassword","parameterTypes":["java.lang.String"] }, 
+    {"name":"setPort","parameterTypes":["java.lang.Integer"] }, 
+    {"name":"setProtocol","parameterTypes":["com.catas.wicked.common.constant.ProxyProtocol"] }, 
+    {"name":"setProxyAuth","parameterTypes":["boolean"] }, 
+    {"name":"setUsername","parameterTypes":["java.lang.String"] }, 
+    {"name":"setUsingExternalProxy","parameterTypes":["boolean"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.common.config.Settings",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getExternalProxy","parameterTypes":[] }, 
+    {"name":"getLanguage","parameterTypes":[] }, 
+    {"name":"getMaxContentSize","parameterTypes":[] }, 
+    {"name":"getPort","parameterTypes":[] }, 
+    {"name":"getRecordExcludeList","parameterTypes":[] }, 
+    {"name":"getRecordIncludeList","parameterTypes":[] }, 
+    {"name":"getSelectedCert","parameterTypes":[] }, 
+    {"name":"getSslExcludeList","parameterTypes":[] }, 
+    {"name":"getSysProxyBypassList","parameterTypes":[] }, 
+    {"name":"getThrottlePreset","parameterTypes":[] }, 
+    {"name":"isEnableExProxy","parameterTypes":[] }, 
+    {"name":"isEnableSysProxyOnLaunch","parameterTypes":[] }, 
+    {"name":"isHandleSsl","parameterTypes":[] }, 
+    {"name":"isRecording","parameterTypes":[] }, 
+    {"name":"isSystemProxy","parameterTypes":[] }, 
+    {"name":"isThrottle","parameterTypes":[] }, 
+    {"name":"setEnableExProxy","parameterTypes":["boolean"] }, 
+    {"name":"setEnableSysProxyOnLaunch","parameterTypes":["boolean"] }, 
+    {"name":"setExternalProxy","parameterTypes":["com.catas.wicked.common.config.ExternalProxyConfig"] }, 
+    {"name":"setHandleSsl","parameterTypes":["boolean"] }, 
+    {"name":"setLanguage","parameterTypes":["com.catas.wicked.common.constant.LanguagePreset"] }, 
+    {"name":"setMaxContentSize","parameterTypes":["java.lang.Integer"] }, 
+    {"name":"setPort","parameterTypes":["java.lang.Integer"] }, 
+    {"name":"setRecordExcludeList","parameterTypes":["java.util.List"] }, 
+    {"name":"setRecording","parameterTypes":["boolean"] }, 
+    {"name":"setSelectedCert","parameterTypes":["java.lang.String"] }, 
+    {"name":"setSslExcludeList","parameterTypes":["java.util.List"] }, 
+    {"name":"setSystemProxy","parameterTypes":["boolean"] }, 
+    {"name":"setThrottle","parameterTypes":["boolean"] }, 
+    {"name":"setThrottlePreset","parameterTypes":["com.catas.wicked.common.constant.ThrottlePreset"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.common.config.Settings$SafeBooleanDeserializer",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.config.Settings$SafeExternalProxyDeserializer",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.config.Settings$SafeIntegerDeserializer",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.config.Settings$SafeJsonListDeserializer",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.constant.ClientStatus"
+},
+{
+  "name":"com.catas.wicked.common.constant.ClientStatus$Status"
+},
+{
+  "name":"com.catas.wicked.common.constant.LanguagePreset",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[
+    {"name":"fromValue","parameterTypes":["java.lang.String"] }, 
+    {"name":"getValue","parameterTypes":[] }
+  ]
+},
+{
+  "name":"com.catas.wicked.common.constant.ProxyProtocol",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[
+    {"name":"fromValue","parameterTypes":["java.lang.String"] }, 
+    {"name":"getValue","parameterTypes":[] }
+  ]
+},
+{
+  "name":"com.catas.wicked.common.constant.ThrottlePreset",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[
+    {"name":"fromValue","parameterTypes":["java.lang.String"] }, 
+    {"name":"getValue","parameterTypes":[] }
+  ]
+},
+{
+  "name":"com.catas.wicked.common.factory.$MessageSourceFactory$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.factory.$MessageSourceFactory$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.factory.$MessageSourceFactory$MessageProvider1$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.factory.$MessageSourceFactory$MessageProvider1$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.factory.$MessageSourceFactory$MessageSource0$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.factory.$MessageSourceFactory$MessageSource0$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.pipeline.$MessageQueue$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.catas.wicked.common.pipeline.$MessageQueue$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.catas.wicked.proxy.$WickedProxyApplication$BouncyCastleCertGenerator0$Definition$Reference",
+  "name":"com.catas.wicked.common.provider.$MacCertInstallProvider$Definition",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.catas.wicked.proxy.$WickedProxyApplication$CertPool0$Definition$Reference",
+  "name":"com.catas.wicked.common.provider.$MacCertInstallProvider$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.catas.wicked.proxy.$WickedProxyApplication$CertService0$Definition$Reference",
+  "name":"com.catas.wicked.common.provider.$MacSysProxyProvider$Definition",
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.provider.$MacSysProxyProvider$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.provider.$WinCertInstallProvider$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.provider.$WinCertInstallProvider$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.provider.$WinSysProxyProvider$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.provider.$WinSysProxyProvider$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.provider.MacSysProxyProvider",
+  "fields":[{"name":"appConfig"}]
+},
+{
+  "name":"com.catas.wicked.common.worker.$ScheduledManager$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.worker.$ScheduledManager$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.worker.ScheduledManager",
+  "fields":[
+    {"name":"certCheckWorker"}, 
+    {"name":"systemProxyWorker"}, 
+    {"name":"updateCheckWorker"}
+  ]
+},
+{
+  "name":"com.catas.wicked.common.worker.worker.$CertCheckWorker$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.worker.worker.$CertCheckWorker$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.worker.worker.$SystemProxyWorker$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.worker.worker.$SystemProxyWorker$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.worker.worker.$UpdateCheckWorker$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.worker.worker.$UpdateCheckWorker$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.worker.worker.CertCheckWorker",
+  "fields":[{"name":"certManager"}]
+},
+{
+  "name":"com.catas.wicked.common.worker.worker.SystemProxyWorker",
+  "fields":[
+    {"name":"appConfig"}, 
+    {"name":"messageQueue"}, 
+    {"name":"proxyProvider"}
+  ]
+},
+{
+  "name":"com.catas.wicked.common.worker.worker.UpdateCheckWorker",
+  "fields":[
+    {"name":"appConfig"}, 
+    {"name":"versionCheckProvider"}
+  ]
 },
 {
   "name":"com.catas.wicked.proxy.$WickedProxyApplication$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.catas.wicked.proxy.$WickedProxyApplication$ProxyServer0$Definition$Reference",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.catas.wicked.proxy.$WickedProxyApplication$ProxyServerInitializer0$Definition$Reference",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"com.catas.wicked.proxy.WickedProxyApplication",
   "fields":[
+    {"name":"appController"}, 
     {"name":"applicationConfig"}, 
     {"name":"loaderFactory"}, 
     {"name":"messageService"}, 
-    {"name":"messageTree"}, 
-    {"name":"proxyServer"}
+    {"name":"proxyServer"}, 
+    {"name":"stageProvider"}
   ]
 },
 {
@@ -89,11 +374,100 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.catas.wicked.proxy.gui.componet.CustomButton",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.componet.CustomMenuButton",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.componet.CustomTextField",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setErrorPaneTranslateX","parameterTypes":["double"] }, 
+    {"name":"setErrorPaneTranslateY","parameterTypes":["double"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.componet.CustomToggleNode",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.componet.HeaderTitledPane",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setCheckBoxTitle","parameterTypes":["java.lang.String"] }, 
+    {"name":"setCheckIndex","parameterTypes":["int"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.componet.MessageLabel",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.componet.SideBar",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.componet.TimeSplitPane",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setDisplayColor","parameterTypes":["java.lang.String"] }, 
+    {"name":"setDisplayOrder","parameterTypes":["int"] }
+  ]
+},
+{
   "name":"com.catas.wicked.proxy.gui.componet.ViewCellFactory",
   "fields":[{"name":"requestViewService"}]
 },
 {
+  "name":"com.catas.wicked.proxy.gui.componet.ZoomImageView",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.componet.highlight.CodeStyleButton",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setCodeStyle","parameterTypes":["java.lang.String"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.componet.richtext.DisplayCodeArea",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setCodeStyle","parameterTypes":["java.lang.String"] }
+  ]
+},
+{
   "name":"com.catas.wicked.proxy.gui.controller.$AppController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.$AppUpdateController$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -117,63 +491,130 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.catas.wicked.proxy.gui.controller.$SettingController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.catas.wicked.proxy.gui.controller.AppController",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.AppUpdateController",
   "allDeclaredFields":true
 },
 {
   "name":"com.catas.wicked.proxy.gui.controller.ButtonBarController",
   "allDeclaredFields":true,
-  "queryAllDeclaredMethods":true
+  "queryAllDeclaredMethods":true,
+  "methods":[
+    {"name":"displaySettingPage","parameterTypes":[] }, 
+    {"name":"onSysProxy","parameterTypes":["javafx.event.ActionEvent"] }
+  ]
 },
 {
   "name":"com.catas.wicked.proxy.gui.controller.DetailTabController",
   "allDeclaredFields":true
 },
 {
-  "name":"com.catas.wicked.proxy.gui.controller.ProxySettingController",
-  "allDeclaredFields":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"com.catas.wicked.proxy.gui.controller.RequestViewController",
   "allDeclaredFields":true,
-  "queryAllDeclaredMethods":true,
-  "methods":[
-    {"name":"bindViewChange","parameterTypes":["javafx.event.ActionEvent"] }, 
-    {"name":"removeItem","parameterTypes":["javafx.event.ActionEvent"] }
-  ]
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.SettingController",
+  "allDeclaredFields":true
 },
 {
   "name":"com.catas.wicked.proxy.message.$MessageService$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.catas.wicked.proxy.message.$MessageTree$Definition$Reference",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"com.catas.wicked.proxy.message.MessageService",
   "fields":[
     {"name":"appConfig"}, 
+    {"name":"buttonBarController"}, 
     {"name":"messageQueue"}, 
-    {"name":"messageTree"}, 
+    {"name":"overViewTabRenderer"}, 
     {"name":"requestCache"}, 
-    {"name":"requestViewController"}
+    {"name":"requestViewController"}, 
+    {"name":"requestViewService"}
   ]
 },
 {
-  "name":"com.catas.wicked.proxy.message.MessageTree",
-  "queryAllDeclaredMethods":true,
+  "name":"com.catas.wicked.proxy.provider.$DefaultVersionCheckProvider$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.provider.$MacArmStageProvider$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.provider.MacArmStageProvider",
   "fields":[
     {"name":"appConfig"}, 
-    {"name":"messageQueue"}, 
+    {"name":"appController"}
+  ]
+},
+{
+  "name":"com.catas.wicked.proxy.render.tab.$OverViewTabRenderer$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.render.tab.$RequestTabRenderer$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.render.tab.$ResponseTabRenderer$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.render.tab.$TimingTabRenderer$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.render.tab.OverViewTabRenderer",
+  "fields":[
+    {"name":"appConfig"}, 
+    {"name":"detailTabController"}, 
+    {"name":"pathOverviewInfo"}, 
     {"name":"requestCache"}, 
-    {"name":"requestViewController"}
-  ],
-  "methods":[{"name":"init","parameterTypes":[] }]
+    {"name":"requestOverviewInfo"}
+  ]
+},
+{
+  "name":"com.catas.wicked.proxy.render.tab.RequestTabRenderer",
+  "fields":[
+    {"name":"appConfig"}, 
+    {"name":"detailTabController"}, 
+    {"name":"requestCache"}
+  ]
+},
+{
+  "name":"com.catas.wicked.proxy.render.tab.ResponseTabRenderer",
+  "fields":[
+    {"name":"appConfig"}, 
+    {"name":"detailTabController"}, 
+    {"name":"requestCache"}
+  ]
+},
+{
+  "name":"com.catas.wicked.proxy.render.tab.TimingTabRenderer",
+  "fields":[
+    {"name":"appConfig"}, 
+    {"name":"detailTabController"}, 
+    {"name":"requestCache"}
+  ]
 },
 {
   "name":"com.catas.wicked.proxy.service.$FeServiceImpl$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.$RandomIdGenerator$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.$RequestMockService$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -181,92 +622,260 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.catas.wicked.proxy.service.RequestViewService",
+  "name":"com.catas.wicked.proxy.service.RequestMockService",
   "fields":[
-    {"name":"detailTabController"}, 
-    {"name":"detailWebViewController"}, 
-    {"name":"feService"}, 
-    {"name":"requestCache"}
+    {"name":"idGenerator"}, 
+    {"name":"messageQueue"}, 
+    {"name":"requestViewService"}
   ]
 },
 {
-  "name":"com.catas.wicked.server.cert.CertPool",
+  "name":"com.catas.wicked.proxy.service.RequestViewService",
   "fields":[
-    {"name":"applicationConfig"}, 
-    {"name":"certService"}
+    {"name":"appConfig"}, 
+    {"name":"detailTabController"}, 
+    {"name":"detailWebViewController"}, 
+    {"name":"messageQueue"}, 
+    {"name":"overViewTabRenderer"}, 
+    {"name":"requestCache"}, 
+    {"name":"requestTabRenderer"}, 
+    {"name":"responseTabRenderer"}, 
+    {"name":"timingTabRenderer"}
   ]
+},
+{
+  "name":"com.catas.wicked.proxy.service.settings.$AboutSettingService$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.settings.$ExternalProxySettingService$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.settings.$GeneralSettingService$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.settings.$ProxySettingService$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.settings.$SslSettingService$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.settings.GeneralSettingService",
+  "fields":[{"name":"applicationConfig"}]
+},
+{
+  "name":"com.catas.wicked.proxy.service.settings.SslSettingService",
+  "fields":[{"name":"certManager"}]
+},
+{
+  "name":"com.catas.wicked.server.cert.$CertPool$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.cert.$CertPool$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.cert.$CertService$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.cert.$CertService$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.cert.$SimpleCertManager$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.cert.$SimpleCertManager$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.cert.SimpleCertManager",
+  "fields":[
+    {"name":"appConfig"}, 
+    {"name":"certInstallProvider"}, 
+    {"name":"certService"}, 
+    {"name":"resourceMessageProvider"}
+  ]
+},
+{
+  "name":"com.catas.wicked.server.cert.spi.$BouncyCastleCertGenerator$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.cert.spi.$BouncyCastleCertGenerator$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.client.MinimalClientHandler",
+  "queriedMethods":[
+    {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.server.client.MinimalHttpClient$1"
 },
 {
   "name":"com.catas.wicked.server.handler.RearHttpAggregator",
-  "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }]
+  "queriedMethods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }]
+},
+{
+  "name":"com.catas.wicked.server.handler.client.ClientChannelInitializer"
 },
 {
   "name":"com.catas.wicked.server.handler.client.ClientPostRecorder",
-  "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }]
+  "queriedMethods":[
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
+    {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.server.handler.client.ClientProcessHandler",
+  "queriedMethods":[
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+  ]
 },
 {
   "name":"com.catas.wicked.server.handler.client.ClientStrategyHandler",
-  "methods":[
+  "queriedMethods":[
     {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
     {"name":"close","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
     {"name":"disconnect","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
     {"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"read","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
   ]
 },
 {
-  "name":"com.catas.wicked.server.handler.client.ProxyClientHandler",
-  "methods":[
-    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
-    {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
-  ]
+  "name":"com.catas.wicked.server.handler.server.$ServerChannelInitializer$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.catas.wicked.server.handler.server.ProxyProcessHandler",
-  "methods":[
-    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
-    {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
-  ]
+  "name":"com.catas.wicked.server.handler.server.$ServerChannelInitializer$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.catas.wicked.server.handler.server.ProxyProcessHandler$1"
-},
-{
-  "name":"com.catas.wicked.server.handler.server.ProxyServerInitializer",
+  "name":"com.catas.wicked.server.handler.server.ServerChannelInitializer",
   "fields":[
     {"name":"appConfig"}, 
-    {"name":"certPool"}, 
-    {"name":"messageQueue"}
+    {"name":"certManager"}, 
+    {"name":"idGenerator"}, 
+    {"name":"messageQueue"}, 
+    {"name":"strategyManager"}
   ]
 },
 {
   "name":"com.catas.wicked.server.handler.server.ServerPostRecorder",
-  "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }]
-},
-{
-  "name":"com.catas.wicked.server.handler.server.ServerStrategyHandler",
-  "methods":[
+  "queriedMethods":[
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
     {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
   ]
+},
+{
+  "name":"com.catas.wicked.server.handler.server.ServerPreRecorder",
+  "queriedMethods":[
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.server.handler.server.ServerProcessHandler",
+  "queriedMethods":[
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.server.handler.server.ServerStrategyHandler",
+  "queriedMethods":[
+    {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.server.proxy.$ProxyServer$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.proxy.$ProxyServer$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.catas.wicked.server.proxy.ProxyServer",
   "queryAllDeclaredMethods":true,
   "fields":[
     {"name":"applicationConfig"}, 
-    {"name":"certPool"}, 
-    {"name":"certService"}, 
     {"name":"proxyServerInitializer"}
   ],
   "methods":[{"name":"init","parameterTypes":[] }]
 },
 {
+  "name":"com.catas.wicked.server.strategy.$DefaultStrategyManager$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.strategy.$DefaultStrategyManager$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.strategy.$TailStrategyManager$Definition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.strategy.$TailStrategyManager$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.fasterxml.jackson.databind.ext.Java7SupportImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.jfoenix.controls.JFXButton",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.jfoenix.controls.JFXCheckBox",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.jfoenix.controls.JFXComboBox",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.jfoenix.controls.JFXDialogLayout",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getActions","parameterTypes":[] }, 
+    {"name":"getBody","parameterTypes":[] }, 
+    {"name":"getHeading","parameterTypes":[] }
+  ]
+},
+{
+  "name":"com.jfoenix.controls.JFXProgressBar",
   "queryAllDeclaredMethods":true,
   "queryAllPublicConstructors":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
@@ -278,13 +887,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.jfoenix.controls.JFXTextArea",
+  "name":"com.jfoenix.controls.JFXTextField",
   "queryAllDeclaredMethods":true,
   "queryAllPublicConstructors":true,
-  "methods":[
-    {"name":"<init>","parameterTypes":[] }, 
-    {"name":"setFocusColor","parameterTypes":["javafx.scene.paint.Paint"] }
-  ]
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.jfoenix.controls.JFXToggleButton",
@@ -293,11 +899,13 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.sun.crypto.provider.AESCipher$General",
+  "name":"com.jfoenix.controls.JFXToggleNode",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.sun.crypto.provider.AESKeyGenerator",
+  "name":"com.sun.crypto.provider.AESCipher$General",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -329,10 +937,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.sun.crypto.provider.HmacCore$HmacSHA384",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"com.sun.crypto.provider.PBEKeyFactory$PBEWithMD5AndDES",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -353,10 +957,22 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.sun.glass.ui.Screen"
+  "name":"com.sun.glass.ui.Application"
 },
 {
-  "name":"com.sun.javafx.font.directwrite.DWFactory",
+  "name":"com.sun.glass.ui.Menu"
+},
+{
+  "name":"com.sun.glass.ui.MenuItem$Callback"
+},
+{
+  "name":"com.sun.glass.ui.Size"
+},
+{
+  "name":"com.sun.glass.ui.View"
+},
+{
+  "name":"com.sun.javafx.font.coretext.CTFactory",
   "methods":[{"name":"getFactory","parameterTypes":[] }]
 },
 {
@@ -377,6 +993,14 @@
 },
 {
   "name":"com.sun.javafx.tk.quantum.QuantumToolkit",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.CallbackProxy",
+  "queriedMethods":[{"name":"callback","parameterTypes":["java.lang.Object[]"] }]
+},
+{
+  "name":"com.sun.jna.NativeLong",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -429,15 +1053,7 @@
   "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
 },
 {
-  "name":"com.sun.prism.shader.Solid_TextureFirstPassLCD_Loader",
-  "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
-},
-{
   "name":"com.sun.prism.shader.Solid_TextureRGB_Loader",
-  "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
-},
-{
-  "name":"com.sun.prism.shader.Solid_TextureSecondPassLCD_Loader",
   "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
 },
 {
@@ -473,6 +1089,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"io.micronaut.inject.annotation.AnnotationConvertersRegistrar",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"io.micronaut.inject.provider.BeanProviderDefinition",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -481,14 +1101,15 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"io.micronaut.inject.provider.JavaxProviderBeanDefinition"
+  "name":"io.micronaut.inject.provider.JavaxProviderBeanDefinition",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"io.netty.bootstrap.ServerBootstrap$1"
 },
 {
   "name":"io.netty.bootstrap.ServerBootstrap$ServerBootstrapAcceptor",
-  "methods":[
+  "queriedMethods":[
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
     {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
   ]
@@ -503,7 +1124,7 @@
 },
 {
   "name":"io.netty.channel.ChannelDuplexHandler",
-  "methods":[
+  "queriedMethods":[
     {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
     {"name":"close","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
     {"name":"connect","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
@@ -514,8 +1135,12 @@
   ]
 },
 {
+  "name":"io.netty.channel.ChannelHandlerAdapter",
+  "queriedMethods":[{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }]
+},
+{
   "name":"io.netty.channel.ChannelInboundHandlerAdapter",
-  "methods":[
+  "queriedMethods":[
     {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
@@ -529,14 +1154,26 @@
 },
 {
   "name":"io.netty.channel.ChannelInitializer",
-  "methods":[
+  "queriedMethods":[
     {"name":"channelRegistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
   ]
 },
 {
+  "name":"io.netty.channel.ChannelOutboundHandlerAdapter",
+  "queriedMethods":[
+    {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
+    {"name":"close","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"connect","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
+    {"name":"deregister","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"disconnect","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"read","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }
+  ]
+},
+{
   "name":"io.netty.channel.CombinedChannelDuplexHandler",
-  "methods":[
+  "queriedMethods":[
     {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
     {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
@@ -558,7 +1195,7 @@
 },
 {
   "name":"io.netty.channel.DefaultChannelPipeline$HeadContext",
-  "methods":[
+  "queriedMethods":[
     {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
     {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
@@ -580,7 +1217,7 @@
 },
 {
   "name":"io.netty.channel.DefaultChannelPipeline$TailContext",
-  "methods":[
+  "queriedMethods":[
     {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
@@ -602,27 +1239,46 @@
 },
 {
   "name":"io.netty.handler.codec.ByteToMessageDecoder",
-  "methods":[
+  "queriedMethods":[
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }
   ]
 },
 {
   "name":"io.netty.handler.codec.MessageAggregator",
-  "methods":[
+  "queriedMethods":[
     {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }
   ]
 },
 {
+  "name":"io.netty.handler.codec.MessageToByteEncoder",
+  "queriedMethods":[{"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }]
+},
+{
+  "name":"io.netty.handler.codec.MessageToMessageDecoder",
+  "queriedMethods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }]
+},
+{
   "name":"io.netty.handler.codec.http.HttpClientCodec"
+},
+{
+  "name":"io.netty.handler.codec.http.HttpObjectAggregator"
 },
 {
   "name":"io.netty.handler.codec.http.HttpServerCodec"
 },
 {
+  "name":"io.netty.handler.codec.socksx.v4.Socks4ClientDecoder"
+},
+{
+  "name":"io.netty.handler.codec.socksx.v4.Socks4ClientEncoder"
+},
+{
   "name":"io.netty.handler.logging.LoggingHandler",
-  "methods":[
+  "queriedMethods":[
     {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
     {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
@@ -642,8 +1298,24 @@
   ]
 },
 {
+  "name":"io.netty.handler.proxy.ProxyHandler",
+  "queriedMethods":[
+    {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"connect","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
+    {"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
+  ]
+},
+{
+  "name":"io.netty.handler.proxy.Socks4ProxyHandler"
+},
+{
   "name":"io.netty.handler.ssl.SslHandler",
-  "methods":[
+  "queriedMethods":[
     {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
     {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
@@ -659,8 +1331,37 @@
   ]
 },
 {
+  "name":"io.netty.internal.tcnative.CertificateCallback"
+},
+{
+  "name":"io.netty.internal.tcnative.CertificateCallbackTask"
+},
+{
+  "name":"io.netty.internal.tcnative.SSLContext"
+},
+{
+  "name":"io.netty.internal.tcnative.SSLPrivateKeyMethodDecryptTask"
+},
+{
+  "name":"io.netty.internal.tcnative.SSLPrivateKeyMethodSignTask"
+},
+{
+  "name":"io.netty.internal.tcnative.SSLPrivateKeyMethodTask"
+},
+{
+  "name":"io.netty.internal.tcnative.SSLTask"
+},
+{
+  "name":"io.netty.util.AbstractReferenceCounted",
+  "fields":[{"name":"refCnt"}]
+},
+{
   "name":"io.netty.util.ReferenceCountUtil",
   "queryAllDeclaredMethods":true
+},
+{
+  "name":"io.netty.util.internal.NativeLibraryUtil",
+  "methods":[{"name":"loadLibrary","parameterTypes":["java.lang.String","boolean"] }]
 },
 {
   "name":"io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueColdProducerFields",
@@ -687,6 +1388,10 @@
   "fields":[{"name":"producerLimit"}]
 },
 {
+  "name":"java.io.Serializable",
+  "queryAllDeclaredMethods":true
+},
+{
   "name":"java.lang.Character",
   "methods":[{"name":"isIdeographic","parameterTypes":["int"] }]
 },
@@ -698,12 +1403,35 @@
   "name":"java.lang.Enum"
 },
 {
+  "name":"java.lang.Exception"
+},
+{
+  "name":"java.lang.IllegalArgumentException"
+},
+{
+  "name":"java.lang.Integer"
+},
+{
   "name":"java.lang.Module",
-  "methods":[{"name":"getResourceAsStream","parameterTypes":["java.lang.String"] }]
+  "queriedMethods":[{"name":"getResourceAsStream","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"java.lang.NullPointerException"
+},
+{
+  "name":"java.lang.Number"
 },
 {
   "name":"java.lang.Object",
-  "allDeclaredFields":true
+  "allDeclaredFields":true,
+  "queriedMethods":[
+    {"name":"equals","parameterTypes":["java.lang.Object"] }, 
+    {"name":"hashCode","parameterTypes":[] }, 
+    {"name":"toString","parameterTypes":[] }
+  ]
+},
+{
+  "name":"java.lang.OutOfMemoryError"
 },
 {
   "name":"java.lang.ProcessHandle",
@@ -713,12 +1441,45 @@
   ]
 },
 {
+  "name":"java.lang.Runnable"
+},
+{
   "name":"java.lang.String",
   "methods":[{"name":"valueOf","parameterTypes":["java.lang.Object"] }]
 },
 {
   "name":"java.lang.Thread",
   "fields":[{"name":"threadLocalRandomProbe"}]
+},
+{
+  "name":"java.lang.Throwable",
+  "queriedMethods":[{"name":"addSuppressed","parameterTypes":["java.lang.Throwable"] }]
+},
+{
+  "name":"java.lang.invoke.MethodHandle",
+  "queriedMethods":[
+    {"name":"bindTo","parameterTypes":["java.lang.Object"] }, 
+    {"name":"invokeWithArguments","parameterTypes":["java.lang.Object[]"] }
+  ]
+},
+{
+  "name":"java.lang.invoke.MethodHandles",
+  "queriedMethods":[
+    {"name":"lookup","parameterTypes":[] }, 
+    {"name":"privateLookupIn","parameterTypes":["java.lang.Class","java.lang.invoke.MethodHandles$Lookup"] }
+  ]
+},
+{
+  "name":"java.lang.invoke.MethodHandles$Lookup",
+  "queriedMethods":[
+    {"name":"findSpecial","parameterTypes":["java.lang.Class","java.lang.String","java.lang.invoke.MethodType","java.lang.Class"] }, 
+    {"name":"in","parameterTypes":["java.lang.Class"] }, 
+    {"name":"unreflectSpecial","parameterTypes":["java.lang.reflect.Method","java.lang.Class"] }
+  ]
+},
+{
+  "name":"java.lang.invoke.MethodType",
+  "queriedMethods":[{"name":"methodType","parameterTypes":["java.lang.Class","java.lang.Class[]"] }]
 },
 {
   "name":"java.lang.management.ManagementFactory",
@@ -733,6 +1494,11 @@
   "methods":[{"name":"setAccessible0","parameterTypes":["boolean"] }]
 },
 {
+  "name":"java.lang.reflect.Method",
+  "methods":[{"name":"isDefault","parameterTypes":[] }],
+  "queriedMethods":[{"name":"isVarArgs","parameterTypes":[] }]
+},
+{
   "name":"java.net.URL"
 },
 {
@@ -745,10 +1511,8 @@
 },
 {
   "name":"java.nio.ByteBuffer",
-  "methods":[
-    {"name":"alignedSlice","parameterTypes":["int"] }, 
-    {"name":"order","parameterTypes":["java.nio.ByteOrder"] }
-  ]
+  "methods":[{"name":"order","parameterTypes":["java.nio.ByteOrder"] }],
+  "queriedMethods":[{"name":"alignedSlice","parameterTypes":["int"] }]
 },
 {
   "name":"java.nio.ByteOrder",
@@ -756,11 +1520,11 @@
 },
 {
   "name":"java.nio.DirectByteBuffer",
-  "methods":[{"name":"<init>","parameterTypes":["long","int"] }]
+  "queriedMethods":[{"name":"<init>","parameterTypes":["long","int"] }]
 },
 {
   "name":"java.nio.channels.spi.SelectorProvider",
-  "methods":[
+  "queriedMethods":[
     {"name":"openServerSocketChannel","parameterTypes":["java.net.ProtocolFamily"] }, 
     {"name":"openSocketChannel","parameterTypes":["java.net.ProtocolFamily"] }
   ]
@@ -802,6 +1566,9 @@
   "name":"java.util.HashMap"
 },
 {
+  "name":"java.util.LinkedHashMap"
+},
+{
   "name":"javafx.animation.KeyValue"
 },
 {
@@ -812,6 +1579,10 @@
   "queryAllPublicMethods":true,
   "queryAllPublicConstructors":true,
   "methods":[{"name":"<init>","parameterTypes":["double","double","double","double"] }]
+},
+{
+  "name":"javafx.geometry.Orientation",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
 },
 {
   "name":"javafx.geometry.Pos",
@@ -833,16 +1604,16 @@
 },
 {
   "name":"javafx.scene.Node",
+  "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "methods":[
     {"name":"getId","parameterTypes":[] }, 
     {"name":"getStyleClass","parameterTypes":[] }, 
     {"name":"setCursor","parameterTypes":["javafx.scene.Cursor"] }, 
     {"name":"setDisable","parameterTypes":["boolean"] }, 
+    {"name":"setEffect","parameterTypes":["javafx.scene.effect.Effect"] }, 
     {"name":"setFocusTraversable","parameterTypes":["boolean"] }, 
     {"name":"setId","parameterTypes":["java.lang.String"] }, 
-    {"name":"setLayoutX","parameterTypes":["double"] }, 
-    {"name":"setLayoutY","parameterTypes":["double"] }, 
     {"name":"setOpacity","parameterTypes":["double"] }, 
     {"name":"setStyle","parameterTypes":["java.lang.String"] }, 
     {"name":"setVisible","parameterTypes":["boolean"] }
@@ -853,6 +1624,7 @@
 },
 {
   "name":"javafx.scene.Parent",
+  "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "methods":[{"name":"getStylesheets","parameterTypes":[] }]
 },
@@ -871,6 +1643,18 @@
   "methods":[{"name":"setOnAction","parameterTypes":["javafx.event.EventHandler"] }]
 },
 {
+  "name":"javafx.scene.control.CheckBox",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"javafx.scene.control.ComboBox",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"javafx.scene.control.ComboBoxBase",
+  "queryAllDeclaredMethods":true
+},
+{
   "name":"javafx.scene.control.ContentDisplay",
   "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
 },
@@ -885,7 +1669,14 @@
 },
 {
   "name":"javafx.scene.control.Control",
-  "queryAllDeclaredMethods":true
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"setTooltip","parameterTypes":["javafx.scene.control.Tooltip"] }]
+},
+{
+  "name":"javafx.scene.control.Hyperlink",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"javafx.scene.control.Label",
@@ -897,7 +1688,7 @@
   "name":"javafx.scene.control.Labeled",
   "queryAllDeclaredMethods":true,
   "methods":[
-    {"name":"setAlignment","parameterTypes":["javafx.geometry.Pos"] }, 
+    {"name":"getGraphic","parameterTypes":[] }, 
     {"name":"setContentDisplay","parameterTypes":["javafx.scene.control.ContentDisplay"] }, 
     {"name":"setFont","parameterTypes":["javafx.scene.text.Font"] }, 
     {"name":"setGraphic","parameterTypes":["javafx.scene.Node"] }, 
@@ -916,9 +1707,7 @@
 {
   "name":"javafx.scene.control.MenuButton",
   "queryAllDeclaredMethods":true,
-  "queryAllPublicConstructors":true,
   "methods":[
-    {"name":"<init>","parameterTypes":[] }, 
     {"name":"getItems","parameterTypes":[] }, 
     {"name":"setPopupSide","parameterTypes":["javafx.geometry.Side"] }
   ]
@@ -930,6 +1719,8 @@
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
     {"name":"getId","parameterTypes":[] }, 
+    {"name":"getStyleClass","parameterTypes":[] }, 
+    {"name":"setDisable","parameterTypes":["boolean"] }, 
     {"name":"setGraphic","parameterTypes":["javafx.scene.Node"] }, 
     {"name":"setId","parameterTypes":["java.lang.String"] }, 
     {"name":"setOnAction","parameterTypes":["javafx.event.EventHandler"] }, 
@@ -951,13 +1742,38 @@
   ]
 },
 {
+  "name":"javafx.scene.control.ProgressBar",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"javafx.scene.control.ProgressIndicator",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"javafx.scene.control.ScrollPane",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getContent","parameterTypes":[] }, 
+    {"name":"setContent","parameterTypes":["javafx.scene.Node"] }
+  ]
+},
+{
+  "name":"javafx.scene.control.Separator",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"javafx.scene.control.SplitPane",
   "queryAllDeclaredMethods":true,
   "queryAllPublicConstructors":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
     {"name":"getItems","parameterTypes":[] }, 
-    {"name":"setDividerPositions","parameterTypes":["double[]"] }
+    {"name":"setDividerPositions","parameterTypes":["double[]"] }, 
+    {"name":"setOrientation","parameterTypes":["javafx.geometry.Orientation"] }
   ]
 },
 {
@@ -967,18 +1783,39 @@
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
     {"name":"getContent","parameterTypes":[] }, 
+    {"name":"getId","parameterTypes":[] }, 
+    {"name":"getStyleClass","parameterTypes":[] }, 
     {"name":"setContent","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"setId","parameterTypes":["java.lang.String"] }, 
     {"name":"setText","parameterTypes":["java.lang.String"] }
   ]
 },
 {
   "name":"javafx.scene.control.TabPane",
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"getTabs","parameterTypes":[] }]
+  "methods":[
+    {"name":"getTabs","parameterTypes":[] }, 
+    {"name":"setTabClosingPolicy","parameterTypes":["javafx.scene.control.TabPane$TabClosingPolicy"] }
+  ]
+},
+{
+  "name":"javafx.scene.control.TabPane$TabClosingPolicy",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"javafx.scene.control.TableColumnBase"
+},
+{
+  "name":"javafx.scene.control.TableView",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"javafx.scene.control.TextArea",
-  "queryAllDeclaredMethods":true
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"javafx.scene.control.TextField",
@@ -989,10 +1826,7 @@
 {
   "name":"javafx.scene.control.TextInputControl",
   "queryAllDeclaredMethods":true,
-  "methods":[
-    {"name":"setEditable","parameterTypes":["boolean"] }, 
-    {"name":"setPromptText","parameterTypes":["java.lang.String"] }
-  ]
+  "methods":[{"name":"setPromptText","parameterTypes":["java.lang.String"] }]
 },
 {
   "name":"javafx.scene.control.TitledPane",
@@ -1007,17 +1841,31 @@
 },
 {
   "name":"javafx.scene.control.ToggleButton",
-  "queryAllDeclaredMethods":true
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"setSelected","parameterTypes":["boolean"] }]
 },
 {
-  "name":"javafx.scene.control.TreeItem",
+  "name":"javafx.scene.control.Tooltip",
   "queryAllDeclaredMethods":true,
   "queryAllPublicConstructors":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
-    {"name":"setExpanded","parameterTypes":["boolean"] }, 
-    {"name":"setValue","parameterTypes":["java.lang.Object"] }
+    {"name":"setShowDelay","parameterTypes":["javafx.util.Duration"] }, 
+    {"name":"setText","parameterTypes":["java.lang.String"] }
   ]
+},
+{
+  "name":"javafx.scene.control.TreeItem",
+  "fields":[
+    {"name":"children"}, 
+    {"name":"childrenListener"}
+  ]
+},
+{
+  "name":"javafx.scene.control.TreeTableView",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"javafx.scene.control.TreeView",
@@ -1025,21 +1873,49 @@
   "queryAllPublicConstructors":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
-    {"name":"getRoot","parameterTypes":[] }, 
     {"name":"setEditable","parameterTypes":["boolean"] }, 
-    {"name":"setRoot","parameterTypes":["javafx.scene.control.TreeItem"] }, 
     {"name":"setShowRoot","parameterTypes":["boolean"] }
   ]
 },
 {
-  "name":"javafx.scene.control.skin.TextAreaSkin",
-  "fields":[{"name":"promptNode"}]
+  "name":"javafx.scene.control.skin.TextFieldSkin",
+  "fields":[
+    {"name":"textNode"}, 
+    {"name":"textRight"}, 
+    {"name":"textTranslateX"}, 
+    {"name":"usePromptText"}
+  ]
 },
 {
-  "name":"javafx.scene.effect.Effect"
+  "name":"javafx.scene.effect.DropShadow",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setColor","parameterTypes":["javafx.scene.paint.Color"] }, 
+    {"name":"setHeight","parameterTypes":["double"] }, 
+    {"name":"setOffsetY","parameterTypes":["double"] }, 
+    {"name":"setWidth","parameterTypes":["double"] }
+  ]
+},
+{
+  "name":"javafx.scene.effect.Effect",
+  "queryAllDeclaredMethods":true
 },
 {
   "name":"javafx.scene.image.Image"
+},
+{
+  "name":"javafx.scene.image.ImageView",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getImage","parameterTypes":[] }, 
+    {"name":"setFitHeight","parameterTypes":["double"] }, 
+    {"name":"setFitWidth","parameterTypes":["double"] }, 
+    {"name":"setImage","parameterTypes":["javafx.scene.image.Image"] }
+  ]
 },
 {
   "name":"javafx.scene.layout.AnchorPane",
@@ -1047,14 +1923,16 @@
   "queryAllPublicConstructors":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
-    {"name":"getBottomAnchor","parameterTypes":["javafx.scene.Node"] }, 
-    {"name":"getLeftAnchor","parameterTypes":["javafx.scene.Node"] }, 
-    {"name":"getRightAnchor","parameterTypes":["javafx.scene.Node"] }, 
-    {"name":"getTopAnchor","parameterTypes":["javafx.scene.Node"] }, 
     {"name":"setBottomAnchor","parameterTypes":["javafx.scene.Node","java.lang.Double"] }, 
     {"name":"setLeftAnchor","parameterTypes":["javafx.scene.Node","java.lang.Double"] }, 
     {"name":"setRightAnchor","parameterTypes":["javafx.scene.Node","java.lang.Double"] }, 
     {"name":"setTopAnchor","parameterTypes":["javafx.scene.Node","java.lang.Double"] }
+  ],
+  "queriedMethods":[
+    {"name":"getBottomAnchor","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"getLeftAnchor","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"getRightAnchor","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"getTopAnchor","parameterTypes":["javafx.scene.Node"] }
   ]
 },
 {
@@ -1080,30 +1958,37 @@
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
     {"name":"getColumnConstraints","parameterTypes":[] }, 
-    {"name":"getColumnIndex","parameterTypes":["javafx.scene.Node"] }, 
     {"name":"getRowConstraints","parameterTypes":[] }, 
-    {"name":"getRowIndex","parameterTypes":["javafx.scene.Node"] }, 
-    {"name":"setAlignment","parameterTypes":["javafx.geometry.Pos"] }, 
     {"name":"setColumnIndex","parameterTypes":["javafx.scene.Node","java.lang.Integer"] }, 
+    {"name":"setColumnSpan","parameterTypes":["javafx.scene.Node","java.lang.Integer"] }, 
+    {"name":"setHgap","parameterTypes":["double"] }, 
     {"name":"setMargin","parameterTypes":["javafx.scene.Node","javafx.geometry.Insets"] }, 
-    {"name":"setRowIndex","parameterTypes":["javafx.scene.Node","java.lang.Integer"] }
+    {"name":"setRowIndex","parameterTypes":["javafx.scene.Node","java.lang.Integer"] }, 
+    {"name":"setVgap","parameterTypes":["double"] }
+  ],
+  "queriedMethods":[
+    {"name":"getColumnIndex","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"getColumnSpan","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"getRowIndex","parameterTypes":["javafx.scene.Node"] }
   ]
 },
 {
   "name":"javafx.scene.layout.HBox",
+  "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllPublicConstructors":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
-    {"name":"getHgrow","parameterTypes":["javafx.scene.Node"] }, 
     {"name":"setAlignment","parameterTypes":["javafx.geometry.Pos"] }, 
     {"name":"setHgrow","parameterTypes":["javafx.scene.Node","javafx.scene.layout.Priority"] }, 
     {"name":"setMargin","parameterTypes":["javafx.scene.Node","javafx.geometry.Insets"] }, 
     {"name":"setSpacing","parameterTypes":["double"] }
-  ]
+  ],
+  "queriedMethods":[{"name":"getHgrow","parameterTypes":["javafx.scene.Node"] }]
 },
 {
   "name":"javafx.scene.layout.Pane",
+  "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllPublicConstructors":true,
   "methods":[
@@ -1117,13 +2002,14 @@
 },
 {
   "name":"javafx.scene.layout.Region",
+  "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "methods":[
     {"name":"setMaxHeight","parameterTypes":["double"] }, 
     {"name":"setMaxWidth","parameterTypes":["double"] }, 
     {"name":"setMinHeight","parameterTypes":["double"] }, 
     {"name":"setMinWidth","parameterTypes":["double"] }, 
-    {"name":"setPadding","parameterTypes":["javafx.geometry.Insets"] }, 
+    {"name":"setOpaqueInsets","parameterTypes":["javafx.geometry.Insets"] }, 
     {"name":"setPrefHeight","parameterTypes":["double"] }, 
     {"name":"setPrefWidth","parameterTypes":["double"] }
   ]
@@ -1135,7 +2021,6 @@
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
     {"name":"setMaxHeight","parameterTypes":["double"] }, 
-    {"name":"setMinHeight","parameterTypes":["double"] }, 
     {"name":"setPrefHeight","parameterTypes":["double"] }, 
     {"name":"setVgrow","parameterTypes":["javafx.scene.layout.Priority"] }
   ]
@@ -1156,11 +2041,11 @@
   "queryAllPublicConstructors":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
-    {"name":"getVgrow","parameterTypes":["javafx.scene.Node"] }, 
     {"name":"setAlignment","parameterTypes":["javafx.geometry.Pos"] }, 
     {"name":"setMargin","parameterTypes":["javafx.scene.Node","javafx.geometry.Insets"] }, 
     {"name":"setVgrow","parameterTypes":["javafx.scene.Node","javafx.scene.layout.Priority"] }
-  ]
+  ],
+  "queriedMethods":[{"name":"getVgrow","parameterTypes":["javafx.scene.Node"] }]
 },
 {
   "name":"javafx.scene.paint.Color",
@@ -1223,6 +2108,14 @@
 {
   "name":"javafx.stage.Window",
   "queryAllDeclaredMethods":true
+},
+{
+  "name":"javafx.util.Duration",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"javax.net.ssl.SSLContext",
+  "fields":[{"name":"contextSpi"}]
 },
 {
   "name":"javax.security.auth.x500.X500Principal",
@@ -1735,22 +2628,7 @@
   "queryAllPublicMethods":true
 },
 {
-  "name":"org.fxmisc.richtext.CodeArea",
-  "queryAllDeclaredMethods":true,
-  "queryAllPublicMethods":true,
-  "queryAllPublicConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"org.fxmisc.richtext.GenericStyledArea",
-  "queryAllDeclaredMethods":true
-},
-{
-  "name":"org.fxmisc.richtext.StyleClassedTextArea",
-  "queryAllDeclaredMethods":true
-},
-{
-  "name":"org.fxmisc.richtext.StyledTextArea",
+  "name":"org.fxmisc.flowless.VirtualizedScrollPane",
   "queryAllDeclaredMethods":true
 },
 {
@@ -1767,11 +2645,11 @@
 {
   "name":"sun.misc.Unsafe",
   "allDeclaredFields":true,
-  "methods":[
+  "methods":[{"name":"invokeCleaner","parameterTypes":["java.nio.ByteBuffer"] }],
+  "queriedMethods":[
     {"name":"copyMemory","parameterTypes":["java.lang.Object","long","java.lang.Object","long","long"] }, 
     {"name":"getAndAddLong","parameterTypes":["java.lang.Object","long","long"] }, 
     {"name":"getAndSetObject","parameterTypes":["java.lang.Object","long","java.lang.Object"] }, 
-    {"name":"invokeCleaner","parameterTypes":["java.nio.ByteBuffer"] }, 
     {"name":"storeFence","parameterTypes":[] }
   ]
 },
@@ -1789,10 +2667,6 @@
 {
   "name":"sun.security.pkcs12.PKCS12KeyStore$DualFormatPKCS12",
   "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"sun.security.provider.DRBG",
-  "methods":[{"name":"<init>","parameterTypes":["java.security.SecureRandomParameters"] }]
 },
 {
   "name":"sun.security.provider.DSA$SHA1withDSA",
@@ -1820,6 +2694,10 @@
 },
 {
   "name":"sun.security.provider.MD5",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.NativePRNG",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -1873,6 +2751,10 @@
 {
   "name":"sun.security.ssl.KeyManagerFactoryImpl$SunX509",
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.ssl.SSLContextImpl",
+  "fields":[{"name":"trustManager"}]
 },
 {
   "name":"sun.security.ssl.SSLContextImpl$TLSContext",

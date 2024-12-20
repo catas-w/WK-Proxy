@@ -2,6 +2,12 @@
   "resources":{
   "includes":[
     {
+      "pattern":"\\QMETA-INF/micronaut/\\E"
+    }, 
+    {
+      "pattern":"\\QMETA-INF/native/libnetty_tcnative_osx_aarch_64.jnilib\\E"
+    }, 
+    {
       "pattern":"\\QMETA-INF/resources/fontawesome5/5.15.3/fonts/fa-brands-400.ttf\\E"
     }, 
     {
@@ -17,7 +23,13 @@
       "pattern":"\\QMETA-INF/services/app.supernaut.fx.FxLauncher\\E"
     }, 
     {
+      "pattern":"\\QMETA-INF/services/io.micronaut.core.convert.TypeConverterRegistrar\\E"
+    }, 
+    {
       "pattern":"\\QMETA-INF/services/io.micronaut.inject.BeanDefinitionReference\\E"
+    }, 
+    {
+      "pattern":"\\QMETA-INF/services/java.nio.file.spi.FileSystemProvider\\E"
     }, 
     {
       "pattern":"\\QMETA-INF/services/org.ehcache.core.spi.service.ServiceFactory\\E"
@@ -29,25 +41,46 @@
       "pattern":"\\QMETA-INF/services/org.slf4j.spi.SLF4JServiceProvider\\E"
     }, 
     {
-      "pattern":"\\Qcert/cert.crt\\E"
-    }, 
-    {
-      "pattern":"\\Qcert/private.key\\E"
+      "pattern":"\\Qapplication.properties\\E"
     }, 
     {
       "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-button.css\\E"
     }, 
     {
+      "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-check-box.css\\E"
+    }, 
+    {
+      "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-combo-box.css\\E"
+    }, 
+    {
+      "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-radio-button.css\\E"
+    }, 
+    {
       "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-tab-pane.css\\E"
     }, 
     {
-      "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-text-area.css\\E"
+      "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-text-field.css\\E"
     }, 
     {
       "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-toggle-button.css\\E"
     }, 
     {
+      "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-toggle-node.css\\E"
+    }, 
+    {
+      "pattern":"\\Qcom/sun/jna/darwin-aarch64/libjnidispatch.jnilib\\E"
+    }, 
+    {
+      "pattern":"\\Qcss/app.css\\E"
+    }, 
+    {
+      "pattern":"\\Qcss/cert-dialog.css\\E"
+    }, 
+    {
       "pattern":"\\Qcss/common-design.css\\E"
+    }, 
+    {
+      "pattern":"\\Qcss/component/component.css\\E"
     }, 
     {
       "pattern":"\\Qcss/dialog.css\\E"
@@ -56,10 +89,25 @@
       "pattern":"\\Qcss/request-view-pane.css\\E"
     }, 
     {
+      "pattern":"\\Qcss/update-dialog.css\\E"
+    }, 
+    {
+      "pattern":"\\Qfont/MiSans-Demibold.ttf\\E"
+    }, 
+    {
+      "pattern":"\\Qfont/MiSans-Normal.ttf\\E"
+    }, 
+    {
       "pattern":"\\Qfxml/application.fxml\\E"
     }, 
     {
-      "pattern":"\\Qfxml/proxy-settings.fxml\\E"
+      "pattern":"\\Qfxml/component/side_bar.fxml\\E"
+    }, 
+    {
+      "pattern":"\\Qimage/wk-proxy.2.ico\\E"
+    }, 
+    {
+      "pattern":"\\QlibWindowBlurLib.dylib\\E"
     }, 
     {
       "pattern":"\\Qorg/fxmisc/richtext/code-area.css\\E"
@@ -73,15 +121,6 @@
       "name":"com.sun.javafx.tk.quantum.QuantumMessagesBundle",
       "locales":[
         "", 
-        "und", 
-        "zh-CN"
-      ]
-    }, 
-    {
-      "name":"com/sun/glass/ui/win/themes",
-      "locales":[
-        "", 
-        "und", 
         "zh-CN"
       ]
     }, 
@@ -89,9 +128,12 @@
       "name":"com/sun/javafx/scene/control/skin/resources/controls",
       "locales":[
         "", 
-        "und", 
         "zh-CN"
       ]
+    }, 
+    {
+      "name":"lang.messages",
+      "locales":["zh-CN"]
     }
   ]
 }
