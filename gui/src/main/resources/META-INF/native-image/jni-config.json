@@ -30,6 +30,9 @@
   "type":"[[B"
 },
 {
+  "type":"[[Ljava.lang.String;"
+},
+{
   "type":"com.catas.wicked.proxy.WickedProxyApplication",
   "methods":[{"name":"main","parameterTypes":["java.lang.String[]"] }]
 },
@@ -142,14 +145,6 @@
 {
   "type":"com.sun.javafx.iio.common.ImageLoaderImpl",
   "methods":[{"name":"emitWarning","parameterTypes":["java.lang.String"] }]
-},
-{
-  "type":"com.sun.javafx.iio.common.ImageLoaderImpl",
-  "methods":[{"name":"emitWarning","parameterTypes":["java.lang.String"] }]
-},
-{
-  "type":"com.sun.javafx.iio.jpeg.JPEGImageLoader",
-  "methods":[{"name":"setInputAttributes","parameterTypes":["int","int","int","int","int","byte[]"] },{"name":"setOutputAttributes","parameterTypes":["int","int"] },{"name":"updateImageProgress","parameterTypes":["int"] }]
 },
 {
   "type":"com.sun.javafx.iio.jpeg.JPEGImageLoader",
@@ -411,9 +406,23 @@
   "methods":[{"name":"getRGB","parameterTypes":["int","int","int","int","int[]","int","int"] },{"name":"setRGB","parameterTypes":["int","int","int","int","int[]","int","int"] }]
 },
 {
+  "type":"java.awt.image.BufferedImage",
+  "fields":[{"name":"colorModel"},{"name":"imageType"},{"name":"raster"}],
+  "methods":[{"name":"getRGB","parameterTypes":["int","int","int","int","int[]","int","int"] },{"name":"setRGB","parameterTypes":["int","int","int","int","int[]","int","int"] }]
+},
+{
   "type":"java.awt.image.ColorModel",
   "fields":[{"name":"colorSpace"},{"name":"colorSpaceType"},{"name":"isAlphaPremultiplied"},{"name":"is_sRGB"},{"name":"nBits"},{"name":"numComponents"},{"name":"supportsAlpha"},{"name":"transparency"}],
   "methods":[{"name":"getRGBdefault","parameterTypes":[] }]
+},
+{
+  "type":"java.awt.image.ColorModel",
+  "fields":[{"name":"colorSpace"},{"name":"colorSpaceType"},{"name":"isAlphaPremultiplied"},{"name":"is_sRGB"},{"name":"nBits"},{"name":"numComponents"},{"name":"supportsAlpha"},{"name":"transparency"}],
+  "methods":[{"name":"getRGBdefault","parameterTypes":[] }]
+},
+{
+  "type":"java.awt.image.Raster",
+  "fields":[{"name":"dataBuffer"},{"name":"height"},{"name":"minX"},{"name":"minY"},{"name":"numBands"},{"name":"numDataElements"},{"name":"sampleModel"},{"name":"sampleModelTranslateX"},{"name":"sampleModelTranslateY"},{"name":"width"}]
 },
 {
   "type":"java.awt.image.Raster",
@@ -425,16 +434,21 @@
   "methods":[{"name":"getPixels","parameterTypes":["int","int","int","int","int[]","java.awt.image.DataBuffer"] },{"name":"setPixels","parameterTypes":["int","int","int","int","int[]","java.awt.image.DataBuffer"] }]
 },
 {
+  "type":"java.awt.image.SampleModel",
+  "fields":[{"name":"height"},{"name":"width"}],
+  "methods":[{"name":"getPixels","parameterTypes":["int","int","int","int","int[]","java.awt.image.DataBuffer"] },{"name":"setPixels","parameterTypes":["int","int","int","int","int[]","java.awt.image.DataBuffer"] }]
+},
+{
+  "type":"java.awt.image.SinglePixelPackedSampleModel",
+  "fields":[{"name":"bitMasks"},{"name":"bitOffsets"},{"name":"bitSizes"},{"name":"maxBitSize"}]
+},
+{
   "type":"java.awt.image.SinglePixelPackedSampleModel",
   "fields":[{"name":"bitMasks"},{"name":"bitOffsets"},{"name":"bitSizes"},{"name":"maxBitSize"}]
 },
 {
   "type":"java.io.File",
   "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
-},
-{
-  "type":"java.io.InputStream",
-  "methods":[{"name":"read","parameterTypes":["byte[]","int","int"] },{"name":"skip","parameterTypes":["long"] }]
 },
 {
   "type":"java.io.InputStream",
@@ -586,7 +600,7 @@
 },
 {
   "type":"java.lang.System",
-  "methods":[{"name":"getProperty","parameterTypes":["java.lang.String"] },{"name":"setProperty","parameterTypes":["java.lang.String","java.lang.String"] }]
+  "methods":[{"name":"getProperty","parameterTypes":["java.lang.String"] },{"name":"load","parameterTypes":["java.lang.String"] },{"name":"setProperty","parameterTypes":["java.lang.String","java.lang.String"] }]
 },
 {
   "type":"java.lang.UnsatisfiedLinkError",
@@ -730,6 +744,14 @@
 {
   "type":"sun.awt.image.IntegerComponentRaster",
   "fields":[{"name":"data"},{"name":"dataOffsets"},{"name":"pixelStride"},{"name":"scanlineStride"},{"name":"type"}]
+},
+{
+  "type":"sun.awt.image.IntegerComponentRaster",
+  "fields":[{"name":"data"},{"name":"dataOffsets"},{"name":"pixelStride"},{"name":"scanlineStride"},{"name":"type"}]
+},
+{
+  "type":"sun.java2d.Disposer",
+  "methods":[{"name":"addRecord","parameterTypes":["java.lang.Object","long","long"] }]
 },
 {
   "type":"sun.java2d.Disposer",

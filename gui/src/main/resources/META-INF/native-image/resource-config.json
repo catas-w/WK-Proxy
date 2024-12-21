@@ -127,14 +127,6 @@
   },{
     "pattern":"\\Qdarwin\/libWindowBlurLib.dylib\\E"
   },{
-    "pattern":"\\Qdarwin\/libawt.dylib\\E"
-  },{
-    "pattern":"\\Qdarwin\/libawt_lwawt.dylib\\E"
-  },{
-    "pattern":"\\Qdarwin\/libjava.dylib\\E"
-  },{
-    "pattern":"\\Qdarwin\/libjawt.dylib\\E"
-  },{
     "pattern":"\\Qfont\/MiSans-Demibold.ttf\\E"
   },{
     "pattern":"\\Qfont\/MiSans-Normal.ttf\\E"

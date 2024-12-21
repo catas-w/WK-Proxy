@@ -96,6 +96,7 @@
 
                         <!-- system proxy -->
                         <option>-Djava.net.useSystemProxies=true</option>
+                        <option>-Djava.awt.headless=true</option>
                     </options>
                 </configuration>
             </plugin>
@@ -116,6 +117,7 @@
                     <runtimeArgs>
                         <arg>--add-opens java.base/java.lang.reflect=ALL-UNNAMED</arg>
                         <arg>--add-opens java.base/java.lang=ALL-UNNAMED</arg>
+                        <arg>-Djava.awt.headless=true</arg>
                     </runtimeArgs>
                     <nativeImageArgs>
                         <arg>-H:+JNI</arg>

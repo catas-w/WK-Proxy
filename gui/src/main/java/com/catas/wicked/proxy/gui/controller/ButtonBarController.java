@@ -296,42 +296,7 @@ public class ButtonBarController implements Initializable {
      * resend selected request
      */
     public void resendRequest() {
-        String requestId = appConfig.getObservableConfig().getCurrentRequestId();
-        if (StringUtils.isBlank(requestId)) {
-            return;
-        }
-        RequestMessage requestMessage = requestCache.get(requestId);
-        if (requestMessage == null || requestMessage.isEncrypted() || requestMessage.isOversize()) {
-            log.warn("Not integrated http request, unable to resend");
-            return;
-        }
-
-        ThreadPoolService.getInstance().run(() -> {
-            String url = requestMessage.getRequestUrl();
-            String method = requestMessage.getMethod();
-            String protocol = requestMessage.getProtocol();
-            Map<String, String> headers = requestMessage.getHeaders();
-            byte[] content = requestMessage.getBody();
-
-            ExternalProxyConfig proxyConfig = new ExternalProxyConfig();
-            proxyConfig.setProtocol(ProxyProtocol.HTTP);
-            proxyConfig.setProxyAddress(appConfig.getHost(), appConfig.getSettings().getPort());
-
-            try (MinimalHttpClient client = MinimalHttpClient.builder()
-                    .uri(url)
-                    .method(HttpMethod.valueOf(method))
-                    .httpVersion(protocol)
-                    .headers(headers)
-                    .content(content)
-                    .proxyConfig(proxyConfig)
-                    .build()) {
-                client.execute();
-                HttpResponse response = client.response();
-                log.info("Get response in resending: {}", response);
-            } catch (Exception e) {
-                log.error("Error in resending request: {}", requestMessage.getRequestUrl());
-            }
-        });
+        requestViewController.resendRequest();
     }
 
     public void exit() {
