@@ -80,9 +80,9 @@ public class CustomTextField extends JFXTextField {
             textPane = (Pane) this.getChildren().get(0);
 
             // get parent fields
-            textNode = ReflectionHelper.getFieldContent(TextFieldSkin.class, this, "textNode");
-            textTranslateX = ReflectionHelper.getFieldContent(TextFieldSkin.class, this, "textTranslateX");
-            textRight = ReflectionHelper.getFieldContent(TextFieldSkin.class, this, "textRight");
+            // textNode = ReflectionHelper.getFieldContent(TextFieldSkin.class, this, "textNode");
+            // textTranslateX = ReflectionHelper.getFieldContent(TextFieldSkin.class, this, "textTranslateX");
+            // textRight = ReflectionHelper.getFieldContent(TextFieldSkin.class, this, "textRight");
 
             linesWrapper = new PromptLinesWrapper<JFXTextField>(
                     textField,
@@ -91,9 +91,9 @@ public class CustomTextField extends JFXTextField {
                     textField.promptTextProperty(),
                     () -> promptText);
 
-            linesWrapper.init(() -> createPromptNode(), textPane);
+            // linesWrapper.init(() -> createPromptNode(), textPane);
 
-            ReflectionHelper.setFieldContent(TextFieldSkin.class, this, "usePromptText", linesWrapper.usePromptText);
+            // ReflectionHelper.setFieldContent(TextFieldSkin.class, this, "usePromptText", linesWrapper.usePromptText);
 
             errorContainer = new ValidationPane<>(textField);
 
@@ -134,27 +134,26 @@ public class CustomTextField extends JFXTextField {
         }
 
 
-        private void updateTextPos() {
-            double textWidth = textNode.getLayoutBounds().getWidth();
-            final double promptWidth = promptText == null ? 0 : promptText.getLayoutBounds().getWidth();
-            switch (getSkinnable().getAlignment().getHpos()) {
-                case CENTER:
-                    linesWrapper.promptTextScale.setPivotX(promptWidth / 2);
-                    double midPoint = textRight.get() / 2;
-                    double newX = midPoint - textWidth / 2;
-                    if (newX + textWidth <= textRight.get()) {
-                        textTranslateX.set(newX);
-                    }
-                    break;
-                case LEFT:
-                    linesWrapper.promptTextScale.setPivotX(0);
-                    break;
-                case RIGHT:
-                    linesWrapper.promptTextScale.setPivotX(promptWidth);
-                    break;
-            }
-
-        }
+        // private void updateTextPos() {
+        //     double textWidth = textNode.getLayoutBounds().getWidth();
+        //     final double promptWidth = promptText == null ? 0 : promptText.getLayoutBounds().getWidth();
+        //     switch (getSkinnable().getAlignment().getHpos()) {
+        //         case CENTER:
+        //             linesWrapper.promptTextScale.setPivotX(promptWidth / 2);
+        //             double midPoint = textRight.get() / 2;
+        //             double newX = midPoint - textWidth / 2;
+        //             if (newX + textWidth <= textRight.get()) {
+        //                 textTranslateX.set(newX);
+        //             }
+        //             break;
+        //         case LEFT:
+        //             linesWrapper.promptTextScale.setPivotX(0);
+        //             break;
+        //         case RIGHT:
+        //             linesWrapper.promptTextScale.setPivotX(promptWidth);
+        //             break;
+        //     }
+        // }
 
         private void createPromptNode() {
             if (promptText != null || !linesWrapper.usePromptText.get()) {

@@ -43,6 +43,7 @@ public class OverviewTreeTableCell extends TreeTableCell<PairEntry, String> {
     protected void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);
         if (item == null || empty || getTableRow() == null) {
+            setText(null);
             setGraphic(null);
         } else {
             TreeItem<PairEntry> currentTreeItem = getTableRow().getTreeItem();

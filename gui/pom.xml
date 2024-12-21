@@ -134,6 +134,8 @@
                         <arg>--initialize-at-build-time=com.sun.beans.util.Cache</arg>
                         <arg>--initialize-at-build-time=com.sun.beans.introspect.ClassInfo$1</arg>
 
+                        <arg>--initialize-at-run-time=javax.imageio.ImageIO</arg>
+
                         <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeNoCleanerDirectByteBuf</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.PooledSlicedByteBuf</arg>

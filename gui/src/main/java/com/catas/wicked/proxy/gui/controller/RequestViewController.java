@@ -3,6 +3,11 @@ package com.catas.wicked.proxy.gui.controller;
 import com.catas.wicked.common.bean.RequestCell;
 import com.catas.wicked.common.bean.message.DeleteMessage;
 import com.catas.wicked.common.bean.message.RenderMessage;
+import com.catas.wicked.common.bean.message.RequestMessage;
+import com.catas.wicked.common.config.ApplicationConfig;
+import com.catas.wicked.common.config.ExternalProxyConfig;
+import com.catas.wicked.common.constant.ProxyProtocol;
+import com.catas.wicked.common.executor.ThreadPoolService;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.proxy.gui.componet.FilterableTreeItem;
@@ -10,7 +15,10 @@ import com.catas.wicked.proxy.gui.componet.TreeItemPredicate;
 import com.catas.wicked.proxy.gui.componet.ViewCellFactory;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.service.RequestViewService;
+import com.catas.wicked.server.client.MinimalHttpClient;
 import com.jfoenix.controls.JFXToggleNode;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.beans.binding.Bindings;
@@ -31,8 +39,11 @@ import javafx.scene.input.KeyCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.ehcache.Cache;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
@@ -49,15 +60,12 @@ public class RequestViewController implements Initializable {
     private TextField filterInput;
     @FXML
     private Button filterCancelBtn;
-
     @Getter
     @FXML
     private TreeView<RequestCell> reqTreeView;
-
     @Getter
     @FXML
     private ListView<RequestCell> reqListView;
-
     @FXML
     private ContextMenu contextMenu;
     @Inject
@@ -66,6 +74,10 @@ public class RequestViewController implements Initializable {
     private MessageQueue messageQueue;
     @Inject
     private RequestViewService requestViewService;
+    @Inject
+    private ApplicationConfig appConfig;
+    @Inject
+    private Cache<String, RequestMessage> requestCache;
 
     private ToggleGroup toggleGroup;
 
@@ -290,5 +302,44 @@ public class RequestViewController implements Initializable {
     public void updateFocusPseudoClass(Boolean state) {
         reqTreeView.pseudoClassStateChanged(FocusPseudoClass, state);
         reqListView.pseudoClassStateChanged(FocusPseudoClass, state);
+    }
+
+    public void resendRequest() {
+        String requestId = appConfig.getObservableConfig().getCurrentRequestId();
+        if (StringUtils.isBlank(requestId)) {
+            return;
+        }
+        RequestMessage requestMessage = requestCache.get(requestId);
+        if (requestMessage == null || requestMessage.isEncrypted() || requestMessage.isOversize()) {
+            log.warn("Not integrated http request, unable to resend");
+            return;
+        }
+
+        ThreadPoolService.getInstance().run(() -> {
+            String url = requestMessage.getRequestUrl();
+            String method = requestMessage.getMethod();
+            String protocol = requestMessage.getProtocol();
+            Map<String, String> headers = requestMessage.getHeaders();
+            byte[] content = requestMessage.getBody();
+
+            ExternalProxyConfig proxyConfig = new ExternalProxyConfig();
+            proxyConfig.setProtocol(ProxyProtocol.HTTP);
+            proxyConfig.setProxyAddress(appConfig.getHost(), appConfig.getSettings().getPort());
+
+            try (MinimalHttpClient client = MinimalHttpClient.builder()
+                    .uri(url)
+                    .method(HttpMethod.valueOf(method))
+                    .httpVersion(protocol)
+                    .headers(headers)
+                    .content(content)
+                    .proxyConfig(proxyConfig)
+                    .build()) {
+                client.execute();
+                HttpResponse response = client.response();
+                log.info("Get response in resending: {}", response);
+            } catch (Exception e) {
+                log.error("Error in resending request: {}", requestMessage.getRequestUrl());
+            }
+        });
     }
 }

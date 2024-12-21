@@ -62,7 +62,7 @@
             <ContextMenu fx:id="contextMenu" prefWidth="75" styleClass="req-context-menu">
                 <items>
                     <MenuItem text="%delete.label" onAction="#removeItem" disable="true"/>
-                    <MenuItem text="%resend.label" disable="true"/>
+                    <MenuItem text="%resend.label" onAction="#resendRequest" disable="true"/>
                 </items>
             </ContextMenu>
         </fx:define>

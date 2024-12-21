@@ -205,13 +205,6 @@ public class DetailTabController implements Initializable {
         nameColumn.setCellFactory((TreeTableColumn<PairEntry, String> param) ->
                 new OverviewTreeTableCell());
 
-        // TreeTableColumn<PairEntry, String> valueColumn = new TreeTableColumn<>("Value");
-        // valueColumn.setSortable(false );
-        // nameColumn.getStyleClass().add("headers-value");
-        // valueColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<PairEntry, String> param) ->
-        //         new ReadOnlyStringWrapper(param.getValue().getValue().getVal()));
-        // valueColumn.setCellFactory((TreeTableColumn<PairEntry, String> param) ->
-        //         new SelectableTreeTableCell(new TextAreaEditorNodeBuilder(valueColumn), valueColumn));
 
         TreeTableColumn<PairEntry, PairEntry> valueColumn = new TreeTableColumn<>("Value");
         valueColumn.setSortable(false );

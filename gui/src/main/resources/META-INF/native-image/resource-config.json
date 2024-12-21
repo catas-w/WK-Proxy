@@ -83,6 +83,8 @@
   },{
     "pattern":"\\Qcom\/jfoenix\/assets\/css\/controls\/jfx-tab-pane.css\\E"
   },{
+    "pattern":"\\Qcom\/jfoenix\/assets\/css\/controls\/jfx-text-area.css\\E"
+  },{
     "pattern":"\\Qcom\/jfoenix\/assets\/css\/controls\/jfx-text-field.css\\E"
   },{
     "pattern":"\\Qcom\/jfoenix\/assets\/css\/controls\/jfx-toggle-button.css\\E"
@@ -124,6 +126,14 @@
     "pattern":"\\Qdarwin\/libCertInstallerLib.dylib\\E"
   },{
     "pattern":"\\Qdarwin\/libWindowBlurLib.dylib\\E"
+  },{
+    "pattern":"\\Qdarwin\/libawt.dylib\\E"
+  },{
+    "pattern":"\\Qdarwin\/libawt_lwawt.dylib\\E"
+  },{
+    "pattern":"\\Qdarwin\/libjava.dylib\\E"
+  },{
+    "pattern":"\\Qdarwin\/libjawt.dylib\\E"
   },{
     "pattern":"\\Qfont\/MiSans-Demibold.ttf\\E"
   },{
@@ -250,6 +260,8 @@
     "pattern":"javafx.graphics:\\Qcom\/sun\/prism\/es2\/glsl\/Texture_LinearGradient_PAD.frag\\E"
   },{
     "pattern":"javafx.graphics:\\Qcom\/sun\/scenario\/effect\/impl\/es2\/glsl\/Blend_SRC_IN.frag\\E"
+  },{
+    "pattern":"javafx.graphics:\\Qcom\/sun\/scenario\/effect\/impl\/es2\/glsl\/LinearConvolveShadow_20.frag\\E"
   },{
     "pattern":"javafx.graphics:\\Qcom\/sun\/scenario\/effect\/impl\/es2\/glsl\/LinearConvolveShadow_32.frag\\E"
   },{
