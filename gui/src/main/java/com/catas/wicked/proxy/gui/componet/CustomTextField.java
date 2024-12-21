@@ -118,9 +118,9 @@ public class CustomTextField extends JFXTextField {
             // errorContainer.layoutPane(x, height + linesWrapper.focusedLine.getHeight(), w, h);
             errorContainer.layoutPane(x + errorPaneTranslateX.get(), height + errorPaneTranslateY.get(), w, h);
 
-            if (getSkinnable().getWidth() > 0) {
-                updateTextPos();
-            }
+            // if (getSkinnable().getWidth() > 0) {
+            //     updateTextPos();
+            // }
 
             linesWrapper.updateLabelFloatLayout();
 

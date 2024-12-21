@@ -156,7 +156,7 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
             code = response.getStatusStr() + " " + response.getReasonPhrase();
         }
 
-        System.out.println(request.getRemoteHost() + " === " + request.getRemoteAddress());
+        // System.out.println(request.getRemoteHost() + " === " + request.getRemoteAddress());
         // basic
         requestOverviewInfo.getUrl().setVal(url);
         requestOverviewInfo.getMethod().setVal(method);

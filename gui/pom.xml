@@ -110,22 +110,32 @@
                         <!-- <arg>management_ext.lib</arg> -->
                         <!-- <arg>psapi.lib</arg> -->
                     </linkerArgs>
-                    <graalvmHome>/Library/Java/JavaVirtualMachines/graalvm-svm-java17-darwin-m1-gluon-22.1.0.1-Final/Contents/Home</graalvmHome>
+                    <!-- <graalvmHome>/Library/Java/JavaVirtualMachines/graalvm-svm-java17-darwin-m1-gluon-22.1.0.1-Final/Contents/Home</graalvmHome> -->
                     <!-- <graalvmHome>/Library/Java/JavaVirtualMachines/graalvm-java23-darwin-aarch64-gluon-23+25.1-dev/Contents/Home</graalvmHome> -->
-                    <reflectionList>com.catas.wicked.proxy.WickedProxyApplication</reflectionList>
+                    <!-- <reflectionList>com.catas.wicked.proxy.WickedProxyApplication</reflectionList> -->
+                    <runtimeArgs>
+                        <arg>--add-opens java.base/java.lang.reflect=ALL-UNNAMED</arg>
+                        <arg>--add-opens java.base/java.lang=ALL-UNNAMED</arg>
+                    </runtimeArgs>
                     <nativeImageArgs>
                         <arg>-H:+JNI</arg>
-                        <arg>-H:ExcludeResources='.*/libjnidispatch.a'</arg>
+                        <arg>-H:ExcludeResources='.*/libjnidispatch.a$'</arg>
                         <arg>--allow-incomplete-classpath</arg>
+                        <arg>--initialize-at-build-time=org.slf4j.jul.JDK14LoggerFactory</arg>
+                        <arg>--initialize-at-build-time=org.slf4j.jul.JULServiceProvider</arg>
+                        <arg>--initialize-at-build-time=org.slf4j.helpers</arg>
                         <arg>--initialize-at-build-time=org.slf4j.LoggerFactory</arg>
                         <arg>--initialize-at-build-time=org.slf4j.jul.JDK14LoggerAdapter</arg>
 
                         <arg>--initialize-at-build-time=com.sun.beans.introspect.ClassInfo</arg>
                         <arg>--initialize-at-build-time=java.beans.Introspector</arg>
+                        <arg>--initialize-at-build-time=java.beans.Introspector$1</arg>
+
+                        <arg>--initialize-at-build-time=com.sun.beans.util.Cache</arg>
+                        <arg>--initialize-at-build-time=com.sun.beans.introspect.ClassInfo$1</arg>
 
                         <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeNoCleanerDirectByteBuf</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator</arg>
-                        <arg>--trace-class-initialization=io.netty.buffer.UnpooledByteBufAllocator</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.PooledSlicedByteBuf</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.PooledByteBufAllocator</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.PooledUnsafeDirectByteBuf</arg>
@@ -216,8 +226,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plgin.version}</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <!-- <source>17</source> -->
+                    <!-- <target>17</target> -->
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>

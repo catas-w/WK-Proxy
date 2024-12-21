@@ -87,6 +87,7 @@ public class ImageUtils {
      * @throws IOException
      */
     public static BufferedImage encodeWebpImage(InputStream inputStream) throws IOException {
+        // TODO [native-image] java.lang.NoClassDefFoundError: Could not initialize class javax.imageio.ImageIO
         ImageReader reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
         if (inputStream instanceof ImageInputStream) {
             reader.setInput(inputStream);

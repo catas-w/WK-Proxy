@@ -227,11 +227,11 @@
 
                         <Label text="%ex-proxy-username.label" fx:id="exUsernameLabel" visible="false"
                                styleClass="grid-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                        <JFXTextField fx:id="exUsername" visible="false" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1" />
+                        <CustomTextField fx:id="exUsername" visible="false" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1" />
 
                         <Label text="%ex-proxy-pwd.label" fx:id="exPasswordLabel" visible="false"
                                styleClass="grid-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-                        <JFXTextField fx:id="exPassword" visible="false" styleClass="grid-element" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                        <CustomTextField fx:id="exPassword" visible="false" styleClass="grid-element" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
                     </GridPane>
                 </ScrollPane>
             </AnchorPane>
