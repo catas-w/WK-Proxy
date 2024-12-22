@@ -123,9 +123,13 @@
   },{
     "pattern":"\\Qdarwin-aarch64\/libWindowBlurLib.dylib\\E"
   },{
+    "pattern":"\\Qdarwin-aarch64\/libawt.dylib\\E"
+  },{
     "pattern":"\\Qdarwin\/libCertInstallerLib.dylib\\E"
   },{
     "pattern":"\\Qdarwin\/libWindowBlurLib.dylib\\E"
+  },{
+    "pattern":"\\Qdarwin\/libawt.dylib\\E"
   },{
     "pattern":"\\Qfont\/MiSans-Demibold.ttf\\E"
   },{
@@ -152,6 +156,8 @@
     "pattern":"\\QlibCertInstallerLib.dylib\\E"
   },{
     "pattern":"\\QlibWindowBlurLib.dylib\\E"
+  },{
+    "pattern":"\\Qlibawt.dylib\\E"
   },{
     "pattern":"\\Qnative\/Mac\/aarch64\/libwebp-imageio.dylib\\E"
   },{
@@ -192,6 +198,14 @@
     "pattern":"java.desktop:\\Qsun\/awt\/resources\/awt_zh_Hans.properties\\E"
   },{
     "pattern":"java.desktop:\\Qsun\/awt\/resources\/awt_zh_Hans_CN.properties\\E"
+  },{
+    "pattern":"java.desktop:\\Qsun\/awt\/resources\/awtosx_zh.properties\\E"
+  },{
+    "pattern":"java.desktop:\\Qsun\/awt\/resources\/awtosx_zh_CN.properties\\E"
+  },{
+    "pattern":"java.desktop:\\Qsun\/awt\/resources\/awtosx_zh_Hans.properties\\E"
+  },{
+    "pattern":"java.desktop:\\Qsun\/awt\/resources\/awtosx_zh_Hans_CN.properties\\E"
   },{
     "pattern":"java.logging:\\Qsun\/util\/logging\/resources\/logging_zh.properties\\E"
   },{
@@ -360,6 +374,9 @@
     "locales":["en","zh-CN","zh-Hans-CN"]
   },{
     "name":"sun.awt.resources.awt",
+    "locales":["zh-Hans-CN"]
+  },{
+    "name":"sun.awt.resources.awtosx",
     "locales":["zh-Hans-CN"]
   }]
 }

@@ -147,6 +147,14 @@
   "methods":[{"name":"emitWarning","parameterTypes":["java.lang.String"] }]
 },
 {
+  "type":"com.sun.javafx.iio.common.ImageLoaderImpl",
+  "methods":[{"name":"emitWarning","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"com.sun.javafx.iio.jpeg.JPEGImageLoader",
+  "methods":[{"name":"setInputAttributes","parameterTypes":["int","int","int","int","int","byte[]"] },{"name":"setOutputAttributes","parameterTypes":["int","int"] },{"name":"updateImageProgress","parameterTypes":["int"] }]
+},
+{
   "type":"com.sun.javafx.iio.jpeg.JPEGImageLoader",
   "methods":[{"name":"setInputAttributes","parameterTypes":["int","int","int","int","int","byte[]"] },{"name":"setOutputAttributes","parameterTypes":["int","int"] },{"name":"updateImageProgress","parameterTypes":["int"] }]
 },
@@ -401,6 +409,10 @@
   "fields":[{"name":"complete"},{"name":"returnValue"}]
 },
 {
+  "type":"java.awt.event.InputEvent",
+  "methods":[{"name":"getButtonDownMasks","parameterTypes":[] }]
+},
+{
   "type":"java.awt.image.BufferedImage",
   "fields":[{"name":"colorModel"},{"name":"imageType"},{"name":"raster"}],
   "methods":[{"name":"getRGB","parameterTypes":["int","int","int","int","int[]","int","int"] },{"name":"setRGB","parameterTypes":["int","int","int","int","int[]","int","int"] }]
@@ -449,6 +461,10 @@
 {
   "type":"java.io.File",
   "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"java.io.InputStream",
+  "methods":[{"name":"read","parameterTypes":["byte[]","int","int"] },{"name":"skip","parameterTypes":["long"] }]
 },
 {
   "type":"java.io.InputStream",
@@ -740,6 +756,10 @@
 {
   "type":"org.graalvm.jniutils.JNIExceptionWrapperEntryPoints",
   "methods":[{"name":"getClassName","parameterTypes":["java.lang.Class"] }]
+},
+{
+  "type":"sun.awt.AWTAutoShutdown",
+  "methods":[{"name":"notifyToolkitThreadFree","parameterTypes":[] }]
 },
 {
   "type":"sun.awt.image.IntegerComponentRaster",
