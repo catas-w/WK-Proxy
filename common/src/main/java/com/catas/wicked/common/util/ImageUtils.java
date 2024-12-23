@@ -25,12 +25,11 @@ import java.nio.IntBuffer;
 @Slf4j
 public class ImageUtils {
 
-    // private static final WebPReadParam readParam;
+    private static final ImageReader reader;
 
-    // static {
-    //     readParam = new WebPReadParam();
-    //     readParam.setBypassFiltering(true);
-    // }
+    static {
+        reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
+    }
 
     /**
      * convert bufferedImage to javafx image
@@ -88,7 +87,7 @@ public class ImageUtils {
      */
     public static BufferedImage encodeWebpImage(InputStream inputStream) throws IOException {
         // TODO [native-image] java.lang.NoClassDefFoundError: Could not initialize class javax.imageio.ImageIO
-        ImageReader reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
+        // ImageReader reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
         if (inputStream instanceof ImageInputStream) {
             reader.setInput(inputStream);
         } else {
