@@ -298,8 +298,19 @@
   "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$ExtendedTrustManagerVerifyCallback"
 },
 {
+  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$ExtendedTrustManagerVerifyCallback"
+},
+{
   "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$OpenSslServerCertificateCallback",
   "methods":[{"name":"handle","parameterTypes":["long","byte[]","byte[][]"] }]
+},
+{
+  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$OpenSslServerCertificateCallback",
+  "methods":[{"name":"handle","parameterTypes":["long","byte[]","byte[][]"] }]
+},
+{
+  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$OpenSslSniHostnameMatcher",
+  "methods":[{"name":"match","parameterTypes":["long","java.lang.String"] }]
 },
 {
   "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$OpenSslSniHostnameMatcher",
@@ -388,10 +399,6 @@
 {
   "type":"io.netty.internal.tcnative.SSLTask",
   "fields":[{"name":"complete"},{"name":"returnValue"}]
-},
-{
-  "type":"java.awt.event.InputEvent",
-  "methods":[{"name":"getButtonDownMasks","parameterTypes":[] }]
 },
 {
   "type":"java.awt.event.InputEvent",
@@ -714,10 +721,6 @@
 {
   "type":"org.graalvm.jniutils.JNIExceptionWrapperEntryPoints",
   "methods":[{"name":"getClassName","parameterTypes":["java.lang.Class"] }]
-},
-{
-  "type":"sun.awt.AWTAutoShutdown",
-  "methods":[{"name":"notifyToolkitThreadFree","parameterTypes":[] }]
 },
 {
   "type":"sun.awt.AWTAutoShutdown",

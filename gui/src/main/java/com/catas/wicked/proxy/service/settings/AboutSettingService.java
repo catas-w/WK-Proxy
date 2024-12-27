@@ -2,13 +2,11 @@ package com.catas.wicked.proxy.service.settings;
 
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.pipeline.MessageQueue;
+import com.catas.wicked.common.provider.DesktopProvider;
 import com.catas.wicked.common.provider.ResourceMessageProvider;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
-
-import java.awt.Desktop;
-import java.net.URI;
 
 @Slf4j
 @Singleton
@@ -18,6 +16,13 @@ public class AboutSettingService extends AbstractSettingService{
     public static final String X_LINK = "https://x.com/Catas43595337";
 
     private ResourceMessageProvider resourceMessageProvider;
+
+    private DesktopProvider desktopProvider;
+
+    @Inject
+    public void setDesktopProvider(DesktopProvider desktopProvider) {
+        this.desktopProvider = desktopProvider;
+    }
 
     @Inject
     public void setResourceMessageProvider(ResourceMessageProvider resourceMessageProvider) {
@@ -42,7 +47,8 @@ public class AboutSettingService extends AbstractSettingService{
         settingController.getGithubLink().setText(REPO_LINK);
         settingController.getGithubLink().setOnAction(event -> {
             try {
-                Desktop.getDesktop().browse(new URI(REPO_LINK));
+                // Desktop.getDesktop().browse(new URI(REPO_LINK));
+                desktopProvider.browseOnLocal(REPO_LINK);
             } catch (Exception e) {
                 log.error("Error in opening github link.", e);
             }
@@ -51,9 +57,9 @@ public class AboutSettingService extends AbstractSettingService{
         settingController.getTwitterLink().setText(X_LINK);
         settingController.getTwitterLink().setOnAction(event -> {
             try {
-                Desktop.getDesktop().browse(new URI(X_LINK));
+                desktopProvider.browseOnLocal(X_LINK);
             } catch (Exception e) {
-                log.error("Error in opening github link.", e);
+                log.error("Error in opening x link.", e);
             }
         });
     }

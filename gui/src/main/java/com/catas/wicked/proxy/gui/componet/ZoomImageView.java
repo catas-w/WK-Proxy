@@ -1,6 +1,7 @@
 package com.catas.wicked.proxy.gui.componet;
 
 import com.catas.wicked.common.util.ImageUtils;
+import com.catas.wicked.common.webpdecoderjn.WebPDecoder;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.ContextMenu;
@@ -16,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,12 +75,12 @@ public class ZoomImageView extends ScrollPane {
     public void setImage(InputStream inputStream, String mimeType) throws IOException {
         // webp format
         if (StringUtils.equals(mimeType, "image/webp")) {
-            BufferedImage encodeWebpImage = ImageUtils.encodeWebpImage(inputStream);
-            this.image = ImageUtils.getJFXImage(encodeWebpImage);
+            WebPDecoder.SimpleImageInfo imageInfo = WebPDecoder.decode2(inputStream.readAllBytes());
+            this.image = ImageUtils.getJFXImage(imageInfo);
         } else {
             this.image = new Image(inputStream);
         }
-        if (this.image.isError()) {
+        if (this.image == null || this.image.isError()) {
             throw new RuntimeException("Image load error.");
         }
         // this.image = new Image(inputStream);

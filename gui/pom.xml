@@ -137,41 +137,6 @@
                         <arg>--initialize-at-build-time=com.sun.beans.util.Cache</arg>
                         <arg>--initialize-at-build-time=com.sun.beans.introspect.ClassInfo$1</arg>
 
-                        <arg>--initialize-at-build-time=javax.imageio.ImageIO</arg>
-                        <arg>--initialize-at-build-time=javax.imageio.spi.ServiceRegistry</arg>
-                        <arg>--initialize-at-build-time=javax.imageio.spi.IIORegistry</arg>
-                        <arg>--initialize-at-build-time=javax.imageio.spi.SubRegistry</arg>
-                        <arg>--initialize-at-build-time=javax.imageio.spi.PartiallyOrderedSet</arg>
-                        <arg>--initialize-at-build-time=javax.imageio.spi.IIOServiceProvider</arg>
-                        <arg>--initialize-at-build-time=javax.imageio.spi.ImageInputStreamSpi</arg>
-                        <arg>--initialize-at-build-time=javax.imageio.spi.ImageReaderWriterSpi</arg>
-                        <arg>--initialize-at-build-time=javax.imageio.spi.ImageWriterSpi</arg>
-                        <arg>--initialize-at-build-time=javax.imageio.spi.ImageOutputStreamSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.wbmp.WBMPImageWriterSpi</arg>
-                        <arg>--initialize-at-build-time=javax.imageio.spi.DigraphNode</arg>
-                        <arg>--initialize-at-build-time=javax.imageio.spi.ImageReaderSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.bmp.BMPImageWriterSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.tiff.TIFFImageWriterSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.spi.OutputStreamImageOutputStreamSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.gif.GIFImageWriterSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.spi.FileImageOutputStreamSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.spi.RAFImageOutputStreamSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.spi.RAFImageInputStreamSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.wbmp.WBMPImageReaderSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.spi.InputStreamImageInputStreamSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.bmp.BMPImageReaderSpi</arg>
-                        <arg>--initialize-at-build-time=com.luciad.imageio.webp.WebPImageReaderSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.tiff.TIFFImageReaderSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.spi.FileImageInputStreamSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.png.PNGImageReaderSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.gif.GIFImageReaderSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.png.PNGImageWriterSpi</arg>
-                        <arg>--initialize-at-build-time=com.luciad.imageio.webp.WebPImageWriterSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.jpeg.JPEGImageWriterSpi</arg>
-                        <arg>--initialize-at-build-time=com.sun.imageio.plugins.jpeg.JPEGImageReaderSpi</arg>
-
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=sun.java2d.Disposer</arg> -->
-
                         <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeNoCleanerDirectByteBuf</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.PooledSlicedByteBuf</arg>

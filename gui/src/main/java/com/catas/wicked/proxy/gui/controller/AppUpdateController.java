@@ -2,6 +2,7 @@ package com.catas.wicked.proxy.gui.controller;
 
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.executor.ThreadPoolService;
+import com.catas.wicked.common.provider.DesktopProvider;
 import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.provider.VersionCheckProvider;
 import com.catas.wicked.common.util.AlertUtils;
@@ -65,6 +66,9 @@ public class AppUpdateController implements Initializable {
 
     @Inject
     private VersionCheckProvider versionCheckProvider;
+
+    @Inject
+    private DesktopProvider desktopProvider;
 
     public static final String RELEASE_URL = "https://github.com/catas-w/WK-Proxy/releases/latest";
 
@@ -151,7 +155,8 @@ public class AppUpdateController implements Initializable {
         // Set an action for the Hyperlink
         hyperlink.setOnAction(event -> {
             try {
-                java.awt.Desktop.getDesktop().browse(new java.net.URI(hyperlink.getText()));
+                // java.awt.Desktop.getDesktop().browse(new java.net.URI(hyperlink.getText()));
+                desktopProvider.browseOnLocal(hyperlink.getText());
             } catch (Exception e) {
                 log.error("Error in opening github link", e);
             }

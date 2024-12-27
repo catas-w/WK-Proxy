@@ -225,6 +225,12 @@
   "type":"com.catas.wicked.common.constant.ClientStatus"
 },
 {
+  "type":"com.catas.wicked.common.constant.ClientStatus"
+},
+{
+  "type":"com.catas.wicked.common.constant.ClientStatus$Status"
+},
+{
   "type":"com.catas.wicked.common.constant.ClientStatus$Status"
 },
 {
@@ -366,6 +372,18 @@
 {
   "type":"com.catas.wicked.common.provider.MacSysProxyProvider",
   "fields":[{"name":"appConfig"}]
+},
+{
+  "type":"com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP$Size_T",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP$WebPAnimInfo",
+  "allDeclaredFields":true
+},
+{
+  "type":"com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP$WebPData",
+  "allDeclaredFields":true
 },
 {
   "type":"com.catas.wicked.common.worker.$ScheduledManager$Definition",
@@ -701,7 +719,7 @@
   "type":"com.catas.wicked.proxy.gui.controller.ButtonBarController",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"displaySettingPage","parameterTypes":[] },{"name":"exit","parameterTypes":[] }]
+  "methods":[{"name":"exit","parameterTypes":[] }]
 },
 {
   "type":"com.catas.wicked.proxy.gui.controller.ButtonBarController",
@@ -945,6 +963,18 @@
   "fields":[{"name":"certManager"}]
 },
 {
+  "type":"com.catas.wicked.proxy.webpdecoderjn.WebPDecoder$LibWebP$Size_T",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.catas.wicked.proxy.webpdecoderjn.WebPDecoder$LibWebP$WebPAnimInfo",
+  "allDeclaredFields":true
+},
+{
+  "type":"com.catas.wicked.proxy.webpdecoderjn.WebPDecoder$LibWebP$WebPData",
+  "allDeclaredFields":true
+},
+{
   "type":"com.catas.wicked.server.cert.$CertPool$Definition",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -1019,7 +1049,18 @@
   "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }]
 },
 {
+  "type":"com.catas.wicked.server.handler.RearHttpAggregator",
+  "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }]
+},
+{
   "type":"com.catas.wicked.server.handler.client.ClientChannelInitializer"
+},
+{
+  "type":"com.catas.wicked.server.handler.client.ClientChannelInitializer"
+},
+{
+  "type":"com.catas.wicked.server.handler.client.ClientPostRecorder",
+  "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] },{"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }]
 },
 {
   "type":"com.catas.wicked.server.handler.client.ClientPostRecorder",
@@ -1028,6 +1069,14 @@
 {
   "type":"com.catas.wicked.server.handler.client.ClientProcessHandler",
   "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },{"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] },{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }]
+},
+{
+  "type":"com.catas.wicked.server.handler.client.ClientProcessHandler",
+  "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },{"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] },{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }]
+},
+{
+  "type":"com.catas.wicked.server.handler.client.ClientStrategyHandler",
+  "methods":[{"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] },{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },{"name":"close","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] },{"name":"disconnect","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] },{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] },{"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] },{"name":"read","parameterTypes":["io.netty.channel.ChannelHandlerContext"] },{"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }]
 },
 {
   "type":"com.catas.wicked.server.handler.client.ClientStrategyHandler",
@@ -1058,12 +1107,28 @@
   "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },{"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }]
 },
 {
+  "type":"com.catas.wicked.server.handler.server.ServerPostRecorder",
+  "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },{"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }]
+},
+{
+  "type":"com.catas.wicked.server.handler.server.ServerPreRecorder",
+  "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },{"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }]
+},
+{
   "type":"com.catas.wicked.server.handler.server.ServerPreRecorder",
   "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },{"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }]
 },
 {
   "type":"com.catas.wicked.server.handler.server.ServerProcessHandler",
   "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },{"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] },{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }]
+},
+{
+  "type":"com.catas.wicked.server.handler.server.ServerProcessHandler",
+  "methods":[{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },{"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] },{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }]
+},
+{
+  "type":"com.catas.wicked.server.handler.server.ServerStrategyHandler",
+  "methods":[{"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] },{"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },{"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }]
 },
 {
   "type":"com.catas.wicked.server.handler.server.ServerStrategyHandler",
@@ -1355,6 +1420,12 @@
   "type":"com.luciad.imageio.webp.WebPImageReaderSpi"
 },
 {
+  "type":"com.luciad.imageio.webp.WebPImageReaderSpi"
+},
+{
+  "type":"com.luciad.imageio.webp.WebPImageWriterSpi"
+},
+{
   "type":"com.luciad.imageio.webp.WebPImageWriterSpi"
 },
 {
@@ -1418,6 +1489,14 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "type":"com.sun.crypto.provider.HmacCore$HmacSHA256",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.sun.crypto.provider.PBEKeyFactory$PBEWithMD5AndDES",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "type":"com.sun.crypto.provider.PBEKeyFactory$PBEWithMD5AndDES",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -1426,7 +1505,19 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "type":"com.sun.crypto.provider.PBES2Core$HmacSHA256AndAES_256",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "type":"com.sun.crypto.provider.PBES2Parameters$General",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.sun.crypto.provider.PBES2Parameters$General",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.sun.crypto.provider.PBES2Parameters$HmacSHA256AndAES_256",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -1545,6 +1636,22 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "type":"com.sun.jna.ptr.IntByReference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.sun.jna.ptr.IntByReference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.sun.jna.ptr.PointerByReference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.sun.jna.ptr.PointerByReference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "type":"com.sun.management.OperatingSystemMXBean",
   "methods":[{"name":"getFreePhysicalMemorySize","parameterTypes":[] },{"name":"getTotalPhysicalMemorySize","parameterTypes":[] }]
 },
@@ -1571,10 +1678,6 @@
   "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
 },
 {
-  "type":"com.sun.prism.shader.DrawCircle_Color_Loader",
-  "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
-},
-{
   "type":"com.sun.prism.shader.DrawPgram_Color_Loader",
   "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
 },
@@ -1588,10 +1691,6 @@
 },
 {
   "type":"com.sun.prism.shader.DrawRoundRect_Color_Loader",
-  "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
-},
-{
-  "type":"com.sun.prism.shader.FillCircle_Color_Loader",
   "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
 },
 {
@@ -1648,10 +1747,6 @@
 },
 {
   "type":"com.sun.prism.shader.Texture_Color_Loader",
-  "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
-},
-{
-  "type":"com.sun.prism.shader.Texture_LinearGradient_PAD_Loader",
   "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
 },
 {
@@ -1774,7 +1869,7 @@
 },
 {
   "type":"io.netty.channel.ChannelDuplexHandler",
-  "methods":[{"name":"read","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }]
+  "methods":[{"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] },{"name":"close","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] },{"name":"connect","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","java.net.SocketAddress","io.netty.channel.ChannelPromise"] },{"name":"deregister","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] },{"name":"disconnect","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] },{"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] },{"name":"read","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }]
 },
 {
   "type":"io.netty.channel.ChannelHandlerAdapter",
@@ -1908,6 +2003,9 @@
   "type":"io.netty.handler.codec.http.HttpServerCodec"
 },
 {
+  "type":"io.netty.handler.codec.http.HttpServerCodec"
+},
+{
   "type":"io.netty.handler.codec.socksx.v4.Socks4ClientDecoder"
 },
 {
@@ -2007,6 +2105,10 @@
 {
   "type":"io.netty.util.DefaultAttributeMap",
   "fields":[{"name":"attributes"}]
+},
+{
+  "type":"io.netty.util.DefaultAttributeMap$DefaultAttribute",
+  "fields":[{"name":"attributeMap"}]
 },
 {
   "type":"io.netty.util.DefaultAttributeMap$DefaultAttribute",
@@ -2136,6 +2238,9 @@
   "type":"java.lang.Enum"
 },
 {
+  "type":"java.lang.Enum"
+},
+{
   "type":"java.lang.Exception"
 },
 {
@@ -2146,6 +2251,9 @@
 },
 {
   "type":"java.lang.IllegalArgumentException"
+},
+{
+  "type":"java.lang.Integer"
 },
 {
   "type":"java.lang.Integer"
@@ -2163,6 +2271,9 @@
 },
 {
   "type":"java.lang.NullPointerException"
+},
+{
+  "type":"java.lang.Number"
 },
 {
   "type":"java.lang.Number"
@@ -2495,6 +2606,9 @@
   "type":"java.security.KeyStoreSpi"
 },
 {
+  "type":"java.security.KeyStoreSpi"
+},
+{
   "type":"java.security.MessageDigestSpi"
 },
 {
@@ -2544,6 +2658,12 @@
 },
 {
   "type":"java.util.HashMap"
+},
+{
+  "type":"java.util.HashMap"
+},
+{
+  "type":"java.util.LinkedHashMap"
 },
 {
   "type":"java.util.LinkedHashMap"
@@ -3473,9 +3593,6 @@
   "type":"javafx.scene.shape.Line"
 },
 {
-  "type":"javafx.scene.shape.Line"
-},
-{
   "type":"javafx.scene.shape.LineTo"
 },
 {
@@ -3579,8 +3696,18 @@
   "type":"javax.imageio.spi.ImageReaderSpi"
 },
 {
+  "type":"javax.imageio.spi.ImageReaderSpi"
+},
+{
   "type":"javax.imageio.spi.ImageReaderWriterSpi",
   "methods":[{"name":"getFileSuffixes","parameterTypes":[] },{"name":"getFormatNames","parameterTypes":[] },{"name":"getMIMETypes","parameterTypes":[] }]
+},
+{
+  "type":"javax.imageio.spi.ImageReaderWriterSpi",
+  "methods":[{"name":"getFileSuffixes","parameterTypes":[] },{"name":"getFormatNames","parameterTypes":[] },{"name":"getMIMETypes","parameterTypes":[] }]
+},
+{
+  "type":"javax.imageio.spi.ImageWriterSpi"
 },
 {
   "type":"javax.imageio.spi.ImageWriterSpi"
@@ -4353,6 +4480,10 @@
   "fields":[{"name":"expirationTime"},{"name":"lastAccessTime"}]
 },
 {
+  "type":"org.ehcache.core.spi.store.AbstractValueHolder",
+  "fields":[{"name":"expirationTime"},{"name":"lastAccessTime"}]
+},
+{
   "type":"org.ehcache.impl.copy.IdentityCopier",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -4645,6 +4776,14 @@
   "methods":[{"name":"encode","parameterTypes":["java.lang.Object"] },{"name":"equals","parameterTypes":["java.lang.Object","java.nio.ByteBuffer"] }]
 },
 {
+  "type":"org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability",
+  "methods":[{"name":"encode","parameterTypes":["java.lang.Object"] },{"name":"equals","parameterTypes":["java.lang.Object","java.nio.ByteBuffer"] }]
+},
+{
+  "type":"org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.WriteBackPortability",
+  "methods":[{"name":"decode","parameterTypes":["java.nio.ByteBuffer","org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.WriteContext"] }]
+},
+{
   "type":"org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.WriteBackPortability",
   "methods":[{"name":"decode","parameterTypes":["java.nio.ByteBuffer","org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.WriteContext"] }]
 },
@@ -4788,6 +4927,14 @@
 },
 {
   "type":"sun.security.pkcs12.PKCS12KeyStore",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"sun.security.pkcs12.PKCS12KeyStore",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"sun.security.pkcs12.PKCS12KeyStore$DualFormatPKCS12",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -4955,6 +5102,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "type":"sun.security.ssl.KeyManagerFactoryImpl$SunX509",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "type":"sun.security.ssl.SSLContextImpl",
   "fields":[{"name":"trustManager"}]
 },
@@ -4986,6 +5137,10 @@
 {
   "type":"sun.security.ssl.SSLContextImpl$TLSContext",
   "fields":[{"name":"trustManager"}],
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"sun.security.ssl.TrustManagerFactoryImpl$PKIXFactory",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -5051,6 +5206,10 @@
   "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
 },
 {
+  "type":"sun.security.x509.IssuerAlternativeNameExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
+},
+{
   "type":"sun.security.x509.KeyUsageExtension",
   "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
 },
@@ -5064,6 +5223,10 @@
 },
 {
   "type":"sun.security.x509.NetscapeCertTypeExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
+},
+{
+  "type":"sun.security.x509.PrivateKeyUsageExtension",
   "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
 },
 {
@@ -5163,7 +5326,12 @@
 },
 {
   "type":{
-    "proxy":["com.catas.wicked.common.jna.WindowBlurLibrary"]
+    "proxy":["com.catas.wicked.common.jna.FoundationLibrary"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.common.jna.FoundationLibrary"]
   }
 },
 {
@@ -5229,6 +5397,31 @@
 {
   "type":{
     "proxy":["com.catas.wicked.common.jna.WindowBlurLibrary"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.common.jna.WindowBlurLibrary"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.common.jna.WindowBlurLibrary"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.common.jna.WindowBlurLibrary"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.proxy.webpdecoderjn.WebPDecoder$LibWebP"]
   }
 },
 {
@@ -5299,6 +5492,26 @@
 {
   "type":{
     "proxy":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
+  }
+},
+{
+  "type":{
+    "proxy":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
+  }
+},
+{
+  "type":{
+    "proxy":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
+  }
+},
+{
+  "type":{
+    "proxy":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.WriteBackPortability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
+  }
+},
+{
+  "type":{
+    "proxy":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.WriteBackPortability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
   }
 },
 {

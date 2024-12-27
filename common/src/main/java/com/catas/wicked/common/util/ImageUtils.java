@@ -1,5 +1,6 @@
 package com.catas.wicked.common.util;
 
+import com.catas.wicked.common.webpdecoderjn.WebPDecoder;
 import com.luciad.imageio.webp.WebPReadParam;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
@@ -29,6 +30,36 @@ public class ImageUtils {
 
     static {
         reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
+    }
+
+    /**
+     * avoid using awt
+     */
+    public static Image getJFXImage(WebPDecoder.SimpleImageInfo imageInfo) {
+        if (imageInfo == null || imageInfo.getPixels() == null || imageInfo.getPixels().length == 0) {
+            return null;
+        }
+
+        int height = imageInfo.getHeight();
+        int width = imageInfo.getWidth();
+        WritableImage image = new WritableImage(width, height);
+        PixelWriter pixelWriter = image.getPixelWriter();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel = imageInfo.getPixels()[y * width + x];
+                int r = pixel & 0x000000FF;
+                int g = pixel & 0x0000FF00;
+                int b = pixel & 0x00FF0000;
+                int alpha = pixel & 0xFF000000;
+
+                int argb = (r << 16) | g | (b >>> 16) | alpha;
+
+                // Color color = Color.rgb(r, g, b);
+                pixelWriter.setArgb(x, y, argb);
+            }
+        }
+        return image;
     }
 
     /**
@@ -71,7 +102,7 @@ public class ImageUtils {
                 var pixel = pixels[y * width + x];
                 int r = (pixel & 0xFF0000) >> 16;
                 int g = (pixel & 0xFF00) >> 8;
-                int b = (pixel & 0xFF) >> 0;
+                int b = (pixel & 0xFF);
 
                 bufferedImage.getRaster().setPixel(x, y, new int[]{r, g, b});
             }
@@ -86,8 +117,7 @@ public class ImageUtils {
      * @throws IOException
      */
     public static BufferedImage encodeWebpImage(InputStream inputStream) throws IOException {
-        // TODO [native-image] java.lang.NoClassDefFoundError: Could not initialize class javax.imageio.ImageIO
-        // ImageReader reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
+        // WebP.register(WebP.getWebPImageReaderSpi());
         if (inputStream instanceof ImageInputStream) {
             reader.setInput(inputStream);
         } else {

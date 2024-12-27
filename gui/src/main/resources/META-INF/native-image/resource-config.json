@@ -125,6 +125,8 @@
   },{
     "pattern":"\\Qdarwin-aarch64\/libawt.dylib\\E"
   },{
+    "pattern":"\\Qdarwin-aarch64\/liblibwebp_animdecoder.dylib\\E"
+  },{
     "pattern":"\\Qdarwin\/libCertInstallerLib.dylib\\E"
   },{
     "pattern":"\\Qdarwin\/libWindowBlurLib.dylib\\E"
