@@ -23,6 +23,8 @@
   },{
     "pattern":"\\QMETA-INF\/services\/app.supernaut.fx.FxLauncher\\E"
   },{
+    "pattern":"\\QMETA-INF\/services\/ch.qos.logback.classic.spi.Configurator\\E"
+  },{
     "pattern":"\\QMETA-INF\/services\/io.micronaut.core.convert.TypeConverterRegistrar\\E"
   },{
     "pattern":"\\QMETA-INF\/services\/io.micronaut.core.optim.StaticOptimizations$Loader\\E"
@@ -54,6 +56,8 @@
     "pattern":"\\QMETA-INF\/services\/javax.imageio.spi.ImageTranscoderSpi\\E"
   },{
     "pattern":"\\QMETA-INF\/services\/javax.imageio.spi.ImageWriterSpi\\E"
+  },{
+    "pattern":"\\QMETA-INF\/services\/javax.xml.parsers.SAXParserFactory\\E"
   },{
     "pattern":"\\QMETA-INF\/services\/javax.xml.stream.XMLInputFactory\\E"
   },{
@@ -160,6 +164,14 @@
     "pattern":"\\QlibWindowBlurLib.dylib\\E"
   },{
     "pattern":"\\Qlibawt.dylib\\E"
+  },{
+    "pattern":"\\Qlogback-test.scmo\\E"
+  },{
+    "pattern":"\\Qlogback-test.xml\\E"
+  },{
+    "pattern":"\\Qlogback.scmo\\E"
+  },{
+    "pattern":"\\Qlogback.xml\\E"
   },{
     "pattern":"\\Qnative\/Mac\/aarch64\/libwebp-imageio.dylib\\E"
   },{

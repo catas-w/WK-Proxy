@@ -52,6 +52,206 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "type":"ch.qos.logback.classic.encoder.PatternLayoutEncoder",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.encoder.PatternLayoutEncoder",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.joran.SerializedModelConfigurator",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.joran.SerializedModelConfigurator",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.DateConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.DateConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.LevelConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.LevelConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.LineSeparatorConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.LineSeparatorConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.LoggerConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.LoggerConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.MessageConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.MessageConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.ThreadConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.pattern.ThreadConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.spi.LogbackServiceProvider"
+},
+{
+  "type":"ch.qos.logback.classic.spi.LogbackServiceProvider"
+},
+{
+  "type":"ch.qos.logback.classic.util.DefaultJoranConfigurator",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.classic.util.DefaultJoranConfigurator",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.core.ConsoleAppender",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.core.ConsoleAppender",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.core.FileAppender",
+  "methods":[{"name":"setAppend","parameterTypes":["boolean"] },{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"ch.qos.logback.core.FileAppender",
+  "methods":[{"name":"setAppend","parameterTypes":["boolean"] },{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"ch.qos.logback.core.OutputStreamAppender",
+  "methods":[{"name":"setEncoder","parameterTypes":["ch.qos.logback.core.encoder.Encoder"] }]
+},
+{
+  "type":"ch.qos.logback.core.OutputStreamAppender",
+  "methods":[{"name":"setEncoder","parameterTypes":["ch.qos.logback.core.encoder.Encoder"] }]
+},
+{
+  "type":"ch.qos.logback.core.encoder.Encoder",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"ch.qos.logback.core.encoder.Encoder",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"ch.qos.logback.core.encoder.LayoutWrappingEncoder",
+  "methods":[{"name":"setParent","parameterTypes":["ch.qos.logback.core.spi.ContextAware"] }]
+},
+{
+  "type":"ch.qos.logback.core.encoder.LayoutWrappingEncoder",
+  "methods":[{"name":"setParent","parameterTypes":["ch.qos.logback.core.spi.ContextAware"] }]
+},
+{
+  "type":"ch.qos.logback.core.pattern.PatternLayoutEncoderBase",
+  "methods":[{"name":"setPattern","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"ch.qos.logback.core.pattern.PatternLayoutEncoderBase",
+  "methods":[{"name":"setPattern","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.RollingFileAppender",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] },{"name":"setFile","parameterTypes":["java.lang.String"] },{"name":"setRollingPolicy","parameterTypes":["ch.qos.logback.core.rolling.RollingPolicy"] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.RollingFileAppender",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] },{"name":"setFile","parameterTypes":["java.lang.String"] },{"name":"setRollingPolicy","parameterTypes":["ch.qos.logback.core.rolling.RollingPolicy"] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.RollingPolicy",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.RollingPolicy",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.RollingPolicyBase",
+  "methods":[{"name":"setFileNamePattern","parameterTypes":["java.lang.String"] },{"name":"setParent","parameterTypes":["ch.qos.logback.core.FileAppender"] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.RollingPolicyBase",
+  "methods":[{"name":"setFileNamePattern","parameterTypes":["java.lang.String"] },{"name":"setParent","parameterTypes":["ch.qos.logback.core.FileAppender"] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] },{"name":"setMaxFileSize","parameterTypes":["ch.qos.logback.core.util.FileSize"] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] },{"name":"setMaxFileSize","parameterTypes":["ch.qos.logback.core.util.FileSize"] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.TimeBasedRollingPolicy",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] },{"name":"setMaxHistory","parameterTypes":["int"] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.TimeBasedRollingPolicy",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] },{"name":"setMaxHistory","parameterTypes":["int"] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.helper.DateTokenConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.core.rolling.helper.DateTokenConverter",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"ch.qos.logback.core.spi.ContextAware",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"ch.qos.logback.core.spi.ContextAware",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"ch.qos.logback.core.util.FileSize",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "type":"ch.qos.logback.core.util.FileSize",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
   "type":"com.catas.wicked.common.bean.$PathOverviewInfo$Definition",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -80,13 +280,29 @@
   "methods":[{"name":"getKey","parameterTypes":[] },{"name":"getVal","parameterTypes":[] },{"name":"keyProperty","parameterTypes":[] },{"name":"setKey","parameterTypes":["java.lang.String"] },{"name":"setVal","parameterTypes":["java.lang.String"] },{"name":"valProperty","parameterTypes":[] }]
 },
 {
+  "type":"com.catas.wicked.common.bean.HeaderEntry",
+  "methods":[{"name":"getKey","parameterTypes":[] },{"name":"getVal","parameterTypes":[] },{"name":"keyProperty","parameterTypes":[] },{"name":"setKey","parameterTypes":["java.lang.String"] },{"name":"setVal","parameterTypes":["java.lang.String"] },{"name":"valProperty","parameterTypes":[] }]
+},
+{
+  "type":"com.catas.wicked.common.bean.message.BaseMessage"
+},
+{
   "type":"com.catas.wicked.common.bean.message.BaseMessage"
 },
 {
   "type":"com.catas.wicked.common.bean.message.BaseMessage$MessageType"
 },
 {
+  "type":"com.catas.wicked.common.bean.message.BaseMessage$MessageType"
+},
+{
   "type":"com.catas.wicked.common.bean.message.RequestMessage"
+},
+{
+  "type":"com.catas.wicked.common.bean.message.RequestMessage"
+},
+{
+  "type":"com.catas.wicked.common.bean.message.ResponseMessage"
 },
 {
   "type":"com.catas.wicked.common.bean.message.ResponseMessage"
@@ -270,6 +486,38 @@
   "methods":[{"name":"fromValue","parameterTypes":["java.lang.String"] },{"name":"getValue","parameterTypes":[] }]
 },
 {
+  "type":"com.catas.wicked.common.factory.$DesktopProviderFactory$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.catas.wicked.common.factory.$DesktopProviderFactory$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.catas.wicked.common.factory.$DesktopProviderFactory$LinuxDesktopProvider2$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.catas.wicked.common.factory.$DesktopProviderFactory$LinuxDesktopProvider2$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.catas.wicked.common.factory.$DesktopProviderFactory$MacDesktopProvider0$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.catas.wicked.common.factory.$DesktopProviderFactory$MacDesktopProvider0$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.catas.wicked.common.factory.$DesktopProviderFactory$WinDesktopProvider1$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.catas.wicked.common.factory.$DesktopProviderFactory$WinDesktopProvider1$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "type":"com.catas.wicked.common.factory.$MessageSourceFactory$Definition",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -378,7 +626,19 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "type":"com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP$Size_T",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "type":"com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP$WebPAnimInfo",
+  "allDeclaredFields":true
+},
+{
+  "type":"com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP$WebPAnimInfo",
+  "allDeclaredFields":true
+},
+{
+  "type":"com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP$WebPData",
   "allDeclaredFields":true
 },
 {
@@ -1666,6 +1926,14 @@
   "type":"com.sun.management.internal.OperatingSystemImpl"
 },
 {
+  "type":"com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "type":"com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "type":"com.sun.prism.GraphicsPipeline",
   "methods":[{"name":"getFontFactory","parameterTypes":[] },{"name":"getPipeline","parameterTypes":[] }]
 },
@@ -2211,6 +2479,12 @@
   "fields":[{"name":"producerLimit"}]
 },
 {
+  "type":"java.io.FilePermission"
+},
+{
+  "type":"java.io.FilePermission"
+},
+{
   "type":"java.io.Serializable",
   "queryAllDeclaredMethods":true
 },
@@ -2307,6 +2581,12 @@
 },
 {
   "type":"java.lang.Runnable"
+},
+{
+  "type":"java.lang.RuntimePermission"
+},
+{
+  "type":"java.lang.RuntimePermission"
 },
 {
   "type":"java.lang.String",
@@ -2465,6 +2745,12 @@
   "type":"java.net.MenuItem"
 },
 {
+  "type":"java.net.NetPermission"
+},
+{
+  "type":"java.net.NetPermission"
+},
+{
   "type":"java.net.Pane"
 },
 {
@@ -2481,6 +2767,12 @@
 },
 {
   "type":"java.net.Separator"
+},
+{
+  "type":"java.net.SocketPermission"
+},
+{
+  "type":"java.net.SocketPermission"
 },
 {
   "type":"java.net.SplitPane"
@@ -2543,6 +2835,14 @@
   "type":"java.net.URL"
 },
 {
+  "type":"java.net.URLPermission",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String"] }]
+},
+{
+  "type":"java.net.URLPermission",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String"] }]
+},
+{
   "type":"java.net.VBox"
 },
 {
@@ -2601,6 +2901,12 @@
 },
 {
   "type":"java.security.AlgorithmParametersSpi"
+},
+{
+  "type":"java.security.AllPermission"
+},
+{
+  "type":"java.security.AllPermission"
 },
 {
   "type":"java.security.KeyStoreSpi"
@@ -2616,6 +2922,12 @@
 },
 {
   "type":"java.security.SecureRandomParameters"
+},
+{
+  "type":"java.security.SecurityPermission"
+},
+{
+  "type":"java.security.SecurityPermission"
 },
 {
   "type":"java.security.cert.PKIXRevocationChecker"
@@ -2667,6 +2979,12 @@
 },
 {
   "type":"java.util.LinkedHashMap"
+},
+{
+  "type":"java.util.PropertyPermission"
+},
+{
+  "type":"java.util.PropertyPermission"
 },
 {
   "type":"java.util.concurrent.ForkJoinTask",
@@ -3726,6 +4044,12 @@
   "methods":[{"name":"<init>","parameterTypes":["sun.security.x509.X500Name"] }]
 },
 {
+  "type":"javax.smartcardio.CardPermission"
+},
+{
+  "type":"javax.smartcardio.CardPermission"
+},
+{
   "type":"jdk.internal.misc.Unsafe",
   "methods":[{"name":"getUnsafe","parameterTypes":[] }]
 },
@@ -4890,9 +5214,6 @@
   "queryAllDeclaredMethods":true,
   "queryAllPublicConstructors":true,
   "methods":[{"name":"<init>","parameterTypes":[] },{"name":"setIconColor","parameterTypes":["javafx.scene.paint.Paint"] },{"name":"setIconLiteral","parameterTypes":["java.lang.String"] },{"name":"setIconSize","parameterTypes":["int"] }]
-},
-{
-  "type":"org.slf4j.jul.JULServiceProvider"
 },
 {
   "type":"org.slf4j.jul.JULServiceProvider"
@@ -5336,7 +5657,12 @@
 },
 {
   "type":{
-    "proxy":["com.catas.wicked.common.jna.WindowBlurLibrary"]
+    "proxy":["com.catas.wicked.common.jna.FoundationLibrary"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.common.jna.FoundationLibrary"]
   }
 },
 {
@@ -5412,6 +5738,31 @@
 {
   "type":{
     "proxy":["com.catas.wicked.common.jna.WindowBlurLibrary"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.common.jna.WindowBlurLibrary"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.common.jna.WindowBlurLibrary"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.common.jna.WindowBlurLibrary"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP"]
+  }
+},
+{
+  "type":{
+    "proxy":["com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP"]
   }
 },
 {
@@ -5502,6 +5853,26 @@
 {
   "type":{
     "proxy":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
+  }
+},
+{
+  "type":{
+    "proxy":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
+  }
+},
+{
+  "type":{
+    "proxy":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
+  }
+},
+{
+  "type":{
+    "proxy":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.WriteBackPortability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
+  }
+},
+{
+  "type":{
+    "proxy":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.WriteBackPortability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
   }
 },
 {

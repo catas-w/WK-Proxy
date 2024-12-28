@@ -19,6 +19,7 @@ import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ssl.SSLHandshakeException;
+import java.net.SocketException;
 
 
 @Slf4j
@@ -89,8 +90,11 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
         Throwable originCause = cause.getCause();
         if (cause instanceof SSLHandshakeException || originCause instanceof SSLHandshakeException) {
             targetStatus = ClientStatus.Status.SSL_HANDSHAKE_ERR;
+        } else if (cause instanceof SocketException || originCause instanceof SocketException) {
+            log.error("Client SocketException.");
+            targetStatus = ClientStatus.Status.CONNECT_ERR;
         } else {
-            log.error("Unknown client error: ", cause);
+            log.error("Unknown client error: ");
             targetStatus = ClientStatus.Status.UNKNOWN_ERR;
         }
 
@@ -111,7 +115,11 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
             messageQueue.pushMsg(Topic.RECORD, responseMsg);
         }
 
-        ctx.channel().close();
-        clientChannel.close();
+        if (ctx.channel() != null && ctx.channel().isOpen()) {
+            ctx.channel().close();
+        }
+        if (clientChannel != null && clientChannel.isOpen()) {
+            clientChannel.close();
+        }
     }
 }

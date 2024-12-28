@@ -45,7 +45,7 @@ public class ProxyServer {
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
 
         try {
-            InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
+            // InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)
                     .channel(NioServerSocketChannel.class)

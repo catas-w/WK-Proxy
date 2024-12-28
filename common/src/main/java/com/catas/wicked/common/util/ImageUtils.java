@@ -26,12 +26,6 @@ import java.nio.IntBuffer;
 @Slf4j
 public class ImageUtils {
 
-    private static final ImageReader reader;
-
-    static {
-        reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
-    }
-
     /**
      * avoid using awt
      */
@@ -67,6 +61,7 @@ public class ImageUtils {
      * @param bufferedImage bufferedImage
      * @return javafx.scene.image.Image
      */
+    @Deprecated
     public static Image getJFXImage(BufferedImage bufferedImage) {
         if (bufferedImage == null) {
              throw new RuntimeException("Buffered image cannot be null.");
@@ -116,8 +111,10 @@ public class ImageUtils {
      * @return bufferedImage
      * @throws IOException
      */
+    @Deprecated
     public static BufferedImage encodeWebpImage(InputStream inputStream) throws IOException {
         // WebP.register(WebP.getWebPImageReaderSpi());
+        ImageReader reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
         if (inputStream instanceof ImageInputStream) {
             reader.setInput(inputStream);
         } else {
@@ -126,8 +123,7 @@ public class ImageUtils {
         }
         WebPReadParam readParam = new WebPReadParam();
         readParam.setBypassFiltering(true);
-        BufferedImage image = reader.read(0, readParam);
-        return image;
+        return reader.read(0, readParam);
     }
 
     public static void saveToFile(Image image, File file) {
