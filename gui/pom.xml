@@ -11,6 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>gui</artifactId>
+    <name>Wk Proxy</name>
 
     <dependencies>
         <dependency>
@@ -306,6 +307,23 @@
                         <!-- <arg></arg> -->
 
                     </nativeImageArgs>
+                    <releaseConfiguration>
+                        <!-- all targets -->
+                        <packageType>dmg</packageType>
+                        <description>Wk Proxy</description>
+                        <vendor>Catas W</vendor>
+                        <!-- macOS -->
+                        <!-- <macAppStore></macAppStore> -->
+                        <!-- <macSigningUserName></macSigningUserName> -->
+                        <!-- <macAppCategory></macAppCategory> -->
+                        <!-- macOS/iOS -->
+                        <bundleName>Wk Proxy</bundleName>
+                        <bundleVersion>1.0.6</bundleVersion>
+                        <bundleShortVersion>1.0</bundleShortVersion>
+                        <!-- <providedSigningIdentity></providedSigningIdentity> -->
+                        <!-- <providedProvisioningProfile></providedProvisioningProfile> -->
+                        <skipSigning>true</skipSigning>
+                    </releaseConfiguration>
                 </configuration>
             </plugin>
 

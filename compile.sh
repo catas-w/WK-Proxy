@@ -14,3 +14,5 @@ mvn gluonfx:compile
 rm target/gluonfx/aarch64-darwin/gvm/lib/libjnidispatch.a
 
 mvn gluonfx:link
+
+mvn gluonfx:package
