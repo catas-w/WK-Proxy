@@ -4,7 +4,6 @@ import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.provider.ResourceMessageProvider;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Parallel;
 import io.micronaut.context.i18n.ResourceBundleMessageSource;
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +15,6 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-@Parallel
 @Factory
 public class MessageSourceFactory {
 

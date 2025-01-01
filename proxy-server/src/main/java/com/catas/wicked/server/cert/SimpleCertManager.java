@@ -95,8 +95,14 @@ public class SimpleCertManager implements CertManager {
             return;
         }
 
-        List<CertificateConfig> configs = objectMapper.readValue(certFile, new TypeReference<List<CertificateConfig>>() {});
-        log.info("Load custom certs: {}", configs.stream().map(CertificateConfig::getName).collect(Collectors.toList()));
+        List<CertificateConfig> configs = new ArrayList<>();
+        try {
+            configs = objectMapper.readValue(certFile, new TypeReference<List<CertificateConfig>>() {});
+            log.info("Load custom certs successfully: {}", configs.size());
+        } catch (Exception e) {
+            log.error("Error in loading custom certs", e);
+            objectMapper.writeValue(certFile, Collections.emptyList());
+        }
         customCertList.addAll(configs);
 
         initAppCertConfig(getSelectedCert());
@@ -175,6 +181,7 @@ public class SimpleCertManager implements CertManager {
                     .privateKey(encryptPriKey)
                     .isDefault(false)
                     .build();
+
 
             customCertList.add(config);
             objectMapper.writeValue(getCertStorageFile(), customCertList);

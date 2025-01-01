@@ -113,7 +113,8 @@ public class ApplicationConfig implements AutoCloseable {
             try {
                 long start = System.currentTimeMillis();
                 SslContextBuilder contextBuilder = SslContextBuilder.forClient()
-                        .sslProvider(SslProvider.OPENSSL)
+                        // .sslProvider(SslProvider.OPENSSL)
+                        .sslProvider(SslProvider.OPENSSL_REFCNT)
                         .startTls(true)
                         .protocols("TLSv1.1", "TLSv1.2", "TLSv1")
                         .trustManager(InsecureTrustManagerFactory.INSTANCE);

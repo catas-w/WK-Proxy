@@ -38,6 +38,7 @@ public class DefaultVersionCheckProvider implements VersionCheckProvider {
                 .headers(headerMap)
                 .fullResponse(true)
                 .build()) {
+            log.info("Fetching release info from: {}", RELEASE_URL);
             client.execute();
             HttpResponse response = client.response();
             HttpHeaders headers = response.headers();
@@ -56,6 +57,9 @@ public class DefaultVersionCheckProvider implements VersionCheckProvider {
             String version = matcher.group(1);
             log.info("Get latest version: {}", version);
             return Pair.of(version, location);
+        } catch (Exception e) {
+            log.error("Error in fetching release info.", e);
+            throw new RuntimeException("Unable to find release info: " + RELEASE_URL);
         }
     }
 }
