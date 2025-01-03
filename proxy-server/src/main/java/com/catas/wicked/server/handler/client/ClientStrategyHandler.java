@@ -20,6 +20,7 @@ import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.net.InetSocketAddress;
 
 /**
  * decide which handlers to use when sending new request
@@ -118,20 +119,18 @@ public class ClientStrategyHandler extends ChannelDuplexHandler {
             currentRequestId = requestInfo.getRequestId();
             Channel ch = ctx.channel();
 
-            // if (requestInfo.isUsingExternalProxy()) {
-            //     strategyList.setRequire(Handler.EXTERNAL_PROXY.name(), true);
-            // }
             // update record strategy
             if (requestInfo.getClientType() == ProxyRequestInfo.ClientType.NORMAL) {
                 // update sslHandler
                 if (requestInfo.isSsl()) {
                     try {
-                        SslHandler sslHandler = appConfig.getClientSslCtx().newHandler(
-                                ch.alloc(), appConfig.getHost(), appConfig.getSettings().getPort());
+                        InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
+                        SslHandler sslHandler = appConfig.getClientSslCtx().newHandler(ch.alloc(), address.getHostName(), address.getPort());
                         strategyList.setSupplier(Handler.SSL_HANDLER.name(), () -> sslHandler);
                         strategyList.setRequire(Handler.SSL_HANDLER.name(), true);
                     } catch (Exception e) {
-                        log.error("Error establish Ssl context");
+                        log.error("Error establish Ssl context", e);
+                        strategyList.setRequire(Handler.SSL_HANDLER.name(), false);
                     }
                 } else {
                     strategyList.setRequire(Handler.SSL_HANDLER.name(), false);

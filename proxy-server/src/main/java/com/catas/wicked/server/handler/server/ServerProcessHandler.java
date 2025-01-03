@@ -154,18 +154,16 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
                     Throwable cause = future.cause();
                     log.error("Error in creating proxy client channel", cause);
                     ClientStatus.Status targetStatus;
-                    if (cause instanceof ClosedChannelException) {
-                        targetStatus = ClientStatus.Status.CLOSED;
-                    } else if (cause instanceof ConnectTimeoutException) {
-                        targetStatus = ClientStatus.Status.TIMEOUT;
-                    } else if (cause instanceof SocketException) {
-                        targetStatus = ClientStatus.Status.CONNECT_ERR;
-                    } else if (cause instanceof UnknownHostException) {
-                        targetStatus = ClientStatus.Status.ADDR_NOTFOUND;
-                    } else {
-                        // javax.net.ssl.SSLPeerUnverifiedException
-                        log.error("Unknown client error: ", cause);
-                        targetStatus = ClientStatus.Status.UNKNOWN_ERR;
+                    switch (cause) {
+                        case ClosedChannelException closedChannelException -> targetStatus = ClientStatus.Status.CLOSED;
+                        case ConnectTimeoutException connectTimeoutException -> targetStatus = ClientStatus.Status.TIMEOUT;
+                        case SocketException socketException -> targetStatus = ClientStatus.Status.CONNECT_ERR;
+                        case UnknownHostException unknownHostException -> targetStatus = ClientStatus.Status.ADDR_NOTFOUND;
+                        case null, default -> {
+                            // javax.net.ssl.SSLPeerUnverifiedException
+                            log.error("Unknown client error: ", cause);
+                            targetStatus = ClientStatus.Status.UNKNOWN_ERR;
+                        }
                     }
                     requestInfo.updateClientStatus(targetStatus, cause.getMessage());
 

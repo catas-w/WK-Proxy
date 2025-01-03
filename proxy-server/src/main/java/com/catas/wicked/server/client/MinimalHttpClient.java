@@ -24,10 +24,12 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.proxy.ProxyHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.util.concurrent.Promise;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.net.ssl.SSLException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URL;
@@ -66,7 +68,17 @@ public class MinimalHttpClient implements AutoCloseable {
     Promise<HttpResponse> responsePromise;
     BlockingQueue<Promise<HttpResponse>> msgList = new ArrayBlockingQueue<>(1);
 
-    public void execute() {
+    private final SslContext context = SslContextBuilder.forClient()
+            .sslProvider(SslProvider.OPENSSL)
+            .startTls(true)
+            .protocols("TLSv1.1", "TLSv1.2", "TLSv1.3")
+            .trustManager(InsecureTrustManagerFactory.INSTANCE)
+            .build();
+
+    public MinimalHttpClient() throws SSLException {
+    }
+
+    public void execute() throws InterruptedException {
         assert uri != null;
         if (eventExecutors == null) {
             eventExecutors = new NioEventLoopGroup();
@@ -94,6 +106,7 @@ public class MinimalHttpClient implements AutoCloseable {
         }
 
         MinimalHttpClient client = this;
+        InetSocketAddress finalAddress = address;
         bootstrap.group(eventExecutors)
                 .remoteAddress(address)
                 .channel(NioSocketChannel.class)
@@ -110,9 +123,8 @@ public class MinimalHttpClient implements AutoCloseable {
                             }
                         }
                         if (isSSl) {
-                            SslContext context = SslContextBuilder.forClient()
-                                    .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
-                            ch.pipeline().addLast(SSL_HANDLER, context.newHandler(ch.alloc()));
+
+                            ch.pipeline().addLast(SSL_HANDLER, context.newHandler(ch.alloc(), finalAddress.getAddress().getHostName(), finalAddress.getPort()));
                         }
                         ch.pipeline().addLast(HTTP_CODEC, new HttpClientCodec());
                         if (fetchFullResponse) {
@@ -138,7 +150,7 @@ public class MinimalHttpClient implements AutoCloseable {
             } else {
                 log.error("Error in minimal httpClient.", future.cause());
                 channelFuture.channel().close();
-                // throw new RuntimeException(future.cause());
+                throw new RuntimeException(future.cause());
             }
         });
     }
@@ -249,14 +261,14 @@ public class MinimalHttpClient implements AutoCloseable {
         this.httpVersion = httpVersion;
     }
 
-    public static Builder builder() {
+    public static Builder builder() throws SSLException {
         return new Builder();
     }
 
     public static class Builder {
         private final MinimalHttpClient httpClient;
 
-        public Builder() {
+        public Builder() throws SSLException {
             httpClient = new MinimalHttpClient();
         }
 
