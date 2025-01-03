@@ -31,6 +31,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
@@ -68,6 +69,10 @@ public class RequestViewController implements Initializable {
     private ListView<RequestCell> reqListView;
     @FXML
     private ContextMenu contextMenu;
+    @FXML
+    private MenuItem removeItem;
+    @FXML
+    private MenuItem resendItem;
     @Inject
     private ViewCellFactory cellFactory;
     @Inject
@@ -128,14 +133,18 @@ public class RequestViewController implements Initializable {
                 contextMenu.getItems().forEach(menuItem -> menuItem.setDisable(true));
                 return;
             }
-            contextMenu.getItems().forEach(menuItem -> menuItem.setDisable(false));
+
             RequestCell requestCell = newValue.getValue();
-            // System.out.println("selected: " + requestCell);
             if (requestCell != null) {
                 if (requestCell.isLeaf()) {
+                    contextMenu.getItems().forEach(menuItem -> menuItem.setDisable(false));
+
                     requestViewService.updateRequestTab(requestCell.getRequestId());
                     messageService.selectRequestItem(requestCell.getRequestId(), true);
                 } else {
+                    removeItem.setDisable(false);
+                    resendItem.setDisable(true);
+
                     requestViewService.updateRequestTab(RenderMessage.PATH_MSG + requestCell.getFullPath());
                     reqListView.getSelectionModel().clearSelection();
                 }
@@ -210,6 +219,7 @@ public class RequestViewController implements Initializable {
                 return new Predicate<RequestCell>() {
                     @Override
                     public boolean test(RequestCell requestCell) {
+                        // System.out.println("filter: " + filterInput.getText());
                         return requestCell.getFullPath().contains(filterInput.getText());
                     }
                 };

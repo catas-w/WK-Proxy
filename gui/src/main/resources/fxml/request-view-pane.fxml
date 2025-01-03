@@ -23,21 +23,15 @@
                     <Insets bottom="2.0" left="5.0" top="2.0" />
                 </StackPane.margin>
             </TextField>
-            <Button fx:id="filterCancelBtn" prefHeight="22.0" prefWidth="22.0" style="-fx-background-color: TRANSPARENT;">
+            <Button fx:id="filterCancelBtn" prefHeight="22.0" prefWidth="22.0">
                 <graphic>
-                    <FontIcon iconColor="#616161" iconLiteral="fas-times-circle" iconSize="14" opacity="0.7" />
+                    <FontIcon iconLiteral="fas-times"/>
                 </graphic>
                 <StackPane.margin>
-                    <Insets bottom="1.0" top="2.0" />
+                    <Insets bottom="1.0" top="1.0" />
                 </StackPane.margin>
             </Button>
         </StackPane>
-        <!-- <JFXToggleNode styleClass="toggle-node" onAction="#clearLeafNode"> -->
-        <!--     <FontIcon iconColor="#616161" iconLiteral="fas-quidditch" iconSize="18"/> -->
-        <!--     <HBox.margin> -->
-        <!--         <Insets left="5.0" /> -->
-        <!--     </HBox.margin> -->
-        <!-- </JFXToggleNode> -->
         <CustomToggleNode fx:id="treeViewToggleNode" styleClass="toggle-node">
             <FontIcon iconLiteral="fas-tree" iconSize="18"/>
             <tooltip>
@@ -61,8 +55,8 @@
         <fx:define>
             <ContextMenu fx:id="contextMenu" prefWidth="75" styleClass="req-context-menu">
                 <items>
-                    <MenuItem text="%delete.label" onAction="#removeItem" disable="true"/>
-                    <MenuItem text="%resend.label" onAction="#resendRequest" disable="true"/>
+                    <MenuItem text="%delete.label" fx:id="removeItem" onAction="#removeItem" disable="true"/>
+                    <MenuItem text="%resend.label" fx:id="resendItem" onAction="#resendRequest" disable="true"/>
                 </items>
             </ContextMenu>
         </fx:define>

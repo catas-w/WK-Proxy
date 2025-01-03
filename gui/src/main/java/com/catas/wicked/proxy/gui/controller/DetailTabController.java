@@ -248,6 +248,7 @@ public class DetailTabController implements Initializable {
         keyColumn.setCellValueFactory(new PropertyValueFactory<>("key"));
         keyColumn.setPrefWidth(120);
         keyColumn.setMaxWidth(200);
+        keyColumn.setMinWidth(100);
         // TableUtils.setTableCellFactory(keyColumn, true);
         keyColumn.setCellFactory((TableColumn<HeaderEntry, String> param) -> {
             SelectableTableCell<HeaderEntry> cell =

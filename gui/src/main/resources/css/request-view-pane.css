@@ -156,9 +156,20 @@
     /*-fx-border-color: rgba(131, 131, 131, 0.49);*/
     -fx-pref-width: 200;
     -fx-pref-height: 22;
-    -fx-padding: 0 0 1 5;
+    -fx-padding: 0 25 1 10;
 
     -fx-prompt-text-fill: #989898;
+}
+#filterCancelBtn {
+    -fx-background-color: TRANSPARENT;
+    -fx-opacity: 0.6;
+}
+#filterCancelBtn:hover {
+    -fx-opacity: 0.95;
+}
+#filterCancelBtn .ikonli-font-icon {
+    -fx-icon-color: #616161;
+    -fx-icon-size: 15;
 }
 
 /********** toggle-node **********/

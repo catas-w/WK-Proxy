@@ -15,19 +15,19 @@ import io.netty.handler.codec.http.HttpMethod;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableView;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.ehcache.Cache;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Function;
 
 @Slf4j
 @Singleton
@@ -88,12 +88,12 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         String port = "-";
         String protocol = "-";
         try {
-            URL url = new URL(path);
+            URL url = new URI(path).toURL();
             urlPath = url.getPath();
             host = url.getHost();
             port = String.valueOf(url.getPort() == -1 ? url.getDefaultPort(): url.getPort());
             protocol = url.getProtocol().toUpperCase(Locale.ROOT);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             log.error("Error in parsing overview path: ", e);
         }
         pathOverviewInfo.getHost().setVal(host);
@@ -211,8 +211,8 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
     public void initRequestRoot() {
         requestRoot = new TreeItem<>();
         TreeItem<PairEntry> reqNode = new TreeItem<>(new PairEntry("General", null));
-        TreeItem<PairEntry> sizeNode = new TreeItem<>(new PairEntry("Size", null, "Maybe inaccurate"));
-        TreeItem<PairEntry> timingNode = new TreeItem<>(new PairEntry("Timing", null, "Maybe inaccurate"));
+        TreeItem<PairEntry> sizeNode = new TreeItem<>(new PairEntry("Size", null, "Estimated, may not be accurate."));
+        TreeItem<PairEntry> timingNode = new TreeItem<>(new PairEntry("Timing", null, "Estimated, may not be accurate."));
 
         // basic info
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getUrl()));
@@ -262,14 +262,14 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         generalNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getPostCnt()));
 
         // timing
-        TreeItem<PairEntry> timingNode = new TreeItem<>(new PairEntry("Timing", null, "Maybe inaccurate"));
+        TreeItem<PairEntry> timingNode = new TreeItem<>(new PairEntry("Timing", null, "Estimated data, may not be accurate."));
         timingNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getTimeCost()));
         timingNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getStartTime()));
         timingNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getEndTime()));
         timingNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getAverageSpeed()));
 
         // size
-        TreeItem<PairEntry> sizeNode = new TreeItem<>(new PairEntry("Size", null, "Maybe inaccurate"));
+        TreeItem<PairEntry> sizeNode = new TreeItem<>(new PairEntry("Size", null, "Estimated data, may not be accurate."));
         sizeNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getTotalSize()));
         sizeNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getRequestsSize()));
         sizeNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getResponsesSize()));
