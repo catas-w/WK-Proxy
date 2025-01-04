@@ -321,6 +321,7 @@ public class RequestViewController implements Initializable {
         }
         RequestMessage requestMessage = requestCache.get(requestId);
         if (requestMessage == null || requestMessage.isEncrypted() || requestMessage.isOversize()) {
+            // TODO
             log.warn("Not integrated http request, unable to resend");
             return;
         }

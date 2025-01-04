@@ -7,6 +7,7 @@ import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.ProxyConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
+import com.catas.wicked.server.component.OversizeHttpMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -109,6 +110,9 @@ public class ClientPostRecorder extends ChannelDuplexHandler {
         responseMessage.setStartTime(requestInfo.getResponseStartTime());
         responseMessage.setEndTime(requestInfo.getResponseEndTime());
         responseMessage.setSize(requestInfo.getRespSize());
+        if (resp instanceof OversizeHttpMessage) {
+            responseMessage.setOversize(true);
+        }
         messageQueue.pushMsg(Topic.RECORD, responseMessage);
 
         requestInfo.setHasSentRespMsg(true);

@@ -10,6 +10,7 @@ import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.EmptyHttpHeaders;
 import io.netty.handler.codec.http.FullHttpMessage;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMessage;
@@ -22,6 +23,7 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.catas.wicked.common.constant.ProxyConstant.OVERSIZE_MSG;
 import static io.netty.handler.codec.http.LastHttpContent.EMPTY_LAST_CONTENT;
 
 /**
@@ -31,9 +33,7 @@ import static io.netty.handler.codec.http.LastHttpContent.EMPTY_LAST_CONTENT;
 @Slf4j
 public class RearHttpAggregator extends HttpObjectAggregator {
 
-    private static final String DEFAULT_MSG = "<Content Oversize>";
-
-    private static final ByteBuf OVERSIZE_BUF = Unpooled.wrappedBuffer(DEFAULT_MSG.getBytes());
+    private static final ByteBuf OVERSIZE_BUF = Unpooled.wrappedBuffer(OVERSIZE_MSG.getBytes());
 
     private final AttributeKey<ProxyRequestInfo> requestInfoAttributeKey =
             AttributeKey.valueOf(ProxyConstant.REQUEST_INFO);
@@ -57,15 +57,12 @@ public class RearHttpAggregator extends HttpObjectAggregator {
             HttpHeaders headers = httpRequest.headers();
             HttpMethod method = httpRequest.method();
             HttpVersion httpVersion = httpRequest.protocolVersion();
-            HttpHeaders trailingHeaders = null;
+            HttpHeaders trailingHeaders = EmptyHttpHeaders.INSTANCE;
             if (httpRequest instanceof FullHttpMessage fullHttpMessage) {
                 trailingHeaders = fullHttpMessage.trailingHeaders();
-            } else {
-                trailingHeaders = EmptyHttpHeaders.INSTANCE;
             }
-            DefaultFullHttpRequest errRequest =
-                    new OversizeHttpRequest(httpVersion, method, uri, Unpooled.wrappedBuffer(DEFAULT_MSG.getBytes()),
-                            headers, trailingHeaders);
+            DefaultFullHttpRequest errRequest = new OversizeHttpRequest(httpVersion, method, uri,
+                    OVERSIZE_BUF, headers, trailingHeaders);
 
             try {
                 ctx.fireChannelRead(errRequest);
@@ -76,8 +73,13 @@ public class RearHttpAggregator extends HttpObjectAggregator {
             log.info("Handling oversized http response.");
             HttpResponseStatus status = httpResponse.status();
             HttpVersion httpVersion = httpResponse.protocolVersion();
+            HttpHeaders headers = httpResponse.headers();
+            HttpHeaders trailingHeaders = EmptyHttpHeaders.INSTANCE;
+            if (httpResponse instanceof FullHttpResponse fullHttpResponse) {
+                trailingHeaders = fullHttpResponse.trailingHeaders();
+            }
             DefaultFullHttpResponse errResponse = new OversizeHttpResponse(httpVersion, status,
-                    Unpooled.wrappedBuffer(DEFAULT_MSG.getBytes()));
+                    OVERSIZE_BUF, headers, trailingHeaders);
 
             try {
                 ctx.fireChannelRead(errResponse);
@@ -130,6 +132,10 @@ public class RearHttpAggregator extends HttpObjectAggregator {
 
         public OversizeHttpResponse(HttpVersion version, HttpResponseStatus status, ByteBuf content) {
             super(version, status, content);
+        }
+
+        public OversizeHttpResponse(HttpVersion version, HttpResponseStatus status, ByteBuf content, HttpHeaders headers, HttpHeaders trailingHeaders) {
+            super(version, status, content, headers, trailingHeaders);
         }
     }
 }

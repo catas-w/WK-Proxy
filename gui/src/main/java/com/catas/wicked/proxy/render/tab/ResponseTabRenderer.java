@@ -19,6 +19,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import static com.catas.wicked.common.constant.ProxyConstant.OVERSIZE_MSG;
+
 @Slf4j
 @Singleton
 public class ResponseTabRenderer extends AbstractTabRenderer {
@@ -69,6 +71,11 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
         renderHeaders(headers, detailTabController.getRespHeaderTable());
         detailTabController.getRespHeaderArea().replaceText(WebUtils.getHeaderText(headers), true);
 
+        // content
+        if (response.isOversize()) {
+            setMsgLabel(detailTabController.getRespContentMsgLabel(), OVERSIZE_MSG);
+            return;
+        }
         ContentType contentType = WebUtils.getContentType(headers);
         SideBar.Strategy strategy = predictCodeStyle(contentType);
         // log.info("Response predict contentType: {}, strategy: {}", contentType.getMimeType(), strategy);

@@ -22,6 +22,8 @@ public class ResponseMessage extends BaseMessage implements Serializable {
 
     private int retryTimes = 3;
 
+    private boolean isOversize;
+
     public ResponseMessage() {
         this.setType(MessageType.RESPONSE);
     }

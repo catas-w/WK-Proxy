@@ -11,6 +11,8 @@ public class ProxyConstant {
 
     public static final String UNPARSED_ALIAS = "<Encrypted>";
 
+    public static final String OVERSIZE_MSG = "<Content Oversize>";
+
     public static final String SIGNATURE = "SHA256WithRSAEncryption";
 
     public static final String START_DATE = "2023-01-01";

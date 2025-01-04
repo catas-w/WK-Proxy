@@ -21,13 +21,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.ehcache.Cache;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+
+import static com.catas.wicked.common.constant.ProxyConstant.OVERSIZE_MSG;
 
 @Slf4j
 @Singleton
@@ -79,20 +80,21 @@ public class RequestTabRenderer extends AbstractTabRenderer {
         detailTabController.getReqParamArea().replaceText(query, true);
 
         // display request content
+        // display oversize msg
+        if (request.isOversize()) {
+            setMsgLabel(detailTabController.getReqContentMsgLabel(), OVERSIZE_MSG);
+            return;
+        }
+
         ContentType contentType = WebUtils.getContentType(headers);
         byte[] content = WebUtils.parseContent(request.getHeaders(), request.getBody());
         Node target;
-        // if (contentType != null && (ContentType.MULTIPART_FORM_DATA.getMimeType().equals(contentType.getMimeType()) ||
-        //         ContentType.APPLICATION_FORM_URLENCODED.getMimeType().equals(contentType.getMimeType()))) {
-        //     target = detailTabController.getReqContentTable();
-        // } else
         if (contentType != null && contentType.getMimeType().startsWith("image/")) {
             target = detailTabController.getReqImageView();
         } else {
             target = detailTabController.getReqPayloadCodeArea();
         }
         SideBar.Strategy strategy = predictCodeStyle(contentType);
-        // log.info("Request predict contentType: {}, strategy: {}", contentType, strategy);
         detailTabController.getReqContentSideBar().setStrategy(strategy);
         renderRequestContent(content, contentType, target);
 

@@ -179,6 +179,7 @@ public class MessageService {
                 System.out.println("requestMessage is null");
                 return;
             }
+            requestMessage.setOversize(updateMsg.isOversize());
             requestMessage.setSize(updateMsg.getSize());
             requestMessage.setEndTime(updateMsg.getEndTime());
             if (updateMsg.getClientStatus() != null) {
