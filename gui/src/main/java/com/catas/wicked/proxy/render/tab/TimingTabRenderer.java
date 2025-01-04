@@ -44,11 +44,15 @@ public class TimingTabRenderer extends AbstractTabRenderer {
         ResponseMessage response = request.getResponse();
 
         long requestTime = request.getEndTime() - request.getStartTime();
-        long waitingTime = response == null ? 0 : response.getStartTime() - request.getEndTime();
+        long waitingTime = response == null ? 0 : Math.max(0, response.getStartTime() - request.getEndTime());
         long respTime = response == null ? 0 : response.getEndTime() - response.getStartTime();
         long total = requestTime + waitingTime + respTime;
         double dividerPos1 = (double) requestTime / total;
         double dividerPos2 = (double) (requestTime + waitingTime) / total;
+
+        // normalize
+        double finalDividerPos1 = Math.max(0.01, dividerPos1);
+        double finalDividerPos2 = Math.min(0.99, dividerPos2);
 
         GridPane timingPane = detailTabController.getTimingGridPane();
         List<TimeSplitPane> timeSplits = timingPane.getChildren()
@@ -59,11 +63,11 @@ public class TimingTabRenderer extends AbstractTabRenderer {
                 .stream()
                 .map(node -> (Label) node).toList();
 
-        timeSplits.forEach(splitPane -> splitPane.setDividerPositions(dividerPos1, dividerPos2));
+        timeSplits.forEach(splitPane -> splitPane.setDividerPositions(finalDividerPos1, finalDividerPos2));
         Platform.runLater(() -> {
             timeLabels.get(0).setText(requestTime + " ms");
             timeLabels.get(1).setText(waitingTime + " ms");
-            timeLabels.get(2).setText(respTime + " ms");
+            timeLabels.get(2).setText(response == null ? "-": respTime + " ms");
             timeLabels.get(3).setText(total + " ms");
         });
     }

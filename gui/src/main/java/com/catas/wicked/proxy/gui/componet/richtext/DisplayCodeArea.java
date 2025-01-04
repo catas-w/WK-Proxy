@@ -13,6 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -20,6 +21,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.GenericStyledArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.Paragraph;
+import org.fxmisc.richtext.model.StyleSpans;
 import org.reactfx.collection.ListModification;
 
 import java.util.Collection;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
  * codeArea wrapped in a scrollPane
  * support text highlight
  */
+@Slf4j
 public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
 
     private VisibleParagraphStyler<Collection<String>, String, Collection<String>> visibleParagraphStyler;
@@ -139,10 +142,20 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
                 codeArea.replaceText(finalText);
             });
         }
-        // StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(formatText);
+
         Platform.runLater(() -> {
-            // TODO: 防止在主线程中执行 highlight
-            codeArea.setStyleSpans(0, highlighter.computeHighlight(codeArea.getText()));
+            // 防止在主线程中执行 highlight
+            ThreadPoolService.getInstance().run(() -> {
+                long time1 = System.currentTimeMillis();
+                StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(codeArea.getText());
+
+                long time2 = System.currentTimeMillis();
+                log.info("Compute time cost: " + (time2 - time1));
+
+                Platform.runLater(() -> {
+                    codeArea.setStyleSpans(0, styleSpans);
+                });
+            });
         });
     }
 

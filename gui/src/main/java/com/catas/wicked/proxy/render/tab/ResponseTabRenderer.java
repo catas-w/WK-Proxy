@@ -72,16 +72,15 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
         detailTabController.getRespHeaderArea().replaceText(WebUtils.getHeaderText(headers), true);
 
         // content
+        byte[] parsedContent = WebUtils.parseContent(response.getHeaders(), response.getContent());
         if (response.isOversize()) {
             setMsgLabel(detailTabController.getRespContentMsgLabel(), OVERSIZE_MSG);
             return;
         }
         ContentType contentType = WebUtils.getContentType(headers);
-        SideBar.Strategy strategy = predictCodeStyle(contentType);
-        // log.info("Response predict contentType: {}, strategy: {}", contentType.getMimeType(), strategy);
+        SideBar.Strategy strategy = predictCodeStyle(contentType, parsedContent.length);
         detailTabController.getRespSideBar().setStrategy(strategy);
 
-        byte[] parsedContent = WebUtils.parseContent(response.getHeaders(), response.getContent());
         if (parsedContent.length == 0) {
             detailTabController.getRespContentMsgLabel().setVisible(true);
             setMsgLabel(detailTabController.getRespContentMsgLabel(), "Empty");

@@ -40,18 +40,12 @@ public abstract class AbstractTabRenderer implements TabRenderer {
         });
     }
 
-    protected SideBar.Strategy predictCodeStyle(ContentType contentType) {
+    protected SideBar.Strategy predictCodeStyle(ContentType contentType, int contentLength) {
         if (contentType == null) {
             return SideBar.Strategy.TEXT;
         }
         String mimeType = contentType.getMimeType();
-        if (mimeType.contains("json")) {
-            return SideBar.Strategy.JSON;
-        } else if (mimeType.contains("xml")) {
-            return SideBar.Strategy.XML;
-        } else if (mimeType.contains("html")) {
-            return SideBar.Strategy.HTML;
-        } else if (mimeType.contains("multipart/form-data")) {
+        if (mimeType.contains("multipart/form-data")) {
             return SideBar.Strategy.MULTIPART_FORM_DATA;
         } else if (mimeType.contains("x-www-form-urlencoded")) {
             return SideBar.Strategy.URLENCODED_FORM_DATA;
@@ -61,6 +55,17 @@ public abstract class AbstractTabRenderer implements TabRenderer {
             return SideBar.Strategy.BINARY;
         }
 
+        // display as plain text if too long
+        if (contentLength > 3500) {
+            return SideBar.Strategy.TEXT;
+        }
+        if (mimeType.contains("json")) {
+            return SideBar.Strategy.JSON;
+        } else if (mimeType.contains("xml")) {
+            return SideBar.Strategy.XML;
+        } else if (mimeType.contains("html")) {
+            return SideBar.Strategy.HTML;
+        }
         return SideBar.Strategy.TEXT;
     }
 }

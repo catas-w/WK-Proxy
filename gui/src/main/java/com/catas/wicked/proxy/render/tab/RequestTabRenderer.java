@@ -94,7 +94,7 @@ public class RequestTabRenderer extends AbstractTabRenderer {
         } else {
             target = detailTabController.getReqPayloadCodeArea();
         }
-        SideBar.Strategy strategy = predictCodeStyle(contentType);
+        SideBar.Strategy strategy = predictCodeStyle(contentType, content.length);
         detailTabController.getReqContentSideBar().setStrategy(strategy);
         renderRequestContent(content, contentType, target);
 

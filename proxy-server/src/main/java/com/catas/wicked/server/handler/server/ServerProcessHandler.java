@@ -180,8 +180,8 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
                     if (!clientStatus.isSuccess()) {
                         ResponseMessage responseMsg = new ResponseMessage();
                         responseMsg.setRequestId(requestInfo.getRequestId());
-                        responseMsg.setStartTime(System.currentTimeMillis());
-                        responseMsg.setEndTime(System.currentTimeMillis());
+                        // responseMsg.setStartTime(System.currentTimeMillis());
+                        // responseMsg.setEndTime(System.currentTimeMillis());
                         responseMsg.setSize(0);
                         responseMsg.setStatus(-1);
                         responseMsg.setReasonPhrase(clientStatus.getStatus().getDesc());

@@ -3,8 +3,10 @@ package com.catas.wicked.proxy.gui.componet.highlight;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -19,6 +21,7 @@ import java.util.regex.Pattern;
 /**
  * JSON highlighter by regular expression
  */
+@Slf4j
 public class JsonHighlighter implements Highlighter<Collection<String>>, Formatter {
 
     private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
@@ -58,9 +61,17 @@ public class JsonHighlighter implements Highlighter<Collection<String>>, Formatt
 
     @Override
     public StyleSpans<Collection<String>> computeHighlight(String text) {
+        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+
+        try {
+            JsonNode ignored = objectMapper.readTree(text);
+        } catch (JsonProcessingException e) {
+            log.info("Error parsing json text.");
+            return spansBuilder.create();
+        }
+
         Matcher matcher = PATTERN.matcher(text);
         int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         while(matcher.find()) {
             String group =
                     matcher.group("KEY") != null ? "KEY" :
