@@ -102,9 +102,17 @@ public class ButtonBarController implements Initializable {
         settingDialogTitle = resourceBundle.getString("setting-dialog.title");
         // listen on current request
         appConfig.getObservableConfig().currentRequestIdProperty().addListener((observable, oldValue, newValue) -> {
-            // System.out.println("reqId: " + newValue);
-            resendBtn.setDisable(newValue == null || newValue.startsWith(RenderMessage.PATH_MSG));
+            boolean disableResend = newValue == null || newValue.startsWith(RenderMessage.PATH_MSG);
+            resendBtn.setDisable(disableResend);
             locateBtn.setDisable(newValue == null);
+
+            // disable resendBtn when request is encrypted or oversize
+            if (!disableResend) {
+                RequestMessage requestMessage = requestCache.get(newValue);
+                if (requestMessage == null || requestMessage.isOversize() || requestMessage.isEncrypted()) {
+                    resendBtn.setDisable(true);
+                }
+            }
         });
         locateBtn.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {

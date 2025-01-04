@@ -10,6 +10,8 @@ import com.catas.wicked.common.constant.ProxyProtocol;
 import com.catas.wicked.common.executor.ThreadPoolService;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
+import com.catas.wicked.common.provider.ResourceMessageProvider;
+import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.proxy.gui.componet.FilterableTreeItem;
 import com.catas.wicked.proxy.gui.componet.TreeItemPredicate;
 import com.catas.wicked.proxy.gui.componet.ViewCellFactory;
@@ -84,6 +86,8 @@ public class RequestViewController implements Initializable {
     @Inject
     private Cache<String, RequestMessage> requestCache;
 
+    private ResourceMessageProvider resourceMessageProvider;
+
     private ToggleGroup toggleGroup;
 
     /**
@@ -105,6 +109,11 @@ public class RequestViewController implements Initializable {
 
     public FilterableTreeItem getTreeRoot() {
         return (FilterableTreeItem) reqTreeView.getRoot();
+    }
+
+    @Inject
+    public void setResourceMessageProvider(ResourceMessageProvider resourceMessageProvider) {
+        this.resourceMessageProvider = resourceMessageProvider;
     }
 
     @Override
@@ -321,8 +330,14 @@ public class RequestViewController implements Initializable {
         }
         RequestMessage requestMessage = requestCache.get(requestId);
         if (requestMessage == null || requestMessage.isEncrypted() || requestMessage.isOversize()) {
-            // TODO
             log.warn("Not integrated http request, unable to resend");
+            String msg;
+            if (requestMessage == null || requestMessage.isOversize()) {
+                msg = resourceMessageProvider.getMessage("resend.incomplete.label");
+            } else {
+                msg = resourceMessageProvider.getMessage("resend.encrypted.label");
+            }
+            AlertUtils.alertWarning(msg);
             return;
         }
 
