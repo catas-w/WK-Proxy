@@ -62,6 +62,14 @@ public class AboutSettingService extends AbstractSettingService{
                 log.error("Error in opening x link.", e);
             }
         });
+
+        settingController.getLicenseLink().setOnMouseClicked(event -> {
+            try {
+                desktopProvider.browseOnLocal("https://www.gnu.org/licenses/gpl-3.0.html");
+            } catch (Exception e) {
+                log.error("Error in opening license link.", e);
+            }
+        });
     }
 
     @Override

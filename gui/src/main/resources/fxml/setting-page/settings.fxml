@@ -9,11 +9,7 @@
 <?import java.net.URL?>
 <?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.scene.layout.HBox?>
-<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.Pane?>
-
-<?import com.jfoenix.controls.JFXTextField?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import javafx.scene.control.TextArea?>
 
@@ -48,7 +44,7 @@
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
                     <GridPane styleClass="setting-general, setting-grid-pane" vgap="5">
                         <columnConstraints>
-                            <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0"/>
+                            <!-- <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0"/> -->
                             <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
                         </columnConstraints>
                         <rowConstraints/>
@@ -69,9 +65,9 @@
                         <Label text="%record-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
                         <Label text="%record-size.label" styleClass="grid-label" contentDisplay="RIGHT"
                                GridPane.rowIndex="3" GridPane.columnIndex="0">
-                            <graphic>
+                            <Label>
                                 <FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/>
-                            </graphic>
+                            </Label>
                             <tooltip>
                                 <Tooltip text="%record-size.tooltip" showDelay="500ms"/>
                             </tooltip>
@@ -103,7 +99,7 @@
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
                     <GridPane styleClass="setting-server, setting-grid-pane" vgap="5">
                         <columnConstraints>
-                            <ColumnConstraints hgrow="NEVER" maxWidth="190.0" minWidth="190.0"/>
+                            <!-- <ColumnConstraints hgrow="NEVER" maxWidth="190.0" minWidth="190.0"/> -->
                             <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
                         </columnConstraints>
                         <!-- Server -->
@@ -144,7 +140,7 @@
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
                     <GridPane fx:id="sslGridPane" styleClass="setting-ssl, setting-grid-pane" vgap="2">
                         <columnConstraints>
-                            <ColumnConstraints hgrow="NEVER" maxWidth="135.0" minWidth="135.0"/>
+                            <!-- <ColumnConstraints hgrow="NEVER" maxWidth="145.0" minWidth="145.0"/> -->
                             <!-- <ColumnConstraints hgrow="SOMETIMES" prefWidth="300" minWidth="100.0" /> -->
                         </columnConstraints>
                         <Label text="%ssl-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
@@ -189,8 +185,8 @@
                             AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="5">
                     <GridPane fx:id="exProxyGridPane" styleClass="setting-external, setting-grid-pane" vgap="5">
                         <columnConstraints>
-                            <ColumnConstraints hgrow="NEVER" maxWidth="130.0" minWidth="130.0"/>
-                            <!-- <ColumnConstraints hgrow="SOMETIMES" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
+                            <!-- <ColumnConstraints hgrow="NEVER" maxWidth="130.0" minWidth="130.0"/> -->
+                            <!-- <ColumnConstraints hgrow="ALWAYS" maxWidth="450" minWidth="100.0" prefWidth="400"/> -->
                         </columnConstraints>
                         <!-- External Proxy -->
                         <Label text="%ex-proxy-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
@@ -252,19 +248,26 @@
                         <rowConstraints>
                             <RowConstraints prefHeight="25.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
-                        <Label prefHeight="45.0" text="WK Proxy" textFill="#707a7c"
-                               GridPane.rowIndex="1" GridPane.columnIndex="1">
-                            <font>
-                                <Font name="MiSans Demibold" size="26.0"/>
-                            </font>
-                        </Label>
+                        <HBox GridPane.rowIndex="1" GridPane.columnIndex="1">
+                            <Label prefHeight="45.0" text="WK Proxy" textFill="#707a7c">
+                                <font>
+                                    <Font name="MiSans Demibold" size="26.0"/>
+                                </font>
+                            </Label>
+                            <Label prefHeight="45.0" text="Http debug proxy tool." textFill="#949090">
+                                <HBox.margin>
+                                    <Insets left="10" top="5"/>
+                                </HBox.margin>
+                            </Label>
+                        </HBox>
+
                         <VBox prefHeight="55.0" GridPane.rowIndex="2" GridPane.columnIndex="1">
                             <Label fx:id="appVersionLabel" prefHeight="25.0" text="Version" textFill="#949090">
                                 <opaqueInsets>
                                     <Insets left="5.0"/>
                                 </opaqueInsets>
                             </Label>
-                            <Label prefHeight="20.0" text="Apache License" textFill="#949090"/>
+                            <Label prefHeight="20.0" fx:id="licenseLink" text="GNU General Public License v3.0" textFill="#949090"/>
                         </VBox>
 
                         <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="3" GridPane.columnIndex="1">

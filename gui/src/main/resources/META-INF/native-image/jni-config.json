@@ -53,8 +53,20 @@
   "methods":[{"name":"extensionsToArray","parameterTypes":[] },{"name":"getDescription","parameterTypes":[] }]
 },
 {
+  "type":"com.sun.glass.ui.CommonDialogs$ExtensionFilter",
+  "methods":[{"name":"extensionsToArray","parameterTypes":[] },{"name":"getDescription","parameterTypes":[] }]
+},
+{
   "type":"com.sun.glass.ui.CommonDialogs$FileChooserResult",
   "methods":[{"name":"<init>","parameterTypes":["java.util.List","com.sun.glass.ui.CommonDialogs$ExtensionFilter"] }]
+},
+{
+  "type":"com.sun.glass.ui.CommonDialogs$FileChooserResult",
+  "methods":[{"name":"<init>","parameterTypes":["java.util.List","com.sun.glass.ui.CommonDialogs$ExtensionFilter"] }]
+},
+{
+  "type":"com.sun.glass.ui.EventLoop",
+  "methods":[{"name":"<init>","parameterTypes":[] },{"name":"enter","parameterTypes":[] },{"name":"leave","parameterTypes":["java.lang.Object"] }]
 },
 {
   "type":"com.sun.glass.ui.EventLoop",
@@ -432,6 +444,10 @@
   "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
 },
 {
+  "type":"java.io.File",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
+},
+{
   "type":"java.io.InputStream",
   "methods":[{"name":"read","parameterTypes":["byte[]","int","int"] },{"name":"skip","parameterTypes":["long"] }]
 },
@@ -577,7 +593,7 @@
 },
 {
   "type":"java.lang.System",
-  "methods":[{"name":"getProperty","parameterTypes":["java.lang.String"] },{"name":"load","parameterTypes":["java.lang.String"] },{"name":"setProperty","parameterTypes":["java.lang.String","java.lang.String"] }]
+  "methods":[{"name":"getProperty","parameterTypes":["java.lang.String"] },{"name":"setProperty","parameterTypes":["java.lang.String","java.lang.String"] }]
 },
 {
   "type":"java.lang.System",
@@ -670,6 +686,10 @@
 {
   "type":"java.nio.ShortBuffer",
   "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
+},
+{
+  "type":"java.util.ArrayList",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "type":"java.util.ArrayList",

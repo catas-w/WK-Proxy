@@ -90,6 +90,8 @@ public class SettingController implements Initializable {
     public Hyperlink githubLink;
     public Hyperlink twitterLink;
     @FXML
+    private Label licenseLink;
+    @FXML
     private JFXCheckBox sysProxyOnLaunchBtn;
     @FXML
     private JFXButton cancelBtn;

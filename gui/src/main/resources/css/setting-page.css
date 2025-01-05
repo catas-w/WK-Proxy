@@ -257,20 +257,20 @@
     /*-fx-border-color: #a4a4a4;*/
 }
 .setting-general .grid-label {
-    -fx-min-width: 125;
-    -fx-max-width: 125;
-}
-.setting-server .grid-label {
-    -fx-min-width: 190;
-    -fx-max-width: 190;
-}
-.setting-ssl .grid-label {
-    -fx-min-width: 135;
-    -fx-max-width: 135;
-}
-.setting-external .grid-label {
     -fx-min-width: 130;
     -fx-max-width: 130;
+}
+.setting-server .grid-label {
+    -fx-min-width: 198;
+    -fx-max-width: 198;
+}
+.setting-ssl .grid-label {
+    -fx-min-width: 145;
+    -fx-max-width: 145;
+}
+.setting-external .grid-label {
+    -fx-min-width: 148;
+    -fx-max-width: 148;
 }
 .lang-alert-label {
     -fx-text-fill: #b73012;

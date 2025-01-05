@@ -4,9 +4,12 @@ mvn clean
 mvn install
 
 # shellcheck disable=SC2164
-cd gui
+cd gui;
 export GRAALVM_HOME='/Library/Java/JavaVirtualMachines/graalvm-java23-darwin-aarch64-gluon-23+25.1-dev/Contents/Home';
 export JAVA_HOME=$GRAALVM_HOME
+
+echo $JAVA_HOME;
+mvn clean;
 
 #mvn gluonfx:runagent
 mvn gluonfx:compile

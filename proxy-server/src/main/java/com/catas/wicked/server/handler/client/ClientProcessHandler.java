@@ -115,13 +115,15 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
             messageQueue.pushMsg(Topic.RECORD, responseMsg);
         }
 
-        log.warn("Proxy client error, closing channel");
+        log.warn("Proxy client error, closing channel-0");
         if (ctx.channel() != null && ctx.channel().isOpen()) {
             ctx.channel().close();
         }
+        log.warn("Proxy client error, closing channel-1");
         if (clientChannel != null) {
             clientChannel.close();
         }
+        log.warn("Proxy client error, closing channel-2");
         ctx.fireExceptionCaught(cause);
     }
 }
