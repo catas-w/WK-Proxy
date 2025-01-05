@@ -104,7 +104,7 @@ public class AppUpdateController implements Initializable {
         closeUpdateDialogBtn.setOnAction(e -> closeAlert());
     }
 
-    public void showAlert() {
+    public void checkUpdateAndShowAlert() {
         if (alert != null) {
             timeline.play();
             ThreadPoolService.getInstance().submit(this::checkUpdate);
@@ -131,20 +131,23 @@ public class AppUpdateController implements Initializable {
             } else {
                 String info = messageProvider.getMessage("check-update.new-release.label") + " " + version;
                 Platform.runLater(() -> {
-                    displayDownloadDialog(info, res.getRight());
+                    displayDownloadDialog(Alert.AlertType.INFORMATION, info, res.getRight());
                 });
             }
         } catch (Exception e) {
             log.error("Error in fetching update information.", e);
-            AlertUtils.alertLater(Alert.AlertType.ERROR, messageProvider.getMessage("check-update.error.label"));
+            String msg = messageProvider.getMessage("check-update.error.label");
+            Platform.runLater(() -> {
+                displayDownloadDialog(Alert.AlertType.WARNING, msg, RELEASE_URL);
+            });
         } finally {
             closeAlert();
         }
     }
 
-    private void displayDownloadDialog(String info, String url) {
+    private void displayDownloadDialog(Alert.AlertType alertType, String info, String url) {
         // Create the Alert
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(alertType);
         alert.setTitle("");
         alert.setHeaderText(null);
         alert.setContentText(null);

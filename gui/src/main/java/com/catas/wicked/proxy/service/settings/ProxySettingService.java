@@ -135,13 +135,5 @@ public class ProxySettingService extends AbstractSettingService{
 
     @Override
     public void update(ApplicationConfig appConfig) {
-        Settings settings = appConfig.getSettings();
-
-
-        // settings.setSystemProxy(settingController.getSysProxyBtn().isSelected());
-        settings.setSysProxyBypassList(getListFromText(settingController.getSysProxyExcludeArea().getText()));
-
-        // manually invoke systemProxyWorker
-        settingController.getScheduledManager().invoke(WorkerConstant.SYS_PROXY_WORKER);
     }
 }

@@ -69,10 +69,9 @@ public class SysProxyProviderTest extends BaseTest {
     @ConditionalTest(os = Requires.Family.MAC_OS)
     public void testMacBypassDomains() {
         MacSysProxyProvider proxyProvider = new MacSysProxyProvider();
-        final String testDomain = ".catas.org";
+        final String testDomain = "catas.org";
 
         List<String> originDomains = proxyProvider.getBypassDomains();
-        // System.out.println(originDomains);
 
         // add domain
         {

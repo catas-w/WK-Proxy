@@ -144,7 +144,7 @@ public class ApplicationConfig implements AutoCloseable {
         try {
             settings = objectMapper.readValue(file, Settings.class);
         } catch (Throwable e) {
-            log.error("Error in loading settingsFile");
+            log.error("Error in loading settingsFile.", e);
             settings = new Settings();
         }
 

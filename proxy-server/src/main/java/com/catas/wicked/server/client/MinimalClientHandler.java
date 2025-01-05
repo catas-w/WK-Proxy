@@ -68,7 +68,7 @@ public class MinimalClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        // super.exceptionCaught(ctx, cause);
+        log.error("Error in minimal client handler", cause);
         synchronized (client) {
             if (client.responsePromise != null) {
                 client.responsePromise.setFailure(cause);

@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static com.catas.wicked.common.constant.NettyConstant.AGGREGATOR;
 import static com.catas.wicked.common.constant.NettyConstant.CLIENT_PROCESSOR;
@@ -166,7 +167,10 @@ public class MinimalHttpClient implements AutoCloseable {
 
     public HttpResponse response() throws InterruptedException, ExecutionException {
         // wait to get response
-        Promise<HttpResponse> promise = msgList.take();
+        Promise<HttpResponse> promise = msgList.poll(timeout, TimeUnit.MILLISECONDS);
+        if (promise == null) {
+            throw new RuntimeException("Minimal client timeout in request: " + uri);
+        }
         return promise.get();
     }
 

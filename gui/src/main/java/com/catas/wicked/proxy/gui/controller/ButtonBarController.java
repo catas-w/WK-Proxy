@@ -4,21 +4,15 @@ import com.catas.wicked.common.bean.message.DeleteMessage;
 import com.catas.wicked.common.bean.message.RenderMessage;
 import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
-import com.catas.wicked.common.config.ExternalProxyConfig;
-import com.catas.wicked.common.constant.ProxyProtocol;
 import com.catas.wicked.common.constant.SystemProxyStatus;
 import com.catas.wicked.common.constant.WorkerConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
-import com.catas.wicked.common.executor.ThreadPoolService;
 import com.catas.wicked.common.worker.ScheduledManager;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.service.RequestMockService;
-import com.catas.wicked.server.client.MinimalHttpClient;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleNode;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.application.Platform;
@@ -36,12 +30,10 @@ import javafx.stage.Window;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
-import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -279,7 +271,7 @@ public class ButtonBarController implements Initializable {
             appUpdateController.initAlert(recordBtn.getScene().getWindow());
         }
         appConfig.getObservableConfig().setHasNewVersion(false);
-        appUpdateController.showAlert();
+        appUpdateController.checkUpdateAndShowAlert();
     }
 
     public void adjustSettingDialogHeight(double targetHeight) {
