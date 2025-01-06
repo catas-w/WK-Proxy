@@ -142,7 +142,6 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         }
         ResponseMessage response = request.getResponse();
         String code;
-        // String code = response == null ? "Pending" : response.getStatusStr() + " " + response.getReasonPhrase();
 
         // set status-column style
         if (response == null) {
@@ -169,13 +168,14 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         requestOverviewInfo.getClientPort().setVal(String.valueOf(request.getLocalPort()));
 
         // timing
-        requestOverviewInfo.getTimeCost().setVal(response == null ? "-": response.getEndTime() - request.getStartTime() + " ms");
-        requestOverviewInfo.getRequestTime().setVal(request.getEndTime() - request.getStartTime() + " ms");
+        boolean noResp = response == null || response.getStartTime() == 0;
+        requestOverviewInfo.getTimeCost().setVal(noResp ? "-": Math.max(0, response.getEndTime() - request.getStartTime()) + " ms");
+        requestOverviewInfo.getRequestTime().setVal(Math.max(0, request.getEndTime() - request.getStartTime()) + " ms");
         requestOverviewInfo.getRequestStart().setVal(dateFormat.format(new Date(request.getStartTime())));
         requestOverviewInfo.getRequestEnd().setVal(dateFormat.format(new Date(request.getEndTime())));
-        requestOverviewInfo.getRespTime().setVal(response == null ? "-": response.getEndTime() - response.getStartTime() + " ms");
-        requestOverviewInfo.getRespStart().setVal(response == null ? "-": dateFormat.format(new Date(response.getStartTime())));
-        requestOverviewInfo.getRespEnd().setVal(response == null ? "-": dateFormat.format(new Date(response.getEndTime())));
+        requestOverviewInfo.getRespTime().setVal(noResp ? "-": Math.max(0,  response.getEndTime() - response.getStartTime()) + " ms");
+        requestOverviewInfo.getRespStart().setVal(noResp ? "-": dateFormat.format(new Date(response.getStartTime())));
+        requestOverviewInfo.getRespEnd().setVal(noResp ? "-": dateFormat.format(new Date(response.getEndTime())));
 
         // size
         requestOverviewInfo.getRequestSize().setVal(WebUtils.getHSize(request.getSize()));
