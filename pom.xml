@@ -32,15 +32,15 @@
     </modules>
 
     <properties>
-        <!-- <maven.compiler.source>17</maven.compiler.source> -->
-        <!-- <maven.compiler.target>17</maven.compiler.target> -->
-        <maven.compiler.release>21</maven.compiler.release>
+        <!-- <maven.compiler.release>21</maven.compiler.release> -->
+        <maven.compiler.release>17</maven.compiler.release>
         <maven.compiler.plgin.version>3.8.1</maven.compiler.plgin.version>
         <maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
         <maven.dependency.plugin.version>3.1.2</maven.dependency.plugin.version>
        <!-- <javafx.version>19.0.2.12</javafx.version> -->
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
-        <gluonfx.maven.plugin.version>1.0.24</gluonfx.maven.plugin.version>
+        <!-- <gluonfx.maven.plugin.version>1.0.24</gluonfx.maven.plugin.version> -->
+        <gluonfx.maven.plugin.version>1.0.23</gluonfx.maven.plugin.version>
         <gluonfx.target>host</gluonfx.target>
         <javafx.version>22.0.1</javafx.version>
         <micronaut.version>3.4.4</micronaut.version>

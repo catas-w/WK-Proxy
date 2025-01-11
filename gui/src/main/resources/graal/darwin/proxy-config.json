@@ -1,0 +1,14 @@
+[
+  {
+    "interfaces":["com.catas.wicked.common.jna.FoundationLibrary"]
+  },
+  {
+    "interfaces":["com.catas.wicked.common.jna.WindowBlurLibrary"]
+  },
+  {
+    "interfaces":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
+  },
+  {
+    "interfaces":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.WriteBackPortability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
+  }
+]

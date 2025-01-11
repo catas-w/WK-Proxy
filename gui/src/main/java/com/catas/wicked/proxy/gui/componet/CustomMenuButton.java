@@ -1,7 +1,7 @@
 package com.catas.wicked.proxy.gui.componet;
 
 import com.sun.javafx.scene.control.ContextMenuContent;
-import com.sun.javafx.scene.control.ListenerHelper;
+// import com.sun.javafx.scene.control.ListenerHelper;
 import com.sun.javafx.scene.control.behavior.MenuButtonBehavior;
 import javafx.event.ActionEvent;
 import javafx.scene.AccessibleAttribute;
@@ -55,10 +55,21 @@ public class CustomMenuButton extends MenuButton {
                 }
             });
 
-            ListenerHelper lh = ListenerHelper.get(this);
+            // ListenerHelper lh = ListenerHelper.get(this);
 
             // request focus on content when the popup is shown
-            lh.addEventHandler(popup, WindowEvent.WINDOW_SHOWN, (ev) -> {
+            // lh.addEventHandler(popup, WindowEvent.WINDOW_SHOWN, (ev) -> {
+            //     if (requestFocusOnFirstMenuItem) {
+            //         requestFocusOnFirstMenuItem();
+            //         requestFocusOnFirstMenuItem = false;
+            //     } else {
+            //         ContextMenuContent cmContent = (ContextMenuContent) popup.getSkin().getNode();
+            //         if (cmContent != null) {
+            //             cmContent.requestFocus();
+            //         }
+            //     }
+            // });
+            popup.addEventHandler( WindowEvent.WINDOW_SHOWN, (ev) -> {
                 if (requestFocusOnFirstMenuItem) {
                     requestFocusOnFirstMenuItem();
                     requestFocusOnFirstMenuItem = false;
@@ -70,7 +81,10 @@ public class CustomMenuButton extends MenuButton {
                 }
             });
 
-            lh.addEventHandler(control, ActionEvent.ACTION, (ev) -> {
+            // lh.addEventHandler(control, ActionEvent.ACTION, (ev) -> {
+            //     control.show();
+            // });
+            control.addEventHandler(ActionEvent.ACTION, (ev) -> {
                 control.show();
             });
 

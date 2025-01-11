@@ -1,765 +1,559 @@
 [
 {
-  "type":"[B"
+  "name":"[B"
 },
 {
-  "type":"[B"
+  "name":"[Lcom.sun.glass.ui.Screen;"
 },
 {
-  "type":"[Lcom.sun.glass.ui.Screen;"
+  "name":"[Ljava.lang.String;"
 },
 {
-  "type":"[Lcom.sun.glass.ui.Screen;"
+  "name":"[[B"
 },
 {
-  "type":"[Ljava.lang.String;"
+  "name":"com.sun.glass.ui.CommonDialogs",
+  "methods":[{"name":"createFileChooserResult","parameterTypes":["java.lang.String[]","com.sun.glass.ui.CommonDialogs$ExtensionFilter[]","int"] }]
 },
 {
-  "type":"[Ljava.lang.String;"
+  "name":"com.sun.glass.ui.CommonDialogs$ExtensionFilter",
+  "methods":[
+    {"name":"extensionsToArray","parameterTypes":[] }, 
+    {"name":"getDescription","parameterTypes":[] }
+  ]
 },
 {
-  "type":"[Ljavafx.scene.paint.Color;"
+  "name":"com.sun.glass.ui.Cursor",
+  "methods":[
+    {"name":"getNativeCursor","parameterTypes":[] }, 
+    {"name":"getType","parameterTypes":[] }
+  ]
 },
 {
-  "type":"[Ljavafx.scene.paint.Color;"
-},
-{
-  "type":"[[B"
-},
-{
-  "type":"[[B"
-},
-{
-  "type":"[[Ljava.lang.String;"
-},
-{
-  "type":"com.catas.wicked.proxy.WickedProxyApplication",
-  "methods":[{"name":"main","parameterTypes":["java.lang.String[]"] }]
-},
-{
-  "type":"com.catas.wicked.proxy.WickedProxyApplication",
-  "methods":[{"name":"main","parameterTypes":["java.lang.String[]"] }]
-},
-{
-  "type":"com.sun.glass.ui.Application",
-  "methods":[{"name":"notifyDidBecomeActive","parameterTypes":[] },{"name":"notifyDidFinishLaunching","parameterTypes":[] },{"name":"notifyDidResignActive","parameterTypes":[] },{"name":"notifyOpenFiles","parameterTypes":["java.lang.String[]"] },{"name":"notifyWillBecomeActive","parameterTypes":[] },{"name":"notifyWillFinishLaunching","parameterTypes":[] },{"name":"notifyWillResignActive","parameterTypes":[] }]
-},
-{
-  "type":"com.sun.glass.ui.Application",
-  "methods":[{"name":"notifyDidBecomeActive","parameterTypes":[] },{"name":"notifyDidFinishLaunching","parameterTypes":[] },{"name":"notifyDidResignActive","parameterTypes":[] },{"name":"notifyOpenFiles","parameterTypes":["java.lang.String[]"] },{"name":"notifyWillBecomeActive","parameterTypes":[] },{"name":"notifyWillFinishLaunching","parameterTypes":[] },{"name":"notifyWillResignActive","parameterTypes":[] }]
-},
-{
-  "type":"com.sun.glass.ui.CommonDialogs$ExtensionFilter",
-  "methods":[{"name":"extensionsToArray","parameterTypes":[] },{"name":"getDescription","parameterTypes":[] }]
-},
-{
-  "type":"com.sun.glass.ui.CommonDialogs$ExtensionFilter",
-  "methods":[{"name":"extensionsToArray","parameterTypes":[] },{"name":"getDescription","parameterTypes":[] }]
-},
-{
-  "type":"com.sun.glass.ui.CommonDialogs$FileChooserResult",
-  "methods":[{"name":"<init>","parameterTypes":["java.util.List","com.sun.glass.ui.CommonDialogs$ExtensionFilter"] }]
-},
-{
-  "type":"com.sun.glass.ui.CommonDialogs$FileChooserResult",
-  "methods":[{"name":"<init>","parameterTypes":["java.util.List","com.sun.glass.ui.CommonDialogs$ExtensionFilter"] }]
-},
-{
-  "type":"com.sun.glass.ui.EventLoop",
-  "methods":[{"name":"<init>","parameterTypes":[] },{"name":"enter","parameterTypes":[] },{"name":"leave","parameterTypes":["java.lang.Object"] }]
-},
-{
-  "type":"com.sun.glass.ui.EventLoop",
-  "methods":[{"name":"<init>","parameterTypes":[] },{"name":"enter","parameterTypes":[] },{"name":"leave","parameterTypes":["java.lang.Object"] }]
-},
-{
-  "type":"com.sun.glass.ui.Menu",
-  "methods":[{"name":"notifyMenuClosed","parameterTypes":[] },{"name":"notifyMenuOpening","parameterTypes":[] }]
-},
-{
-  "type":"com.sun.glass.ui.Menu",
-  "methods":[{"name":"notifyMenuClosed","parameterTypes":[] },{"name":"notifyMenuOpening","parameterTypes":[] }]
-},
-{
-  "type":"com.sun.glass.ui.MenuItem$Callback",
-  "methods":[{"name":"action","parameterTypes":[] },{"name":"validate","parameterTypes":[] }]
-},
-{
-  "type":"com.sun.glass.ui.MenuItem$Callback",
-  "methods":[{"name":"action","parameterTypes":[] },{"name":"validate","parameterTypes":[] }]
-},
-{
-  "type":"com.sun.glass.ui.Screen",
+  "name":"com.sun.glass.ui.Screen",
   "methods":[{"name":"<init>","parameterTypes":["long","int","int","int","int","int","int","int","int","int","int","int","int","int","int","int","float","float","float","float"] }]
 },
 {
-  "type":"com.sun.glass.ui.Screen",
-  "methods":[{"name":"<init>","parameterTypes":["long","int","int","int","int","int","int","int","int","int","int","int","int","int","int","int","float","float","float","float"] }]
-},
-{
-  "type":"com.sun.glass.ui.Size",
+  "name":"com.sun.glass.ui.Size",
   "methods":[{"name":"<init>","parameterTypes":["int","int"] }]
 },
 {
-  "type":"com.sun.glass.ui.Size",
-  "methods":[{"name":"<init>","parameterTypes":["int","int"] }]
-},
-{
-  "type":"com.sun.glass.ui.View",
-  "fields":[{"name":"ptr"}],
-  "methods":[{"name":"getAccessible","parameterTypes":[] },{"name":"notifyDragDrop","parameterTypes":["int","int","int","int","int"] },{"name":"notifyDragEnd","parameterTypes":["int"] },{"name":"notifyDragEnter","parameterTypes":["int","int","int","int","int"] },{"name":"notifyDragLeave","parameterTypes":[] },{"name":"notifyDragOver","parameterTypes":["int","int","int","int","int"] },{"name":"notifyInputMethod","parameterTypes":["java.lang.String","int[]","int[]","byte[]","int","int","int"] },{"name":"notifyInputMethodCandidatePosRequest","parameterTypes":["int"] },{"name":"notifyKey","parameterTypes":["int","int","char[]","int"] },{"name":"notifyMenu","parameterTypes":["int","int","int","int","boolean"] },{"name":"notifyMouse","parameterTypes":["int","int","int","int","int","int","int","boolean","boolean"] },{"name":"notifyRepaint","parameterTypes":["int","int","int","int"] },{"name":"notifyResize","parameterTypes":["int","int"] },{"name":"notifyView","parameterTypes":["int"] }]
-},
-{
-  "type":"com.sun.glass.ui.View",
-  "fields":[{"name":"ptr"}],
-  "methods":[{"name":"getAccessible","parameterTypes":[] },{"name":"notifyDragDrop","parameterTypes":["int","int","int","int","int"] },{"name":"notifyDragEnd","parameterTypes":["int"] },{"name":"notifyDragEnter","parameterTypes":["int","int","int","int","int"] },{"name":"notifyDragLeave","parameterTypes":[] },{"name":"notifyDragOver","parameterTypes":["int","int","int","int","int"] },{"name":"notifyInputMethod","parameterTypes":["java.lang.String","int[]","int[]","byte[]","int","int","int"] },{"name":"notifyInputMethodCandidatePosRequest","parameterTypes":["int"] },{"name":"notifyKey","parameterTypes":["int","int","char[]","int"] },{"name":"notifyMenu","parameterTypes":["int","int","int","int","boolean"] },{"name":"notifyMouse","parameterTypes":["int","int","int","int","int","int","int","boolean","boolean"] },{"name":"notifyRepaint","parameterTypes":["int","int","int","int"] },{"name":"notifyResize","parameterTypes":["int","int"] },{"name":"notifyView","parameterTypes":["int"] }]
-},
-{
-  "type":"com.sun.javafx.font.coretext.CGAffineTransform",
-  "fields":[{"name":"a"},{"name":"b"},{"name":"c"},{"name":"d"},{"name":"tx"},{"name":"ty"}],
+  "name":"com.sun.javafx.font.directwrite.D2D1_COLOR_F",
+  "fields":[
+    {"name":"a"}, 
+    {"name":"b"}, 
+    {"name":"g"}, 
+    {"name":"r"}
+  ],
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "type":"com.sun.javafx.font.coretext.CGAffineTransform",
-  "fields":[{"name":"a"},{"name":"b"},{"name":"c"},{"name":"d"},{"name":"tx"},{"name":"ty"}],
+  "name":"com.sun.javafx.font.directwrite.D2D1_MATRIX_3X2_F",
+  "fields":[
+    {"name":"_11"}, 
+    {"name":"_12"}, 
+    {"name":"_21"}, 
+    {"name":"_22"}, 
+    {"name":"_31"}, 
+    {"name":"_32"}
+  ],
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "type":"com.sun.javafx.font.coretext.CGPoint",
-  "fields":[{"name":"x"},{"name":"y"}],
+  "name":"com.sun.javafx.font.directwrite.D2D1_PIXEL_FORMAT",
+  "fields":[
+    {"name":"alphaMode"}, 
+    {"name":"format"}
+  ],
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "type":"com.sun.javafx.font.coretext.CGPoint",
-  "fields":[{"name":"x"},{"name":"y"}],
+  "name":"com.sun.javafx.font.directwrite.D2D1_POINT_2F",
+  "fields":[
+    {"name":"x"}, 
+    {"name":"y"}
+  ],
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "type":"com.sun.javafx.font.coretext.CGRect",
-  "fields":[{"name":"origin"},{"name":"size"}],
+  "name":"com.sun.javafx.font.directwrite.D2D1_RENDER_TARGET_PROPERTIES",
+  "fields":[
+    {"name":"dpiX"}, 
+    {"name":"dpiY"}, 
+    {"name":"minLevel"}, 
+    {"name":"pixelFormat"}, 
+    {"name":"type"}, 
+    {"name":"usage"}
+  ],
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "type":"com.sun.javafx.font.coretext.CGRect",
-  "fields":[{"name":"origin"},{"name":"size"}],
+  "name":"com.sun.javafx.font.directwrite.DWRITE_GLYPH_METRICS",
+  "fields":[
+    {"name":"advanceHeight"}, 
+    {"name":"advanceWidth"}, 
+    {"name":"bottomSideBearing"}, 
+    {"name":"leftSideBearing"}, 
+    {"name":"rightSideBearing"}, 
+    {"name":"topSideBearing"}, 
+    {"name":"verticalOriginY"}
+  ],
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "type":"com.sun.javafx.font.coretext.CGSize",
-  "fields":[{"name":"height"},{"name":"width"}],
+  "name":"com.sun.javafx.font.directwrite.DWRITE_GLYPH_RUN",
+  "fields":[
+    {"name":"advanceOffset"}, 
+    {"name":"ascenderOffset"}, 
+    {"name":"bidiLevel"}, 
+    {"name":"fontEmSize"}, 
+    {"name":"fontFace"}, 
+    {"name":"glyphAdvances"}, 
+    {"name":"glyphIndices"}, 
+    {"name":"isSideways"}
+  ],
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "type":"com.sun.javafx.font.coretext.CGSize",
-  "fields":[{"name":"height"},{"name":"width"}],
+  "name":"com.sun.javafx.font.directwrite.DWRITE_MATRIX",
+  "fields":[
+    {"name":"dx"}, 
+    {"name":"dy"}, 
+    {"name":"m11"}, 
+    {"name":"m12"}, 
+    {"name":"m21"}, 
+    {"name":"m22"}
+  ],
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "type":"com.sun.javafx.iio.common.ImageLoaderImpl",
-  "methods":[{"name":"emitWarning","parameterTypes":["java.lang.String"] }]
+  "name":"com.sun.javafx.font.directwrite.RECT",
+  "fields":[
+    {"name":"bottom"}, 
+    {"name":"left"}, 
+    {"name":"right"}, 
+    {"name":"top"}
+  ],
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "type":"com.sun.javafx.iio.jpeg.JPEGImageLoader",
-  "methods":[{"name":"setInputAttributes","parameterTypes":["int","int","int","int","int","byte[]"] },{"name":"setOutputAttributes","parameterTypes":["int","int"] },{"name":"updateImageProgress","parameterTypes":["int"] }]
+  "name":"com.sun.jna.Callback"
 },
 {
-  "type":"com.sun.jna.Callback"
+  "name":"com.sun.jna.CallbackReference",
+  "methods":[
+    {"name":"getCallback","parameterTypes":["java.lang.Class","com.sun.jna.Pointer","boolean"] }, 
+    {"name":"getFunctionPointer","parameterTypes":["com.sun.jna.Callback","boolean"] }, 
+    {"name":"getNativeString","parameterTypes":["java.lang.Object","boolean"] }, 
+    {"name":"initializeThread","parameterTypes":["com.sun.jna.Callback","com.sun.jna.CallbackReference$AttachOptions"] }
+  ]
 },
 {
-  "type":"com.sun.jna.Callback"
+  "name":"com.sun.jna.CallbackReference$AttachOptions"
 },
 {
-  "type":"com.sun.jna.CallbackReference",
-  "methods":[{"name":"getCallback","parameterTypes":["java.lang.Class","com.sun.jna.Pointer","boolean"] },{"name":"getFunctionPointer","parameterTypes":["com.sun.jna.Callback","boolean"] },{"name":"getNativeString","parameterTypes":["java.lang.Object","boolean"] },{"name":"initializeThread","parameterTypes":["com.sun.jna.Callback","com.sun.jna.CallbackReference$AttachOptions"] }]
-},
-{
-  "type":"com.sun.jna.CallbackReference",
-  "methods":[{"name":"getCallback","parameterTypes":["java.lang.Class","com.sun.jna.Pointer","boolean"] },{"name":"getFunctionPointer","parameterTypes":["com.sun.jna.Callback","boolean"] },{"name":"getNativeString","parameterTypes":["java.lang.Object","boolean"] },{"name":"initializeThread","parameterTypes":["com.sun.jna.Callback","com.sun.jna.CallbackReference$AttachOptions"] }]
-},
-{
-  "type":"com.sun.jna.CallbackReference$AttachOptions"
-},
-{
-  "type":"com.sun.jna.CallbackReference$AttachOptions"
-},
-{
-  "type":"com.sun.jna.FromNativeConverter",
+  "name":"com.sun.jna.FromNativeConverter",
   "methods":[{"name":"nativeType","parameterTypes":[] }]
 },
 {
-  "type":"com.sun.jna.FromNativeConverter",
-  "methods":[{"name":"nativeType","parameterTypes":[] }]
-},
-{
-  "type":"com.sun.jna.IntegerType",
+  "name":"com.sun.jna.IntegerType",
   "fields":[{"name":"value"}]
 },
 {
-  "type":"com.sun.jna.IntegerType",
-  "fields":[{"name":"value"}]
+  "name":"com.sun.jna.JNIEnv"
 },
 {
-  "type":"com.sun.jna.JNIEnv"
+  "name":"com.sun.jna.Native",
+  "methods":[
+    {"name":"dispose","parameterTypes":[] }, 
+    {"name":"fromNative","parameterTypes":["com.sun.jna.FromNativeConverter","java.lang.Object","java.lang.reflect.Method"] }, 
+    {"name":"fromNative","parameterTypes":["java.lang.Class","java.lang.Object"] }, 
+    {"name":"fromNative","parameterTypes":["java.lang.reflect.Method","java.lang.Object"] }, 
+    {"name":"nativeType","parameterTypes":["java.lang.Class"] }, 
+    {"name":"toNative","parameterTypes":["com.sun.jna.ToNativeConverter","java.lang.Object"] }
+  ]
 },
 {
-  "type":"com.sun.jna.JNIEnv"
-},
-{
-  "type":"com.sun.jna.Native",
-  "methods":[{"name":"dispose","parameterTypes":[] },{"name":"fromNative","parameterTypes":["com.sun.jna.FromNativeConverter","java.lang.Object","java.lang.reflect.Method"] },{"name":"fromNative","parameterTypes":["java.lang.Class","java.lang.Object"] },{"name":"fromNative","parameterTypes":["java.lang.reflect.Method","java.lang.Object"] },{"name":"nativeType","parameterTypes":["java.lang.Class"] },{"name":"toNative","parameterTypes":["com.sun.jna.ToNativeConverter","java.lang.Object"] }]
-},
-{
-  "type":"com.sun.jna.Native",
-  "methods":[{"name":"dispose","parameterTypes":[] },{"name":"fromNative","parameterTypes":["com.sun.jna.FromNativeConverter","java.lang.Object","java.lang.reflect.Method"] },{"name":"fromNative","parameterTypes":["java.lang.Class","java.lang.Object"] },{"name":"fromNative","parameterTypes":["java.lang.reflect.Method","java.lang.Object"] },{"name":"nativeType","parameterTypes":["java.lang.Class"] },{"name":"toNative","parameterTypes":["com.sun.jna.ToNativeConverter","java.lang.Object"] }]
-},
-{
-  "type":"com.sun.jna.Native$ffi_callback",
+  "name":"com.sun.jna.Native$ffi_callback",
   "methods":[{"name":"invoke","parameterTypes":["long","long","long"] }]
 },
 {
-  "type":"com.sun.jna.Native$ffi_callback",
-  "methods":[{"name":"invoke","parameterTypes":["long","long","long"] }]
-},
-{
-  "type":"com.sun.jna.NativeMapped",
+  "name":"com.sun.jna.NativeMapped",
   "methods":[{"name":"toNative","parameterTypes":[] }]
 },
 {
-  "type":"com.sun.jna.NativeMapped",
-  "methods":[{"name":"toNative","parameterTypes":[] }]
-},
-{
-  "type":"com.sun.jna.Pointer",
+  "name":"com.sun.jna.Pointer",
   "fields":[{"name":"peer"}],
   "methods":[{"name":"<init>","parameterTypes":["long"] }]
 },
 {
-  "type":"com.sun.jna.Pointer",
-  "fields":[{"name":"peer"}],
+  "name":"com.sun.jna.PointerType",
+  "fields":[{"name":"pointer"}]
+},
+{
+  "name":"com.sun.jna.Structure",
+  "fields":[
+    {"name":"memory"}, 
+    {"name":"typeInfo"}
+  ],
+  "methods":[
+    {"name":"autoRead","parameterTypes":[] }, 
+    {"name":"autoWrite","parameterTypes":[] }, 
+    {"name":"getTypeInfo","parameterTypes":[] }, 
+    {"name":"newInstance","parameterTypes":["java.lang.Class","long"] }
+  ]
+},
+{
+  "name":"com.sun.jna.Structure$ByValue"
+},
+{
+  "name":"com.sun.jna.Structure$FFIType$FFITypes",
+  "fields":[
+    {"name":"ffi_type_double"}, 
+    {"name":"ffi_type_float"}, 
+    {"name":"ffi_type_longdouble"}, 
+    {"name":"ffi_type_pointer"}, 
+    {"name":"ffi_type_sint16"}, 
+    {"name":"ffi_type_sint32"}, 
+    {"name":"ffi_type_sint64"}, 
+    {"name":"ffi_type_sint8"}, 
+    {"name":"ffi_type_uint16"}, 
+    {"name":"ffi_type_uint32"}, 
+    {"name":"ffi_type_uint64"}, 
+    {"name":"ffi_type_uint8"}, 
+    {"name":"ffi_type_void"}
+  ]
+},
+{
+  "name":"com.sun.jna.WString",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"com.sun.prism.impl.PrismSettings",
+  "fields":[
+    {"name":"disableD3D9Ex"}, 
+    {"name":"forceGPU"}, 
+    {"name":"isVsyncEnabled"}, 
+    {"name":"verbose"}
+  ]
+},
+{
+  "name":"io.netty.handler.ssl.OpenSslClientSessionCache"
+},
+{
+  "name":"io.netty.handler.ssl.OpenSslSessionCache",
+  "methods":[
+    {"name":"getSession","parameterTypes":["long","byte[]"] }, 
+    {"name":"sessionCreated","parameterTypes":["long","long"] }
+  ]
+},
+{
+  "name":"io.netty.handler.ssl.ReferenceCountedOpenSslClientContext$ExtendedTrustManagerVerifyCallback"
+},
+{
+  "name":"io.netty.handler.ssl.ReferenceCountedOpenSslContext$AbstractCertificateVerifier",
+  "methods":[{"name":"verify","parameterTypes":["long","byte[][]","java.lang.String"] }]
+},
+{
+  "name":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$ExtendedTrustManagerVerifyCallback"
+},
+{
+  "name":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$OpenSslServerCertificateCallback",
+  "methods":[{"name":"handle","parameterTypes":["long","byte[]","byte[][]"] }]
+},
+{
+  "name":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$OpenSslSniHostnameMatcher",
+  "methods":[{"name":"match","parameterTypes":["long","java.lang.String"] }]
+},
+{
+  "name":"io.netty.internal.tcnative.Buffer"
+},
+{
+  "name":"io.netty.internal.tcnative.CertificateCallbackTask",
+  "methods":[{"name":"<init>","parameterTypes":["long","byte[]","byte[][]","io.netty.internal.tcnative.CertificateCallback"] }]
+},
+{
+  "name":"io.netty.internal.tcnative.CertificateVerifierTask",
+  "methods":[{"name":"<init>","parameterTypes":["long","byte[][]","java.lang.String","io.netty.internal.tcnative.CertificateVerifier"] }]
+},
+{
+  "name":"io.netty.internal.tcnative.Library"
+},
+{
+  "name":"io.netty.internal.tcnative.NativeStaticallyReferencedJniMethods"
+},
+{
+  "name":"io.netty.internal.tcnative.SSL"
+},
+{
+  "name":"io.netty.internal.tcnative.SSLContext"
+},
+{
+  "name":"io.netty.internal.tcnative.SSLPrivateKeyMethodDecryptTask",
+  "methods":[{"name":"<init>","parameterTypes":["long","byte[]","io.netty.internal.tcnative.AsyncSSLPrivateKeyMethod"] }]
+},
+{
+  "name":"io.netty.internal.tcnative.SSLPrivateKeyMethodSignTask",
+  "methods":[{"name":"<init>","parameterTypes":["long","int","byte[]","io.netty.internal.tcnative.AsyncSSLPrivateKeyMethod"] }]
+},
+{
+  "name":"io.netty.internal.tcnative.SSLPrivateKeyMethodTask",
+  "fields":[{"name":"resultBytes"}]
+},
+{
+  "name":"io.netty.internal.tcnative.SSLSession"
+},
+{
+  "name":"io.netty.internal.tcnative.SSLTask",
+  "fields":[
+    {"name":"complete"}, 
+    {"name":"returnValue"}
+  ]
+},
+{
+  "name":"java.lang.Boolean",
+  "fields":[
+    {"name":"FALSE"}, 
+    {"name":"TRUE"}, 
+    {"name":"TYPE"}, 
+    {"name":"value"}
+  ],
+  "methods":[{"name":"<init>","parameterTypes":["boolean"] }]
+},
+{
+  "name":"java.lang.Byte",
+  "fields":[
+    {"name":"TYPE"}, 
+    {"name":"value"}
+  ],
+  "methods":[{"name":"<init>","parameterTypes":["byte"] }]
+},
+{
+  "name":"java.lang.Character",
+  "fields":[
+    {"name":"TYPE"}, 
+    {"name":"value"}
+  ],
+  "methods":[{"name":"<init>","parameterTypes":["char"] }]
+},
+{
+  "name":"java.lang.Class",
+  "methods":[
+    {"name":"forName","parameterTypes":["java.lang.String","boolean","java.lang.ClassLoader"] }, 
+    {"name":"getComponentType","parameterTypes":[] }
+  ]
+},
+{
+  "name":"java.lang.ClassLoader",
+  "methods":[
+    {"name":"getPlatformClassLoader","parameterTypes":[] }, 
+    {"name":"loadClass","parameterTypes":["java.lang.String"] }
+  ]
+},
+{
+  "name":"java.lang.Double",
+  "fields":[
+    {"name":"TYPE"}, 
+    {"name":"value"}
+  ],
+  "methods":[{"name":"<init>","parameterTypes":["double"] }]
+},
+{
+  "name":"java.lang.Exception"
+},
+{
+  "name":"java.lang.Float",
+  "fields":[
+    {"name":"TYPE"}, 
+    {"name":"value"}
+  ],
+  "methods":[{"name":"<init>","parameterTypes":["float"] }]
+},
+{
+  "name":"java.lang.IllegalArgumentException"
+},
+{
+  "name":"java.lang.Integer",
+  "fields":[
+    {"name":"TYPE"}, 
+    {"name":"value"}
+  ],
+  "methods":[{"name":"<init>","parameterTypes":["int"] }]
+},
+{
+  "name":"java.lang.Long",
+  "fields":[
+    {"name":"TYPE"}, 
+    {"name":"value"}
+  ],
   "methods":[{"name":"<init>","parameterTypes":["long"] }]
 },
 {
-  "type":"com.sun.jna.PointerType",
-  "fields":[{"name":"pointer"}]
+  "name":"java.lang.NullPointerException"
 },
 {
-  "type":"com.sun.jna.PointerType",
-  "fields":[{"name":"pointer"}]
+  "name":"java.lang.Object",
+  "methods":[
+    {"name":"equals","parameterTypes":["java.lang.Object"] }, 
+    {"name":"toString","parameterTypes":[] }
+  ]
 },
 {
-  "type":"com.sun.jna.Structure",
-  "fields":[{"name":"memory"},{"name":"typeInfo"}],
-  "methods":[{"name":"autoRead","parameterTypes":[] },{"name":"autoWrite","parameterTypes":[] },{"name":"getTypeInfo","parameterTypes":[] },{"name":"newInstance","parameterTypes":["java.lang.Class","long"] }]
+  "name":"java.lang.OutOfMemoryError"
 },
 {
-  "type":"com.sun.jna.Structure",
-  "fields":[{"name":"memory"},{"name":"typeInfo"}],
-  "methods":[{"name":"autoRead","parameterTypes":[] },{"name":"autoWrite","parameterTypes":[] },{"name":"getTypeInfo","parameterTypes":[] },{"name":"newInstance","parameterTypes":["java.lang.Class","long"] }]
-},
-{
-  "type":"com.sun.jna.Structure$ByValue"
-},
-{
-  "type":"com.sun.jna.Structure$ByValue"
-},
-{
-  "type":"com.sun.jna.Structure$FFIType$FFITypes",
-  "fields":[{"name":"ffi_type_double"},{"name":"ffi_type_float"},{"name":"ffi_type_longdouble"},{"name":"ffi_type_pointer"},{"name":"ffi_type_sint16"},{"name":"ffi_type_sint32"},{"name":"ffi_type_sint64"},{"name":"ffi_type_sint8"},{"name":"ffi_type_uint16"},{"name":"ffi_type_uint32"},{"name":"ffi_type_uint64"},{"name":"ffi_type_uint8"},{"name":"ffi_type_void"}]
-},
-{
-  "type":"com.sun.jna.Structure$FFIType$FFITypes",
-  "fields":[{"name":"ffi_type_double"},{"name":"ffi_type_float"},{"name":"ffi_type_longdouble"},{"name":"ffi_type_pointer"},{"name":"ffi_type_sint16"},{"name":"ffi_type_sint32"},{"name":"ffi_type_sint64"},{"name":"ffi_type_sint8"},{"name":"ffi_type_uint16"},{"name":"ffi_type_uint32"},{"name":"ffi_type_uint64"},{"name":"ffi_type_uint8"},{"name":"ffi_type_void"}]
-},
-{
-  "type":"com.sun.jna.WString",
-  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
-},
-{
-  "type":"com.sun.jna.WString",
-  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
-},
-{
-  "type":"io.netty.handler.ssl.OpenSslClientSessionCache"
-},
-{
-  "type":"io.netty.handler.ssl.OpenSslClientSessionCache"
-},
-{
-  "type":"io.netty.handler.ssl.OpenSslSessionCache",
-  "methods":[{"name":"getSession","parameterTypes":["long","byte[]"] },{"name":"sessionCreated","parameterTypes":["long","long"] }]
-},
-{
-  "type":"io.netty.handler.ssl.OpenSslSessionCache",
-  "methods":[{"name":"getSession","parameterTypes":["long","byte[]"] },{"name":"sessionCreated","parameterTypes":["long","long"] }]
-},
-{
-  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslClientContext$ExtendedTrustManagerVerifyCallback"
-},
-{
-  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslClientContext$ExtendedTrustManagerVerifyCallback"
-},
-{
-  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslContext$AbstractCertificateVerifier",
-  "methods":[{"name":"verify","parameterTypes":["long","byte[][]","java.lang.String"] }]
-},
-{
-  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslContext$AbstractCertificateVerifier",
-  "methods":[{"name":"verify","parameterTypes":["long","byte[][]","java.lang.String"] }]
-},
-{
-  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$ExtendedTrustManagerVerifyCallback"
-},
-{
-  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$ExtendedTrustManagerVerifyCallback"
-},
-{
-  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$OpenSslServerCertificateCallback",
-  "methods":[{"name":"handle","parameterTypes":["long","byte[]","byte[][]"] }]
-},
-{
-  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$OpenSslServerCertificateCallback",
-  "methods":[{"name":"handle","parameterTypes":["long","byte[]","byte[][]"] }]
-},
-{
-  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$OpenSslSniHostnameMatcher",
-  "methods":[{"name":"match","parameterTypes":["long","java.lang.String"] }]
-},
-{
-  "type":"io.netty.handler.ssl.ReferenceCountedOpenSslServerContext$OpenSslSniHostnameMatcher",
-  "methods":[{"name":"match","parameterTypes":["long","java.lang.String"] }]
-},
-{
-  "type":"io.netty.internal.tcnative.Buffer"
-},
-{
-  "type":"io.netty.internal.tcnative.Buffer"
-},
-{
-  "type":"io.netty.internal.tcnative.CertificateCallbackTask",
-  "methods":[{"name":"<init>","parameterTypes":["long","byte[]","byte[][]","io.netty.internal.tcnative.CertificateCallback"] }]
-},
-{
-  "type":"io.netty.internal.tcnative.CertificateCallbackTask",
-  "methods":[{"name":"<init>","parameterTypes":["long","byte[]","byte[][]","io.netty.internal.tcnative.CertificateCallback"] }]
-},
-{
-  "type":"io.netty.internal.tcnative.CertificateVerifierTask",
-  "methods":[{"name":"<init>","parameterTypes":["long","byte[][]","java.lang.String","io.netty.internal.tcnative.CertificateVerifier"] }]
-},
-{
-  "type":"io.netty.internal.tcnative.CertificateVerifierTask",
-  "methods":[{"name":"<init>","parameterTypes":["long","byte[][]","java.lang.String","io.netty.internal.tcnative.CertificateVerifier"] }]
-},
-{
-  "type":"io.netty.internal.tcnative.Library"
-},
-{
-  "type":"io.netty.internal.tcnative.Library"
-},
-{
-  "type":"io.netty.internal.tcnative.NativeStaticallyReferencedJniMethods"
-},
-{
-  "type":"io.netty.internal.tcnative.NativeStaticallyReferencedJniMethods"
-},
-{
-  "type":"io.netty.internal.tcnative.SSL"
-},
-{
-  "type":"io.netty.internal.tcnative.SSL"
-},
-{
-  "type":"io.netty.internal.tcnative.SSLContext"
-},
-{
-  "type":"io.netty.internal.tcnative.SSLContext"
-},
-{
-  "type":"io.netty.internal.tcnative.SSLPrivateKeyMethodDecryptTask",
-  "methods":[{"name":"<init>","parameterTypes":["long","byte[]","io.netty.internal.tcnative.AsyncSSLPrivateKeyMethod"] }]
-},
-{
-  "type":"io.netty.internal.tcnative.SSLPrivateKeyMethodDecryptTask",
-  "methods":[{"name":"<init>","parameterTypes":["long","byte[]","io.netty.internal.tcnative.AsyncSSLPrivateKeyMethod"] }]
-},
-{
-  "type":"io.netty.internal.tcnative.SSLPrivateKeyMethodSignTask",
-  "methods":[{"name":"<init>","parameterTypes":["long","int","byte[]","io.netty.internal.tcnative.AsyncSSLPrivateKeyMethod"] }]
-},
-{
-  "type":"io.netty.internal.tcnative.SSLPrivateKeyMethodSignTask",
-  "methods":[{"name":"<init>","parameterTypes":["long","int","byte[]","io.netty.internal.tcnative.AsyncSSLPrivateKeyMethod"] }]
-},
-{
-  "type":"io.netty.internal.tcnative.SSLPrivateKeyMethodTask",
-  "fields":[{"name":"resultBytes"}]
-},
-{
-  "type":"io.netty.internal.tcnative.SSLPrivateKeyMethodTask",
-  "fields":[{"name":"resultBytes"}]
-},
-{
-  "type":"io.netty.internal.tcnative.SSLSession"
-},
-{
-  "type":"io.netty.internal.tcnative.SSLSession"
-},
-{
-  "type":"io.netty.internal.tcnative.SSLTask",
-  "fields":[{"name":"complete"},{"name":"returnValue"}]
-},
-{
-  "type":"io.netty.internal.tcnative.SSLTask",
-  "fields":[{"name":"complete"},{"name":"returnValue"}]
-},
-{
-  "type":"java.awt.event.InputEvent",
-  "methods":[{"name":"getButtonDownMasks","parameterTypes":[] }]
-},
-{
-  "type":"java.awt.image.BufferedImage",
-  "fields":[{"name":"colorModel"},{"name":"imageType"},{"name":"raster"}],
-  "methods":[{"name":"getRGB","parameterTypes":["int","int","int","int","int[]","int","int"] },{"name":"setRGB","parameterTypes":["int","int","int","int","int[]","int","int"] }]
-},
-{
-  "type":"java.awt.image.ColorModel",
-  "fields":[{"name":"colorSpace"},{"name":"colorSpaceType"},{"name":"isAlphaPremultiplied"},{"name":"is_sRGB"},{"name":"nBits"},{"name":"numComponents"},{"name":"supportsAlpha"},{"name":"transparency"}],
-  "methods":[{"name":"getRGBdefault","parameterTypes":[] }]
-},
-{
-  "type":"java.awt.image.Raster",
-  "fields":[{"name":"dataBuffer"},{"name":"height"},{"name":"minX"},{"name":"minY"},{"name":"numBands"},{"name":"numDataElements"},{"name":"sampleModel"},{"name":"sampleModelTranslateX"},{"name":"sampleModelTranslateY"},{"name":"width"}]
-},
-{
-  "type":"java.awt.image.SampleModel",
-  "fields":[{"name":"height"},{"name":"width"}],
-  "methods":[{"name":"getPixels","parameterTypes":["int","int","int","int","int[]","java.awt.image.DataBuffer"] },{"name":"setPixels","parameterTypes":["int","int","int","int","int[]","java.awt.image.DataBuffer"] }]
-},
-{
-  "type":"java.awt.image.SinglePixelPackedSampleModel",
-  "fields":[{"name":"bitMasks"},{"name":"bitOffsets"},{"name":"bitSizes"},{"name":"maxBitSize"}]
-},
-{
-  "type":"java.io.File",
-  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
-},
-{
-  "type":"java.io.File",
-  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
-},
-{
-  "type":"java.io.InputStream",
-  "methods":[{"name":"read","parameterTypes":["byte[]","int","int"] },{"name":"skip","parameterTypes":["long"] }]
-},
-{
-  "type":"java.lang.Boolean",
-  "fields":[{"name":"FALSE"},{"name":"TRUE"},{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["boolean"] },{"name":"booleanValue","parameterTypes":[] },{"name":"getBoolean","parameterTypes":["java.lang.String"] }]
-},
-{
-  "type":"java.lang.Boolean",
-  "fields":[{"name":"FALSE"},{"name":"TRUE"},{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["boolean"] },{"name":"booleanValue","parameterTypes":[] },{"name":"getBoolean","parameterTypes":["java.lang.String"] }]
-},
-{
-  "type":"java.lang.Byte",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["byte"] }]
-},
-{
-  "type":"java.lang.Byte",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["byte"] }]
-},
-{
-  "type":"java.lang.Character",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["char"] }]
-},
-{
-  "type":"java.lang.Character",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["char"] }]
-},
-{
-  "type":"java.lang.Class",
-  "methods":[{"name":"forName","parameterTypes":["java.lang.String","boolean","java.lang.ClassLoader"] },{"name":"getComponentType","parameterTypes":[] }]
-},
-{
-  "type":"java.lang.Class",
-  "methods":[{"name":"forName","parameterTypes":["java.lang.String","boolean","java.lang.ClassLoader"] },{"name":"getComponentType","parameterTypes":[] }]
-},
-{
-  "type":"java.lang.ClassLoader",
-  "methods":[{"name":"getPlatformClassLoader","parameterTypes":[] },{"name":"loadClass","parameterTypes":["java.lang.String"] }]
-},
-{
-  "type":"java.lang.Double",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["double"] }]
-},
-{
-  "type":"java.lang.Double",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["double"] }]
-},
-{
-  "type":"java.lang.Exception"
-},
-{
-  "type":"java.lang.Exception"
-},
-{
-  "type":"java.lang.Float",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["float"] }]
-},
-{
-  "type":"java.lang.Float",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["float"] }]
-},
-{
-  "type":"java.lang.IllegalArgumentException"
-},
-{
-  "type":"java.lang.IllegalArgumentException"
-},
-{
-  "type":"java.lang.Integer",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["int"] },{"name":"intValue","parameterTypes":[] }]
-},
-{
-  "type":"java.lang.Integer",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["int"] },{"name":"intValue","parameterTypes":[] }]
-},
-{
-  "type":"java.lang.Long",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["long"] },{"name":"longValue","parameterTypes":[] }]
-},
-{
-  "type":"java.lang.Long",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["long"] },{"name":"longValue","parameterTypes":[] }]
-},
-{
-  "type":"java.lang.NullPointerException"
-},
-{
-  "type":"java.lang.NullPointerException"
-},
-{
-  "type":"java.lang.Object",
-  "methods":[{"name":"equals","parameterTypes":["java.lang.Object"] },{"name":"toString","parameterTypes":[] }]
-},
-{
-  "type":"java.lang.Object",
-  "methods":[{"name":"equals","parameterTypes":["java.lang.Object"] },{"name":"toString","parameterTypes":[] }]
-},
-{
-  "type":"java.lang.OutOfMemoryError"
-},
-{
-  "type":"java.lang.OutOfMemoryError"
-},
-{
-  "type":"java.lang.Runnable",
+  "name":"java.lang.Runnable",
   "methods":[{"name":"run","parameterTypes":[] }]
 },
 {
-  "type":"java.lang.Runnable",
-  "methods":[{"name":"run","parameterTypes":[] }]
-},
-{
-  "type":"java.lang.Short",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
+  "name":"java.lang.Short",
+  "fields":[
+    {"name":"TYPE"}, 
+    {"name":"value"}
+  ],
   "methods":[{"name":"<init>","parameterTypes":["short"] }]
 },
 {
-  "type":"java.lang.Short",
-  "fields":[{"name":"TYPE"},{"name":"value"}],
-  "methods":[{"name":"<init>","parameterTypes":["short"] }]
+  "name":"java.lang.String",
+  "methods":[
+    {"name":"<init>","parameterTypes":["byte[]"] }, 
+    {"name":"<init>","parameterTypes":["byte[]","java.lang.String"] }, 
+    {"name":"concat","parameterTypes":["java.lang.String"] }, 
+    {"name":"getBytes","parameterTypes":[] }, 
+    {"name":"getBytes","parameterTypes":["java.lang.String"] }, 
+    {"name":"toCharArray","parameterTypes":[] }, 
+    {"name":"toLowerCase","parameterTypes":["java.util.Locale"] }
+  ]
 },
 {
-  "type":"java.lang.String",
-  "methods":[{"name":"<init>","parameterTypes":["byte[]"] },{"name":"<init>","parameterTypes":["byte[]","java.lang.String"] },{"name":"getBytes","parameterTypes":[] },{"name":"getBytes","parameterTypes":["java.lang.String"] },{"name":"lastIndexOf","parameterTypes":["int"] },{"name":"substring","parameterTypes":["int"] },{"name":"toCharArray","parameterTypes":[] }]
+  "name":"java.lang.System",
+  "methods":[{"name":"getProperty","parameterTypes":["java.lang.String"] }]
 },
 {
-  "type":"java.lang.String",
-  "methods":[{"name":"<init>","parameterTypes":["byte[]"] },{"name":"<init>","parameterTypes":["byte[]","java.lang.String"] },{"name":"getBytes","parameterTypes":[] },{"name":"getBytes","parameterTypes":["java.lang.String"] },{"name":"lastIndexOf","parameterTypes":["int"] },{"name":"substring","parameterTypes":["int"] },{"name":"toCharArray","parameterTypes":[] }]
-},
-{
-  "type":"java.lang.System",
-  "methods":[{"name":"getProperty","parameterTypes":["java.lang.String"] },{"name":"setProperty","parameterTypes":["java.lang.String","java.lang.String"] }]
-},
-{
-  "type":"java.lang.System",
-  "methods":[{"name":"getProperty","parameterTypes":["java.lang.String"] },{"name":"load","parameterTypes":["java.lang.String"] },{"name":"setProperty","parameterTypes":["java.lang.String","java.lang.String"] }]
-},
-{
-  "type":"java.lang.UnsatisfiedLinkError",
+  "name":"java.lang.UnsatisfiedLinkError",
   "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
 },
 {
-  "type":"java.lang.UnsatisfiedLinkError",
-  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
-},
-{
-  "type":"java.lang.Void",
+  "name":"java.lang.Void",
   "fields":[{"name":"TYPE"}]
 },
 {
-  "type":"java.lang.Void",
-  "fields":[{"name":"TYPE"}]
+  "name":"java.lang.reflect.Method",
+  "methods":[
+    {"name":"getParameterTypes","parameterTypes":[] }, 
+    {"name":"getReturnType","parameterTypes":[] }
+  ]
 },
 {
-  "type":"java.lang.reflect.Method",
-  "methods":[{"name":"getParameterTypes","parameterTypes":[] },{"name":"getReturnType","parameterTypes":[] }]
-},
-{
-  "type":"java.lang.reflect.Method",
-  "methods":[{"name":"getParameterTypes","parameterTypes":[] },{"name":"getReturnType","parameterTypes":[] }]
-},
-{
-  "type":"java.nio.Buffer",
+  "name":"java.nio.Buffer",
   "methods":[{"name":"position","parameterTypes":[] }]
 },
 {
-  "type":"java.nio.Buffer",
-  "methods":[{"name":"position","parameterTypes":[] }]
+  "name":"java.nio.ByteBuffer",
+  "methods":[
+    {"name":"array","parameterTypes":[] }, 
+    {"name":"arrayOffset","parameterTypes":[] }
+  ]
 },
 {
-  "type":"java.nio.ByteBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
+  "name":"java.nio.CharBuffer",
+  "methods":[
+    {"name":"array","parameterTypes":[] }, 
+    {"name":"arrayOffset","parameterTypes":[] }
+  ]
 },
 {
-  "type":"java.nio.ByteBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
+  "name":"java.nio.DoubleBuffer",
+  "methods":[
+    {"name":"array","parameterTypes":[] }, 
+    {"name":"arrayOffset","parameterTypes":[] }
+  ]
 },
 {
-  "type":"java.nio.CharBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
+  "name":"java.nio.FloatBuffer",
+  "methods":[
+    {"name":"array","parameterTypes":[] }, 
+    {"name":"arrayOffset","parameterTypes":[] }
+  ]
 },
 {
-  "type":"java.nio.CharBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
+  "name":"java.nio.IntBuffer",
+  "methods":[
+    {"name":"array","parameterTypes":[] }, 
+    {"name":"arrayOffset","parameterTypes":[] }
+  ]
 },
 {
-  "type":"java.nio.DoubleBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
+  "name":"java.nio.LongBuffer",
+  "methods":[
+    {"name":"array","parameterTypes":[] }, 
+    {"name":"arrayOffset","parameterTypes":[] }
+  ]
 },
 {
-  "type":"java.nio.DoubleBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
+  "name":"java.nio.ShortBuffer",
+  "methods":[
+    {"name":"array","parameterTypes":[] }, 
+    {"name":"arrayOffset","parameterTypes":[] }
+  ]
 },
 {
-  "type":"java.nio.FloatBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
+  "name":"java.util.ArrayList",
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"<init>","parameterTypes":["int"] }, 
+    {"name":"add","parameterTypes":["java.lang.Object"] }
+  ]
 },
 {
-  "type":"java.nio.FloatBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
-},
-{
-  "type":"java.nio.IntBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
-},
-{
-  "type":"java.nio.IntBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
-},
-{
-  "type":"java.nio.LongBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
-},
-{
-  "type":"java.nio.LongBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
-},
-{
-  "type":"java.nio.ShortBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
-},
-{
-  "type":"java.nio.ShortBuffer",
-  "methods":[{"name":"array","parameterTypes":[] },{"name":"arrayOffset","parameterTypes":[] }]
-},
-{
-  "type":"java.util.ArrayList",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "type":"java.util.ArrayList",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "type":"java.util.Collections",
+  "name":"java.util.Collections",
   "methods":[{"name":"unmodifiableMap","parameterTypes":["java.util.Map"] }]
 },
 {
-  "type":"java.util.Collections",
-  "methods":[{"name":"unmodifiableMap","parameterTypes":["java.util.Map"] }]
+  "name":"java.util.HashMap",
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"containsKey","parameterTypes":["java.lang.Object"] }, 
+    {"name":"put","parameterTypes":["java.lang.Object","java.lang.Object"] }
+  ]
 },
 {
-  "type":"java.util.HashMap",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "name":"java.util.Map",
+  "methods":[{"name":"put","parameterTypes":["java.lang.Object","java.lang.Object"] }]
 },
 {
-  "type":"java.util.HashMap",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "type":"java.util.List",
-  "methods":[{"name":"add","parameterTypes":["java.lang.Object"] }]
-},
-{
-  "type":"java.util.List",
-  "methods":[{"name":"add","parameterTypes":["java.lang.Object"] }]
-},
-{
-  "type":"java.util.Map",
-  "methods":[{"name":"get","parameterTypes":["java.lang.Object"] },{"name":"put","parameterTypes":["java.lang.Object","java.lang.Object"] }]
-},
-{
-  "type":"java.util.Map",
-  "methods":[{"name":"get","parameterTypes":["java.lang.Object"] },{"name":"put","parameterTypes":["java.lang.Object","java.lang.Object"] }]
-},
-{
-  "type":"javafx.scene.paint.Color",
+  "name":"javafx.scene.paint.Color",
   "methods":[{"name":"rgb","parameterTypes":["int","int","int","double"] }]
 },
 {
-  "type":"javafx.scene.paint.Color",
-  "methods":[{"name":"rgb","parameterTypes":["int","int","int","double"] }]
+  "name":"jdk.internal.loader.ClassLoaders$PlatformClassLoader"
 },
 {
-  "type":"jdk.internal.loader.ClassLoaders$PlatformClassLoader"
-},
-{
-  "type":"org.graalvm.jniutils.JNIExceptionWrapperEntryPoints",
+  "name":"org.graalvm.jniutils.JNIExceptionWrapperEntryPoints",
   "methods":[{"name":"getClassName","parameterTypes":["java.lang.Class"] }]
 },
 {
-  "type":"sun.awt.AWTAutoShutdown",
-  "methods":[{"name":"notifyToolkitThreadFree","parameterTypes":[] }]
+  "name":"sun.management.VMManagementImpl",
+  "fields":[
+    {"name":"compTimeMonitoringSupport"}, 
+    {"name":"currentThreadCpuTimeSupport"}, 
+    {"name":"objectMonitorUsageSupport"}, 
+    {"name":"otherThreadCpuTimeSupport"}, 
+    {"name":"remoteDiagnosticCommandsSupport"}, 
+    {"name":"synchronizerUsageSupport"}, 
+    {"name":"threadAllocatedMemorySupport"}, 
+    {"name":"threadContentionMonitoringSupport"}
+  ]
 },
 {
-  "type":"sun.awt.image.IntegerComponentRaster",
-  "fields":[{"name":"data"},{"name":"dataOffsets"},{"name":"pixelStride"},{"name":"scanlineStride"},{"name":"type"}]
+  "name":"sun.security.mscapi.CKeyStore",
+  "methods":[
+    {"name":"generateCertificate","parameterTypes":["byte[]","java.util.Collection"] }, 
+    {"name":"generateCertificateChain","parameterTypes":["java.lang.String","java.util.Collection"] }, 
+    {"name":"generateKeyAndCertificateChain","parameterTypes":["boolean","java.lang.String","long","long","int","java.util.Collection"] }
+  ]
 },
 {
-  "type":"sun.java2d.Disposer",
-  "methods":[{"name":"addRecord","parameterTypes":["java.lang.Object","long","long"] }]
-},
-{
-  "type":"sun.management.VMManagementImpl",
-  "fields":[{"name":"compTimeMonitoringSupport"},{"name":"currentThreadCpuTimeSupport"},{"name":"objectMonitorUsageSupport"},{"name":"otherThreadCpuTimeSupport"},{"name":"remoteDiagnosticCommandsSupport"},{"name":"synchronizerUsageSupport"},{"name":"threadAllocatedMemorySupport"},{"name":"threadContentionMonitoringSupport"}]
-},
-{
-  "type":"sun.management.VMManagementImpl",
-  "fields":[{"name":"compTimeMonitoringSupport"},{"name":"currentThreadCpuTimeSupport"},{"name":"objectMonitorUsageSupport"},{"name":"otherThreadCpuTimeSupport"},{"name":"remoteDiagnosticCommandsSupport"},{"name":"synchronizerUsageSupport"},{"name":"threadAllocatedMemorySupport"},{"name":"threadContentionMonitoringSupport"}]
+  "name":"sun.security.mscapi.CKeyStore$ROOT"
 }
 ]

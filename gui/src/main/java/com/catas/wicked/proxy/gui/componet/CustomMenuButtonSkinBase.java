@@ -59,7 +59,13 @@ public class CustomMenuButtonSkinBase<C extends MenuButton> extends SkinBase<C> 
         ListenerHelper lh = ListenerHelper.get(this);
 
         if (control.getOnMousePressed() == null) {
-            lh.addEventHandler(control, MouseEvent.MOUSE_PRESSED, (ev) -> {
+            // lh.addEventHandler(control, MouseEvent.MOUSE_PRESSED, (ev) -> {
+            //     MenuButtonBehaviorBase behavior = getBehavior();
+            //     if (behavior != null) {
+            //         behavior.mousePressed(ev, behaveLikeButton);
+            //     }
+            // });
+            control.addEventHandler(MouseEvent.MOUSE_PRESSED, (ev) -> {
                 MenuButtonBehaviorBase behavior = getBehavior();
                 if (behavior != null) {
                     behavior.mousePressed(ev, behaveLikeButton);
@@ -68,7 +74,13 @@ public class CustomMenuButtonSkinBase<C extends MenuButton> extends SkinBase<C> 
         }
 
         if (control.getOnMouseReleased() == null) {
-            lh.addEventHandler(control, MouseEvent.MOUSE_RELEASED, (ev) -> {
+            // lh.addEventHandler(control, MouseEvent.MOUSE_RELEASED, (ev) -> {
+            //     MenuButtonBehaviorBase behavior = getBehavior();
+            //     if (behavior != null) {
+            //         behavior.mouseReleased(ev, behaveLikeButton);
+            //     }
+            // });
+            control.addEventHandler(MouseEvent.MOUSE_RELEASED, (ev) -> {
                 MenuButtonBehaviorBase behavior = getBehavior();
                 if (behavior != null) {
                     behavior.mouseReleased(ev, behaveLikeButton);
