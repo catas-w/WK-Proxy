@@ -97,7 +97,7 @@
                 <Tooltip text="%locate-btn.tooltip" />
             </tooltip>
         </CustomButton>
-        <CustomButton fx:id="markerBtn" onAction="#mockTreeItem" prefWidth="200.0" textOverrun="CLIP" visible="true">
+        <CustomButton fx:id="markerBtn" onAction="#mockTreeItem" prefWidth="200.0" textOverrun="CLIP" visible="false">
             <graphic>
                 <FontIcon iconColor="#616161" iconLiteral="fas-marker" iconSize="18" />
             </graphic>

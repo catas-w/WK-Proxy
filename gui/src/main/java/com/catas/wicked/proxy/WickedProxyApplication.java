@@ -60,7 +60,7 @@ public class WickedProxyApplication implements ApplicationDelegate {
         Locale locale = applicationConfig.getSettings().getLanguage().getLocale();
         ResourceBundle bundle = ResourceBundle.getBundle("lang.messages", locale);
 
-        FXMLLoader loader = loaderFactory.get(WickedProxyApplication.class.getResource("/fxml/application.fxml"));
+        FXMLLoader loader = loaderFactory.get(getClass().getResource("/fxml/application.fxml"));
         loader.setResources(bundle);
 
         Parent root = loader.load();
@@ -72,7 +72,8 @@ public class WickedProxyApplication implements ApplicationDelegate {
             stageProvider.initStage(primaryStage);
         }
 
-        primaryStage.getIcons().add(new Image(String.valueOf(WickedProxyApplication.class.getResource("/image/wk-proxy.2.ico"))));
+        primaryStage.setTitle("WK Proxy");
+        primaryStage.getIcons().add(new Image(String.valueOf(getClass().getResource("/image/wk-proxy.2.png"))));
         primaryStage.setScene(scene);
         primaryStage.show();
     }

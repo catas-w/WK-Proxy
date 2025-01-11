@@ -11,7 +11,10 @@
     -fx-font-family: "MiSans Normal";
     -fx-font-size: 12;
 }
-
+.root-vbox {
+    -fx-border-color: #C2C2C2BC;
+    -fx-border-width: 0.5 0 0 0;
+}
 .menu-bar {
     -fx-background-color: TRANSPARENT;
 }

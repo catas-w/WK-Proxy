@@ -31,7 +31,7 @@ public class DesktopProviderFactory {
     public DesktopProvider winDesktopProvider() {
         return uri -> {
             ObjectUtils.requireNonEmpty(uri);
-            ProcessBuilder builder = new ProcessBuilder("rundll32 url.dll,FileProtocolHandler", uri);
+            ProcessBuilder builder = new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", uri);
             SystemUtils.runCommand(builder);
         };
     }
