@@ -167,6 +167,11 @@
   "queryAllDeclaredConstructors":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getCert","parameterTypes":[] }, 
+    {"name":"getId","parameterTypes":[] }, 
+    {"name":"getName","parameterTypes":[] }, 
+    {"name":"getPrivateKey","parameterTypes":[] }, 
+    {"name":"isDefault","parameterTypes":[] }, 
     {"name":"setCert","parameterTypes":["java.lang.String"] }, 
     {"name":"setDefault","parameterTypes":["boolean"] }, 
     {"name":"setId","parameterTypes":["java.lang.String"] }, 
@@ -334,6 +339,18 @@
 {
   "name":"com.catas.wicked.common.provider.WinSysProxyProvider",
   "fields":[{"name":"appConfig"}]
+},
+{
+  "name":"com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP$Size_T",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP$WebPAnimInfo",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP$WebPData",
+  "allDeclaredFields":true
 },
 {
   "name":"com.catas.wicked.common.worker.$ScheduledManager$Definition$Reference",
@@ -536,7 +553,8 @@
     {"name":"displaySettingPage","parameterTypes":[] }, 
     {"name":"exit","parameterTypes":[] }, 
     {"name":"mockTreeItem","parameterTypes":[] }, 
-    {"name":"onSysProxy","parameterTypes":["javafx.event.ActionEvent"] }
+    {"name":"onSysProxy","parameterTypes":["javafx.event.ActionEvent"] }, 
+    {"name":"resendRequest","parameterTypes":[] }
   ]
 },
 {
@@ -973,6 +991,14 @@
 {
   "name":"com.sun.jna.CallbackProxy",
   "queriedMethods":[{"name":"callback","parameterTypes":["java.lang.Object[]"] }]
+},
+{
+  "name":"com.sun.jna.ptr.IntByReference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.ptr.PointerByReference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.sun.jna.win32.DLLCallback"
@@ -1470,12 +1496,43 @@
   "queryAllDeclaredMethods":true
 },
 {
+  "name":"java.lang.invoke.MethodHandle",
+  "queriedMethods":[
+    {"name":"bindTo","parameterTypes":["java.lang.Object"] }, 
+    {"name":"invokeWithArguments","parameterTypes":["java.lang.Object[]"] }
+  ]
+},
+{
+  "name":"java.lang.invoke.MethodHandles",
+  "queriedMethods":[
+    {"name":"lookup","parameterTypes":[] }, 
+    {"name":"privateLookupIn","parameterTypes":["java.lang.Class","java.lang.invoke.MethodHandles$Lookup"] }
+  ]
+},
+{
+  "name":"java.lang.invoke.MethodHandles$Lookup",
+  "queriedMethods":[
+    {"name":"findSpecial","parameterTypes":["java.lang.Class","java.lang.String","java.lang.invoke.MethodType","java.lang.Class"] }, 
+    {"name":"in","parameterTypes":["java.lang.Class"] }, 
+    {"name":"unreflectSpecial","parameterTypes":["java.lang.reflect.Method","java.lang.Class"] }
+  ]
+},
+{
+  "name":"java.lang.invoke.MethodType",
+  "queriedMethods":[{"name":"methodType","parameterTypes":["java.lang.Class","java.lang.Class[]"] }]
+},
+{
   "name":"java.lang.management.ManagementFactory",
   "methods":[{"name":"getRuntimeMXBean","parameterTypes":[] }]
 },
 {
   "name":"java.lang.management.RuntimeMXBean",
   "methods":[{"name":"getInputArguments","parameterTypes":[] }]
+},
+{
+  "name":"java.lang.reflect.Method",
+  "methods":[{"name":"isDefault","parameterTypes":[] }],
+  "queriedMethods":[{"name":"isVarArgs","parameterTypes":[] }]
 },
 {
   "name":"java.net.NetPermission"

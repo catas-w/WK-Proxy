@@ -1,5 +1,6 @@
 package com.catas.wicked.common.factory;
 
+import app.supernaut.services.BrowserService;
 import com.catas.wicked.common.provider.DesktopProvider;
 import com.catas.wicked.common.util.SystemUtils;
 import io.micronaut.context.annotation.Bean;
@@ -28,12 +29,8 @@ public class DesktopProviderFactory {
     @Bean
     @Singleton
     @Requires(os = Requires.Family.WINDOWS)
-    public DesktopProvider winDesktopProvider() {
-        return uri -> {
-            ObjectUtils.requireNonEmpty(uri);
-            ProcessBuilder builder = new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", uri);
-            SystemUtils.runCommand(builder);
-        };
+    public DesktopProvider winDesktopProvider(BrowserService browserService) {
+        return browserService::showDocument;
     }
 
     @Bean

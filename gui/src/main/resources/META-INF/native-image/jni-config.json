@@ -12,6 +12,10 @@
   "name":"[[B"
 },
 {
+  "name":"com.catas.wicked.proxy.WickedProxyApplication",
+  "methods":[{"name":"main","parameterTypes":["java.lang.String[]"] }]
+},
+{
   "name":"com.sun.glass.ui.CommonDialogs",
   "methods":[{"name":"createFileChooserResult","parameterTypes":["java.lang.String[]","com.sun.glass.ui.CommonDialogs$ExtensionFilter[]","int"] }]
 },
@@ -135,6 +139,18 @@
     {"name":"top"}
   ],
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.javafx.iio.common.ImageLoaderImpl",
+  "methods":[{"name":"emitWarning","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"com.sun.javafx.iio.jpeg.JPEGImageLoader",
+  "methods":[
+    {"name":"setInputAttributes","parameterTypes":["int","int","int","int","int","byte[]"] }, 
+    {"name":"setOutputAttributes","parameterTypes":["int","int"] }, 
+    {"name":"updateImageProgress","parameterTypes":["int"] }
+  ]
 },
 {
   "name":"com.sun.jna.Callback"
@@ -308,6 +324,13 @@
   "fields":[
     {"name":"complete"}, 
     {"name":"returnValue"}
+  ]
+},
+{
+  "name":"java.io.InputStream",
+  "methods":[
+    {"name":"read","parameterTypes":["byte[]","int","int"] }, 
+    {"name":"skip","parameterTypes":["long"] }
   ]
 },
 {

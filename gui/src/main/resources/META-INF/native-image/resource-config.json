@@ -98,6 +98,9 @@
       "pattern":"\\Qimage/wk-proxy.2.ico\\E"
     }, 
     {
+      "pattern":"\\Qimage/wk-proxy.2.png\\E"
+    }, 
+    {
       "pattern":"\\Qlogback.xml\\E"
     }, 
     {
@@ -105,6 +108,9 @@
     }, 
     {
       "pattern":"\\Qorg/fxmisc/richtext/styled-text-area.css\\E"
+    }, 
+    {
+      "pattern":"\\Qwin32-x86-64/libwebp_animdecoder.dll\\E"
     }
   ]},
   "bundles":[
@@ -112,6 +118,7 @@
       "name":"com.sun.javafx.tk.quantum.QuantumMessagesBundle",
       "locales":[
         "", 
+        "und", 
         "zh-CN"
       ]
     }, 
@@ -128,6 +135,7 @@
         "ko", 
         "pt-BR", 
         "sv", 
+        "und", 
         "zh-CN", 
         "zh-TW"
       ]
@@ -136,6 +144,7 @@
       "name":"com/sun/javafx/scene/control/skin/resources/controls",
       "locales":[
         "", 
+        "und", 
         "zh-CN"
       ]
     }, 

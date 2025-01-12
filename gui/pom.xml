@@ -319,7 +319,7 @@
                         <!-- macOS/iOS -->
                         <bundleName>Wk Proxy</bundleName>
                         <bundleVersion>1.0.6</bundleVersion>
-                        <bundleShortVersion>1.0</bundleShortVersion>
+                        <bundleShortVersion>1.0.6</bundleShortVersion>
                         <!-- <providedSigningIdentity></providedSigningIdentity> -->
                         <!-- <providedProvisioningProfile></providedProvisioningProfile> -->
                         <skipSigning>true</skipSigning>

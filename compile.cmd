@@ -8,9 +8,12 @@ set GRAALVM_HOME=C:\Program Files\Java\graalvm-svm-java17-windows-gluon-22.1.0.1
 set JAVA_HOME=%GRAALVM_HOME%
 echo %JAVA_HOME%
 
+set PATH=%PATH%;C:\Program Files (x86)\WiX Toolset v3.14\bin
+echo %PATH%
+
 mvn clean
 
-mvn gluonfx:runagent
+@REM mvn gluonfx:runagent
 mvn gluonfx:compile
 mvn gluonfx:link
 
