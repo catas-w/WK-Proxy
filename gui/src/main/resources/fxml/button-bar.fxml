@@ -25,7 +25,7 @@
                 <Insets top="20.0"/>
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%record-btn.enable.tooltip" showDelay="500ms" />
+                <Tooltip text="%record-btn.enable.tooltip" showDelay="50ms" />
             </tooltip>
             <FontIcon iconLiteral="fas-record-vinyl" iconSize="18"/>
         </CustomToggleNode>
@@ -34,7 +34,7 @@
                 <Insets top="20.0"/>
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%ssl-btn.enable.tooltip" showDelay="500ms" />
+                <Tooltip text="%ssl-btn.enable.tooltip" showDelay="50ms" />
             </tooltip>
             <FontIcon iconColor="#616161" iconLiteral="fas-mask" iconSize="18"/>
         </JFXToggleNode>
@@ -43,7 +43,7 @@
                 <Insets top="20.0"/>
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%sys-proxy-btn.tooltip" showDelay="500ms" />
+                <Tooltip text="%sys-proxy-btn.tooltip" showDelay="50ms" />
             </tooltip>
             <FontIcon iconColor="#616161" iconLiteral="fas-burn" iconSize="18"/>
         </JFXToggleNode>
@@ -52,7 +52,7 @@
                 <Insets top="20.0"/>
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%throttle-btn.enable.tooltip" showDelay="500ms" />
+                <Tooltip text="%throttle-btn.enable.tooltip" showDelay="50ms" />
             </tooltip>
             <FontIcon iconColor="#616161" iconLiteral="fas-hourglass-half" iconSize="18"/>
         </JFXToggleNode>
@@ -71,7 +71,7 @@
                 <Insets top="20.0" />
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%clear-btn.tooltip" showDelay="500ms" />
+                <Tooltip text="%clear-btn.tooltip" showDelay="50ms" />
             </tooltip>
         </JFXButton>
 
@@ -83,7 +83,7 @@
                 <Insets top="20.0" />
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%resend-btn.tooltip" showDelay="500ms"/>
+                <Tooltip text="%resend-btn.tooltip" showDelay="50ms"/>
             </tooltip>
         </CustomButton>
         <CustomButton fx:id="locateBtn" onAction="#locateToSelectedItem" prefWidth="200.0" textOverrun="CLIP" disable="true">

@@ -341,6 +341,7 @@ public class RequestViewController implements Initializable {
             return;
         }
 
+        log.info("Resending request: {}, method: {}", requestMessage.getRequestUrl(), requestMessage.getMethod());
         ThreadPoolService.getInstance().run(() -> {
             String url = requestMessage.getRequestUrl();
             String method = requestMessage.getMethod();

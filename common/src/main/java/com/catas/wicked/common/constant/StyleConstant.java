@@ -14,7 +14,7 @@ public class StyleConstant {
 
     public static final Color COLOR_ACTIVE = Color.valueOf("#1fb7a8");
 
-    public static final Color COLOR_SUSPEND = Color.valueOf("#724832");
+    public static final Color COLOR_SUSPEND = Color.valueOf("#992400");
 
     public static final Color COLOR_RED = Color.valueOf("#cc3636");
 

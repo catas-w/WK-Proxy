@@ -8,6 +8,7 @@ import com.catas.wicked.common.bean.message.RenderMessage;
 import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.bean.message.ResponseMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
+import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
 import com.catas.wicked.proxy.message.MessageService;
@@ -50,6 +51,9 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
 
     @Setter
     private MessageService messageService;
+
+    @Inject
+    private ResourceMessageProvider resourceMessageProvider;
 
     private TreeItem<PairEntry> requestRoot;
     private TreeItem<PairEntry> pathRoot;
@@ -210,9 +214,10 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
     @SuppressWarnings("unchecked")
     public void initRequestRoot() {
         requestRoot = new TreeItem<>();
+        String estimatedMsg = resourceMessageProvider.getMessage("estimate.tooltip");
         TreeItem<PairEntry> reqNode = new TreeItem<>(new PairEntry("General", null));
-        TreeItem<PairEntry> sizeNode = new TreeItem<>(new PairEntry("Size", null, "Estimated, may not be accurate."));
-        TreeItem<PairEntry> timingNode = new TreeItem<>(new PairEntry("Timing", null, "Estimated, may not be accurate."));
+        TreeItem<PairEntry> sizeNode = new TreeItem<>(new PairEntry("Size", null, estimatedMsg));
+        TreeItem<PairEntry> timingNode = new TreeItem<>(new PairEntry("Timing", null, estimatedMsg));
 
         // basic info
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getUrl()));
@@ -251,6 +256,7 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
     @SuppressWarnings("unchecked")
     public void initPathRoot() {
         pathRoot = new TreeItem<>();
+        String estimatedMsg = resourceMessageProvider.getMessage("estimate.tooltip");
         // general
         TreeItem<PairEntry> generalNode = new TreeItem<>(new PairEntry("General", null));
         generalNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getHost()));
@@ -262,14 +268,14 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         generalNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getPostCnt()));
 
         // timing
-        TreeItem<PairEntry> timingNode = new TreeItem<>(new PairEntry("Timing", null, "Estimated data, may not be accurate."));
+        TreeItem<PairEntry> timingNode = new TreeItem<>(new PairEntry("Timing", null, estimatedMsg));
         timingNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getTimeCost()));
         timingNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getStartTime()));
         timingNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getEndTime()));
         timingNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getAverageSpeed()));
 
         // size
-        TreeItem<PairEntry> sizeNode = new TreeItem<>(new PairEntry("Size", null, "Estimated data, may not be accurate."));
+        TreeItem<PairEntry> sizeNode = new TreeItem<>(new PairEntry("Size", null, estimatedMsg));
         sizeNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getTotalSize()));
         sizeNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getRequestsSize()));
         sizeNode.getChildren().add(new TreeItem<>(pathOverviewInfo.getResponsesSize()));

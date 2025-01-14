@@ -51,10 +51,5 @@
                 <Insets right="8.0"/>
             </HBox.margin>
         </Label>
-        <!-- <Label fx:id="versionLabel" text="v1.0.0" styleClass="display-label" HBox.hgrow="NEVER"> -->
-        <!--     <HBox.margin> -->
-        <!--         <Insets right="10.0"/> -->
-        <!--     </HBox.margin> -->
-        <!-- </Label> -->
     </HBox>
 </VBox>

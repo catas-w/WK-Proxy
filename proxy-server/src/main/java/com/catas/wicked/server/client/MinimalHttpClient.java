@@ -106,6 +106,7 @@ public class MinimalHttpClient implements AutoCloseable {
             throw new RuntimeException("Illegal Url: " + uri);
         }
 
+        log.info("MinimalHttpClient connecting to: {}, uri: {}, method: {}", address, uri, method);
         MinimalHttpClient client = this;
         InetSocketAddress finalAddress = address;
         bootstrap.group(eventExecutors)

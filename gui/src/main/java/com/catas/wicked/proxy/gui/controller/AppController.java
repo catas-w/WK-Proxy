@@ -2,6 +2,7 @@ package com.catas.wicked.proxy.gui.controller;
 
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.ServerStatus;
+import com.catas.wicked.common.provider.ResourceMessageProvider;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.application.Platform;
@@ -29,8 +30,6 @@ public class AppController implements Initializable {
     @FXML
     private Label serverStatusLabel;
     @FXML
-    private Label versionLabel;
-    @FXML
     @Getter
     private VBox rootVBox;
 
@@ -39,6 +38,9 @@ public class AppController implements Initializable {
 
     @Inject
     private ButtonBarController buttonBarController;
+
+    @Inject
+    private ResourceMessageProvider resourceMessageProvider;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -112,7 +114,9 @@ public class AppController implements Initializable {
     }
 
     private void setStatusLabel(boolean isError) {
-        String label = isError ? "Port: " + appConfig.getSettings().getPort() + " is unavailable. Click to modify." :
+        String portLabel = resourceMessageProvider.getMessage("port.label") + ": ";
+        String msg = resourceMessageProvider.getMessage("port-unavailable.alert");
+        String label = isError ? portLabel + appConfig.getSettings().getPort() + msg:
                 appConfig.getHost() + ":" + appConfig.getSettings().getPort();
         Platform.runLater(() -> serverStatusLabel.setText(label));
     }

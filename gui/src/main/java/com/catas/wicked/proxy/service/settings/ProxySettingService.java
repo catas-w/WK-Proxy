@@ -53,6 +53,7 @@ public class ProxySettingService extends AbstractSettingService{
                 // check pot available
                 if (!WebUtils.isPortAvailable(newPort)) {
                     AlertUtils.alertWarning("Port " + newPort + " is unavailable");
+                    portField.setText(oldPort + "");
                     return;
                 }
                 settings.setPort(newPort);
