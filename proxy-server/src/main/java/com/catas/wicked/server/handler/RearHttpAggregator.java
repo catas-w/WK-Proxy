@@ -33,8 +33,6 @@ import static io.netty.handler.codec.http.LastHttpContent.EMPTY_LAST_CONTENT;
 @Slf4j
 public class RearHttpAggregator extends HttpObjectAggregator {
 
-    private static final ByteBuf OVERSIZE_BUF = Unpooled.wrappedBuffer(OVERSIZE_MSG.getBytes());
-
     private final AttributeKey<ProxyRequestInfo> requestInfoAttributeKey =
             AttributeKey.valueOf(ProxyConstant.REQUEST_INFO);
 
@@ -62,7 +60,7 @@ public class RearHttpAggregator extends HttpObjectAggregator {
                 trailingHeaders = fullHttpMessage.trailingHeaders();
             }
             DefaultFullHttpRequest errRequest = new OversizeHttpRequest(httpVersion, method, uri,
-                    OVERSIZE_BUF, headers, trailingHeaders);
+                    Unpooled.wrappedBuffer(OVERSIZE_MSG.getBytes()), headers, trailingHeaders);
 
             try {
                 ctx.fireChannelRead(errRequest);
@@ -79,7 +77,7 @@ public class RearHttpAggregator extends HttpObjectAggregator {
                 trailingHeaders = fullHttpResponse.trailingHeaders();
             }
             DefaultFullHttpResponse errResponse = new OversizeHttpResponse(httpVersion, status,
-                    OVERSIZE_BUF, headers, trailingHeaders);
+                    Unpooled.wrappedBuffer(OVERSIZE_MSG.getBytes()), headers, trailingHeaders);
 
             try {
                 ctx.fireChannelRead(errResponse);
