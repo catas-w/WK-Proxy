@@ -86,4 +86,11 @@ public class CommonUtils {
         }
         return 0;
     }
+
+    public static String truncate(String content, int length) {
+        if (StringUtils.isEmpty(content) || length <= 0 || length > content.length()) {
+            return content;
+        }
+        return content.substring(0, length) + "...omitted(" + (content.length() - length) + " bytes)";
+    }
 }

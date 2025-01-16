@@ -48,6 +48,10 @@
 .bracket {
     -fx-fill: #0067b2;
 }
+.appendix {
+    -fx-fill: #939393;
+    -fx-font-family: "MiSans Demibold";
+}
 
 
 /******** line number *********/

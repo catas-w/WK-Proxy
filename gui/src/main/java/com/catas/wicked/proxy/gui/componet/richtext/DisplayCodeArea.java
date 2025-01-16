@@ -1,7 +1,7 @@
 package com.catas.wicked.proxy.gui.componet.richtext;
 
 import com.catas.wicked.common.constant.CodeStyle;
-import com.catas.wicked.common.executor.ThreadPoolService;
+import com.catas.wicked.common.util.CommonUtils;
 import com.catas.wicked.proxy.gui.componet.highlight.Formatter;
 import com.catas.wicked.proxy.gui.componet.highlight.Highlighter;
 import com.catas.wicked.proxy.gui.componet.highlight.HighlighterFactory;
@@ -13,6 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -25,6 +26,7 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.reactfx.collection.ListModification;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,18 +38,21 @@ import java.util.regex.Pattern;
 @Slf4j
 public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
 
-    private VisibleParagraphStyler<Collection<String>, String, Collection<String>> visibleParagraphStyler;
+    private static final String STYLE = "display-code-area";
 
-    private TextStyler textStyler;
+    public static final int MAX_TEXT_LENGTH = 20000;
+
+    private VisibleParagraphStyler<Collection<String>, String, Collection<String>> visibleParagraphStyler;
 
     private CodeArea codeArea;
 
     private final StringProperty codeStyle = new SimpleStringProperty(CodeStyle.PLAIN.name());
 
-    private static final String STYLE = "display-code-area";
-
     private String originText;
 
+    private int appendixLen = 0;
+
+    @Getter
     private ContentType contentType;
 
     public DisplayCodeArea(CodeArea codeArea) {
@@ -79,10 +84,6 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
         setCodeStyle(CodeStyle.valueOf(codeStyle), false);
     }
 
-    public ContentType getContentType() {
-        return contentType;
-    }
-
     public void setContentType(ContentType contentType) {
         this.contentType = contentType;
     }
@@ -94,29 +95,30 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
      */
     public void setCodeStyle(CodeStyle codeStyle, boolean refreshStyle) {
         this.codeStyle.set(codeStyle.name());
-        Highlighter<Collection<String>> highlighter = HighlighterFactory.getHighlightComputer(codeStyle);
-        // this.visibleParagraphStyler.setHighlightComputer(highlighter);
-        // this.textStyler.setHighlightComputer(highlighter);
 
         // refresh style
         if (refreshStyle) {
-            // refreshStyle();
-            ThreadPoolService.getInstance().run(this::refreshStyle);
+            refreshStyle();
         }
     }
 
-    public void replaceText(String text) {
-        replaceText(text, false);
-    }
-
     public void replaceText(String text, boolean refreshStyle) {
+        if (text != null && text.length() > MAX_TEXT_LENGTH) {
+            log.info("Text is too long, truncate it.");
+            text = CommonUtils.truncate(text, MAX_TEXT_LENGTH);
+            appendixLen = text.length() - MAX_TEXT_LENGTH;
+        } else {
+            appendixLen = 0;
+        }
+
         this.originText = text;
         if (refreshStyle) {
-            // refreshStyle();
-            ThreadPoolService.getInstance().run(this::refreshStyle);
+            refreshStyle();
+            // ThreadPoolService.getInstance().run(this::refreshStyle);
         } else {
+            String finalText = text;
             Platform.runLater(() -> {
-                codeArea.replaceText(text);
+                codeArea.replaceText(finalText);
             });
         }
     }
@@ -143,20 +145,19 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
             });
         }
 
+        // ThreadPoolService.getInstance().run(() -> {
+        long time1 = System.currentTimeMillis();
+        StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(codeArea.getText());
+        long time2 = System.currentTimeMillis();
+        log.info("Compute time cost: " + (time2 - time1) + " ms");
+
         Platform.runLater(() -> {
-            // 防止在主线程中执行 highlight
-            ThreadPoolService.getInstance().run(() -> {
-                long time1 = System.currentTimeMillis();
-                StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(codeArea.getText());
-
-                long time2 = System.currentTimeMillis();
-                log.info("Compute time cost: " + (time2 - time1));
-
-                Platform.runLater(() -> {
-                    codeArea.setStyleSpans(0, styleSpans);
-                });
-            });
+            codeArea.setStyleSpans(0, styleSpans);
+            if (appendixLen > 0) {
+                codeArea.setStyle(codeArea.getLength() - appendixLen, codeArea.getLength(), Collections.singleton("appendix"));
+            }
         });
+        // });
     }
 
     private Highlighter<Collection<String>> getCurrentHighlighter() {

@@ -1,5 +1,6 @@
 package com.catas.wicked.proxy.gui.componet.highlight;
 
+import com.catas.wicked.common.util.CommonUtils;
 import org.apache.http.entity.ContentType;
 
 import java.io.ByteArrayInputStream;
@@ -10,9 +11,11 @@ public class HexHighlighter extends  OriginHighlighter implements Formatter{
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
+    public static final int MAX_TEXT_LENGTH = 20000;
+
     @Override
     public String format(String text, ContentType contentType) {
-        if (text == null || text.length() == 0) {
+        if (text == null || text.isEmpty()) {
             return "";
         }
         ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes());
@@ -27,13 +30,12 @@ public class HexHighlighter extends  OriginHighlighter implements Formatter{
             array[0] = CHARS[data / 16];
             builder.append(array).append("\t");
         }
-        if (builder.length() > 0) {
+        if (!builder.isEmpty()) {
             builder.deleteCharAt(builder.length() - 1);
         }
-        // TODO
-        if (builder.length() > 10000) {
-            builder.delete(10000, builder.length());
-            builder.append("...(omitted)");
+        // truncate the content if it is too long
+        if (builder.length() > MAX_TEXT_LENGTH) {
+            return CommonUtils.truncate(builder.toString(), MAX_TEXT_LENGTH);
         }
         return builder.toString();
     }
