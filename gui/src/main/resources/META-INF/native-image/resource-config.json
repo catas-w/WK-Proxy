@@ -2,6 +2,9 @@
   "resources":{
   "includes":[
     {
+      "pattern":"\\QMETA-INF/native/libnetty_tcnative_osx_aarch_64.jnilib\\E"
+    }, 
+    {
       "pattern":"\\QMETA-INF/native/netty_tcnative_windows_x86_64.dll\\E"
     }, 
     {
@@ -35,6 +38,9 @@
       "pattern":"\\Qapplication.properties\\E"
     }, 
     {
+      "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-alert.css\\E"
+    }, 
+    {
       "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-button.css\\E"
     }, 
     {
@@ -44,10 +50,19 @@
       "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-combo-box.css\\E"
     }, 
     {
+      "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-dialog-layout.css\\E"
+    }, 
+    {
+      "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-progress-bar.css\\E"
+    }, 
+    {
       "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-radio-button.css\\E"
     }, 
     {
       "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-tab-pane.css\\E"
+    }, 
+    {
+      "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-text-area.css\\E"
     }, 
     {
       "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-text-field.css\\E"
@@ -57,6 +72,9 @@
     }, 
     {
       "pattern":"\\Qcom/jfoenix/assets/css/controls/jfx-toggle-node.css\\E"
+    }, 
+    {
+      "pattern":"\\Qcom/sun/jna/darwin-aarch64/libjnidispatch.jnilib\\E"
     }, 
     {
       "pattern":"\\Qcom/sun/jna/win32-x86-64/jnidispatch.dll\\E"
@@ -83,6 +101,9 @@
       "pattern":"\\Qcss/update-dialog.css\\E"
     }, 
     {
+      "pattern":"\\Qdarwin-aarch64/liblibwebp_animdecoder.dylib\\E"
+    }, 
+    {
       "pattern":"\\Qfont/MiSans-Demibold.ttf\\E"
     }, 
     {
@@ -99,6 +120,12 @@
     }, 
     {
       "pattern":"\\Qimage/wk-proxy.2.png\\E"
+    }, 
+    {
+      "pattern":"\\QlibCertInstallerLib.dylib\\E"
+    }, 
+    {
+      "pattern":"\\QlibWindowBlurLib.dylib\\E"
     }, 
     {
       "pattern":"\\Qlogback.xml\\E"
@@ -125,7 +152,6 @@
     {
       "name":"com/sun/glass/ui/win/themes",
       "locales":[
-        "", 
         "de", 
         "en", 
         "es", 

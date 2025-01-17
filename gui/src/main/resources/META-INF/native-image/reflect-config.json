@@ -22,6 +22,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"apple.security.AppleProvider",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"ch.qos.logback.classic.encoder.PatternLayoutEncoder",
   "queryAllPublicMethods":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
@@ -234,6 +238,8 @@
     {"name":"setPort","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setRecording","parameterTypes":["boolean"] }, 
     {"name":"setSelectedCert","parameterTypes":["java.lang.String"] }, 
+    {"name":"setSslExcludeList","parameterTypes":["java.util.List"] }, 
+    {"name":"setSysProxyBypassList","parameterTypes":["java.util.List"] }, 
     {"name":"setSystemProxy","parameterTypes":["boolean"] }, 
     {"name":"setThrottle","parameterTypes":["boolean"] }, 
     {"name":"setThrottlePreset","parameterTypes":["com.catas.wicked.common.constant.ThrottlePreset"] }
@@ -335,6 +341,10 @@
 {
   "name":"com.catas.wicked.common.provider.$WinSysProxyProvider$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.provider.MacSysProxyProvider",
+  "fields":[{"name":"appConfig"}]
 },
 {
   "name":"com.catas.wicked.common.provider.WinSysProxyProvider",
@@ -550,8 +560,10 @@
   "methods":[
     {"name":"checkUpdate","parameterTypes":[] }, 
     {"name":"clearLeafNode","parameterTypes":["javafx.event.ActionEvent"] }, 
+    {"name":"displayAboutPage","parameterTypes":[] }, 
     {"name":"displaySettingPage","parameterTypes":[] }, 
     {"name":"exit","parameterTypes":[] }, 
+    {"name":"locateToSelectedItem","parameterTypes":[] }, 
     {"name":"mockTreeItem","parameterTypes":[] }, 
     {"name":"onSysProxy","parameterTypes":["javafx.event.ActionEvent"] }, 
     {"name":"resendRequest","parameterTypes":[] }
@@ -599,6 +611,13 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.catas.wicked.proxy.provider.MacArmStageProvider",
+  "fields":[
+    {"name":"appConfig"}, 
+    {"name":"appController"}
+  ]
+},
+{
   "name":"com.catas.wicked.proxy.render.tab.$OverViewTabRenderer$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -621,7 +640,8 @@
     {"name":"detailTabController"}, 
     {"name":"pathOverviewInfo"}, 
     {"name":"requestCache"}, 
-    {"name":"requestOverviewInfo"}
+    {"name":"requestOverviewInfo"}, 
+    {"name":"resourceMessageProvider"}
   ]
 },
 {
@@ -962,7 +982,35 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.sun.glass.ui.Application"
+},
+{
+  "name":"com.sun.glass.ui.CommonDialogs$ExtensionFilter"
+},
+{
+  "name":"com.sun.glass.ui.CommonDialogs$FileChooserResult"
+},
+{
+  "name":"com.sun.glass.ui.EventLoop"
+},
+{
+  "name":"com.sun.glass.ui.Menu"
+},
+{
+  "name":"com.sun.glass.ui.MenuItem$Callback"
+},
+{
   "name":"com.sun.glass.ui.Screen"
+},
+{
+  "name":"com.sun.glass.ui.Size"
+},
+{
+  "name":"com.sun.glass.ui.View"
+},
+{
+  "name":"com.sun.javafx.font.coretext.CTFactory",
+  "methods":[{"name":"getFactory","parameterTypes":[] }]
 },
 {
   "name":"com.sun.javafx.font.directwrite.DWFactory",
@@ -991,6 +1039,10 @@
 {
   "name":"com.sun.jna.CallbackProxy",
   "queriedMethods":[{"name":"callback","parameterTypes":["java.lang.Object[]"] }]
+},
+{
+  "name":"com.sun.jna.NativeLong",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.sun.jna.ptr.IntByReference",
@@ -1146,6 +1198,10 @@
   ]
 },
 {
+  "name":"io.netty.channel.ChannelHandlerAdapter",
+  "queriedMethods":[{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }]
+},
+{
   "name":"io.netty.channel.ChannelInboundHandlerAdapter",
   "queriedMethods":[
     {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
@@ -1164,6 +1220,18 @@
   "queriedMethods":[
     {"name":"channelRegistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+  ]
+},
+{
+  "name":"io.netty.channel.ChannelOutboundHandlerAdapter",
+  "queriedMethods":[
+    {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
+    {"name":"close","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"connect","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
+    {"name":"deregister","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"disconnect","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
+    {"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"read","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }
   ]
 },
 {
@@ -1235,7 +1303,9 @@
 {
   "name":"io.netty.handler.codec.ByteToMessageDecoder",
   "queriedMethods":[
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }
   ]
 },
@@ -1245,6 +1315,10 @@
     {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }
   ]
+},
+{
+  "name":"io.netty.handler.codec.MessageToByteEncoder",
+  "queriedMethods":[{"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }]
 },
 {
   "name":"io.netty.handler.codec.MessageToMessageDecoder",
@@ -1258,6 +1332,12 @@
 },
 {
   "name":"io.netty.handler.codec.http.HttpServerCodec"
+},
+{
+  "name":"io.netty.handler.codec.socksx.v4.Socks4ClientDecoder"
+},
+{
+  "name":"io.netty.handler.codec.socksx.v4.Socks4ClientEncoder"
 },
 {
   "name":"io.netty.handler.logging.LoggingHandler",
@@ -1317,6 +1397,9 @@
     {"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
   ]
+},
+{
+  "name":"io.netty.handler.proxy.Socks4ProxyHandler"
 },
 {
   "name":"io.netty.handler.ssl.SslHandler",
@@ -1471,6 +1554,9 @@
     {"name":"current","parameterTypes":[] }, 
     {"name":"pid","parameterTypes":[] }
   ]
+},
+{
+  "name":"java.lang.Runnable"
 },
 {
   "name":"java.lang.RuntimePermission"
@@ -1962,6 +2048,9 @@
     {"name":"setFitWidth","parameterTypes":["double"] }, 
     {"name":"setImage","parameterTypes":["javafx.scene.image.Image"] }
   ]
+},
+{
+  "name":"javafx.scene.input.Clipboard"
 },
 {
   "name":"javafx.scene.layout.AnchorPane",
@@ -2744,6 +2833,10 @@
 },
 {
   "name":"sun.security.provider.MD5",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.NativePRNG",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {

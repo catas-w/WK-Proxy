@@ -9,11 +9,29 @@
   "name":"[Ljava.lang.String;"
 },
 {
+  "name":"[Ljavafx.scene.paint.Color;"
+},
+{
   "name":"[[B"
+},
+{
+  "name":"[[Ljava.lang.String;"
 },
 {
   "name":"com.catas.wicked.proxy.WickedProxyApplication",
   "methods":[{"name":"main","parameterTypes":["java.lang.String[]"] }]
+},
+{
+  "name":"com.sun.glass.ui.Application",
+  "methods":[
+    {"name":"notifyDidBecomeActive","parameterTypes":[] }, 
+    {"name":"notifyDidFinishLaunching","parameterTypes":[] }, 
+    {"name":"notifyDidResignActive","parameterTypes":[] }, 
+    {"name":"notifyOpenFiles","parameterTypes":["java.lang.String[]"] }, 
+    {"name":"notifyWillBecomeActive","parameterTypes":[] }, 
+    {"name":"notifyWillFinishLaunching","parameterTypes":[] }, 
+    {"name":"notifyWillResignActive","parameterTypes":[] }
+  ]
 },
 {
   "name":"com.sun.glass.ui.CommonDialogs",
@@ -27,10 +45,36 @@
   ]
 },
 {
+  "name":"com.sun.glass.ui.CommonDialogs$FileChooserResult",
+  "methods":[{"name":"<init>","parameterTypes":["java.util.List","com.sun.glass.ui.CommonDialogs$ExtensionFilter"] }]
+},
+{
   "name":"com.sun.glass.ui.Cursor",
   "methods":[
     {"name":"getNativeCursor","parameterTypes":[] }, 
     {"name":"getType","parameterTypes":[] }
+  ]
+},
+{
+  "name":"com.sun.glass.ui.EventLoop",
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"enter","parameterTypes":[] }, 
+    {"name":"leave","parameterTypes":["java.lang.Object"] }
+  ]
+},
+{
+  "name":"com.sun.glass.ui.Menu",
+  "methods":[
+    {"name":"notifyMenuClosed","parameterTypes":[] }, 
+    {"name":"notifyMenuOpening","parameterTypes":[] }
+  ]
+},
+{
+  "name":"com.sun.glass.ui.MenuItem$Callback",
+  "methods":[
+    {"name":"action","parameterTypes":[] }, 
+    {"name":"validate","parameterTypes":[] }
   ]
 },
 {
@@ -40,6 +84,62 @@
 {
   "name":"com.sun.glass.ui.Size",
   "methods":[{"name":"<init>","parameterTypes":["int","int"] }]
+},
+{
+  "name":"com.sun.glass.ui.View",
+  "fields":[{"name":"ptr"}],
+  "methods":[
+    {"name":"getAccessible","parameterTypes":[] }, 
+    {"name":"notifyDragDrop","parameterTypes":["int","int","int","int","int"] }, 
+    {"name":"notifyDragEnd","parameterTypes":["int"] }, 
+    {"name":"notifyDragEnter","parameterTypes":["int","int","int","int","int"] }, 
+    {"name":"notifyDragLeave","parameterTypes":[] }, 
+    {"name":"notifyDragOver","parameterTypes":["int","int","int","int","int"] }, 
+    {"name":"notifyInputMethod","parameterTypes":["java.lang.String","int[]","int[]","byte[]","int","int","int"] }, 
+    {"name":"notifyInputMethodCandidatePosRequest","parameterTypes":["int"] }, 
+    {"name":"notifyKey","parameterTypes":["int","int","char[]","int"] }, 
+    {"name":"notifyMenu","parameterTypes":["int","int","int","int","boolean"] }, 
+    {"name":"notifyMouse","parameterTypes":["int","int","int","int","int","int","int","boolean","boolean"] }, 
+    {"name":"notifyRepaint","parameterTypes":["int","int","int","int"] }, 
+    {"name":"notifyResize","parameterTypes":["int","int"] }, 
+    {"name":"notifyView","parameterTypes":["int"] }
+  ]
+},
+{
+  "name":"com.sun.javafx.font.coretext.CGAffineTransform",
+  "fields":[
+    {"name":"a"}, 
+    {"name":"b"}, 
+    {"name":"c"}, 
+    {"name":"d"}, 
+    {"name":"tx"}, 
+    {"name":"ty"}
+  ],
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.javafx.font.coretext.CGPoint",
+  "fields":[
+    {"name":"x"}, 
+    {"name":"y"}
+  ],
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.javafx.font.coretext.CGRect",
+  "fields":[
+    {"name":"origin"}, 
+    {"name":"size"}
+  ],
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.javafx.font.coretext.CGSize",
+  "fields":[
+    {"name":"height"}, 
+    {"name":"width"}
+  ],
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.sun.javafx.font.directwrite.D2D1_COLOR_F",
@@ -327,6 +427,10 @@
   ]
 },
 {
+  "name":"java.io.File",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
+},
+{
   "name":"java.io.InputStream",
   "methods":[
     {"name":"read","parameterTypes":["byte[]","int","int"] }, 
@@ -341,7 +445,11 @@
     {"name":"TYPE"}, 
     {"name":"value"}
   ],
-  "methods":[{"name":"<init>","parameterTypes":["boolean"] }]
+  "methods":[
+    {"name":"<init>","parameterTypes":["boolean"] }, 
+    {"name":"booleanValue","parameterTypes":[] }, 
+    {"name":"getBoolean","parameterTypes":["java.lang.String"] }
+  ]
 },
 {
   "name":"java.lang.Byte",
@@ -401,7 +509,10 @@
     {"name":"TYPE"}, 
     {"name":"value"}
   ],
-  "methods":[{"name":"<init>","parameterTypes":["int"] }]
+  "methods":[
+    {"name":"<init>","parameterTypes":["int"] }, 
+    {"name":"intValue","parameterTypes":[] }
+  ]
 },
 {
   "name":"java.lang.Long",
@@ -409,7 +520,10 @@
     {"name":"TYPE"}, 
     {"name":"value"}
   ],
-  "methods":[{"name":"<init>","parameterTypes":["long"] }]
+  "methods":[
+    {"name":"<init>","parameterTypes":["long"] }, 
+    {"name":"longValue","parameterTypes":[] }
+  ]
 },
 {
   "name":"java.lang.NullPointerException"
@@ -444,13 +558,18 @@
     {"name":"concat","parameterTypes":["java.lang.String"] }, 
     {"name":"getBytes","parameterTypes":[] }, 
     {"name":"getBytes","parameterTypes":["java.lang.String"] }, 
+    {"name":"lastIndexOf","parameterTypes":["int"] }, 
+    {"name":"substring","parameterTypes":["int"] }, 
     {"name":"toCharArray","parameterTypes":[] }, 
     {"name":"toLowerCase","parameterTypes":["java.util.Locale"] }
   ]
 },
 {
   "name":"java.lang.System",
-  "methods":[{"name":"getProperty","parameterTypes":["java.lang.String"] }]
+  "methods":[
+    {"name":"getProperty","parameterTypes":["java.lang.String"] }, 
+    {"name":"setProperty","parameterTypes":["java.lang.String","java.lang.String"] }
+  ]
 },
 {
   "name":"java.lang.UnsatisfiedLinkError",
@@ -541,8 +660,15 @@
   ]
 },
 {
+  "name":"java.util.List",
+  "methods":[{"name":"add","parameterTypes":["java.lang.Object"] }]
+},
+{
   "name":"java.util.Map",
-  "methods":[{"name":"put","parameterTypes":["java.lang.Object","java.lang.Object"] }]
+  "methods":[
+    {"name":"get","parameterTypes":["java.lang.Object"] }, 
+    {"name":"put","parameterTypes":["java.lang.Object","java.lang.Object"] }
+  ]
 },
 {
   "name":"javafx.scene.paint.Color",

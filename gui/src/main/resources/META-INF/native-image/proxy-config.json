@@ -1,5 +1,14 @@
 [
   {
+    "interfaces":["com.catas.wicked.common.jna.CertInstallerLibrary"]}
+  ,
+  {
+    "interfaces":["com.catas.wicked.common.jna.FoundationLibrary"]}
+  ,
+  {
+    "interfaces":["com.catas.wicked.common.jna.WindowBlurLibrary"]}
+  ,
+  {
     "interfaces":["com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP"]}
   ,
   {
