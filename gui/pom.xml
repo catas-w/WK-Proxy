@@ -112,129 +112,14 @@
                         <!-- <arg>management_ext.lib</arg> -->
                         <!-- <arg>psapi.lib</arg> -->
                     </linkerArgs>
-                    <!-- <graalvmHome>/Library/Java/JavaVirtualMachines/graalvm-svm-java17-darwin-m1-gluon-22.1.0.1-Final/Contents/Home</graalvmHome> -->
-                    <!-- <graalvmHome>/Library/Java/JavaVirtualMachines/graalvm-java23-darwin-aarch64-gluon-23+25.1-dev/Contents/Home</graalvmHome> -->
-                    <!-- <reflectionList>com.catas.wicked.proxy.WickedProxyApplication</reflectionList> -->
                     <runtimeArgs>
                         <arg>--add-opens java.base/java.lang.reflect=ALL-UNNAMED</arg>
                         <arg>--add-opens java.base/java.lang=ALL-UNNAMED</arg>
-                        <arg>-Djava.awt.headless=false</arg>
                     </runtimeArgs>
                     <nativeImageArgs>
                         <arg>-H:+JNI</arg>
                         <arg>-H:ExcludeResources='.*/libjnidispatch.a$'</arg>
                         <arg>--allow-incomplete-classpath</arg>
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=org.slf4j.jul.JDK14LoggerFactory</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=org.slf4j.jul.JULServiceProvider</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=org.slf4j.helpers</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=org.slf4j.LoggerFactory</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=org.slf4j.helpers.AbstractLogger</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=org.slf4j</arg> -->
-                        <!-- &lt;!&ndash; <arg>&#45;&#45;initialize-at-build-time=org.slf4j.jul.JDK14LoggerAdapter</arg> &ndash;&gt; -->
-
-
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.Logger</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.ContextBase</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.spi.LogbackServiceProvider</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.LoggerContext</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.BasicStatusManager</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.spi.AppenderAttachableImpl</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.spi.LoggerContextVO</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.util.COWArrayList</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.spi.TurboFilterList</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.helpers.CyclicBuffer</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.spi.ContextAwareBase</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.UnsynchronizedAppenderBase</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.spi.LogbackLock</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.OutputStreamAppender</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.util.LogbackMDCAdapter</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.status.StatusBase</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.Level</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.status.InfoStatus</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.status.ErrorStatus</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.status.WarnStatus</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.GenericXMLConfigurator</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.util.ContextInitializer</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.Model</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.ConsoleAppender</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.FileAppender</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.RollingFileAppender</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.RollingPolicyBase</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.TimeBasedRollingPolicy</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.processor.AppenderModelHandler</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.model.ConfigurationModel</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.processor.ImplicitModelHandler</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.spi.FilterAttachableImpl</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.encoder.EncoderBase</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.encoder.LayoutWrappingEncoder</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.pattern.PatternLayoutEncoderBase</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.spi.ConfigurationWatchList</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.processor.AppenderRefModelHandler</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.util.FileSize</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.spi.ContextAwareImpl</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.processor.DefaultProcessor</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.recovery.ResilientOutputStreamBase</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.recovery.ResilientFileOutputStream</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.encoder.PatternLayoutEncoder</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.LayoutBase</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.model.processor.RootLoggerModelHandler</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.TimeBasedFileNamingAndTriggeringPolicyBase</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.util.ContextInitializer</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.ComponentModel</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.util.PropertySetter</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.helper.Compressor</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.pattern.PatternLayoutBase</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.action.BaseModelAction</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.PatternLayout</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.helper.TimeBasedArchiveRemover</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.joran.action.LoggerAction</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.helper.FileNamePattern</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.joran.JoranConfigurator</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.NamedComponentModel</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.AppenderRefModel</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.spi.SaxEventInterpreter</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.helper.RollingCalendar</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.util.ContextInitializer$1</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.pattern.Converter</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.spi.ConsoleTarget</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.processor.ModelInterpretationContext</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.model.RootLoggerModel</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.action.NOPAction</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.helper.PeriodicityType</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.pattern.LiteralConverter.literal</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.AppenderModel</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.spi.SimpleRuleStore</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.pattern.LiteralConverter</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.pattern.FormattingConverter</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.pattern.DynamicConverter</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.classic.pattern.DateConverter</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.helper.DateTokenConverter</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.util.CachingDateFormatter</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.util.CachingDateFormatter$CacheTuple</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.ImplicitModel</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.helper.RenameUtil</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.util.beans.BeanDescriptionCache</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.util.AggregationAssessor</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.model.processor.ChainedModelFilter</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.action.ImplicitModelData</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.rolling.helper.CompressionMode</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.spi.ElementPath</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.spi.DefaultNestedComponentRegistry</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.spi.ConsoleTarget.SystemOut</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.spi.ConsoleTarget.SystemErr</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=ch.qos.logback.core.joran.spi.ConsoleTarget$1</arg> -->
-
-
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=com.sun.beans.introspect.ClassInfo</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=java.beans.Introspector</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=java.beans.Introspector$1</arg> -->
-
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=com.sun.beans.util.Cache</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=com.sun.beans.util.Cache.CacheEntry</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=com.sun.beans.util.Cache$CacheEntry.hash</arg> -->
-                        <!-- <arg>&#45;&#45;initialize-at-build-time=com.sun.beans.introspect.ClassInfo$1</arg> -->
-
                         <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeNoCleanerDirectByteBuf</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.PooledSlicedByteBuf</arg>

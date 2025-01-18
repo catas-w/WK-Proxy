@@ -23,12 +23,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 @Slf4j
-// @Import(packages = {
-//         "com.catas.wicked.server.proxy",
-//         "com.catas.wicked.server.cert",
-//         "com.catas.wicked.server.cert.spi",
-//         "com.catas.wicked.server.handler.server"
-// })
 @Singleton
 public class WickedProxyApplication implements ApplicationDelegate {
 
@@ -47,7 +41,6 @@ public class WickedProxyApplication implements ApplicationDelegate {
     @Inject
     private AppController appController;
 
-    @Inject
     @Nullable
     private StageProvider stageProvider;
 
@@ -72,8 +65,6 @@ public class WickedProxyApplication implements ApplicationDelegate {
             stageProvider.initStage(primaryStage);
         }
 
-        primaryStage.setTitle("WK Proxy");
-        primaryStage.getIcons().add(new Image(String.valueOf(getClass().getResource("/image/wk-proxy.2.png"))));
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -83,5 +74,10 @@ public class WickedProxyApplication implements ApplicationDelegate {
         log.info("---- Stopping Application ----");
         proxyServer.shutdown();
         applicationConfig.shutDownApplication();
+    }
+
+    @Inject
+    public void setStageProvider(@Nullable StageProvider stageProvider) {
+        this.stageProvider = stageProvider;
     }
 }

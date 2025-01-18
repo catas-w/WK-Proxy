@@ -611,6 +611,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.catas.wicked.proxy.provider.$WinStageProvider$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.catas.wicked.proxy.provider.MacArmStageProvider",
   "fields":[
     {"name":"appConfig"}, 

@@ -115,7 +115,7 @@ public class AppController implements Initializable {
 
     private void setStatusLabel(boolean isError) {
         String portLabel = resourceMessageProvider.getMessage("port.label") + ": ";
-        String msg = resourceMessageProvider.getMessage("port-unavailable.alert");
+        String msg = " " + resourceMessageProvider.getMessage("port-unavailable.alert");
         String label = isError ? portLabel + appConfig.getSettings().getPort() + msg:
                 appConfig.getHost() + ":" + appConfig.getSettings().getPort();
         Platform.runLater(() -> serverStatusLabel.setText(label));
