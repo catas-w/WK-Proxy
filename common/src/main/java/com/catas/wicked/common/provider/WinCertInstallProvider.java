@@ -45,6 +45,7 @@ public class WinCertInstallProvider implements CertInstallProvider {
         } catch (Exception e) {
             log.error("Error in checking cert installation on Win: {}", certName, e);
         }
+        log.warn("Certificate: {} is not installed in the Windows-ROOT store.", certName);
         return false;
     }
 
