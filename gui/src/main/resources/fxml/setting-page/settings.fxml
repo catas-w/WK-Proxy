@@ -276,11 +276,11 @@
                         </HBox>
                         <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="4" GridPane.columnIndex="1">
                             <Label styleClass="link-label" text="Twitter/X:"/>
-                            <Hyperlink fx:id="twitterLink" styleClass="link" text="https://x.com"/>
+                            <Hyperlink fx:id="twitterLink" styleClass="link" text="https://x.com/Catas43595337"/>
                         </HBox>
                         <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="5" GridPane.columnIndex="1" >
                             <Label styleClass="link-label" text="%email-link.label"/>
-                            <Label styleClass="link" text="catas1900@gmail.com"/>
+                            <Label styleClass="link" text="catasw@foxmail.com"/>
                         </HBox>
                         <!-- <Separator prefHeight="50" GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.columnSpan="2"/> -->
                     </GridPane>
