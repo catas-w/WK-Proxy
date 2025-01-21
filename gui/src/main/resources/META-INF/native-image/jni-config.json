@@ -26,10 +26,12 @@
   "methods":[
     {"name":"notifyDidBecomeActive","parameterTypes":[] }, 
     {"name":"notifyDidFinishLaunching","parameterTypes":[] }, 
+    {"name":"notifyDidHide","parameterTypes":[] }, 
     {"name":"notifyDidResignActive","parameterTypes":[] }, 
     {"name":"notifyOpenFiles","parameterTypes":["java.lang.String[]"] }, 
     {"name":"notifyWillBecomeActive","parameterTypes":[] }, 
     {"name":"notifyWillFinishLaunching","parameterTypes":[] }, 
+    {"name":"notifyWillHide","parameterTypes":[] }, 
     {"name":"notifyWillResignActive","parameterTypes":[] }
   ]
 },

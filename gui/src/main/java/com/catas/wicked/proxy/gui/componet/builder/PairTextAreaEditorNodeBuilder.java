@@ -22,7 +22,7 @@ public class PairTextAreaEditorNodeBuilder implements EditorNodeBuilder<PairEntr
 
     private final TableColumnBase tableColumn;
 
-    public PairTextAreaEditorNodeBuilder(TableColumnBase  treeItem) {
+    public PairTextAreaEditorNodeBuilder(TableColumnBase treeItem) {
         this.tableColumn = treeItem;
     }
 
@@ -66,13 +66,14 @@ public class PairTextAreaEditorNodeBuilder implements EditorNodeBuilder<PairEntr
         textArea.setSkin(new TextAreaEditorNodeBuilder.EditorTextAreaSkin(textArea));
 
         text = new Text();
-        // text.setStyle("-fx-font-size: 13px;");
         text.wrappingWidthProperty().bind(tableColumn.widthProperty());
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
             computeHeight();
         });
         textArea.setOnKeyPressed(keyEventsHandler);
-        textArea.focusedProperty().addListener(focusChangeListener);
+
+        // fixme: text became invisible
+        // textArea.focusedProperty().addListener(focusChangeListener);
 
         textArea.setText(value.getVal());
         return textArea;

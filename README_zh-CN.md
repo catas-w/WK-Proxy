@@ -9,11 +9,11 @@ WK Proxy
 WK Proxy 是一款开源的桌面端 HTTP 代理与抓包工具，支持 Windows 和 macOS 平台，致力于为开发者和测试人员提供简单高效的网络调试体验。
 
 ## Features
-- 🌟 基于 GraalVM & Java 的原生编译, 提供卓越的性能与跨平台支持.
-- 🔎 HTTP/HTTPS 代理与抓包,支持拦截、查看 HTTP/HTTPS 请求与响应数据.
-- 🔐 自定义根证书, 证书一键安装, 支持 HTTPS 解析，安全可靠.
-- 🌐 WebSocket 代理支持 适配实时通信场景.
-- ⚡ 请求限流与重发 方便模拟不同网络环境与测试请求的可靠性.
+- 基于 GraalVM & Java 的原生编译, 提供卓越的性能与跨平台支持.
+- HTTP/HTTPS 代理与抓包,支持拦截、查看 HTTP/HTTPS 请求与响应数据.
+- 自定义根证书, 证书一键安装, 支持 HTTPS 解析，安全可靠.
+- WebSocket 代理支持 适配实时通信场景.
+- 请求限流与重发 方便模拟不同网络环境与测试请求的可靠性.
 
 ## Screenshots
 ![image](screenshots/03.png)
@@ -39,4 +39,12 @@ java -jar gui-${version}.jar
 欢迎贡献！有任何建议或意见您可以给我们提 [Issue](https://github.com/catas-w/WK-Proxy/issues), 
 或联系本人 [catasw@foxmail.com](mailto:catasw@foxmail.com)
 
-
+## Credits
+本项目使用了以下优秀的开源项目，感谢他们的贡献：
+- [GraalVM](https://www.graalvm.org)
+- [GluonFX](https://gluonhq.com/products/gluonfx)
+- [Netty](https://netty.io)
+- [Proxyee](https://github.com/monkeyWie/proxyee)
+- [JFoenix](http://www.jfoenix.com)
+- [Ikonli](https://kordamp.org/ikonli/)
+- ...

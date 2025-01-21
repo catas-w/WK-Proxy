@@ -145,19 +145,13 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
             });
         }
 
-        // ThreadPoolService.getInstance().run(() -> {
-        long time1 = System.currentTimeMillis();
-        StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(codeArea.getText());
-        long time2 = System.currentTimeMillis();
-        log.info("Compute time cost: " + (time2 - time1) + " ms");
-
         Platform.runLater(() -> {
+            StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(codeArea.getText());
             codeArea.setStyleSpans(0, styleSpans);
             if (appendixLen > 0) {
                 codeArea.setStyle(codeArea.getLength() - appendixLen, codeArea.getLength(), Collections.singleton("appendix"));
             }
         });
-        // });
     }
 
     private Highlighter<Collection<String>> getCurrentHighlighter() {

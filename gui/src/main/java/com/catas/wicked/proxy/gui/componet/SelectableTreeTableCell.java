@@ -75,10 +75,10 @@ public class SelectableTreeTableCell extends GenericEditableTreeTableCell<PairEn
             HBox.setMargin(icon, new Insets(2, 4, 2, 0));
 
             setGraphic(hBox);
-            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            // setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         } else {
             setGraphic(text);
-            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            // setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }
     }
 }
