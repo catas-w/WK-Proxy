@@ -156,7 +156,8 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
                     ClientStatus.Status targetStatus;
                     if (cause instanceof ClosedChannelException) {
                         targetStatus = ClientStatus.Status.CLOSED;
-                    } else if (cause instanceof ConnectTimeoutException) {
+                    } else if (cause instanceof ConnectTimeoutException
+                            || (cause.getMessage() != null && cause.getMessage().contains("timed out"))) {
                         targetStatus = ClientStatus.Status.TIMEOUT;
                     } else if (cause instanceof SocketException) {
                         targetStatus = ClientStatus.Status.CONNECT_ERR;

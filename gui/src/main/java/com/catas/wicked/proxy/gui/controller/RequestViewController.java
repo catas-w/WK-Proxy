@@ -216,7 +216,8 @@ public class RequestViewController implements Initializable {
             // System.out.println(filterInput.getText());
             if (filterInput.getText() == null || filterInput.getText().isEmpty())
                 return null;
-            return TreeItemPredicate.create(actor -> actor.toString().contains(filterInput.getText()));
+            return TreeItemPredicate.create(actor ->
+                    actor.toString().toLowerCase().contains(filterInput.getText().trim().toLowerCase()));
         }, filterInput.textProperty()));
 
         // bind filter listView
