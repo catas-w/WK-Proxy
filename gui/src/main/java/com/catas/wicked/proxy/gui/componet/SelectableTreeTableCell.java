@@ -8,6 +8,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * selectable table cell for treeTableView
  */
+@Slf4j
 public class SelectableTreeTableCell extends GenericEditableTreeTableCell<PairEntry, PairEntry> {
 
     private final Text text;
@@ -35,9 +37,14 @@ public class SelectableTreeTableCell extends GenericEditableTreeTableCell<PairEn
     @Override
     public void cancelEdit() {
         super.cancelEdit();
-        // setGraphic(text);
-        // setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        log.info("cancelEdit...");
         refreshGraphic();
+    }
+
+    @Override
+    protected void commitHelper(boolean losingFocus) {
+        super.commitHelper(losingFocus);
+        cancelEdit();
     }
 
     @Override
@@ -75,10 +82,10 @@ public class SelectableTreeTableCell extends GenericEditableTreeTableCell<PairEn
             HBox.setMargin(icon, new Insets(2, 4, 2, 0));
 
             setGraphic(hBox);
-            // setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         } else {
             setGraphic(text);
-            // setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }
     }
 }

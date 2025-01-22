@@ -39,7 +39,9 @@ public class PairTextAreaEditorNodeBuilder implements EditorNodeBuilder<PairEntr
 
     @Override
     public void cancelEdit() {
-
+        if (textArea != null) {
+            textArea.deselect();
+        }
     }
 
     @Override
@@ -49,7 +51,7 @@ public class PairTextAreaEditorNodeBuilder implements EditorNodeBuilder<PairEntr
         }
         Platform.runLater(() -> {
             textArea.selectAll();
-            textArea.requestFocus();
+            // textArea.requestFocus();
         });
     }
 
@@ -70,7 +72,7 @@ public class PairTextAreaEditorNodeBuilder implements EditorNodeBuilder<PairEntr
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
             computeHeight();
         });
-        textArea.setOnKeyPressed(keyEventsHandler);
+        // textArea.setOnKeyPressed(keyEventsHandler);
 
         // fixme: text became invisible
         // textArea.focusedProperty().addListener(focusChangeListener);
