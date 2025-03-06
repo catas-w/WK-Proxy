@@ -10,6 +10,7 @@
 <?import com.catas.wicked.proxy.gui.componet.CustomToggleNode?>
 <?import com.catas.wicked.proxy.gui.componet.CustomMenuButton?>
 <?import com.catas.wicked.proxy.gui.componet.CustomButton?>
+<?import com.catas.wicked.proxy.gui.componet.button.WKToggleNode?>
 <AnchorPane maxWidth="55.0" minWidth="50.0" prefHeight="545.0" prefWidth="50.0"
             style="-fx-background-color: TRANSPARENT; -fx-border-color: rgba(119,119,119,0.38); -fx-border-width: 0 0.6 0 0;"
             xmlns="http://javafx.com/javafx/11.0.14-internal"
@@ -19,43 +20,44 @@
         <URL value="@../css/common-design.css" />
         <URL value="@../css/button-bar.css" />
     </stylesheets>
-    <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: TRANSPARENT;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="20.0">
-        <CustomToggleNode fx:id="recordBtn" prefWidth="200.0" selected="false" textOverrun="CLIP">
+    <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: TRANSPARENT;" alignment="CENTER"
+          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="20.0">
+        <WKToggleNode fx:id="recordBtn"
+                      labelText="Record" activeIconLiteral="fas-record-vinyl" inactiveIconLiteral="far-play-circle">
             <VBox.margin>
                 <Insets top="20.0"/>
             </VBox.margin>
             <tooltip>
                 <Tooltip text="%record-btn.enable.tooltip" showDelay="50ms" />
             </tooltip>
-            <FontIcon iconLiteral="fas-record-vinyl" iconSize="18"/>
-        </CustomToggleNode>
-        <JFXToggleNode fx:id="sslBtn" prefWidth="200.0" textOverrun="CLIP">
+        </WKToggleNode>
+
+        <WKToggleNode fx:id="sslBtn" labelText="Ssl" iconLiteral="fas-mask">
             <VBox.margin>
-                <Insets top="20.0"/>
+                <Insets top="12.0"/>
             </VBox.margin>
             <tooltip>
                 <Tooltip text="%ssl-btn.enable.tooltip" showDelay="50ms" />
             </tooltip>
-            <FontIcon iconColor="#616161" iconLiteral="fas-mask" iconSize="18"/>
-        </JFXToggleNode>
-        <JFXToggleNode fx:id="sysProxyBtn" prefWidth="200.0" textOverrun="CLIP" onAction="#onSysProxy">
+        </WKToggleNode>
+
+        <WKToggleNode fx:id="sysProxyBtn" onAction="#onSysProxy" labelText="Sys Proxy" iconLiteral="fas-burn">
             <VBox.margin>
-                <Insets top="20.0"/>
+                <Insets top="12.0"/>
             </VBox.margin>
             <tooltip>
                 <Tooltip text="%sys-proxy-btn.tooltip" showDelay="50ms" />
             </tooltip>
-            <FontIcon iconColor="#616161" iconLiteral="fas-burn" iconSize="18"/>
-        </JFXToggleNode>
-        <JFXToggleNode fx:id="throttleBtn" prefWidth="200.0" textOverrun="CLIP">
+        </WKToggleNode>
+
+        <WKToggleNode fx:id="throttleBtn" labelText="Throttle" iconLiteral="fas-hourglass-half">
             <VBox.margin>
-                <Insets top="20.0"/>
+                <Insets top="12.0"/>
             </VBox.margin>
             <tooltip>
                 <Tooltip text="%throttle-btn.enable.tooltip" showDelay="50ms" />
             </tooltip>
-            <FontIcon iconColor="#616161" iconLiteral="fas-hourglass-half" iconSize="18"/>
-        </JFXToggleNode>
+        </WKToggleNode>
 
         <Separator prefWidth="200.0" >
              <VBox.margin>
