@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
 <?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.*?>
 
-<?import com.catas.wicked.proxy.gui.componet.CustomToggleNode?>
 <?import com.catas.wicked.proxy.gui.componet.CustomMenuButton?>
-<?import com.catas.wicked.proxy.gui.componet.CustomButton?>
 <?import com.catas.wicked.proxy.gui.componet.button.WKToggleNode?>
+<?import com.catas.wicked.proxy.gui.componet.button.WkButton?>
 <AnchorPane maxWidth="55.0" minWidth="50.0" prefHeight="545.0" prefWidth="50.0"
             style="-fx-background-color: TRANSPARENT; -fx-border-color: rgba(119,119,119,0.38); -fx-border-width: 0 0.6 0 0;"
             xmlns="http://javafx.com/javafx/11.0.14-internal"
@@ -34,7 +32,7 @@
 
         <WKToggleNode fx:id="sslBtn" labelText="Ssl" iconLiteral="fas-mask">
             <VBox.margin>
-                <Insets top="12.0"/>
+                <Insets top="5.0"/>
             </VBox.margin>
             <tooltip>
                 <Tooltip text="%ssl-btn.enable.tooltip" showDelay="50ms" />
@@ -43,7 +41,7 @@
 
         <WKToggleNode fx:id="sysProxyBtn" onAction="#onSysProxy" labelText="Sys Proxy" iconLiteral="fas-burn">
             <VBox.margin>
-                <Insets top="12.0"/>
+                <Insets top="5.0"/>
             </VBox.margin>
             <tooltip>
                 <Tooltip text="%sys-proxy-btn.tooltip" showDelay="50ms" />
@@ -52,7 +50,7 @@
 
         <WKToggleNode fx:id="throttleBtn" labelText="Throttle" iconLiteral="fas-hourglass-half">
             <VBox.margin>
-                <Insets top="12.0"/>
+                <Insets top="5.0"/>
             </VBox.margin>
             <tooltip>
                 <Tooltip text="%throttle-btn.enable.tooltip" showDelay="50ms" />
@@ -65,51 +63,43 @@
              </VBox.margin>
         </Separator>
 
-        <JFXButton fx:id="clearBtn" onAction="#clearLeafNode" prefWidth="200.0" textOverrun="CLIP" disable="true">
-            <graphic>
-                <FontIcon iconColor="#616161" iconLiteral="fas-quidditch" iconSize="18"/>
-            </graphic>
+        <WkButton fx:id="clearBtn" onAction="#clearLeafNode"
+                  iconLiteral="fas-quidditch" labelText="clear" disable="true">
             <VBox.margin>
-                <Insets top="20.0" />
+                <Insets top="5.0" />
             </VBox.margin>
             <tooltip>
                 <Tooltip text="%clear-btn.tooltip" showDelay="50ms" />
             </tooltip>
-        </JFXButton>
+        </WkButton>
 
-        <CustomButton fx:id="resendBtn" onAction="#resendRequest" prefWidth="200.0" textOverrun="CLIP" disable="true">
-            <graphic>
-                <FontIcon iconColor="#616161" iconLiteral="fas-redo-alt" iconSize="18" />
-            </graphic>
+        <WkButton fx:id="resendBtn" onAction="#resendRequest"
+                  iconLiteral="fas-redo-alt" labelText="resend" disable="true">
             <VBox.margin>
-                <Insets top="20.0" />
+                <Insets top="5.0" />
             </VBox.margin>
             <tooltip>
                 <Tooltip text="%resend-btn.tooltip" showDelay="50ms"/>
             </tooltip>
-        </CustomButton>
-        <CustomButton fx:id="locateBtn" onAction="#locateToSelectedItem" prefWidth="200.0" textOverrun="CLIP" disable="true">
-            <graphic>
-                <FontIcon iconColor="#616161" iconLiteral="fas-crosshairs" iconSize="18" />
-            </graphic>
+        </WkButton>
+        <WkButton fx:id="locateBtn" onAction="#locateToSelectedItem"
+                  iconLiteral="fas-crosshairs" labelText="locate" disable="true">
             <VBox.margin>
-                <Insets top="20.0" />
+                <Insets top="5.0" />
             </VBox.margin>
             <tooltip>
                 <Tooltip text="%locate-btn.tooltip" />
             </tooltip>
-        </CustomButton>
-        <CustomButton fx:id="markerBtn" onAction="#mockTreeItem" prefWidth="200.0" textOverrun="CLIP" visible="false">
-            <graphic>
-                <FontIcon iconColor="#616161" iconLiteral="fas-marker" iconSize="18" />
-            </graphic>
+        </WkButton>
+        <WkButton onAction="#mockTreeItem" iconLiteral="fas-marker" labelText="mock" visible="true">
             <VBox.margin>
-                <Insets top="20.0" />
+                <Insets top="5.0" />
             </VBox.margin>
-        </CustomButton>
+        </WkButton>
 
         <Pane VBox.vgrow="ALWAYS" />
-        <CustomMenuButton fx:id="mainMenuButton" mnemonicParsing="false" popupSide="TOP" styleClass="main-menu-btn">
+        <CustomMenuButton mnemonicParsing="false" popupSide="TOP"
+                          iconLiteral="fas-cog" labelText="" styleClass="main-menu-btn">
             <items>
                 <MenuItem fx:id="settingBtn" styleClass="main-menu-item" onAction="#displaySettingPage" text="%setting-btn.label">
                     <graphic>
@@ -136,12 +126,12 @@
                 </MenuItem>
             </items>
 
-            <graphic>
-                <FontIcon iconColor="#616161" iconLiteral="fas-cog" iconSize="18" />
-            </graphic>
-            <VBox.margin>
-                <Insets bottom="5.0" left="3" />
-            </VBox.margin>
+            <!-- <graphic> -->
+            <!--     <FontIcon iconColor="#616161" iconLiteral="fas-cog" iconSize="18" /> -->
+            <!-- </graphic> -->
+            <!-- <VBox.margin> -->
+            <!--     <Insets bottom="0.0" left="3" /> -->
+            <!-- </VBox.margin> -->
         </CustomMenuButton>
     </VBox>
 

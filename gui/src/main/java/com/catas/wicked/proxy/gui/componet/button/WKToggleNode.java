@@ -2,32 +2,27 @@ package com.catas.wicked.proxy.gui.componet.button;
 
 import com.catas.wicked.common.constant.StyleConstant;
 import com.jfoenix.controls.JFXToggleNode;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Skin;
 import javafx.scene.control.skin.ToggleButtonSkin;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+import javafx.scene.paint.Paint;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 
 @Slf4j
 public class WKToggleNode extends JFXToggleNode {
 
-    private static final int TOOL_TIP_DELAY = 100;
-
-    private final FontIcon icon;
-
-    private int iconSize = 18;
 
     private final StringProperty labelText = new SimpleStringProperty();
 
     private final StringProperty iconLiteral = new SimpleStringProperty("");
+
+    private final ObjectProperty<Paint> iconColor = new SimpleObjectProperty<>(Color.valueOf(StyleConstant.INACTIVE_COLOR));
 
     private final StringProperty activeIconLiteral = new SimpleStringProperty("");
 
@@ -38,35 +33,21 @@ public class WKToggleNode extends JFXToggleNode {
     private final StringProperty inactiveColor = new SimpleStringProperty(StyleConstant.INACTIVE_COLOR);
 
     public WKToggleNode() {
-        icon = new FontIcon();
-        icon.setIconSize(iconSize);
-        icon.setIconColor(Color.valueOf(inactiveColor.get()));
-        icon.setOpacity(0.8);
-
-        // Label label = new Label();
-        Text label = new Text();
-        label.getStyleClass().add("wk-node-label");
-        label.textProperty().bind(this.labelTextProperty());
-        VBox.setMargin(label, new Insets(2, 0, 0, 0));
-
-        VBox vBox = new VBox();
-        vBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().addAll(this.icon, label);
-        this.setGraphic(vBox);
-        this.getStyleClass().add("wk-node");
+        UnderLabelWrapper underLabelWrapper = new UnderLabelWrapper(iconLiteral, labelText, iconColor);
+        this.setGraphic(underLabelWrapper);
 
         // set active style
         this.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 if (StringUtils.isNotBlank(activeIconLiteral.get())) {
-                    this.icon.setIconLiteral(activeIconLiteral.get());
+                    iconLiteral.setValue(activeIconLiteral.get());
                 }
-                this.icon.setIconColor(Color.valueOf(activeColor.get()));
+                iconColor.setValue(Color.valueOf(activeColor.get()));
             } else {
                 if (StringUtils.isNotBlank(inactiveIconLiteral.get())) {
-                    this.icon.setIconLiteral(inactiveIconLiteral.get());
+                    iconLiteral.setValue(inactiveIconLiteral.get());
                 }
-                this.icon.setIconColor(Color.valueOf(inactiveColor.get()));
+                iconColor.setValue(Color.valueOf(inactiveColor.get()));
             }
         });
     }
@@ -78,12 +59,7 @@ public class WKToggleNode extends JFXToggleNode {
     }
 
     public void setIconColor(Color color) {
-        this.icon.setIconColor(color);
-    }
-
-    public void setIconSize(int iconSize) {
-        this.iconSize = iconSize;
-        this.icon.setIconSize(iconSize);
+        this.iconColor.setValue(color);
     }
 
     public String getLabelText() {
@@ -109,7 +85,7 @@ public class WKToggleNode extends JFXToggleNode {
     public void setActiveIconLiteral(String activeIconLiteral) {
         this.activeIconLiteral.set(activeIconLiteral);
         if (this.isSelected()) {
-            this.icon.setIconLiteral(activeIconLiteral);
+            this.iconColor.setValue(Color.valueOf(activeColor.get()));
         }
     }
 
@@ -124,7 +100,7 @@ public class WKToggleNode extends JFXToggleNode {
     public void setInactiveIconLiteral(String inactiveIconLiteral) {
         this.inactiveIconLiteral.set(inactiveIconLiteral);
         if (!this.isSelected()) {
-            this.icon.setIconLiteral(inactiveIconLiteral);
+            this.iconColor.setValue(Color.valueOf(inactiveColor.get()));
         }
     }
 
@@ -162,6 +138,5 @@ public class WKToggleNode extends JFXToggleNode {
 
     public void setIconLiteral(String iconLiteral) {
         this.iconLiteral.set(iconLiteral);
-        this.icon.setIconLiteral(iconLiteral);
     }
 }

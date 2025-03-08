@@ -45,8 +45,6 @@ public class ButtonBarController implements Initializable {
     @FXML
     private Node settingScene;
     @FXML
-    private JFXButton markerBtn;
-    @FXML
     private WKToggleNode recordBtn;
     @FXML
     private WKToggleNode sslBtn;
@@ -165,9 +163,7 @@ public class ButtonBarController implements Initializable {
     }
 
     public void mockTreeItem() {
-        markerBtn.setOnAction(event -> {
-            requestMockService.mockRequest();
-        });
+        requestMockService.mockRequest();
     }
 
     public void bindUpdateBadge() {
