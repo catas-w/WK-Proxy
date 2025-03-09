@@ -9,6 +9,7 @@ import com.catas.wicked.common.constant.WorkerConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.worker.ScheduledManager;
+import com.catas.wicked.proxy.gui.componet.button.UnderLabelWrapper;
 import com.catas.wicked.proxy.gui.componet.button.WKToggleNode;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.service.RequestMockService;
@@ -20,9 +21,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -42,6 +45,8 @@ import static com.catas.wicked.common.constant.StyleConstant.COLOR_SUSPEND;
 @Singleton
 public class ButtonBarController implements Initializable {
 
+    @FXML
+    private VBox buttonBox;
     @FXML
     private Node settingScene;
     @FXML
@@ -153,11 +158,18 @@ public class ButtonBarController implements Initializable {
 
             // SUSPENDED 状态视为 unselected, 只能流转为 selected
             if (newValue == SystemProxyStatus.SUSPENDED) {
-                // FontIcon icon = (FontIcon) sysProxyBtn.getGraphic();
-                // icon.setIconColor(COLOR_SUSPEND);
                 sysProxyBtn.setIconColor(COLOR_SUSPEND);
             }
         });
+
+        // listen on display button label
+        for (Node node : buttonBox.getChildren()) {
+            if (node instanceof ButtonBase buttonBase) {
+                if (buttonBase.getGraphic() instanceof UnderLabelWrapper underLabelWrapper) {
+                    underLabelWrapper.getLabelVisibleProperty().bind(appConfig.getObservableConfig().showButtonLabelProperty());
+                }
+            }
+        }
 
         bindUpdateBadge();
     }
@@ -203,7 +215,7 @@ public class ButtonBarController implements Initializable {
     }
 
     public void displaySettingPage() {
-        displaySettingPage(400);
+        displaySettingPage(450);
     }
 
     public void displaySettingPage(long targetHeight) {

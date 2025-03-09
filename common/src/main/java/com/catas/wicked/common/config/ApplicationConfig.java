@@ -149,6 +149,7 @@ public class ApplicationConfig implements AutoCloseable {
         }
 
         observableConfig.setHandlingSSL(settings.isHandleSsl());
+        observableConfig.setShowButtonLabel(settings.isShowButtonLabel());
         if (settings.isEnableSysProxyOnLaunch()) {
             // force update systemProxy
             settings.setSystemProxy(true);

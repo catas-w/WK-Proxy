@@ -2,6 +2,7 @@ package com.catas.wicked.proxy.gui.componet.button;
 
 
 import com.catas.wicked.common.constant.StyleConstant;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -27,6 +28,8 @@ public class UnderLabelWrapper extends VBox {
     private final StackPane background;
 
     private final FontIcon icon;
+
+    private final Text label;
 
     private final IntegerProperty iconSizeProperty;
 
@@ -83,7 +86,7 @@ public class UnderLabelWrapper extends VBox {
 
 
         // underline label
-        Text label = new Text();
+        label = new Text();
         label.getStyleClass().add("wk-node-label");
         label.textProperty().bind(this.labelTextProperty);
         VBox.setMargin(label, new Insets(0, 0, 0, 0));
@@ -91,6 +94,10 @@ public class UnderLabelWrapper extends VBox {
         this.setAlignment(Pos.CENTER);
         this.getChildren().addAll(background, label);
         this.getStyleClass().add("wk-node");
+    }
+
+    public BooleanProperty getLabelVisibleProperty() {
+        return label.visibleProperty();
     }
 
     public String getLabelTextProperty() {

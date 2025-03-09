@@ -61,10 +61,13 @@
                             </Label>
                         </HBox>
 
+                        <Label text="%show-btn-label.label" styleClass="grid-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <JFXToggleButton fx:id="buttonLabelBtn" styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
                         <!-- recording -->
-                        <Label text="%record-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+                        <Label text="%record-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="3" GridPane.columnSpan="2"/>
                         <Label text="%record-size.label" styleClass="grid-label" contentDisplay="RIGHT"
-                               GridPane.rowIndex="3" GridPane.columnIndex="0">
+                               GridPane.rowIndex="4" GridPane.columnIndex="0">
                             <Label>
                                 <FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/>
                             </Label>
@@ -72,14 +75,14 @@
                                 <Tooltip text="%record-size.tooltip" showDelay="500ms"/>
                             </tooltip>
                         </Label>
-                        <StackPane styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="140.0">
+                        <StackPane styleClass="grid-element" GridPane.rowIndex="4" GridPane.columnIndex="1" maxWidth="140.0">
                             <CustomTextField errorPaneTranslateX="140.0" errorPaneTranslateY="-40.0"
                                              fx:id="maxSizeField" styleClass="record-size-input" maxWidth="140.0"/>
                             <Label text="Mb" styleClass="record-size-label"/>
                         </StackPane>
 
                         <Label text="%record-bypass.label" styleClass="grid-label" contentDisplay="RIGHT"
-                               GridPane.rowIndex="4" GridPane.columnIndex="0">
+                               GridPane.rowIndex="5" GridPane.columnIndex="0">
                             <graphic>
                                 <FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/>
                             </graphic>
@@ -87,7 +90,7 @@
                                 <Tooltip text="%ant-path.tooltip" showDelay="500ms"/>
                             </tooltip>
                         </Label>
-                        <TextArea fx:id="recordExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="4" GridPane.columnIndex="1"
+                        <TextArea fx:id="recordExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="5" GridPane.columnIndex="1"
                                   promptText="*.test.com/**; **.org/**"/>
                     </GridPane>
                 </ScrollPane>

@@ -18,10 +18,10 @@
         <URL value="@../css/common-design.css" />
         <URL value="@../css/button-bar.css" />
     </stylesheets>
-    <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: TRANSPARENT;" alignment="CENTER"
+    <VBox fx:id="buttonBox" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: TRANSPARENT;" alignment="CENTER"
           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="20.0">
         <WKToggleNode fx:id="recordBtn"
-                      labelText="Record" activeIconLiteral="fas-record-vinyl" inactiveIconLiteral="far-play-circle">
+                      labelText="%record-btn.label" activeIconLiteral="fas-record-vinyl" inactiveIconLiteral="far-play-circle">
             <VBox.margin>
                 <Insets top="20.0"/>
             </VBox.margin>
@@ -30,7 +30,7 @@
             </tooltip>
         </WKToggleNode>
 
-        <WKToggleNode fx:id="sslBtn" labelText="Ssl" iconLiteral="fas-mask">
+        <WKToggleNode fx:id="sslBtn" labelText="%ssl-btn.label" iconLiteral="fas-mask">
             <VBox.margin>
                 <Insets top="5.0"/>
             </VBox.margin>
@@ -39,7 +39,7 @@
             </tooltip>
         </WKToggleNode>
 
-        <WKToggleNode fx:id="sysProxyBtn" onAction="#onSysProxy" labelText="Sys Proxy" iconLiteral="fas-burn">
+        <WKToggleNode fx:id="sysProxyBtn" onAction="#onSysProxy" labelText="%sys-proxy-btn.label" iconLiteral="fas-burn">
             <VBox.margin>
                 <Insets top="5.0"/>
             </VBox.margin>
@@ -48,7 +48,7 @@
             </tooltip>
         </WKToggleNode>
 
-        <WKToggleNode fx:id="throttleBtn" labelText="Throttle" iconLiteral="fas-hourglass-half">
+        <WKToggleNode fx:id="throttleBtn" labelText="%throttle-btn.label" iconLiteral="fas-hourglass-half">
             <VBox.margin>
                 <Insets top="5.0"/>
             </VBox.margin>
@@ -64,7 +64,7 @@
         </Separator>
 
         <WkButton fx:id="clearBtn" onAction="#clearLeafNode"
-                  iconLiteral="fas-quidditch" labelText="clear" disable="true">
+                  iconLiteral="fas-quidditch" labelText="%clear-btn.label" disable="true">
             <VBox.margin>
                 <Insets top="5.0" />
             </VBox.margin>
@@ -74,7 +74,7 @@
         </WkButton>
 
         <WkButton fx:id="resendBtn" onAction="#resendRequest"
-                  iconLiteral="fas-redo-alt" labelText="resend" disable="true">
+                  iconLiteral="fas-redo-alt" labelText="%resend-btn.label" disable="true">
             <VBox.margin>
                 <Insets top="5.0" />
             </VBox.margin>
@@ -83,7 +83,7 @@
             </tooltip>
         </WkButton>
         <WkButton fx:id="locateBtn" onAction="#locateToSelectedItem"
-                  iconLiteral="fas-crosshairs" labelText="locate" disable="true">
+                  iconLiteral="fas-crosshairs" labelText="%locate-btn.label" disable="true">
             <VBox.margin>
                 <Insets top="5.0" />
             </VBox.margin>

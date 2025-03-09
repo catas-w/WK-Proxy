@@ -25,6 +25,8 @@ public class AppObservableConfig {
 
     private final SimpleBooleanProperty hasNewVersion = new SimpleBooleanProperty(false);
 
+    private final SimpleBooleanProperty showButtonLabel = new SimpleBooleanProperty(true);
+
     public AppObservableConfig() {
     }
 
@@ -98,5 +100,17 @@ public class AppObservableConfig {
 
     public void setHasNewVersion(boolean hasNewVersion) {
         this.hasNewVersion.set(hasNewVersion);
+    }
+
+    public boolean isShowButtonLabel() {
+        return showButtonLabel.get();
+    }
+
+    public SimpleBooleanProperty showButtonLabelProperty() {
+        return showButtonLabel;
+    }
+
+    public void setShowButtonLabel(boolean showButtonLabel) {
+        this.showButtonLabel.set(showButtonLabel);
     }
 }
