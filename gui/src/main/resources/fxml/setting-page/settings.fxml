@@ -238,7 +238,7 @@
         <Tab text="%about-tab.label" fx:id="infoSettingTab" styleClass="setting-info, setting-tab">
             <AnchorPane>
                 <ImageView AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="35.0"
-                           fitHeight="200" fitWidth="200">
+                           fitHeight="175" fitWidth="175">
                     <Image url="@../../image/wk-proxy.2.png"/>
                 </ImageView>
                 <ScrollPane AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
@@ -273,13 +273,9 @@
                             <Label prefHeight="20.0" fx:id="licenseLink" text="GNU General Public License v3.0" textFill="#949090"/>
                         </VBox>
 
-                        <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                        <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="4" GridPane.columnIndex="1">
                             <Label styleClass="link-label" text="GitHub:"/>
                             <Hyperlink fx:id="githubLink" styleClass="link" text="https://github.com/catas-w/WK-Proxy"/>
-                        </HBox>
-                        <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="4" GridPane.columnIndex="1">
-                            <Label styleClass="link-label" text="Twitter/X:"/>
-                            <Hyperlink fx:id="twitterLink" styleClass="link" text="https://x.com/Catas43595337"/>
                         </HBox>
                         <HBox prefHeight="20.0" prefWidth="200.0" GridPane.rowIndex="5" GridPane.columnIndex="1" >
                             <Label styleClass="link-label" text="%email-link.label"/>

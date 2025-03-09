@@ -35,13 +35,13 @@
         <CustomToggleNode fx:id="treeViewToggleNode" styleClass="toggle-node">
             <FontIcon iconLiteral="fas-tree" iconSize="18"/>
             <tooltip>
-                <Tooltip text="%tree-view.tooltip" showDelay="500ms"/>
+                <Tooltip text="%tree-view.tooltip" showDelay="50ms"/>
             </tooltip>
         </CustomToggleNode>
         <CustomToggleNode fx:id="listViewToggleNode" styleClass="toggle-node" >
             <FontIcon iconLiteral="fas-list-ul" iconSize="18"/>
             <tooltip>
-                <Tooltip text="%list-view.tooltip" showDelay="500ms"/>
+                <Tooltip text="%list-view.tooltip" showDelay="50ms"/>
             </tooltip>
         </CustomToggleNode>
 

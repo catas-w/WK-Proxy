@@ -91,7 +91,7 @@
                 <Tooltip text="%locate-btn.tooltip" />
             </tooltip>
         </WkButton>
-        <WkButton onAction="#mockTreeItem" iconLiteral="fas-marker" labelText="mock" visible="true">
+        <WkButton onAction="#mockTreeItem" iconLiteral="fas-marker" labelText="Mock" visible="false">
             <VBox.margin>
                 <Insets top="5.0" />
             </VBox.margin>
