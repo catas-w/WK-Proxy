@@ -114,12 +114,19 @@
 .bottom-bar .display-label {
     -fx-font-size: 12;
     -fx-text-fill: rgb(128, 128, 128);
+    -fx-font-family: "MiSans Demibold";
+}
+.bottom-bar .display-label.healthy {
+    -fx-text-fill: rgba(52, 155, 47, 0.81);
+    /*-fx-underline: true;*/
 }
 .bottom-bar .display-label.error {
     -fx-text-fill: rgba(210, 56, 43, 0.9);
     -fx-underline: true;
+    -fx-font-family: "MiSans Demibold";
 }
-.bottom-bar .display-label.error:hover {
+.bottom-bar .display-label.error:hover,
+.bottom-bar .display-label.healthy:hover {
     -fx-opacity: 0.65;
 }
 .bottom-bar .server-icon.healthy {

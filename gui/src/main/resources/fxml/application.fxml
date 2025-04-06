@@ -28,15 +28,9 @@
         </SplitPane>
     </HBox>
     <HBox styleClass="bottom-bar" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-        <Label text="Proxy Server: " styleClass="display-label">
+        <Label text="WK Proxy" visible="false" styleClass="display-label" style="-fx-font-family: 'MiSans Normal'">
             <HBox.margin>
                 <Insets left="12.0" right="5"/>
-            </HBox.margin>
-        </Label>
-        <FontIcon fx:id="serverStatusIcon" iconLiteral="fas-circle" styleClass="server-icon"/>
-        <Label fx:id="serverStatusLabel" text="127.0.0.1:9966" styleClass="display-label">
-            <HBox.margin>
-                <Insets left="2.0"/>
             </HBox.margin>
         </Label>
 
@@ -49,6 +43,14 @@
         <Label fx:id="certStatusLabel" visible="false" text="Root Certificate is Not Installed" styleClass="display-label, error">
             <HBox.margin>
                 <Insets right="8.0"/>
+            </HBox.margin>
+        </Label>
+
+        <FontIcon fx:id="serverStatusIcon" iconLiteral="fas-play" styleClass="server-icon"/>
+        <Label text="127.0.0.1:" styleClass="display-label"/>
+        <Label fx:id="serverStatusLabel" text="9966" styleClass="display-label">
+            <HBox.margin>
+                <Insets left="-2.0" right="10.0"/>
             </HBox.margin>
         </Label>
     </HBox>
