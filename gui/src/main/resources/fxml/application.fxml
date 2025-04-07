@@ -28,7 +28,7 @@
         </SplitPane>
     </HBox>
     <HBox styleClass="bottom-bar" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-        <Label text="WK Proxy" visible="false" styleClass="display-label" style="-fx-font-family: 'MiSans Normal'">
+        <Label text="WK Proxy" styleClass="display-label" style="-fx-font-family: 'MiSans Normal'">
             <HBox.margin>
                 <Insets left="12.0" right="5"/>
             </HBox.margin>
