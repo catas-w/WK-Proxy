@@ -89,21 +89,17 @@ public class SettingController implements Initializable {
     public Label appVersionLabel;
     public Hyperlink githubLink;
     public Hyperlink twitterLink;
+    public JFXToggleButton buttonLabelBtn;
     @FXML
     private Label licenseLink;
     @FXML
     private JFXCheckBox sysProxyOnLaunchBtn;
-    @FXML
-    private JFXButton cancelBtn;
     @FXML
     private TabPane settingTabPane;
     @FXML
     private JFXTextField portField;
     @FXML
     private JFXTextField maxSizeField;
-    @FXML
-    private JFXButton saveBtn;
-
     @Inject
     private ApplicationConfig appConfig;
     @Setter

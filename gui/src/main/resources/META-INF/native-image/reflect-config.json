@@ -227,6 +227,7 @@
     {"name":"isEnableSysProxyOnLaunch","parameterTypes":[] }, 
     {"name":"isHandleSsl","parameterTypes":[] }, 
     {"name":"isRecording","parameterTypes":[] }, 
+    {"name":"isShowButtonLabel","parameterTypes":[] }, 
     {"name":"isSystemProxy","parameterTypes":[] }, 
     {"name":"isThrottle","parameterTypes":[] }, 
     {"name":"setEnableExProxy","parameterTypes":["boolean"] }, 
@@ -238,6 +239,7 @@
     {"name":"setPort","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setRecording","parameterTypes":["boolean"] }, 
     {"name":"setSelectedCert","parameterTypes":["java.lang.String"] }, 
+    {"name":"setShowButtonLabel","parameterTypes":["boolean"] }, 
     {"name":"setSslExcludeList","parameterTypes":["java.util.List"] }, 
     {"name":"setSysProxyBypassList","parameterTypes":["java.util.List"] }, 
     {"name":"setSystemProxy","parameterTypes":["boolean"] }, 
@@ -434,7 +436,11 @@
   "name":"com.catas.wicked.proxy.gui.componet.CustomMenuButton",
   "queryAllDeclaredMethods":true,
   "queryAllPublicConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setIconLiteral","parameterTypes":["java.lang.String"] }, 
+    {"name":"setLabelText","parameterTypes":["java.lang.String"] }
+  ]
 },
 {
   "name":"com.catas.wicked.proxy.gui.componet.CustomTextField",
@@ -494,6 +500,28 @@
   "queryAllDeclaredMethods":true,
   "queryAllPublicConstructors":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.componet.button.WKToggleNode",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setActiveIconLiteral","parameterTypes":["java.lang.String"] }, 
+    {"name":"setIconLiteral","parameterTypes":["java.lang.String"] }, 
+    {"name":"setInactiveIconLiteral","parameterTypes":["java.lang.String"] }, 
+    {"name":"setLabelText","parameterTypes":["java.lang.String"] }
+  ]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.componet.button.WkButton",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setIconLiteral","parameterTypes":["java.lang.String"] }, 
+    {"name":"setLabelText","parameterTypes":["java.lang.String"] }
+  ]
 },
 {
   "name":"com.catas.wicked.proxy.gui.componet.highlight.CodeStyleButton",

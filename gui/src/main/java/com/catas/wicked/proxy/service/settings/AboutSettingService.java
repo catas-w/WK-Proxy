@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AboutSettingService extends AbstractSettingService{
 
     public static final String REPO_LINK = "https://github.com/catas-w/HumBird-Proxy";
-    public static final String X_LINK = "https://x.com/Catas43595337";
 
     private ResourceMessageProvider resourceMessageProvider;
 
@@ -54,14 +53,14 @@ public class AboutSettingService extends AbstractSettingService{
             }
         });
 
-        settingController.getTwitterLink().setText(X_LINK);
-        settingController.getTwitterLink().setOnAction(event -> {
-            try {
-                desktopProvider.browseOnLocal(X_LINK);
-            } catch (Exception e) {
-                log.error("Error in opening x link.", e);
-            }
-        });
+        // settingController.getTwitterLink().setText(X_LINK);
+        // settingController.getTwitterLink().setOnAction(event -> {
+        //     try {
+        //         desktopProvider.browseOnLocal(X_LINK);
+        //     } catch (Exception e) {
+        //         log.error("Error in opening x link.", e);
+        //     }
+        // });
 
         settingController.getLicenseLink().setOnMouseClicked(event -> {
             try {

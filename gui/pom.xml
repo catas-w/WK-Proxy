@@ -203,8 +203,8 @@
                         <!-- <macAppCategory></macAppCategory> -->
                         <!-- macOS/iOS -->
                         <bundleName>Wk Proxy</bundleName>
-                        <bundleVersion>1.0.6</bundleVersion>
-                        <bundleShortVersion>1.0.6</bundleShortVersion>
+                        <bundleVersion>${wk.version}</bundleVersion>
+                        <bundleShortVersion>${wk.version}</bundleShortVersion>
                         <!-- <providedSigningIdentity></providedSigningIdentity> -->
                         <!-- <providedProvisioningProfile></providedProvisioningProfile> -->
                         <skipSigning>true</skipSigning>

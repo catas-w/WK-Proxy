@@ -9,10 +9,11 @@ import com.catas.wicked.common.constant.WorkerConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.worker.ScheduledManager;
+import com.catas.wicked.proxy.gui.componet.button.UnderLabelWrapper;
+import com.catas.wicked.proxy.gui.componet.button.WKToggleNode;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.service.RequestMockService;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXToggleNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.application.Platform;
@@ -20,10 +21,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.MenuItem;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -37,8 +39,6 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import static com.catas.wicked.common.constant.StyleConstant.COLOR_ACTIVE;
-import static com.catas.wicked.common.constant.StyleConstant.COLOR_INACTIVE;
 import static com.catas.wicked.common.constant.StyleConstant.COLOR_SUSPEND;
 
 @Slf4j
@@ -46,21 +46,21 @@ import static com.catas.wicked.common.constant.StyleConstant.COLOR_SUSPEND;
 public class ButtonBarController implements Initializable {
 
     @FXML
+    private VBox buttonBox;
+    @FXML
     private Node settingScene;
     @FXML
-    private JFXButton markerBtn;
+    private WKToggleNode recordBtn;
     @FXML
-    private JFXToggleNode recordBtn;
-    @FXML
-    private JFXToggleNode sslBtn;
+    private WKToggleNode sslBtn;
     @FXML
     private JFXButton locateBtn;
     @FXML
     private JFXButton resendBtn;
     @FXML
-    private JFXToggleNode throttleBtn;
+    private WKToggleNode throttleBtn;
     @FXML
-    private JFXToggleNode sysProxyBtn;
+    private WKToggleNode sysProxyBtn;
     @FXML
     private JFXButton clearBtn;
     @FXML
@@ -127,32 +127,16 @@ public class ButtonBarController implements Initializable {
 
         // toggle record button
         recordBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            FontIcon icon = (FontIcon) recordBtn.getGraphic();
-            if (newValue) {
-                icon.setIconLiteral("fas-record-vinyl");
-                icon.setIconColor(COLOR_ACTIVE);
-            } else {
-                icon.setIconLiteral("far-play-circle");
-                icon.setIconColor(COLOR_INACTIVE);
-            }
             appConfig.getSettings().setRecording(newValue);
-
-            // String toolTip = newValue ? "Stop Recording" : "Record Requests";
             String toolTip = resourceBundle.getString(newValue ? "record-btn.disable.tooltip": "record-btn.enable.tooltip");
             recordBtn.getTooltip().setText(toolTip);
         });
-        // System.out.println(resourceBundle.getString("record-btn.tooltip"));
         recordBtn.setSelected(true);
 
         // toggle handle ssl button
         sslBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            FontIcon icon = (FontIcon) sslBtn.getGraphic();
-            Color color = newValue ? COLOR_ACTIVE : COLOR_INACTIVE;
-            icon.setIconColor(color);
             appConfig.setHandleSSL(newValue);
             appConfig.updateSettingsAsync();
-
-            // String toolTip = newValue ? "Stop Handling SSL" : "Handle SSL";
             String toolTip = resourceBundle.getString(newValue ? "ssl-btn.disable.tooltip": "ssl-btn.enable.tooltip");
             sslBtn.getTooltip().setText(toolTip);
         });
@@ -160,42 +144,38 @@ public class ButtonBarController implements Initializable {
 
         // init throttle button
         throttleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            FontIcon icon = (FontIcon) throttleBtn.getGraphic();
-            Color color = newValue ? COLOR_ACTIVE : COLOR_INACTIVE;
-            icon.setIconColor(color);
             appConfig.getSettings().setThrottle(newValue);
             appConfig.updateSettingsAsync();
-
-            // String toolTip = newValue ? "Stop Throttling" : "Start Throttling";
             String toolTip = resourceBundle.getString(newValue ? "throttle-btn.disable.tooltip": "throttle-btn.enable.tooltip");
             throttleBtn.getTooltip().setText(toolTip);
         });
         throttleBtn.setSelected(appConfig.getSettings().isThrottle());
 
         // init sysProxyBtn
-        sysProxyBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            FontIcon icon = (FontIcon) sysProxyBtn.getGraphic();
-            Color color = newValue ? COLOR_ACTIVE : COLOR_INACTIVE;
-            icon.setIconColor(color);
-        });
         appConfig.getObservableConfig().systemProxyStatusProperty().addListener((observable, oldValue, newValue) -> {
             sysProxyBtn.setDisable(newValue == SystemProxyStatus.DISABLED);
             sysProxyBtn.setSelected(newValue == SystemProxyStatus.ON);
 
             // SUSPENDED 状态视为 unselected, 只能流转为 selected
             if (newValue == SystemProxyStatus.SUSPENDED) {
-                FontIcon icon = (FontIcon) sysProxyBtn.getGraphic();
-                icon.setIconColor(COLOR_SUSPEND);
+                sysProxyBtn.setIconColor(COLOR_SUSPEND);
             }
         });
+
+        // listen on display button label
+        for (Node node : buttonBox.getChildren()) {
+            if (node instanceof ButtonBase buttonBase) {
+                if (buttonBase.getGraphic() instanceof UnderLabelWrapper underLabelWrapper) {
+                    underLabelWrapper.getLabelVisibleProperty().bind(appConfig.getObservableConfig().showButtonLabelProperty());
+                }
+            }
+        }
 
         bindUpdateBadge();
     }
 
     public void mockTreeItem() {
-        markerBtn.setOnAction(event -> {
-            requestMockService.mockRequest();
-        });
+        requestMockService.mockRequest();
     }
 
     public void bindUpdateBadge() {
@@ -235,7 +215,7 @@ public class ButtonBarController implements Initializable {
     }
 
     public void displaySettingPage() {
-        displaySettingPage(400);
+        displaySettingPage(450);
     }
 
     public void displaySettingPage(long targetHeight) {

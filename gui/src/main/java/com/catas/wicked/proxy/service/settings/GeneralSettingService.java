@@ -7,6 +7,7 @@ import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.proxy.gui.componet.EnumLabel;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXToggleButton;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +34,6 @@ public class GeneralSettingService extends AbstractSettingService {
     public void init() {
         Settings settings = applicationConfig.getSettings();
 
-        // languageComboBox.getSelectionModel().select(0);
-
         // update language
         JFXComboBox<EnumLabel<LanguagePreset>> languageComboBox = settingController.getLanguageComboBox();
         for (LanguagePreset value : LanguagePreset.values()) {
@@ -48,6 +47,17 @@ public class GeneralSettingService extends AbstractSettingService {
             if (newValue != null) {
                 settings.setLanguage(newValue.getEnum());
                 settingController.getLangAlertLabel().setVisible(true);
+                refreshAppSettings();
+            }
+        });
+
+        // update display button label
+        JFXToggleButton buttonLabelBtn = settingController.getButtonLabelBtn();
+        buttonLabelBtn.setSelected(settings.isShowButtonLabel());
+        buttonLabelBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                settings.setShowButtonLabel(newValue);
+                applicationConfig.getObservableConfig().setShowButtonLabel(newValue);
                 refreshAppSettings();
             }
         });
@@ -90,8 +100,8 @@ public class GeneralSettingService extends AbstractSettingService {
         }
 
         settingController.getMaxSizeField().setText(String.valueOf(settings.getMaxContentSize()));
-
         settingController.getRecordExcludeArea().setText(getTextFromList(settings.getRecordExcludeList()));
+        settingController.getButtonLabelBtn().setSelected(settings.isShowButtonLabel());
     }
 
     @Override

@@ -44,22 +44,19 @@ public class AppController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // versionLabel.setText("version " + ApplicationConfig.APP_VERSION);
-
         // update server status label
         refreshServerStatusDisplay(appConfig.getObservableConfig().getServerStatus());
         appConfig.getObservableConfig().serverStatusProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 return;
             }
-            // System.out.println("refresh server status: " + newValue);
             refreshServerStatusDisplay(newValue);
         });
 
         serverStatusLabel.setOnMouseClicked(event -> {
-            if (!serverStatusLabel.getStyleClass().contains("error")) {
-                return;
-            }
+            // if (!serverStatusLabel.getStyleClass().contains("error")) {
+            //     return;
+            // }
 
             buttonBarController.displayProxySettingPage();
         });
@@ -101,6 +98,7 @@ public class AppController implements Initializable {
                 serverStatusIcon.getStyleClass().add("healthy");
 
                 serverStatusLabel.getStyleClass().removeIf(style -> style.equals("error"));
+                serverStatusLabel.getStyleClass().add("healthy");
                 setStatusLabel(false);
             }
             case HALTED -> {
@@ -108,6 +106,7 @@ public class AppController implements Initializable {
                 serverStatusIcon.getStyleClass().add("error");
 
                 serverStatusLabel.getStyleClass().add("error");
+                serverStatusLabel.getStyleClass().removeIf(style -> style.equals("healthy"));
                 setStatusLabel(true);
             }
         }
@@ -117,7 +116,7 @@ public class AppController implements Initializable {
         String portLabel = resourceMessageProvider.getMessage("port.label") + ": ";
         String msg = " " + resourceMessageProvider.getMessage("port-unavailable.alert");
         String label = isError ? portLabel + appConfig.getSettings().getPort() + msg:
-                appConfig.getHost() + ":" + appConfig.getSettings().getPort();
+                "" + appConfig.getSettings().getPort();
         Platform.runLater(() -> serverStatusLabel.setText(label));
     }
 }

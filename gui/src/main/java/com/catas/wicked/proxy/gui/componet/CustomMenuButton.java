@@ -1,8 +1,10 @@
 package com.catas.wicked.proxy.gui.componet;
 
+import com.catas.wicked.proxy.gui.componet.button.UnderLabelWrapper;
 import com.sun.javafx.scene.control.ContextMenuContent;
-// import com.sun.javafx.scene.control.ListenerHelper;
 import com.sun.javafx.scene.control.behavior.MenuButtonBehavior;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.AccessibleAttribute;
 import javafx.scene.control.Control;
@@ -12,9 +14,42 @@ import javafx.stage.WindowEvent;
 
 public class CustomMenuButton extends MenuButton {
 
+    private final StringProperty iconLiteral = new SimpleStringProperty("");
+
+    private final StringProperty labelText = new SimpleStringProperty("");
+
+    public CustomMenuButton() {
+        UnderLabelWrapper underLabelWrapper = new UnderLabelWrapper(iconLiteral, labelText);
+        this.setGraphic(underLabelWrapper);
+    }
+
     @Override
     protected Skin<?> createDefaultSkin() {
         return new CustomMenuBtnSkin(this);
+    }
+
+    public String getIconLiteral() {
+        return iconLiteral.get();
+    }
+
+    public StringProperty iconLiteralProperty() {
+        return iconLiteral;
+    }
+
+    public void setIconLiteral(String iconLiteral) {
+        this.iconLiteral.set(iconLiteral);
+    }
+
+    public String getLabelText() {
+        return labelText.get();
+    }
+
+    public StringProperty labelTextProperty() {
+        return labelText;
+    }
+
+    public void setLabelText(String labelText) {
+        this.labelText.set(labelText);
     }
 
     /**

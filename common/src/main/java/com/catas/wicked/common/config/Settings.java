@@ -25,6 +25,9 @@ public class Settings {
     private LanguagePreset language = LanguagePreset.ENGLISH;
 
     @JsonDeserialize(using = SafeBooleanDeserializer.class)
+    private boolean showButtonLabel = true;
+
+    @JsonDeserialize(using = SafeBooleanDeserializer.class)
     private boolean recording = true;
 
     @JsonDeserialize(using = SafeIntegerDeserializer.class)
