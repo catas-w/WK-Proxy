@@ -97,7 +97,6 @@
 
                         <!-- system proxy -->
                         <option>-Djava.net.useSystemProxies=true</option>
-                        <!-- <option>-Djava.awt.headless=false</option> -->
                     </options>
                 </configuration>
             </plugin>
@@ -189,14 +188,13 @@
                         <arg>--initialize-at-run-time=io.netty.handler.ssl.BouncyCastleAlpnSslUtils</arg>
                         <arg>--initialize-at-run-time=io.netty.incubator.codec.quic.InsecureQuicTokenHandler</arg>
                         <arg>--initialize-at-run-time=io.netty.incubator.codec.quic.SecureRandomQuicConnectionIdGenerator</arg>
-                        <!-- <arg></arg> -->
-
                     </nativeImageArgs>
                     <releaseConfiguration>
                         <!-- all targets -->
                         <packageType>dmg</packageType>
-                        <description>Wk Proxy</description>
+                        <description>Wk Proxy Http Proxy Debug Tool</description>
                         <vendor>Catas W</vendor>
+                        <version>1.0.7</version>
                         <!-- macOS -->
                         <!-- <macAppStore></macAppStore> -->
                         <!-- <macSigningUserName></macSigningUserName> -->
@@ -252,7 +250,6 @@
                     </annotationProcessorPaths>
                     <compilerArgs>
                         <arg>-Amicronaut.processing.group=org.catas</arg>
-                        <!-- <arg>-Amicronaut.processing.module=hellofx</arg> -->
                     </compilerArgs>
                 </configuration>
             </plugin>
