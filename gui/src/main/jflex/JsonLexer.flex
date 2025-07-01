@@ -35,30 +35,76 @@ STRING     = \"([^\"\\]|\\.)*\"
 KEYWORD    = true|false|null
 %state AFTER_COLON
 %state INITIAL
+%state IN_ARRAY_VALUE
 
 %%
 
-"{"             { yybegin(INITIAL); return token(TokenType.OPERATOR,  CURLY); }
-"}"             { yybegin(INITIAL); return token(TokenType.OPERATOR, -CURLY); }
-"["             { yybegin(INITIAL); return token(TokenType.OPERATOR,  BRACKET); }
-"]"             { yybegin(INITIAL); return token(TokenType.OPERATOR, -BRACKET); }
-":"            {
-                  yybegin(AFTER_COLON);  // 进入 value 状态
-                  return token(TokenType.OPERATOR);
-               }
-","            {
-                  yybegin(INITIAL); // 重置回 key 状态（或数组值）
-                  return token(TokenType.OPERATOR);
-               }
-// 在 INITIAL 状态中：匹配 key
-<INITIAL>       {STRING}   { return token(TokenType.KEY); }
-<AFTER_COLON>   {STRING}   { yybegin(INITIAL); return token(TokenType.STRING); }
-<AFTER_COLON>   {NUMBER}   { yybegin(INITIAL); return token(TokenType.NUMBER); }
-<AFTER_COLON>   {KEYWORD}  { yybegin(INITIAL); return token(TokenType.KEYWORD2); }
-<AFTER_COLON>   "{"        { yybegin(INITIAL); return token(TokenType.OPERATOR,  CURLY); }
-<AFTER_COLON>   "}"        { yybegin(INITIAL); return token(TokenType.OPERATOR, -CURLY); }
-<AFTER_COLON>   "["        { yybegin(INITIAL); return token(TokenType.OPERATOR,  BRACKET); }
-<AFTER_COLON>   "]"        { yybegin(INITIAL); return token(TokenType.OPERATOR, -BRACKET); }
+
+"{" {
+    // start of object → back to key mode
+    yybegin(INITIAL);
+    return token(TokenType.OPERATOR, CURLY);
+}
+"}" {
+    return token(TokenType.OPERATOR, -CURLY);
+}
+<INITIAL,AFTER_COLON,IN_ARRAY_VALUE> "[" {
+    // entering array → special array value mode
+    yybegin(IN_ARRAY_VALUE);
+    return token(TokenType.OPERATOR, BRACKET);
+}
+<IN_ARRAY_VALUE> "]" {
+    yybegin(INITIAL); // exit array → back to key mode
+    return token(TokenType.OPERATOR, -BRACKET);
+}
+":" {
+    yybegin(AFTER_COLON);
+    return token(TokenType.OPERATOR);
+}
+<INITIAL,AFTER_COLON,IN_ARRAY_VALUE> "," {
+    // do not change state, caller handles it
+    return token(TokenType.OPERATOR);
+}
+
+// === KEY ===
+<INITIAL> {STRING} {
+    return token(TokenType.KEY);
+}
+
+// === VALUE ===
+// After colon → next string/number/etc is a value
+<AFTER_COLON> {STRING}  {
+    yybegin(INITIAL);
+    return token(TokenType.STRING);
+}
+<AFTER_COLON> {NUMBER}  {
+    yybegin(INITIAL);
+    return token(TokenType.NUMBER);
+}
+<AFTER_COLON> {KEYWORD} {
+    yybegin(INITIAL);
+    return token(TokenType.KEYWORD2);
+}
+<AFTER_COLON> "{" {
+    yybegin(INITIAL);  // nested object
+    return token(TokenType.OPERATOR, CURLY);
+}
+<AFTER_COLON> "}" {
+    return token(TokenType.OPERATOR, -CURLY);
+}
+
+// === ARRAY VALUES ===
+<IN_ARRAY_VALUE> {STRING}  { return token(TokenType.STRING); }
+<IN_ARRAY_VALUE> {NUMBER}  { return token(TokenType.NUMBER); }
+<IN_ARRAY_VALUE> {KEYWORD} { return token(TokenType.KEYWORD2); }
+<IN_ARRAY_VALUE> "{" {
+    yybegin(INITIAL); // handle nested object inside array
+    return token(TokenType.OPERATOR, CURLY);
+}
+<IN_ARRAY_VALUE> "}" {
+    yybegin(IN_ARRAY_VALUE); // return from nested object
+    return token(TokenType.OPERATOR, -CURLY);
+}
 
 {WHITESPACE}             { /* skip whitespace */ }
 .|\n                     { /* skip unknown character */ }
