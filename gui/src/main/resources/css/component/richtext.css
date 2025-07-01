@@ -31,7 +31,13 @@
 }
 .keyword {
     -fx-fill: #8f2614;
-    /*-fx-font-weight: bold;*/
+}
+.keyword2 {
+    -fx-fill: #005eb9;
+    -fx-font-weight: bold;
+}
+.key {
+    -fx-fill: #be4d0f;
 }
 .number {
     -fx-fill: #128c27;
@@ -39,7 +45,8 @@
 .bool {
     -fx-fill: #005eb9;
 }
-.string {
+.string,
+.string2 {
     -fx-fill: #676767;
 }
 .brace {
@@ -51,6 +58,30 @@
 .appendix {
     -fx-fill: #939393;
     -fx-font-family: "MiSans Demibold";
+}
+
+.identifier {
+    -fx-fill: #876b96;
+}
+
+.comment,
+.comment2 {
+    -fx-fill: #7d7d7d;
+}
+
+.type,
+.type2,
+.type3 {
+    -fx-fill: #0067b2;
+}
+
+.operator {
+    -fx-fill: #0067b2;
+}
+
+.default,
+.delimiter {
+    -fx-fill: #646a70;
 }
 
 

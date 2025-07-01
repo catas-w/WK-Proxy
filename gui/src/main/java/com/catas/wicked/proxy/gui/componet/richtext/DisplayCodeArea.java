@@ -40,9 +40,7 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
 
     private static final String STYLE = "display-code-area";
 
-    public static final int MAX_TEXT_LENGTH = 20000;
-
-    private VisibleParagraphStyler<Collection<String>, String, Collection<String>> visibleParagraphStyler;
+    public static final int MAX_TEXT_LENGTH = Integer.MAX_VALUE;
 
     private CodeArea codeArea;
 
@@ -68,6 +66,7 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
     }
 
     public void setWrapText(boolean wrapText) {
+        // TODO performance
         codeArea.setWrapText(wrapText);
     }
 
@@ -146,8 +145,12 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
         }
 
         Platform.runLater(() -> {
+            // TODO
+            long time = System.currentTimeMillis();
             StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(codeArea.getText());
+            System.out.println("Time 1: " + (System.currentTimeMillis() - time));
             codeArea.setStyleSpans(0, styleSpans);
+            System.out.println("Time 2: " + (System.currentTimeMillis() - time));
             if (appendixLen > 0) {
                 codeArea.setStyle(codeArea.getLength() - appendixLen, codeArea.getLength(), Collections.singleton("appendix"));
             }

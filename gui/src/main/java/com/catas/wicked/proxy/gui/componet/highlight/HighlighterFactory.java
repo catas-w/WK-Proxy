@@ -1,6 +1,8 @@
 package com.catas.wicked.proxy.gui.componet.highlight;
 
 import com.catas.wicked.common.constant.CodeStyle;
+import com.catas.wicked.proxy.lexer.XHTMLLexer;
+import com.catas.wicked.proxy.lexer.XmlLexer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +21,11 @@ public class HighlighterFactory {
             synchronized (lock) {
                 if (map == null) {
                     map = new HashMap<>();
-                    map.put(CodeStyle.JSON, new JsonHighlighter());
-                    map.put(CodeStyle.XML, new XmlHighlighter());
+                    // map.put(CodeStyle.JSON, new JsonHighlighter());
+                    map.put(CodeStyle.JSON, new JsonFlexHighlighter());
+                    map.put(CodeStyle.XML, new BaseFlexHighlighter<>(new XmlLexer()));
                     map.put(CodeStyle.HEADER, new HeaderHighlighter());
-                    map.put(CodeStyle.HTML, new HtmlHighlighter());
+                    map.put(CodeStyle.HTML, new BaseFlexHighlighter<>(new XHTMLLexer()));
                     map.put(CodeStyle.QUERY_FORM, new QueryHighlighter());
                     map.put(CodeStyle.MULTIPART_FORM, new MultipartHighlighter());
                     map.put(CodeStyle.HEX, new HexHighlighter());

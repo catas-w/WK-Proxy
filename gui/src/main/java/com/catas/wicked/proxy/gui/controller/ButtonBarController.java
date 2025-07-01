@@ -119,6 +119,7 @@ public class ButtonBarController implements Initializable {
                 clearBtn.setDisable(true);
             } else {
                 clearBtn.setDisable(false);
+                // TODO com.catas.wicked.proxy.gui.componet.button.UnderLabelWrapper cannot be cast to class org.kordamp.ikonli.javafx.FontIco
                 FontIcon icon = (FontIcon) clearBtn.getGraphic();
                 String targetIcon = newValue.intValue() == 0 ? "fas-broom": "fas-quidditch";
                 icon.setIconLiteral(targetIcon);
