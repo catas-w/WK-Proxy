@@ -24,7 +24,6 @@ public class BaseFlexHighlighter<T extends DefaultJFlexLexer> implements Highlig
     public StyleSpans<Collection<String>> computeHighlight(String text) {
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         try {
-            // Lexer lexer = new T(new StringReader(text));
             lexer.yyreset(new StringReader(text));
 
             int lastEnd = 0;

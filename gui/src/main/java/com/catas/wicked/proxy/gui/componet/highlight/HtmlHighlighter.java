@@ -4,6 +4,7 @@ import org.fxmisc.richtext.model.StyleSpans;
 
 import java.util.Collection;
 
+@Deprecated
 public class HtmlHighlighter extends XmlHighlighter {
 
     @Override

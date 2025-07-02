@@ -11,6 +11,7 @@ import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.worker.ScheduledManager;
 import com.catas.wicked.proxy.gui.componet.button.UnderLabelWrapper;
 import com.catas.wicked.proxy.gui.componet.button.WKToggleNode;
+import com.catas.wicked.proxy.gui.componet.button.WkButton;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.service.RequestMockService;
 import com.jfoenix.controls.JFXButton;
@@ -62,7 +63,7 @@ public class ButtonBarController implements Initializable {
     @FXML
     private WKToggleNode sysProxyBtn;
     @FXML
-    private JFXButton clearBtn;
+    private WkButton clearBtn;
     @FXML
     private MenuItem checkUpdateBtn;
 
@@ -119,10 +120,9 @@ public class ButtonBarController implements Initializable {
                 clearBtn.setDisable(true);
             } else {
                 clearBtn.setDisable(false);
-                // TODO com.catas.wicked.proxy.gui.componet.button.UnderLabelWrapper cannot be cast to class org.kordamp.ikonli.javafx.FontIco
-                FontIcon icon = (FontIcon) clearBtn.getGraphic();
+                System.out.println(11111);
                 String targetIcon = newValue.intValue() == 0 ? "fas-broom": "fas-quidditch";
-                icon.setIconLiteral(targetIcon);
+                clearBtn.setIconLiteral(targetIcon);
             }
         });
 

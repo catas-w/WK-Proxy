@@ -102,14 +102,6 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
     }
 
     public void replaceText(String text, boolean refreshStyle) {
-        if (text != null && text.length() > MAX_TEXT_LENGTH) {
-            log.info("Text is too long, truncate it.");
-            text = CommonUtils.truncate(text, MAX_TEXT_LENGTH);
-            appendixLen = text.length() - MAX_TEXT_LENGTH;
-        } else {
-            appendixLen = 0;
-        }
-
         this.originText = text;
         if (refreshStyle) {
             refreshStyle();
@@ -132,9 +124,19 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
         Highlighter<Collection<String>> highlighter = getCurrentHighlighter();
         assert highlighter != null;
 
+        // format text
         String formatText = originText;
         if (highlighter instanceof Formatter formatter) {
             formatText = formatter.format(originText, this.contentType);
+        }
+
+        // truncate text
+        if (formatText != null && formatText.length() > MAX_TEXT_LENGTH) {
+            log.info("formatText is too long, truncate it.");
+            formatText = CommonUtils.truncate(formatText, MAX_TEXT_LENGTH);
+            appendixLen = formatText.length() - MAX_TEXT_LENGTH;
+        } else {
+            appendixLen = 0;
         }
 
         if (!StringUtils.equals(formatText, codeArea.getText())) {
@@ -144,6 +146,7 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
             });
         }
 
+        // highlight
         Platform.runLater(() -> {
             StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(codeArea.getText());
             codeArea.setStyleSpans(0, styleSpans);

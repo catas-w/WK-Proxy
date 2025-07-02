@@ -228,7 +228,7 @@ public class SideBar extends HBox {
         public SideBarEventHandler(Button collapseBtn, SideBar sideBar) {
             this.collapseBtn = collapseBtn;
             this.sideBar = sideBar;
-            this.minWidth = collapseBtn.getMinWidth();
+            this.minWidth = collapseBtn.getMinWidth() - 2;
         }
 
         private void rotateIcon(FontIcon icon) {
