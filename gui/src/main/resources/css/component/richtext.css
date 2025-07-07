@@ -95,3 +95,12 @@
     -fx-font-family: "MiSans Demibold";
     /*-fx-text-fill: red;*/
 }
+
+
+.code-area-context.context-menu {
+    /*-fx-background-color: rgba(141, 50, 50, 0.95);*/
+    -fx-border-color: #bdbdbd;
+    -fx-border-width: 0.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6
+}

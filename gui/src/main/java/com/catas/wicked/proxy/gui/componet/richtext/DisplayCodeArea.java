@@ -115,6 +115,14 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
     }
 
     /**
+     * set contextMenu for codeArea
+     */
+    public void setContextMenu(CodeAreaContextMenu contextMenu) {
+        contextMenu.setCodeArea(this.codeArea);
+        this.codeArea.setContextMenu(contextMenu);
+    }
+
+    /**
      * force to update style
      */
     private void refreshStyle() {
@@ -169,14 +177,7 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
         this.getStyleClass().add(STYLE);
         codeArea.setEditable(false);
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.setContextMenu(new CodeAreaContextMenu(this.codeArea));
-
-        // this.visibleParagraphStyler =new VisibleParagraphStyler<>(codeArea, getCurrentHighlighter());
-        // codeArea.getVisibleParagraphs().addModificationObserver(visibleParagraphStyler);
-
-        // 改为手动刷新 code style
-        // this.textStyler = new TextStyler(codeArea, getCurrentHighlighter());
-        // codeArea.textProperty().addListener(textStyler);
+        // codeArea.setContextMenu(new CodeAreaContextMenu(this.codeArea));
 
         // auto-indent: insert previous line's indents on enter
         final Pattern whiteSpace = Pattern.compile( "^\\s+" );

@@ -3,7 +3,10 @@ package com.catas.wicked.proxy.gui.controller;
 import com.catas.wicked.common.bean.HeaderEntry;
 import com.catas.wicked.common.bean.RequestOverviewInfo;
 import com.catas.wicked.common.bean.PairEntry;
+import com.catas.wicked.common.bean.message.OutputMessage;
+import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.CodeStyle;
+import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.util.TableUtils;
 import com.catas.wicked.proxy.gui.componet.OverviewTreeTableCell;
 import com.catas.wicked.proxy.gui.componet.SelectableTableCell;
@@ -14,6 +17,7 @@ import com.catas.wicked.proxy.gui.componet.ZoomImageView;
 import com.catas.wicked.proxy.gui.componet.builder.PairTextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.builder.TextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.highlight.CodeStyleLabel;
+import com.catas.wicked.proxy.gui.componet.richtext.CodeAreaContextMenu;
 import com.catas.wicked.proxy.gui.componet.richtext.DisplayCodeArea;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTabPane;
@@ -142,6 +146,12 @@ public class DetailTabController implements Initializable {
     @Inject
     private RequestOverviewInfo requestOverviewInfo;
 
+    @Inject
+    private MessageQueue messageQueue;
+
+    @Inject
+    private ApplicationConfig applicationConfig;
+
     private final Map<SplitPane, double[]> dividerPositionMap = new HashMap<>();
 
     private final List<Tab> requestOnlyTabs = new ArrayList<>();
@@ -175,6 +185,10 @@ public class DetailTabController implements Initializable {
         initTableView(reqHeaderTable);
         initTableView(respHeaderTable);
         initOverviewTable(overviewTable);
+
+        // init codeArea context menu
+        reqPayloadCodeArea.setContextMenu(new CodeAreaContextMenu(messageQueue, applicationConfig, OutputMessage.Source.REQ_CONTENT));
+        respContentArea.setContextMenu(new CodeAreaContextMenu(messageQueue, applicationConfig, OutputMessage.Source.RESP_CONTENT));
     }
 
     public void setOverviewTableRoot(TreeItem<PairEntry> root) {

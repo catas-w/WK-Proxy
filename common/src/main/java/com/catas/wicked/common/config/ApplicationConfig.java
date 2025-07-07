@@ -4,6 +4,7 @@ import com.catas.wicked.common.bean.message.BaseMessage;
 import com.catas.wicked.common.bean.message.QuitMessage;
 import com.catas.wicked.common.bean.message.RetryMessage;
 import com.catas.wicked.common.executor.ScheduledThreadPoolService;
+import com.catas.wicked.common.factory.MessageSourceFactory;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.executor.ThreadPoolService;
 import com.catas.wicked.common.pipeline.Topic;
@@ -148,6 +149,7 @@ public class ApplicationConfig implements AutoCloseable {
             settings = new Settings();
         }
 
+        MessageSourceFactory.setCurrentLocal(settings.getLanguage().getLocale());
         observableConfig.setHandlingSSL(settings.isHandleSsl());
         observableConfig.setShowButtonLabel(settings.isShowButtonLabel());
         if (settings.isEnableSysProxyOnLaunch()) {

@@ -1,5 +1,6 @@
 package com.catas.wicked.proxy.gui.componet;
 
+import com.catas.wicked.common.factory.MessageSourceFactory;
 import com.catas.wicked.common.util.ImageUtils;
 import com.catas.wicked.common.webpdecoderjn.WebPDecoder;
 import javafx.beans.property.DoubleProperty;
@@ -157,9 +158,9 @@ public class ZoomImageView extends ScrollPane {
         public ImageViewContextMenu(ZoomImageView zoomImageView) {
             this.zoomImageView = zoomImageView;
 
-            MenuItem download = new MenuItem("Save as..");
-            MenuItem rotateClockwise = new MenuItem("Rotate -90°");
-            MenuItem rotateAntiClock = new MenuItem("Rotate +90°");
+            MenuItem download = new MenuItem(MessageSourceFactory.getMessage("context.menu.save"));
+            MenuItem rotateClockwise = new MenuItem(MessageSourceFactory.getMessage("context.menu.rotate") + "-90°");
+            MenuItem rotateAntiClock = new MenuItem(MessageSourceFactory.getMessage("context.menu.rotate") + "+90°");
             rotateClockwise.setOnAction(e -> {
                 zoomImageView.rotate(-90);
             });
