@@ -100,6 +100,7 @@ public class CodeAreaContextMenu extends ContextMenu {
             fileChooser.setTitle("Save as...");
             fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                new FileChooser.ExtensionFilter("Json Files", "*.json"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
             );
         }
@@ -122,14 +123,7 @@ public class CodeAreaContextMenu extends ContextMenu {
                     .source(source)
                     .targetFile(file)
                     .build();
-
             messageQueue.pushMsg(Topic.DATA_OUTPUT, outputMessage);
-            // try {
-            //     java.nio.file.Files.writeString(file.toPath(), content);
-            //     log.info("File saved successfully: {}", file.getAbsolutePath());
-            // } catch (Exception e) {
-            //     log.error("Error saving file: {}", e.getMessage());
-            // }
         }
     }
 

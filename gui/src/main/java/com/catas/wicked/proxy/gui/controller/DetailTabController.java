@@ -71,8 +71,6 @@ public class DetailTabController implements Initializable {
     @FXML
     public TableView<HeaderEntry> reqContentTable;
     @FXML
-    public ZoomImageView reqImageView;
-    @FXML
     public MessageLabel respHeaderMsgLabel;
     @FXML
     public MessageLabel reqHeaderMsgLabel;
@@ -102,6 +100,8 @@ public class DetailTabController implements Initializable {
     public Tab timingTab;
     @FXML
     private JFXComboBox<Labeled> respComboBox;
+    @FXML
+    public ZoomImageView reqImageView;
     @FXML
     private ZoomImageView respImageView;
     @FXML
@@ -189,6 +189,8 @@ public class DetailTabController implements Initializable {
         // init codeArea context menu
         reqPayloadCodeArea.setContextMenu(new CodeAreaContextMenu(messageQueue, applicationConfig, OutputMessage.Source.REQ_CONTENT));
         respContentArea.setContextMenu(new CodeAreaContextMenu(messageQueue, applicationConfig, OutputMessage.Source.RESP_CONTENT));
+        reqImageView.initContextMenu(messageQueue, applicationConfig, OutputMessage.Source.REQ_CONTENT);
+        respImageView.initContextMenu(messageQueue, applicationConfig, OutputMessage.Source.RESP_CONTENT);
     }
 
     public void setOverviewTableRoot(TreeItem<PairEntry> root) {
