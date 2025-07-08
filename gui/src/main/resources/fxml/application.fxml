@@ -14,17 +14,12 @@
         <URL value="@../css/app.css"/>
         <URL value="@../css/common-design.css"/>
     </stylesheets>
-    <!-- <HBox fx:id="customTitleBar" styleClass="custom-title-bar" VBox.vgrow="NEVER"> -->
-        <!-- <HBox fx:id="leftBar" styleClass="left-bar" prefWidth="200" HBox.hgrow="ALWAYS"/> -->
-        <!-- <HBox fx:id="rightBar" styleClass="right-bar" HBox.hgrow="NEVER"/> -->
-    <!-- </HBox> -->
     <HBox VBox.vgrow="ALWAYS">
         <fx:include source="button-bar.fxml"/>
         <SplitPane dividerPositions="0.3" focusTraversable="true"
                    style="-fx-background-color: TRANSPARENT;" HBox.hgrow="ALWAYS">
             <fx:include styleClass="request-view-pane" source="request-view-pane.fxml"/>
             <fx:include fx:id="detailTabPane" source="detail-tab-pane.fxml"/>
-            <!-- <fx:include source="detail-web-view.fxml"/> -->
         </SplitPane>
     </HBox>
     <HBox styleClass="bottom-bar" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
@@ -48,10 +43,13 @@
 
         <FontIcon fx:id="serverStatusIcon" iconLiteral="fas-play" styleClass="server-icon"/>
         <Label text="127.0.0.1:" styleClass="display-label"/>
-        <Label fx:id="serverStatusLabel" text="9966" styleClass="display-label">
+        <Label fx:id="serverStatusLabel" text="9966" styleClass="display-label" onMouseClicked="#displayProxySettings">
             <HBox.margin>
                 <Insets left="-2.0" right="10.0"/>
             </HBox.margin>
+            <tooltip>
+                <Tooltip text="%port-label.tooltip" showDelay="50ms" />
+            </tooltip>
         </Label>
     </HBox>
 </VBox>
