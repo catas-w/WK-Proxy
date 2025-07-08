@@ -197,6 +197,7 @@ public class ButtonBarController implements Initializable {
         }
         settingController.getSettingTabPane().getSelectionModel().select(settingController.getProxySettingTab());
         displaySettingPage();
+        settingController.focusOnPortField();
     }
 
     public void displayAboutPage() {
