@@ -40,10 +40,6 @@ public class MessageLabel extends Label {
         AnchorPane.setTopAnchor(this, 0.0);
         AnchorPane.setBottomAnchor(this, 0.0);
         this.setAlignment(Pos.CENTER);
-
-        this.setTextFill(Paint.valueOf("#9f9f9f"));
-        this.setFont(Font.font("System", 18));
-        this.setBackground(Background.fill(Paint.valueOf("#ffffff")));
     }
 
 }

@@ -4,7 +4,7 @@ import com.catas.wicked.common.bean.message.OutputMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.factory.MessageSourceFactory;
 import com.catas.wicked.common.pipeline.MessageQueue;
-import com.catas.wicked.common.pipeline.Topic;
+import com.catas.wicked.proxy.event.OutputFileEventHandler;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -73,15 +73,9 @@ public class CodeAreaContextMenu extends ContextMenu {
             }
         });
 
-
-
-
         MenuItem saveItem = new MenuItem(MessageSourceFactory.getMessage("context.menu.save"));
         saveItem.disableProperty().bind(saveItemDisabled);
-        saveItem.setOnAction(event -> {
-            System.out.println("Save action triggered");
-            save();
-        });
+        saveItem.setOnAction(new OutputFileEventHandler<>(source, messageQueue, appConfig, () -> getOwnerNode().getScene().getWindow()));
 
         getItems().addAll(selectAllItem, copyItem, saveItem);
         getStyleClass().add(STYLE);
@@ -92,39 +86,6 @@ public class CodeAreaContextMenu extends ContextMenu {
         codeArea.selectedTextProperty().addListener((observable, oldValue, newValue) -> {
             copyItem.setDisable(StringUtils.isEmpty(newValue));
         });
-    }
-
-    private void save() {
-        if (fileChooser == null) {
-            fileChooser = new FileChooser();
-            fileChooser.setTitle("Save as...");
-            fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
-                new FileChooser.ExtensionFilter("Json Files", "*.json"),
-                new FileChooser.ExtensionFilter("All Files", "*.*")
-            );
-        }
-
-        CodeArea codeArea = (CodeArea) getOwnerNode();
-        String content = codeArea.getText();
-
-        if (StringUtils.isBlank(content)) {
-            log.warn("No content to save.");
-            return;
-        }
-
-        // fileChooser.setInitialFileName("code.txt");
-        var file = fileChooser.showSaveDialog(codeArea.getScene().getWindow());
-        if (file != null) {
-            // Create and send the output message
-            log.info("Saving content to file: {}", file.getAbsolutePath());
-            OutputMessage outputMessage = OutputMessage.builder()
-                    .requestId(appConfig.getObservableConfig().getCurrentRequestId())
-                    .source(source)
-                    .targetFile(file)
-                    .build();
-            messageQueue.pushMsg(Topic.DATA_OUTPUT, outputMessage);
-        }
     }
 
     /**

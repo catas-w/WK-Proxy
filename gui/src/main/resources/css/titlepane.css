@@ -381,3 +381,21 @@
     /*-fx-font-size: 13px;*/
     -fx-min-height: 13px;
 }
+
+
+/******* message label *********/
+.message-label {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #9f9f9f;
+    /*-fx-font-family: "System";*/
+    -fx-font-family: "System";
+    /*-fx-font-weight: bold;*/
+    -fx-font-size: 18;
+}
+.output-msg-label {
+    -fx-text-fill: #26b1b6;
+    -fx-background-color: TRANSPARENT;
+}
+.output-msg-label:hover {
+    -fx-opacity: 0.6;
+}

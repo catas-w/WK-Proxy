@@ -8,6 +8,7 @@ import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.CodeStyle;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.util.TableUtils;
+import com.catas.wicked.proxy.event.OutputFileEventHandler;
 import com.catas.wicked.proxy.gui.componet.OverviewTreeTableCell;
 import com.catas.wicked.proxy.gui.componet.SelectableTableCell;
 import com.catas.wicked.proxy.gui.componet.MessageLabel;
@@ -32,6 +33,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -49,8 +51,11 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.skin.TableHeaderRow;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -79,7 +84,11 @@ public class DetailTabController implements Initializable {
     @FXML
     public MessageLabel respContentMsgLabel;
     @FXML
+    public MessageLabel respOutputMsgLabel;
+    @FXML
     public MessageLabel timingMsgLabel;
+    @FXML
+    public HBox respMsgLabelBox;
     @FXML
     public JFXComboBox<Labeled> reqComboBox;
     @FXML
@@ -191,6 +200,9 @@ public class DetailTabController implements Initializable {
         respContentArea.setContextMenu(new CodeAreaContextMenu(messageQueue, applicationConfig, OutputMessage.Source.RESP_CONTENT));
         reqImageView.initContextMenu(messageQueue, applicationConfig, OutputMessage.Source.REQ_CONTENT);
         respImageView.initContextMenu(messageQueue, applicationConfig, OutputMessage.Source.RESP_CONTENT);
+
+        // init output message label
+        initOutputMsgLabel(respOutputMsgLabel);
     }
 
     public void setOverviewTableRoot(TreeItem<PairEntry> root) {
@@ -204,6 +216,19 @@ public class DetailTabController implements Initializable {
 
     public void refreshOverviewTable() {
         overviewTable.refresh();
+    }
+
+    public void initOutputMsgLabel(MessageLabel label) {
+        // save to file msgLabel
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save as...");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
+        OutputFileEventHandler<Event> handler = new OutputFileEventHandler<>(OutputMessage.Source.RESP_CONTENT, messageQueue, applicationConfig,
+                () -> respOutputMsgLabel.getScene().getWindow());
+        handler.setFileChooser(fileChooser);
+        label.setOnMouseClicked(handler);
     }
 
     @SuppressWarnings("unchecked")

@@ -4,11 +4,12 @@ import com.catas.wicked.common.bean.message.OutputMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.factory.MessageSourceFactory;
 import com.catas.wicked.common.pipeline.MessageQueue;
-import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.util.ImageUtils;
 import com.catas.wicked.common.webpdecoderjn.WebPDecoder;
+import com.catas.wicked.proxy.event.OutputFileEventHandler;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
@@ -21,7 +22,6 @@ import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -194,26 +194,18 @@ public class ZoomImageView extends ScrollPane {
                     new FileChooser.ExtensionFilter("All Files", "*.*")
             );
 
-            download.setOnAction(e -> {
+            OutputFileEventHandler<ActionEvent> eventHandler = new OutputFileEventHandler<>(source, messageQueue, appConfig,
+                    () -> zoomImageView.getScene().getWindow());
+            eventHandler.setFileChooser(fileChooser);
+            eventHandler.setInitialFileNameSupplier(() -> {
                 String extension = ".jpg";
                 if (!StringUtils.isBlank(zoomImageView.mimeType)) {
                     String[] split = zoomImageView.mimeType.split("/");
-                    extension = split.length > 1 ? "." + split[1]: "";
+                    extension = split.length > 1 ? "." + split[1] : "";
                 }
-                fileChooser.setInitialFileName("image" + extension);
-
-                File file = fileChooser.showSaveDialog(getOwnerWindow());
-                if (file == null) {
-                    return;
-                }
-                log.info("saving image to file: {}", file.getName());
-                OutputMessage outputMessage = OutputMessage.builder()
-                        .requestId(appConfig.getObservableConfig().getCurrentRequestId())
-                        .source(source)
-                        .targetFile(file)
-                        .build();
-                messageQueue.pushMsg(Topic.DATA_OUTPUT, outputMessage);
+                return "image" + extension;
             });
+            download.setOnAction(eventHandler);
             getItems().addAll(rotateClockwise, rotateAntiClock, download);
         }
     }

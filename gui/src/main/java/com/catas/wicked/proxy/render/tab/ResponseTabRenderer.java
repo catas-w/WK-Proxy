@@ -38,7 +38,8 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
     public void render(RenderMessage renderMsg) {
         // System.out.println("-- render response --");
         detailTabController.getRespHeaderMsgLabel().setVisible(renderMsg.isEmpty());
-        detailTabController.getRespContentMsgLabel().setVisible(renderMsg.isEmpty());
+        detailTabController.getRespMsgLabelBox().setVisible(renderMsg.isEmpty());
+        detailTabController.getRespOutputMsgLabel().setVisible(false);
         if (renderMsg.isEmpty()) {
             setEmptyMsgLabel(detailTabController.getRespHeaderMsgLabel());
             setEmptyMsgLabel(detailTabController.getRespContentMsgLabel());
@@ -55,15 +56,14 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
 
     public void displayResponse(RequestMessage request) {
         if (request == null) {
-            setMsgLabel(detailTabController.getRespHeaderMsgLabel(), "Empty");
-            setMsgLabel(detailTabController.getRespContentMsgLabel(), "Empty");
+            setMsgLabel(detailTabController.getRespHeaderMsgLabel(), "Empty", detailTabController.getRespMsgLabelBox());
+            setMsgLabel(detailTabController.getRespContentMsgLabel(), "Empty", detailTabController.getRespMsgLabelBox());
             return;
         }
         ResponseMessage response = request.getResponse();
         if (response == null) {
-            // detailTabController.getRespContentArea().replaceText("<Pending...>");
-            setMsgLabel(detailTabController.getRespHeaderMsgLabel(), "Pending...");
-            setMsgLabel(detailTabController.getRespContentMsgLabel(), "Pending...");
+            setMsgLabel(detailTabController.getRespHeaderMsgLabel(), "Pending...", detailTabController.getRespMsgLabelBox());
+            setMsgLabel(detailTabController.getRespContentMsgLabel(), "Pending...", detailTabController.getRespMsgLabelBox());
             return;
         }
         // headers
@@ -74,7 +74,7 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
         // content
         byte[] parsedContent = WebUtils.parseContent(response.getHeaders(), response.getContent());
         if (response.isOversize()) {
-            setMsgLabel(detailTabController.getRespContentMsgLabel(), OVERSIZE_MSG);
+            setMsgLabel(detailTabController.getRespContentMsgLabel(), OVERSIZE_MSG, detailTabController.getRespMsgLabelBox());
             return;
         }
         ContentType contentType = WebUtils.getContentType(headers);
@@ -82,9 +82,9 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
         detailTabController.getRespSideBar().setStrategy(strategy);
 
         if (parsedContent.length == 0) {
-            detailTabController.getRespContentMsgLabel().setVisible(true);
-            setMsgLabel(detailTabController.getRespContentMsgLabel(), "Empty");
-            // detailTabController.getRespDataPane().setExpanded(false);
+            // detailTabController.getRespContentMsgLabel().setVisible(true);
+            detailTabController.getRespMsgLabelBox().setVisible(true);
+            setMsgLabel(detailTabController.getRespContentMsgLabel(), "Empty", detailTabController.getRespMsgLabelBox());
             return;
         }
 
@@ -96,7 +96,9 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
             try {
                 detailTabController.getRespImageView().setImage(inputStream, mimeType);
             } catch (Exception e) {
-                setMsgLabel(detailTabController.getRespContentMsgLabel(), "Image load error, type: " + mimeType);
+                detailTabController.getRespOutputMsgLabel().setVisible(true);
+                setMsgLabel(detailTabController.getRespContentMsgLabel(),
+                        "Image load error: " + mimeType + ", ", detailTabController.getRespMsgLabelBox());
             }
         } else {
             detailTabController.getRespContentArea().setVisible(true);
