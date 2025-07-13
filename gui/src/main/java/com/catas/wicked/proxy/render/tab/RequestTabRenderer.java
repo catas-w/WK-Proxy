@@ -49,6 +49,8 @@ public class RequestTabRenderer extends AbstractTabRenderer {
         // System.out.println("-- render request --");
         detailTabController.getReqHeaderMsgLabel().setVisible(renderMsg.isEmpty());
         detailTabController.getReqContentMsgLabel().setVisible(renderMsg.isEmpty());
+        detailTabController.getReqMsgLabelBox().setVisible(renderMsg.isEmpty());
+        detailTabController.getReqOutputMsgLabel().setVisible(false);
         if (renderMsg.isEmpty()) {
             setEmptyMsgLabel(detailTabController.getReqHeaderMsgLabel());
             setEmptyMsgLabel(detailTabController.getReqContentMsgLabel());
@@ -82,7 +84,7 @@ public class RequestTabRenderer extends AbstractTabRenderer {
         // display request content
         // display oversize msg
         if (request.isOversize()) {
-            setMsgLabel(detailTabController.getReqContentMsgLabel(), OVERSIZE_MSG);
+            setMsgLabel(detailTabController.getReqContentMsgLabel(), OVERSIZE_MSG, detailTabController.getReqMsgLabelBox());
             return;
         }
 
@@ -169,8 +171,10 @@ public class RequestTabRenderer extends AbstractTabRenderer {
                 String mimeType = contentType.getMimeType();
                 detailTabController.getReqImageView().setImage(inputStream, mimeType);
             } catch (Exception e) {
+                detailTabController.getReqMsgLabelBox().setVisible(true);
+                detailTabController.getReqOutputMsgLabel().setVisible(true);
                 setMsgLabel(detailTabController.getReqContentMsgLabel(),
-                        "Image load error, type: " + contentType.getMimeType());
+                        "Image load error: " + contentType.getMimeType() + ", ", detailTabController.getReqMsgLabelBox());
             }
         }
     }

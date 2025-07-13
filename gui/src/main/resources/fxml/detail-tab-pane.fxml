@@ -78,7 +78,12 @@
                                     </AnchorPane>
                                 </Tab>
                             </JFXTabPane>
-                            <MessageLabel fx:id="reqContentMsgLabel" visible="true" text="Empty"/>
+                            <HBox fx:id="reqMsgLabelBox" style="-fx-background-color: #ffffff"
+                                  AnchorPane.leftAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+                                <MessageLabel fx:id="reqContentMsgLabel" text="Empty" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT"/>
+                                <MessageLabel fx:id="reqOutputMsgLabel" styleClass="output-msg-label" text="save to file"
+                                              HBox.hgrow="ALWAYS" alignment="CENTER_LEFT"/>
+                            </HBox>
                         </AnchorPane>
                     </TitledPane>
                 </SplitPane>

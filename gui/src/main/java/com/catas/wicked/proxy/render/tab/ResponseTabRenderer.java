@@ -9,6 +9,7 @@ import com.catas.wicked.proxy.gui.componet.SideBar;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.ehcache.Cache;
@@ -38,6 +39,7 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
     public void render(RenderMessage renderMsg) {
         // System.out.println("-- render response --");
         detailTabController.getRespHeaderMsgLabel().setVisible(renderMsg.isEmpty());
+        // detailTabController.getRespContentMsgLabel().setVisible(renderMsg.isEmpty());
         detailTabController.getRespMsgLabelBox().setVisible(renderMsg.isEmpty());
         detailTabController.getRespOutputMsgLabel().setVisible(false);
         if (renderMsg.isEmpty()) {
@@ -96,7 +98,10 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
             try {
                 detailTabController.getRespImageView().setImage(inputStream, mimeType);
             } catch (Exception e) {
-                detailTabController.getRespOutputMsgLabel().setVisible(true);
+                Platform.runLater(() -> {
+                    detailTabController.getRespMsgLabelBox().setVisible(true);
+                    detailTabController.getRespOutputMsgLabel().setVisible(true);
+                });
                 setMsgLabel(detailTabController.getRespContentMsgLabel(),
                         "Image load error: " + mimeType + ", ", detailTabController.getRespMsgLabelBox());
             }

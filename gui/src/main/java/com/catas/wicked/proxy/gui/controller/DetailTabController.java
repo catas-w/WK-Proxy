@@ -82,11 +82,15 @@ public class DetailTabController implements Initializable {
     @FXML
     public MessageLabel reqContentMsgLabel;
     @FXML
+    public MessageLabel reqOutputMsgLabel;
+    @FXML
     public MessageLabel respContentMsgLabel;
     @FXML
     public MessageLabel respOutputMsgLabel;
     @FXML
     public MessageLabel timingMsgLabel;
+    @FXML
+    public HBox reqMsgLabelBox;
     @FXML
     public HBox respMsgLabelBox;
     @FXML
@@ -202,7 +206,8 @@ public class DetailTabController implements Initializable {
         respImageView.initContextMenu(messageQueue, applicationConfig, OutputMessage.Source.RESP_CONTENT);
 
         // init output message label
-        initOutputMsgLabel(respOutputMsgLabel);
+        initOutputMsgLabel(reqOutputMsgLabel, OutputMessage.Source.REQ_CONTENT);
+        initOutputMsgLabel(respOutputMsgLabel, OutputMessage.Source.RESP_CONTENT);
     }
 
     public void setOverviewTableRoot(TreeItem<PairEntry> root) {
@@ -218,14 +223,14 @@ public class DetailTabController implements Initializable {
         overviewTable.refresh();
     }
 
-    public void initOutputMsgLabel(MessageLabel label) {
+    public void initOutputMsgLabel(MessageLabel label, OutputMessage.Source source) {
         // save to file msgLabel
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save as...");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
-        OutputFileEventHandler<Event> handler = new OutputFileEventHandler<>(OutputMessage.Source.RESP_CONTENT, messageQueue, applicationConfig,
+        OutputFileEventHandler<Event> handler = new OutputFileEventHandler<>(source, messageQueue, applicationConfig,
                 () -> respOutputMsgLabel.getScene().getWindow());
         handler.setFileChooser(fileChooser);
         label.setOnMouseClicked(handler);

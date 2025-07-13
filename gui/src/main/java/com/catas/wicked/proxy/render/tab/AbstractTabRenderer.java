@@ -34,7 +34,6 @@ public abstract class AbstractTabRenderer implements TabRenderer {
         setMsgLabel(msgLabel, "Empty");
     }
 
-    // TODO
     protected void setMsgLabel(MessageLabel msgLabel, String msg) {
         Platform.runLater(() -> {
             msgLabel.setText(msg);

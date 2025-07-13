@@ -79,17 +79,21 @@ public class ZoomImageView extends ScrollPane {
     }
 
     public void setImage(InputStream inputStream, String mimeType) throws IOException {
+        // reset imageView
+        this.imageView.setImage(null);
+        Image currentImage = null;
+
         // webp format
         if (StringUtils.equals(mimeType, "image/webp")) {
             WebPDecoder.SimpleImageInfo imageInfo = WebPDecoder.decode2(inputStream.readAllBytes());
             this.image = ImageUtils.getJFXImage(imageInfo);
         } else {
-            this.image = new Image(inputStream);
+            currentImage = new Image(inputStream);
         }
-        if (this.image == null || this.image.isError()) {
+        if (currentImage == null || currentImage.isError()) {
             throw new RuntimeException("Image load error.");
         }
-        // this.image = new Image(inputStream);
+        this.image = currentImage;
         this.mimeType = mimeType;
         this.imageData = inputStream;
         this.imageData.reset();
