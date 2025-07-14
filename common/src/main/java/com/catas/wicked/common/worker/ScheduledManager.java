@@ -3,6 +3,7 @@ package com.catas.wicked.common.worker;
 import com.catas.wicked.common.executor.ScheduledThreadPoolService;
 import com.catas.wicked.common.executor.ThreadPoolService;
 import com.catas.wicked.common.worker.worker.CertCheckWorker;
+import com.catas.wicked.common.worker.worker.FilePurgeWorker;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -37,12 +38,17 @@ public class ScheduledManager {
     @Named("certCheckWorker")
     private CertCheckWorker certCheckWorker;
 
+    @Inject
+    @Named("filePurgeWorker")
+    private FilePurgeWorker filePurgeWorker;
+
     @PostConstruct
     public void init() {
         // register default workers
         register(SYS_PROXY_WORKER, systemProxyWorker);
         register(CHECK_UPDATE_WORKER, updateCheckWorker);
         register(CHECK_CERT_WORKER, certCheckWorker);
+        register("filePurgeWorker", filePurgeWorker);
     }
 
     /**
