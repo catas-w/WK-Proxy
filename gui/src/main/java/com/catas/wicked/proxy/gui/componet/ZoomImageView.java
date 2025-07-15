@@ -86,7 +86,7 @@ public class ZoomImageView extends ScrollPane {
         // webp format
         if (StringUtils.equals(mimeType, "image/webp")) {
             WebPDecoder.SimpleImageInfo imageInfo = WebPDecoder.decode2(inputStream.readAllBytes());
-            this.image = ImageUtils.getJFXImage(imageInfo);
+            currentImage = ImageUtils.getJFXImage(imageInfo);
         } else {
             currentImage = new Image(inputStream);
         }

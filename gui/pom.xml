@@ -194,7 +194,7 @@
                         <packageType>dmg</packageType>
                         <description>Wk Proxy Http Proxy Debug Tool</description>
                         <vendor>Catas W</vendor>
-                        <version>1.0.7</version>
+                        <version>${wk.version}</version>
                         <!-- macOS -->
                         <!-- <macAppStore></macAppStore> -->
                         <!-- <macSigningUserName></macSigningUserName> -->

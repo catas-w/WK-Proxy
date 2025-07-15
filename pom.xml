@@ -58,7 +58,7 @@
         <jakarta.version>2.0.1</jakarta.version>
         <ehcache.version>3.10.8</ehcache.version>
         <richtextfx.version>0.11.5</richtextfx.version>
-        <wk.version>1.0.7</wk.version>
+        <wk.version>1.0.8</wk.version>
     </properties>
 
     <dependencies>

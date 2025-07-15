@@ -120,7 +120,6 @@ public class ButtonBarController implements Initializable {
                 clearBtn.setDisable(true);
             } else {
                 clearBtn.setDisable(false);
-                System.out.println(11111);
                 String targetIcon = newValue.intValue() == 0 ? "fas-broom": "fas-quidditch";
                 clearBtn.setIconLiteral(targetIcon);
             }

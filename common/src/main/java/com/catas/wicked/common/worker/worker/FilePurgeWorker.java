@@ -36,7 +36,7 @@ public class FilePurgeWorker extends AbstractScheduledWorker {
 
     @Override
     public long getInitDelay() {
-        return 5 * 1000;
+        return 60 * 1000;
     }
 
     private void purgeTempFiles(String pattern) {
