@@ -213,6 +213,7 @@
   "queryAllDeclaredConstructors":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getConnectTimeout","parameterTypes":[] }, 
     {"name":"getExternalProxy","parameterTypes":[] }, 
     {"name":"getLanguage","parameterTypes":[] }, 
     {"name":"getMaxContentSize","parameterTypes":[] }, 
@@ -230,6 +231,7 @@
     {"name":"isShowButtonLabel","parameterTypes":[] }, 
     {"name":"isSystemProxy","parameterTypes":[] }, 
     {"name":"isThrottle","parameterTypes":[] }, 
+    {"name":"setConnectTimeout","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setEnableExProxy","parameterTypes":["boolean"] }, 
     {"name":"setEnableSysProxyOnLaunch","parameterTypes":["boolean"] }, 
     {"name":"setExternalProxy","parameterTypes":["com.catas.wicked.common.config.ExternalProxyConfig"] }, 

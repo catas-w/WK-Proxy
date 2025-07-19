@@ -152,6 +152,7 @@
     {
       "name":"com/sun/glass/ui/win/themes",
       "locales":[
+        "", 
         "de", 
         "en", 
         "es", 
