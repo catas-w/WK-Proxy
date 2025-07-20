@@ -13,6 +13,7 @@
 <?import com.catas.wicked.proxy.gui.componet.highlight.CodeStyleButton?>
 
 <?import com.catas.wicked.proxy.gui.componet.TimeSplitPane?>
+<?import javafx.geometry.Insets?>
 <VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.catas.wicked.proxy.gui.controller.DetailTabController">
     <stylesheets>
         <URL value="@../css/tabpane.css" />
@@ -80,9 +81,11 @@
                             </JFXTabPane>
                             <HBox fx:id="reqMsgLabelBox" style="-fx-background-color: #ffffff"
                                   AnchorPane.leftAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
-                                <MessageLabel fx:id="reqContentMsgLabel" text="Empty" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT"/>
+                                <MessageLabel fx:id="reqContentMsgLabel" text="Empty" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
+                                    <HBox.margin><Insets left="80.0"/></HBox.margin>
+                                </MessageLabel>
                                 <MessageLabel fx:id="reqOutputMsgLabel" styleClass="output-msg-label" text="save to file"
-                                              HBox.hgrow="ALWAYS" alignment="CENTER_LEFT"/>
+                                              HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" visible="false"/>
                             </HBox>
                         </AnchorPane>
                     </TitledPane>
@@ -113,9 +116,11 @@
                             </SideBar>
                             <HBox fx:id="respMsgLabelBox" style="-fx-background-color: #ffffff"
                                     AnchorPane.leftAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
-                                <MessageLabel fx:id="respContentMsgLabel" text="Empty" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT"/>
+                                <MessageLabel fx:id="respContentMsgLabel" text="Empty" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
+                                    <HBox.margin><Insets left="80.0"/></HBox.margin>
+                                </MessageLabel>
                                 <MessageLabel fx:id="respOutputMsgLabel" styleClass="output-msg-label" text="save to file"
-                                              HBox.hgrow="ALWAYS" alignment="CENTER_LEFT"/>
+                                              HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" visible="false"/>
                             </HBox>
                         </AnchorPane>
                     </TitledPane>

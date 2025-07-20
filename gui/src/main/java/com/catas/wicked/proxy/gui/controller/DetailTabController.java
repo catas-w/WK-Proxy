@@ -179,6 +179,7 @@ public class DetailTabController implements Initializable {
         dividerPositionMap.put(respSplitPane, respSplitPane.getDividerPositions().clone());
 
         requestOnlyTabs.addAll(List.of(requestTab, respTab, timingTab));
+        hideRequestOnlyTabs();
 
         // init titlePane collapse
         addTitleListener(reqHeaderPane, reqSplitPane);
