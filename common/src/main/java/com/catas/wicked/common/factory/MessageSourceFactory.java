@@ -15,18 +15,22 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import static java.util.Locale.ENGLISH;
+
 @Factory
 public class MessageSourceFactory {
 
-    @Bean
-    @Singleton
-    public ResourceBundleMessageSource messageSource() {
-        return new ResourceBundleMessageSource("lang.messages");
+    private static final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource("lang.messages");
+
+    private static Locale currentLocal = ENGLISH;
+
+    public static String getMessage(String msg) {
+        return messageSource.getMessage(msg, "", currentLocal);
     }
 
     @Bean
     @Singleton
-    public ResourceMessageProvider messageProvider(ResourceBundleMessageSource messageSource, ApplicationConfig appConfig) {
+    public ResourceMessageProvider messageProvider(ApplicationConfig appConfig) {
         return code -> {
             if (StringUtils.isBlank(code)) {
                 return null;
@@ -62,5 +66,13 @@ public class MessageSourceFactory {
             }
             return null;
         }
+    }
+
+    public static Locale getCurrentLocal() {
+        return currentLocal;
+    }
+
+    public static void setCurrentLocal(Locale currentLocal) {
+        MessageSourceFactory.currentLocal = currentLocal;
     }
 }

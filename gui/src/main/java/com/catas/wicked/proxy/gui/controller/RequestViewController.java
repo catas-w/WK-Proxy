@@ -307,16 +307,15 @@ public class RequestViewController implements Initializable {
     public void focus() {
         // scroll treeView
         int selectedTreeItem = reqTreeView.getSelectionModel().getSelectedIndex();
-        reqTreeView.scrollTo(selectedTreeItem);
+        if (selectedTreeItem >= 0 && selectedTreeItem < reqTreeView.getExpandedItemCount()) {
+            reqTreeView.scrollTo(selectedTreeItem);
+        }
 
         // scroll listView
         int selectedListItem = reqListView.getSelectionModel().getSelectedIndex();
-        reqListView.scrollTo(selectedListItem);
-
-        // focus style
-        // reqTreeView.pseudoClassStateChanged(FocusPseudoClass, true);
-        // reqListView.pseudoClassStateChanged(FocusPseudoClass, true);
-
+        if (selectedListItem >= 0 && selectedListItem < reqListView.getItems().size()) {
+            reqListView.scrollTo(selectedListItem);
+        }
     }
 
     public void updateFocusPseudoClass(Boolean state) {

@@ -11,6 +11,7 @@ import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.worker.ScheduledManager;
 import com.catas.wicked.proxy.gui.componet.button.UnderLabelWrapper;
 import com.catas.wicked.proxy.gui.componet.button.WKToggleNode;
+import com.catas.wicked.proxy.gui.componet.button.WkButton;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.service.RequestMockService;
 import com.jfoenix.controls.JFXButton;
@@ -62,7 +63,7 @@ public class ButtonBarController implements Initializable {
     @FXML
     private WKToggleNode sysProxyBtn;
     @FXML
-    private JFXButton clearBtn;
+    private WkButton clearBtn;
     @FXML
     private MenuItem checkUpdateBtn;
 
@@ -119,9 +120,8 @@ public class ButtonBarController implements Initializable {
                 clearBtn.setDisable(true);
             } else {
                 clearBtn.setDisable(false);
-                FontIcon icon = (FontIcon) clearBtn.getGraphic();
                 String targetIcon = newValue.intValue() == 0 ? "fas-broom": "fas-quidditch";
-                icon.setIconLiteral(targetIcon);
+                clearBtn.setIconLiteral(targetIcon);
             }
         });
 
@@ -196,6 +196,7 @@ public class ButtonBarController implements Initializable {
         }
         settingController.getSettingTabPane().getSelectionModel().select(settingController.getProxySettingTab());
         displaySettingPage();
+        settingController.focusOnPortField();
     }
 
     public void displayAboutPage() {

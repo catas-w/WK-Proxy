@@ -18,7 +18,7 @@ public interface ScheduledWorker extends Runnable {
     boolean invoke();
 
     /**
-     * time delay for auto execution
+     * time delay for auto execution, milliseconds
      */
     long getDelay();
 

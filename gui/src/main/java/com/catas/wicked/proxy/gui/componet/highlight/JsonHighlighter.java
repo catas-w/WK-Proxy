@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
  * JSON highlighter by regular expression
  */
 @Slf4j
+@Deprecated
 public class JsonHighlighter implements Highlighter<Collection<String>>, Formatter {
 
     private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";

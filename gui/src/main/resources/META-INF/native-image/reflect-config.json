@@ -213,6 +213,7 @@
   "queryAllDeclaredConstructors":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getConnectTimeout","parameterTypes":[] }, 
     {"name":"getExternalProxy","parameterTypes":[] }, 
     {"name":"getLanguage","parameterTypes":[] }, 
     {"name":"getMaxContentSize","parameterTypes":[] }, 
@@ -230,6 +231,7 @@
     {"name":"isShowButtonLabel","parameterTypes":[] }, 
     {"name":"isSystemProxy","parameterTypes":[] }, 
     {"name":"isThrottle","parameterTypes":[] }, 
+    {"name":"setConnectTimeout","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setEnableExProxy","parameterTypes":["boolean"] }, 
     {"name":"setEnableSysProxyOnLaunch","parameterTypes":["boolean"] }, 
     {"name":"setExternalProxy","parameterTypes":["com.catas.wicked.common.config.ExternalProxyConfig"] }, 
@@ -317,6 +319,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.catas.wicked.common.factory.$MessageSourceFactory$MessageProvider0$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.catas.wicked.common.factory.$MessageSourceFactory$MessageProvider1$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -372,12 +378,17 @@
   "name":"com.catas.wicked.common.worker.ScheduledManager",
   "fields":[
     {"name":"certCheckWorker"}, 
+    {"name":"filePurgeWorker"}, 
     {"name":"systemProxyWorker"}, 
     {"name":"updateCheckWorker"}
   ]
 },
 {
   "name":"com.catas.wicked.common.worker.worker.$CertCheckWorker$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.common.worker.worker.$FilePurgeWorker$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -416,6 +427,7 @@
   "fields":[
     {"name":"appController"}, 
     {"name":"applicationConfig"}, 
+    {"name":"dataOutputService"}, 
     {"name":"loaderFactory"}, 
     {"name":"messageService"}, 
     {"name":"proxyServer"}, 
@@ -575,7 +587,9 @@
 },
 {
   "name":"com.catas.wicked.proxy.gui.controller.AppController",
-  "allDeclaredFields":true
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"displayProxySettings","parameterTypes":["javafx.scene.input.MouseEvent"] }]
 },
 {
   "name":"com.catas.wicked.proxy.gui.controller.AppUpdateController",
@@ -701,6 +715,10 @@
   ]
 },
 {
+  "name":"com.catas.wicked.proxy.service.$DataOutputService$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.catas.wicked.proxy.service.$FeServiceImpl$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -715,6 +733,13 @@
 {
   "name":"com.catas.wicked.proxy.service.$RequestViewService$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.DataOutputService",
+  "fields":[
+    {"name":"messageQueue"}, 
+    {"name":"requestCache"}
+  ]
 },
 {
   "name":"com.catas.wicked.proxy.service.RequestMockService",
@@ -1787,6 +1812,7 @@
     {"name":"setEffect","parameterTypes":["javafx.scene.effect.Effect"] }, 
     {"name":"setFocusTraversable","parameterTypes":["boolean"] }, 
     {"name":"setId","parameterTypes":["java.lang.String"] }, 
+    {"name":"setOnMouseClicked","parameterTypes":["javafx.event.EventHandler"] }, 
     {"name":"setStyle","parameterTypes":["java.lang.String"] }, 
     {"name":"setVisible","parameterTypes":["boolean"] }
   ]
@@ -1862,6 +1888,7 @@
   "methods":[
     {"name":"getGraphic","parameterTypes":[] }, 
     {"name":"getText","parameterTypes":[] }, 
+    {"name":"setAlignment","parameterTypes":["javafx.geometry.Pos"] }, 
     {"name":"setContentDisplay","parameterTypes":["javafx.scene.control.ContentDisplay"] }, 
     {"name":"setFont","parameterTypes":["javafx.scene.text.Font"] }, 
     {"name":"setGraphic","parameterTypes":["javafx.scene.Node"] }, 

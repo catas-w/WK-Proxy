@@ -3,8 +3,12 @@ package com.catas.wicked.proxy.gui.controller;
 import com.catas.wicked.common.bean.HeaderEntry;
 import com.catas.wicked.common.bean.RequestOverviewInfo;
 import com.catas.wicked.common.bean.PairEntry;
+import com.catas.wicked.common.bean.message.OutputMessage;
+import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.CodeStyle;
+import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.util.TableUtils;
+import com.catas.wicked.proxy.event.OutputFileEventHandler;
 import com.catas.wicked.proxy.gui.componet.OverviewTreeTableCell;
 import com.catas.wicked.proxy.gui.componet.SelectableTableCell;
 import com.catas.wicked.proxy.gui.componet.MessageLabel;
@@ -14,6 +18,7 @@ import com.catas.wicked.proxy.gui.componet.ZoomImageView;
 import com.catas.wicked.proxy.gui.componet.builder.PairTextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.builder.TextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.highlight.CodeStyleLabel;
+import com.catas.wicked.proxy.gui.componet.richtext.CodeAreaContextMenu;
 import com.catas.wicked.proxy.gui.componet.richtext.DisplayCodeArea;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTabPane;
@@ -28,6 +33,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -45,8 +51,11 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.skin.TableHeaderRow;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -67,17 +76,23 @@ public class DetailTabController implements Initializable {
     @FXML
     public TableView<HeaderEntry> reqContentTable;
     @FXML
-    public ZoomImageView reqImageView;
-    @FXML
     public MessageLabel respHeaderMsgLabel;
     @FXML
     public MessageLabel reqHeaderMsgLabel;
     @FXML
     public MessageLabel reqContentMsgLabel;
     @FXML
+    public MessageLabel reqOutputMsgLabel;
+    @FXML
     public MessageLabel respContentMsgLabel;
     @FXML
+    public MessageLabel respOutputMsgLabel;
+    @FXML
     public MessageLabel timingMsgLabel;
+    @FXML
+    public HBox reqMsgLabelBox;
+    @FXML
+    public HBox respMsgLabelBox;
     @FXML
     public JFXComboBox<Labeled> reqComboBox;
     @FXML
@@ -98,6 +113,8 @@ public class DetailTabController implements Initializable {
     public Tab timingTab;
     @FXML
     private JFXComboBox<Labeled> respComboBox;
+    @FXML
+    public ZoomImageView reqImageView;
     @FXML
     private ZoomImageView respImageView;
     @FXML
@@ -142,6 +159,12 @@ public class DetailTabController implements Initializable {
     @Inject
     private RequestOverviewInfo requestOverviewInfo;
 
+    @Inject
+    private MessageQueue messageQueue;
+
+    @Inject
+    private ApplicationConfig applicationConfig;
+
     private final Map<SplitPane, double[]> dividerPositionMap = new HashMap<>();
 
     private final List<Tab> requestOnlyTabs = new ArrayList<>();
@@ -156,6 +179,7 @@ public class DetailTabController implements Initializable {
         dividerPositionMap.put(respSplitPane, respSplitPane.getDividerPositions().clone());
 
         requestOnlyTabs.addAll(List.of(requestTab, respTab, timingTab));
+        hideRequestOnlyTabs();
 
         // init titlePane collapse
         addTitleListener(reqHeaderPane, reqSplitPane);
@@ -175,6 +199,16 @@ public class DetailTabController implements Initializable {
         initTableView(reqHeaderTable);
         initTableView(respHeaderTable);
         initOverviewTable(overviewTable);
+
+        // init codeArea context menu
+        reqPayloadCodeArea.setContextMenu(new CodeAreaContextMenu(messageQueue, applicationConfig, OutputMessage.Source.REQ_CONTENT));
+        respContentArea.setContextMenu(new CodeAreaContextMenu(messageQueue, applicationConfig, OutputMessage.Source.RESP_CONTENT));
+        reqImageView.initContextMenu(messageQueue, applicationConfig, OutputMessage.Source.REQ_CONTENT);
+        respImageView.initContextMenu(messageQueue, applicationConfig, OutputMessage.Source.RESP_CONTENT);
+
+        // init output message label
+        initOutputMsgLabel(reqOutputMsgLabel, OutputMessage.Source.REQ_CONTENT);
+        initOutputMsgLabel(respOutputMsgLabel, OutputMessage.Source.RESP_CONTENT);
     }
 
     public void setOverviewTableRoot(TreeItem<PairEntry> root) {
@@ -188,6 +222,19 @@ public class DetailTabController implements Initializable {
 
     public void refreshOverviewTable() {
         overviewTable.refresh();
+    }
+
+    public void initOutputMsgLabel(MessageLabel label, OutputMessage.Source source) {
+        // save to file msgLabel
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save as...");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
+        OutputFileEventHandler<Event> handler = new OutputFileEventHandler<>(source, messageQueue, applicationConfig,
+                () -> respOutputMsgLabel.getScene().getWindow());
+        handler.setFileChooser(fileChooser);
+        label.setOnMouseClicked(handler);
     }
 
     @SuppressWarnings("unchecked")

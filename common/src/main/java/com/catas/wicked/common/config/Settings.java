@@ -55,6 +55,9 @@ public class Settings {
     @JsonDeserialize(using = SafeJsonListDeserializer.class)
     private List<String> sysProxyBypassList;
 
+    @JsonDeserialize(using = SafeIntegerDeserializer.class)
+    private Integer connectTimeout = 60;
+
     /**
      * Ssl settings
      */

@@ -8,6 +8,7 @@ import com.catas.wicked.proxy.render.TabRenderer;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
 import org.apache.http.entity.ContentType;
 
 import java.util.Map;
@@ -37,6 +38,14 @@ public abstract class AbstractTabRenderer implements TabRenderer {
         Platform.runLater(() -> {
             msgLabel.setText(msg);
             msgLabel.setVisible(true);
+        });
+    }
+
+    protected void setMsgLabel(MessageLabel msgLabel, String msg, HBox labelBox) {
+        Platform.runLater(() -> {
+            msgLabel.setText(msg);
+            msgLabel.setVisible(true);
+            labelBox.setVisible(true);
         });
     }
 

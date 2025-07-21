@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -51,14 +52,6 @@ public class AppController implements Initializable {
                 return;
             }
             refreshServerStatusDisplay(newValue);
-        });
-
-        serverStatusLabel.setOnMouseClicked(event -> {
-            // if (!serverStatusLabel.getStyleClass().contains("error")) {
-            //     return;
-            // }
-
-            buttonBarController.displayProxySettingPage();
         });
 
         // cert status
@@ -118,5 +111,9 @@ public class AppController implements Initializable {
         String label = isError ? portLabel + appConfig.getSettings().getPort() + msg:
                 "" + appConfig.getSettings().getPort();
         Platform.runLater(() -> serverStatusLabel.setText(label));
+    }
+
+    public void displayProxySettings(MouseEvent event) {
+        buttonBarController.displayProxySettingPage();
     }
 }

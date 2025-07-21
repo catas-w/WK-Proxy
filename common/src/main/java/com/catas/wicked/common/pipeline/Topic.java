@@ -5,5 +5,7 @@ public enum Topic {
     UPDATE_MSG,
     RENDER,
     UPDATE_SETTING_FILE,
-    SET_SYS_PROXY;
+    SET_SYS_PROXY,
+    DATA_OUTPUT,
+    ;
 }

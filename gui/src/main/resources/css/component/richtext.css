@@ -31,7 +31,13 @@
 }
 .keyword {
     -fx-fill: #8f2614;
-    /*-fx-font-weight: bold;*/
+}
+.keyword2 {
+    -fx-fill: #005eb9;
+    -fx-font-weight: bold;
+}
+.key {
+    -fx-fill: #be4d0f;
 }
 .number {
     -fx-fill: #128c27;
@@ -39,7 +45,8 @@
 .bool {
     -fx-fill: #005eb9;
 }
-.string {
+.string,
+.string2 {
     -fx-fill: #676767;
 }
 .brace {
@@ -53,6 +60,30 @@
     -fx-font-family: "MiSans Demibold";
 }
 
+.identifier {
+    -fx-fill: #876b96;
+}
+
+.comment,
+.comment2 {
+    -fx-fill: #7d7d7d;
+}
+
+.type,
+.type2,
+.type3 {
+    -fx-fill: #0067b2;
+}
+
+.operator {
+    -fx-fill: #0067b2;
+}
+
+.default,
+.delimiter {
+    -fx-fill: #646a70;
+}
+
 
 /******** line number *********/
 .lineno {
@@ -60,7 +91,16 @@
     -fx-font-size: 10px;
     -fx-background-color: white;
     -fx-padding: 0.0em, 0.2em, 0.0em, 0.0em;
-    -fx-text-fill: #226c5c;
+    -fx-text-fill: #a4a4a4;
     -fx-font-family: "MiSans Demibold";
     /*-fx-text-fill: red;*/
+}
+
+
+.code-area-context.context-menu {
+    /*-fx-background-color: rgba(141, 50, 50, 0.95);*/
+    -fx-border-color: #bdbdbd;
+    -fx-border-width: 0.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6
 }

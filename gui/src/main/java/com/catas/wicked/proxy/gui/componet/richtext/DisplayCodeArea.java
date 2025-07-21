@@ -40,11 +40,9 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
 
     private static final String STYLE = "display-code-area";
 
-    public static final int MAX_TEXT_LENGTH = 20000;
+    public static final int MAX_TEXT_LENGTH = 50000;
 
-    private VisibleParagraphStyler<Collection<String>, String, Collection<String>> visibleParagraphStyler;
-
-    private CodeArea codeArea;
+    private final CodeArea codeArea;
 
     private final StringProperty codeStyle = new SimpleStringProperty(CodeStyle.PLAIN.name());
 
@@ -68,6 +66,7 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
     }
 
     public void setWrapText(boolean wrapText) {
+        // TODO performance
         codeArea.setWrapText(wrapText);
     }
 
@@ -103,14 +102,6 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
     }
 
     public void replaceText(String text, boolean refreshStyle) {
-        if (text != null && text.length() > MAX_TEXT_LENGTH) {
-            log.info("Text is too long, truncate it.");
-            text = CommonUtils.truncate(text, MAX_TEXT_LENGTH);
-            appendixLen = text.length() - MAX_TEXT_LENGTH;
-        } else {
-            appendixLen = 0;
-        }
-
         this.originText = text;
         if (refreshStyle) {
             refreshStyle();
@@ -124,6 +115,14 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
     }
 
     /**
+     * set contextMenu for codeArea
+     */
+    public void setContextMenu(CodeAreaContextMenu contextMenu) {
+        contextMenu.setCodeArea(this.codeArea);
+        this.codeArea.setContextMenu(contextMenu);
+    }
+
+    /**
      * force to update style
      */
     private void refreshStyle() {
@@ -133,9 +132,19 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
         Highlighter<Collection<String>> highlighter = getCurrentHighlighter();
         assert highlighter != null;
 
+        // format text
         String formatText = originText;
         if (highlighter instanceof Formatter formatter) {
             formatText = formatter.format(originText, this.contentType);
+        }
+
+        // truncate text
+        if (formatText != null && formatText.length() > MAX_TEXT_LENGTH) {
+            log.info("formatText is too long, truncate it.");
+            formatText = CommonUtils.truncate(formatText, MAX_TEXT_LENGTH);
+            appendixLen = formatText.length() - MAX_TEXT_LENGTH;
+        } else {
+            appendixLen = 0;
         }
 
         if (!StringUtils.equals(formatText, codeArea.getText())) {
@@ -145,6 +154,7 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
             });
         }
 
+        // highlight
         Platform.runLater(() -> {
             StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(codeArea.getText());
             codeArea.setStyleSpans(0, styleSpans);
@@ -167,14 +177,7 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
         this.getStyleClass().add(STYLE);
         codeArea.setEditable(false);
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.setContextMenu(new CodeAreaContextMenu(this.codeArea));
-
-        // this.visibleParagraphStyler =new VisibleParagraphStyler<>(codeArea, getCurrentHighlighter());
-        // codeArea.getVisibleParagraphs().addModificationObserver(visibleParagraphStyler);
-
-        // 改为手动刷新 code style
-        // this.textStyler = new TextStyler(codeArea, getCurrentHighlighter());
-        // codeArea.textProperty().addListener(textStyler);
+        // codeArea.setContextMenu(new CodeAreaContextMenu(this.codeArea));
 
         // auto-indent: insert previous line's indents on enter
         final Pattern whiteSpace = Pattern.compile( "^\\s+" );

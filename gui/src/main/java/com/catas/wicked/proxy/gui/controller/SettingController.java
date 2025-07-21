@@ -299,4 +299,10 @@ public class SettingController implements Initializable {
     public void setImportCertBtnStatus(boolean disabled) {
         importCertBtn.setDisable(disabled);
     }
+
+    public void focusOnPortField() {
+        // focus and select all
+        portField.requestFocus();
+        portField.selectAll();
+    }
 }

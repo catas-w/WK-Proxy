@@ -194,7 +194,7 @@
                         <packageType>dmg</packageType>
                         <description>Wk Proxy Http Proxy Debug Tool</description>
                         <vendor>Catas W</vendor>
-                        <version>1.0.7</version>
+                        <version>${wk.version}</version>
                         <!-- macOS -->
                         <!-- <macAppStore></macAppStore> -->
                         <!-- <macSigningUserName></macSigningUserName> -->
@@ -207,6 +207,22 @@
                         <!-- <providedProvisioningProfile></providedProvisioningProfile> -->
                         <skipSigning>true</skipSigning>
                     </releaseConfiguration>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>de.jflex</groupId>
+                <artifactId>maven-jflex-plugin</artifactId>
+                <version>1.4.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputDirectory>src/main/java</outputDirectory>
                 </configuration>
             </plugin>
 

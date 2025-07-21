@@ -16,6 +16,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -117,6 +118,7 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
 
             bootstrap.group(appConfig.getProxyLoopGroup())
                     .channel(NioSocketChannel.class)
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, appConfig.getSettings().getConnectTimeout() * 1000)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .handler(new ClientChannelInitializer(appConfig, messageQueue, requestInfo,
                             strategyManager, proxyHandler, ctx.channel()));
