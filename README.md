@@ -6,23 +6,23 @@ WK Proxy
 
 [English](https://github.com/catas-w/WK-Proxy/blob/master/README.md) | [中文](https://github.com/catas-w/WK-Proxy/blob/master/README_zh-CN.md)
 
-WK Proxy is an open-source desktop tool for HTTP proxying and packet capturing, available on Windows and macOS platforms. It is designed to provide developers and testers with a simple yet powerful network debugging experience.
+WK Proxy is an open-source desktop HTTP/HTTPS proxy and packet capture tool, available for both Windows and macOS platforms. It is designed to provide developers and testers with a clean and efficient network debugging experience.
+
 ## Features
-- Native compilation with GraalVM & Java
-Leverages GraalVM for outstanding performance and cross-platform compatibility.
-- Comprehensive HTTP/HTTPS proxy and packet capture
-Allows interception and inspection of HTTP/HTTPS requests and responses.
-- Customizable root certificates
-Enables easy certificate installation, supports HTTPS decryption, and ensures secure operations.
-- WebSocket proxy support
-Suited for debugging real-time communication scenarios.
-- Request throttling and replay capabilities
-Simulates various network conditions and facilitates reliable testing of requests.
+- Natively compiled with GraalVM & Java, offering excellent performance and cross-platform support.
+- HTTP/HTTPS proxy and traffic inspection, with support for intercepting and analyzing both requests and responses.
+- Automatically generated root certificates with one-click installation for seamless and secure HTTPS decryption.
+- WebSocket proxy support, suitable for real-time communication scenarios.
+- Request throttling and replay, enabling simulation of various network conditions and testing request reliability.
+
+## Coming Soon
+- Custom request interception and modification
+- Modify request content using Python scripts
 
 ## Screenshots
-![image](screenshots/03.png)
-![image](screenshots/01.png)
-![image](screenshots/04.png)
+![image](screenshots/001.png)
+![image](screenshots/002.png)
+![image](screenshots/004.png)
 
 ## Installation
 ### Install the binary package

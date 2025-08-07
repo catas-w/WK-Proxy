@@ -6,21 +6,25 @@ WK Proxy
 
 [English](https://github.com/catas-w/WK-Proxy/blob/master/README.md) | [中文](https://github.com/catas-w/WK-Proxy/blob/master/README_zh-CN.md)
 
-WK Proxy 是一款开源的桌面端 HTTP 代理与抓包工具，支持 Windows 和 macOS 平台，致力于为开发者和测试人员提供简单高效的网络调试体验。
+WK Proxy 是一款开源的桌面端 HTTP/HTTPS 网络代理与抓包工具，支持 Windows 和 macOS 平台，致力于为开发者与测试人员提供简洁高效的网络调试体验
 
-## Features
-- 基于 GraalVM & Java 的原生编译, 提供卓越的性能与跨平台支持.
-- HTTP/HTTPS 代理与抓包,支持拦截、查看 HTTP/HTTPS 请求与响应数据.
-- 自定义根证书, 证书一键安装, 支持 HTTPS 解析，安全可靠.
-- WebSocket 代理支持 适配实时通信场景.
-- 请求限流与重发 方便模拟不同网络环境与测试请求的可靠性.
+## 功能特点
+- 基于 GraalVM 的 Java 原生编译，具备出色的性能表现与跨平台支持
+- 支持 HTTP/HTTPS 代理与流量抓取，可拦截并解析请求与响应数据
+- 自动生成根证书，一键安装，安全便捷地实现 HTTPS 解密
+- 支持 WebSocket 代理，适配实时通信场景
+- 请求限流与重发功能，便于模拟不同网络环境，提升测试覆盖与可靠性
 
-## Screenshots
-![image](screenshots/03.png)
-![image](screenshots/01.png)
-![image](screenshots/04.png)
+## 即将支持
+- 自定义请求的拦截与修改
+- 使用 Python 脚本动态修改请求内容
 
-## Installation
+## 预览截图
+![image](screenshots/001.png)
+![image](screenshots/002.png)
+![image](screenshots/004.png)
+
+## 安装
 ### 安装二进制包
 1.	从 [Github Release](https://github.com/catas-w/WK-Proxy/releases/latest) 下载适配平台的可执行文件。
 2.	按需配置运行环境（如必要的依赖项）。
