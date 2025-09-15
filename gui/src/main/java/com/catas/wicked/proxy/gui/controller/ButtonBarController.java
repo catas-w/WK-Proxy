@@ -238,6 +238,8 @@ public class ButtonBarController implements Initializable {
         settingPage = new Dialog<>();
         settingPage.setTitle(this.settingDialogTitle);
         settingPage.initModality(Modality.APPLICATION_MODAL);
+        //指定父窗口，子窗口会显示父窗口相同的图标
+        settingPage.initOwner(recordBtn.getScene().getWindow());
         DialogPane dialogPane = settingPage.getDialogPane();
         dialogPane.setContent(settingScene);
         dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/dialog.css")).toExternalForm());
