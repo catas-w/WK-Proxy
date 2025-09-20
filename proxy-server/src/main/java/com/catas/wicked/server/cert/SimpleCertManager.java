@@ -122,7 +122,9 @@ public class SimpleCertManager implements CertManager {
         } catch (Exception e) {
             log.error("Error in initAppCertConfig", e);
             if (certConfig.isDefault()) {
-                AlertUtils.alertLater(Alert.AlertType.ERROR, "Certificate init error!");
+                AlertUtils.alertLater(Alert.AlertType.ERROR,
+                        resourceMessageProvider.getMessage("alert.type.error"),
+                        resourceMessageProvider.getMessage("cert-init-error.alert"));
             } else {
                 appConfig.getSettings().setSelectedCert(getDefaultCert().getId());
                 appConfig.updateSettingsAsync();
@@ -358,7 +360,7 @@ public class SimpleCertManager implements CertManager {
     public void installCert(String certId) throws Exception {
         String certPEM = getCertPEM(certId);
         if (StringUtils.isBlank(certId)) {
-            throw new RuntimeException("Cannot Parse Certificate!");
+            throw new RuntimeException(resourceMessageProvider.getMessage("cert-cannot-parse.alert"));
         }
 
         File tempFile = SystemUtils.getStoragePath("temp_" + IdUtil.getSimpleId() + ".crt").toFile();
@@ -370,7 +372,7 @@ public class SimpleCertManager implements CertManager {
         log.info("Trying to install {}", tempFile.getAbsoluteFile());
         boolean res = certInstallProvider.install(tempFile.getAbsolutePath());
         if (!res) {
-            throw new RuntimeException("Failed To Install Certificate!");
+            throw new RuntimeException(resourceMessageProvider.getMessage("cert-install-failed.alert"));
         }
     }
 

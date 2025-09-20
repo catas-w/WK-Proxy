@@ -212,9 +212,12 @@ public class SslSettingService extends AbstractSettingService {
                 CertificateConfig config = certManager.importCert(certData.fetchData(), priKeyData.fetchData());
                 log.info("Imported config success: {}", config.getName());
                 initValues(appConfig);
+                throw new RuntimeException("test1111");
             } catch (Exception e) {
                 log.error("Error in importing certificate.", e);
-                AlertUtils.alertLater(Alert.AlertType.WARNING, e.getMessage());
+                AlertUtils.alertLater(Alert.AlertType.WARNING,
+                        resourceMessageProvider.getMessage("alert.type.warning"),
+                        e.getMessage());
             }
         });
     }
@@ -297,7 +300,7 @@ public class SslSettingService extends AbstractSettingService {
      * @param certId
      */
     private void installCert(String certId) {
-        boolean confirmed = AlertUtils.confirm("Warning",
+        boolean confirmed = AlertUtils.confirm(resourceMessageProvider.getMessage("alert.type.warning"),
                 resourceMessageProvider.getMessage("cert-install-confirm.label"));
         if (!confirmed) {
             return;
@@ -308,7 +311,9 @@ public class SslSettingService extends AbstractSettingService {
             initValues(appConfig);
         } catch (Exception e) {
             log.error("Error in installing certificate.", e);
-            AlertUtils.alertLater(Alert.AlertType.WARNING, "Error: " + e.getMessage());
+            AlertUtils.alertLater(Alert.AlertType.ERROR,
+                    resourceMessageProvider.getMessage("alert.type.warning"),
+                    resourceMessageProvider.getMessage("alert.msg.error") + " " + e.getMessage());
         }
     }
 
@@ -316,7 +321,8 @@ public class SslSettingService extends AbstractSettingService {
      * delete cert event
      */
     private void deleteCert(String certId) {
-        boolean confirmed = AlertUtils.confirm("Warning", resourceMessageProvider.getMessage("cert-delete-confirm.label"));
+        boolean confirmed = AlertUtils.confirm(resourceMessageProvider.getMessage("alert.type.warning"),
+                resourceMessageProvider.getMessage("cert-delete-confirm.label"));
         if (!confirmed) {
             return;
         }
