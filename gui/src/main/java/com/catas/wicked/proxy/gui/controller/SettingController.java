@@ -4,6 +4,7 @@ import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.LanguagePreset;
 import com.catas.wicked.common.constant.ProxyProtocol;
 import com.catas.wicked.common.constant.ThrottlePreset;
+import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.worker.ScheduledManager;
 import com.catas.wicked.proxy.gui.componet.CertSelectComponent;
@@ -110,7 +111,8 @@ public class SettingController implements Initializable {
     private ScheduledManager scheduledManager;
     @Inject
     private List<SettingService> settingServiceList;
-
+    @Inject
+    private ResourceMessageProvider resourceMessageProvider;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -194,7 +196,8 @@ public class SettingController implements Initializable {
         }
 
         if (!isValidated) {
-            AlertUtils.alertWarning("Illegal settings!");
+            AlertUtils.alertWarning(resourceMessageProvider.getMessage("alert.type.warning"),
+                    resourceMessageProvider.getMessage("alert.msg.illegal-settings"));
             return;
         }
 
