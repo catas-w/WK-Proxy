@@ -70,6 +70,9 @@ public class AppUpdateController implements Initializable {
     @Inject
     private DesktopProvider desktopProvider;
 
+    @Inject
+    private ResourceMessageProvider resourceMessageProvider;
+
     public static final String RELEASE_URL = "https://github.com/catas-w/WK-Proxy/releases/latest";
 
     @Override
@@ -127,28 +130,31 @@ public class AppUpdateController implements Initializable {
             String appVersion = "Wk-Proxy " + version;
             if (CommonUtils.compareVersions(appConfig.getAppVersion(), version) >= 0) {
                 AlertUtils.alertLater(Alert.AlertType.INFORMATION,
+                        resourceMessageProvider.getMessage("alert.type.information"),
                         appVersion + " " + messageProvider.getMessage("check-update.latest-version.label"));
             } else {
                 String info = messageProvider.getMessage("check-update.new-release.label") + " " + version;
                 Platform.runLater(() -> {
-                    displayDownloadDialog(Alert.AlertType.INFORMATION, info, res.getRight());
+                    displayDownloadDialog(Alert.AlertType.INFORMATION, info, res.getRight(),
+                            resourceMessageProvider.getMessage("alert.type.information"));
                 });
             }
         } catch (Exception e) {
             log.error("Error in fetching update information.", e);
             String msg = messageProvider.getMessage("check-update.error.label");
             Platform.runLater(() -> {
-                displayDownloadDialog(Alert.AlertType.WARNING, msg, RELEASE_URL);
+                displayDownloadDialog(Alert.AlertType.WARNING, msg, RELEASE_URL,
+                        resourceMessageProvider.getMessage("alert.type.information"));
             });
         } finally {
             closeAlert();
         }
     }
 
-    private void displayDownloadDialog(Alert.AlertType alertType, String info, String url) {
+    private void displayDownloadDialog(Alert.AlertType alertType, String info, String url, String title) {
         // Create the Alert
         Alert alert = new Alert(alertType);
-        alert.setTitle("");
+        alert.setTitle(title == null ? alertType.name() :  title);
         alert.setHeaderText(null);
         alert.setContentText(null);
 

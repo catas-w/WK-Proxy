@@ -54,6 +54,7 @@ public class WickedProxyApplication implements ApplicationDelegate {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Locale locale = applicationConfig.getSettings().getLanguage().getLocale();
+        Locale.setDefault(locale);
         ResourceBundle bundle = ResourceBundle.getBundle("lang.messages", locale);
 
         FXMLLoader loader = loaderFactory.get(getClass().getResource("/fxml/application.fxml"));

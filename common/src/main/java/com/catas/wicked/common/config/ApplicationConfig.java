@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.micronaut.context.i18n.ResourceBundleMessageSource;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.ssl.SslContext;
@@ -24,6 +25,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import javafx.scene.control.Alert;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +36,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -169,7 +172,11 @@ public class ApplicationConfig implements AutoCloseable {
             objectMapper.writeValue(file, settings);
         } catch (Exception e) {
             log.error("Error updating local config.", e);
-            AlertUtils.alertWarning("Error in updating settings.");
+            Locale locale = this.getSettings().getLanguage().getLocale();
+            ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource("lang.messages");
+            AlertUtils.alertLater(Alert.AlertType.WARNING,
+                    messageSource.getMessage("alert.type.warning", "", locale),
+                    messageSource.getMessage("alert.msg.settings-update-error", "", locale));
         }
     }
 

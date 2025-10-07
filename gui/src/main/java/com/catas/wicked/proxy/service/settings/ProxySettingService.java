@@ -3,8 +3,8 @@ package com.catas.wicked.proxy.service.settings;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.Settings;
 import com.catas.wicked.common.constant.ThrottlePreset;
-import com.catas.wicked.common.constant.WorkerConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
+import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.proxy.gui.componet.EnumLabel;
@@ -21,6 +21,8 @@ import java.util.Objects;
 @Singleton
 public class ProxySettingService extends AbstractSettingService{
 
+    @Inject
+    private ResourceMessageProvider resourceMessageProvider;
 
     @Inject
     public void setApplicationConfig(ApplicationConfig applicationConfig) {
@@ -52,7 +54,12 @@ public class ProxySettingService extends AbstractSettingService{
             if (oldPort != newPort) {
                 // check pot available
                 if (!WebUtils.isPortAvailable(newPort)) {
-                    AlertUtils.alertWarning("Port " + newPort + " is unavailable");
+                    AlertUtils.alertWarning(resourceMessageProvider.getMessage("alert.type.warning"),
+                            String.format("%s %d %s",
+                                    resourceMessageProvider.getMessage("port.label"),
+                                    newPort,
+                                    resourceMessageProvider.getMessage("alert.msg.unavailable")
+                            ));
                     portField.setText(oldPort + "");
                     return;
                 }
@@ -63,7 +70,12 @@ public class ProxySettingService extends AbstractSettingService{
                     refreshAppSettings();
                 } catch (Exception e) {
                     log.error("Error in restarting proxy server.", e);
-                    AlertUtils.alertWarning("Port " + newPort + " is unavailable");
+                    AlertUtils.alertWarning(resourceMessageProvider.getMessage("alert.type.warning"),
+                            String.format("%s %d %s",
+                                    resourceMessageProvider.getMessage("port.label"),
+                                    newPort,
+                                    resourceMessageProvider.getMessage("alert.msg.unavailable")
+                            ));
                     settings.setPort(oldPort);
                     settingController.getProxyServer().start();
                 }

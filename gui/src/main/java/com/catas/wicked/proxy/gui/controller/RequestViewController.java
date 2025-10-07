@@ -337,7 +337,7 @@ public class RequestViewController implements Initializable {
             } else {
                 msg = resourceMessageProvider.getMessage("resend.encrypted.label");
             }
-            AlertUtils.alertWarning(msg);
+            AlertUtils.alertWarning(resourceMessageProvider.getMessage("alert.type.warning"), msg);
             return;
         }
 

@@ -29,13 +29,13 @@ public class AlertUtils {
         return alert.showAndWait();
     }
 
-    public static void alertWarning(String msg) {
-        alert(Alert.AlertType.WARNING, null, msg);
+    public static void alertWarning(String title, String msg) {
+        alert(Alert.AlertType.WARNING, title, msg);
     }
 
-    public static void alertLater(Alert.AlertType type, String msg) {
+    public static void alertLater(Alert.AlertType type, String title, String msg) {
         Platform.runLater(() -> {
-            alert(type, null, msg);
+            alert(type, title, msg);
         });
     }
 
