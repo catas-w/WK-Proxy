@@ -9,7 +9,7 @@ export GRAALVM_HOME='/Library/Java/JavaVirtualMachines/graalvm-svm-java17-darwin
 export JAVA_HOME=$GRAALVM_HOME;
 echo $JAVA_HOME;
 
-cp src/main/resources/graal/darwin/* ./src/main/resources/META-INF.native-image/
+#cp src/main/resources/graal/darwin/* ./src/main/resources/META-INF.native-image/
 
 mvn clean;
 #mvn gluonfx:runagent

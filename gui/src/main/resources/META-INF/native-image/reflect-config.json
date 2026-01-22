@@ -788,6 +788,10 @@
   "fields":[{"name":"applicationConfig"}]
 },
 {
+  "name":"com.catas.wicked.proxy.service.settings.ProxySettingService",
+  "fields":[{"name":"resourceMessageProvider"}]
+},
+{
   "name":"com.catas.wicked.proxy.service.settings.SslSettingService",
   "fields":[{"name":"certManager"}]
 },
