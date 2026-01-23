@@ -2,8 +2,9 @@
 
 chcp 65001
 cd D:\PY_Projects\Wicked-Proxy\gui
+cd D:\code\WK-Proxy\gui
 
-D:\vs2019\VC\Auxiliary\Build\vcvars64.bat
+D:\visualStudio\product\VC\Auxiliary\Build\vcvars64.bat
 
 @REM set GRAALVM_HOME=C:\Program Files\Java\graalvm-java23-windows-amd64-gluon-23+25.1-dev
 set GRAALVM_HOME=C:\Program Files\Java\graalvm-svm-java17-windows-gluon-22.1.0.1-Final
