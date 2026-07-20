@@ -134,7 +134,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skip>true</skip>
+                    <skip>false</skip>
+                    <includes>
+                        <include>**/*UnitTest.java</include>
+                        <include>**/StrategyManagerTest.java</include>
+                    </includes>
                     <classpathDependencyExcludes>org.graalvm.nativeimage</classpathDependencyExcludes>
                     <argLine>-ea</argLine>
                 </configuration>
@@ -182,5 +186,25 @@
             </testResource>
         </testResources>
     </build>
+
+    <profiles>
+        <profile>
+            <id>environment-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

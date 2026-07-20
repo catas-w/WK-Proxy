@@ -137,13 +137,9 @@ public class ServerPostRecorder extends ChannelDuplexHandler {
 
         try {
             if (content != null && content.isReadable()) {
-                if (content.hasArray()) {
-                    requestMessage.setBody(content.array());
-                } else {
-                    byte[] bytes = new byte[content.readableBytes()];
-                    content.getBytes(content.readerIndex(), bytes);
-                    requestMessage.setBody(bytes);
-                }
+                byte[] bytes = new byte[content.readableBytes()];
+                content.getBytes(content.readerIndex(), bytes);
+                requestMessage.setBody(bytes);
             }
         } catch (Exception e) {
             log.error("Error recording request content.", e);

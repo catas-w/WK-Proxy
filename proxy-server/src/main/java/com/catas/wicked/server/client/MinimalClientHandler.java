@@ -4,8 +4,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -43,27 +45,53 @@ public class MinimalClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        super.channelRead(ctx, msg);
         if (msg instanceof FullHttpResponse fullHttpResponse) {
-            response = fullHttpResponse;
-            synchronized (client) {
-                if (client.responsePromise != null) {
-                    client.responsePromise.setSuccess(response);
-                }
-            }
-            client.close();
+            response = fullHttpResponse.copy();
+            ReferenceCountUtil.release(msg);
+            completeResponse();
         } else if (msg instanceof HttpResponse httpResponse){
-            // System.out.println("Receiving: " + httpResponse);
-            response = new DefaultFullHttpResponse(httpResponse.protocolVersion(), httpResponse.status());
-        } else if (msg instanceof LastHttpContent) {
-            // notify to get response
-            synchronized (client) {
-                if (client.responsePromise != null) {
-                    client.responsePromise.setSuccess(response);
-                }
+            DefaultFullHttpResponse copiedResponse = new DefaultFullHttpResponse(
+                    httpResponse.protocolVersion(), httpResponse.status());
+            copiedResponse.headers().set(httpResponse.headers());
+            response = copiedResponse;
+        } else if (msg instanceof HttpContent httpContent) {
+            if (response instanceof FullHttpResponse fullResponse && httpContent.content().isReadable()) {
+                fullResponse.content().writeBytes(httpContent.content(), httpContent.content().readerIndex(),
+                        httpContent.content().readableBytes());
             }
-            client.close();
+            if (response instanceof FullHttpResponse fullResponse && msg instanceof LastHttpContent lastContent) {
+                fullResponse.trailingHeaders().set(lastContent.trailingHeaders());
+            }
+            boolean last = msg instanceof LastHttpContent;
+            ReferenceCountUtil.release(msg);
+            if (last) {
+                completeResponse();
+            }
+        } else {
+            ReferenceCountUtil.release(msg);
         }
+    }
+
+    private void completeResponse() {
+        synchronized (client) {
+            if (client.responsePromise != null && !client.responsePromise.isDone()) {
+                client.responsePromise.setSuccess(response);
+            } else if (response instanceof FullHttpResponse fullResponse) {
+                fullResponse.release();
+            }
+        }
+        client.close();
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        if (response instanceof FullHttpResponse fullResponse
+                && (client.responsePromise == null || !client.responsePromise.isSuccess())) {
+            if (fullResponse.refCnt() > 0) {
+                fullResponse.release();
+            }
+        }
+        super.handlerRemoved(ctx);
     }
 
     @Override
