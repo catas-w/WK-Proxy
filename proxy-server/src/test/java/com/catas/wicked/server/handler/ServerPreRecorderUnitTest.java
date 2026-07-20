@@ -70,6 +70,20 @@ public class ServerPreRecorderUnitTest {
         channel.finishAndReleaseAll();
     }
 
+    @Test
+    public void forwardsWhenRequestInfoIsUnavailable() {
+        CapturingMessageQueue queue = new CapturingMessageQueue();
+        EmbeddedChannel channel = new EmbeddedChannel(new ServerPreRecorder(null, queue));
+        DefaultHttpRequest request = new DefaultHttpRequest(
+                HttpVersion.HTTP_1_1, HttpMethod.GET, "http://example.test/health");
+
+        Assert.assertTrue(channel.writeInbound(request));
+        Assert.assertSame(request, channel.readInbound());
+        Assert.assertTrue(queue.getMessages().isEmpty());
+
+        channel.finishAndReleaseAll();
+    }
+
     private ProxyRequestInfo requestInfo(boolean recording) {
         ProxyRequestInfo requestInfo = new ProxyRequestInfo();
         requestInfo.setRequestId("request-1");

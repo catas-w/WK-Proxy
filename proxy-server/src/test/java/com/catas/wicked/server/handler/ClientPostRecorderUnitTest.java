@@ -58,6 +58,21 @@ public class ClientPostRecorderUnitTest {
         channel.finishAndReleaseAll();
     }
 
+    @Test
+    public void forwardsWhenRequestInfoIsUnavailable() {
+        CapturingMessageQueue queue = new CapturingMessageQueue();
+        EmbeddedChannel channel = new EmbeddedChannel(new ClientPostRecorder(null, queue));
+        DefaultFullHttpResponse response = new DefaultFullHttpResponse(
+                HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+
+        Assert.assertTrue(channel.writeInbound(response));
+        Assert.assertSame(response, channel.readInbound());
+        Assert.assertTrue(queue.getMessages().isEmpty());
+
+        response.release();
+        channel.finishAndReleaseAll();
+    }
+
     private ProxyRequestInfo requestInfo(boolean recording) {
         ProxyRequestInfo requestInfo = new ProxyRequestInfo();
         requestInfo.setRequestId("request-1");

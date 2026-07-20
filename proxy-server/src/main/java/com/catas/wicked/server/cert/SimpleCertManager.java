@@ -38,10 +38,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static com.catas.wicked.common.constant.ProxyConstant.CERT_FILE_PATTERN;
@@ -67,7 +66,7 @@ public class SimpleCertManager implements CertManager {
 
     private final List<CertificateConfig> customCertList = new ArrayList<>();
 
-    private final Map<Integer, Map<String, X509Certificate>> serverCertCache = new WeakHashMap<>();
+    private final Map<Integer, Map<String, X509Certificate>> serverCertCache = new ConcurrentHashMap<>();
 
     private CertificateConfig defaultCert;
 
@@ -92,7 +91,6 @@ public class SimpleCertManager implements CertManager {
             certFile.getParentFile().mkdirs();
             certFile.createNewFile();
             objectMapper.writeValue(certFile, Collections.emptyList());
-            return;
         }
 
         List<CertificateConfig> configs = new ArrayList<>();
@@ -135,7 +133,7 @@ public class SimpleCertManager implements CertManager {
 
     @Override
     public CertificateConfig importCert(InputStream certInputStream, InputStream priKeyInputStream) {
-        if (customCertList.size() > LIMIT) {
+        if (customCertList.size() >= LIMIT) {
             throw new RuntimeException(resourceMessageProvider.getMessage("cert-out-number.alert"));
         }
         if (certInputStream == null) {
@@ -358,8 +356,11 @@ public class SimpleCertManager implements CertManager {
 
     @Override
     public void installCert(String certId) throws Exception {
-        String certPEM = getCertPEM(certId);
         if (StringUtils.isBlank(certId)) {
+            throw new RuntimeException(resourceMessageProvider.getMessage("cert-cannot-parse.alert"));
+        }
+        String certPEM = getCertPEM(certId);
+        if (StringUtils.isBlank(certPEM)) {
             throw new RuntimeException(resourceMessageProvider.getMessage("cert-cannot-parse.alert"));
         }
 
@@ -367,12 +368,15 @@ public class SimpleCertManager implements CertManager {
         if (!tempFile.exists()) {
             tempFile.getParentFile().mkdirs();
         }
-        FileUtils.writeByteArrayToFile(tempFile, certPEM.getBytes(StandardCharsets.UTF_8));
-
-        log.info("Trying to install {}", tempFile.getAbsoluteFile());
-        boolean res = certInstallProvider.install(tempFile.getAbsolutePath());
-        if (!res) {
-            throw new RuntimeException(resourceMessageProvider.getMessage("cert-install-failed.alert"));
+        try {
+            FileUtils.writeByteArrayToFile(tempFile, certPEM.getBytes(StandardCharsets.UTF_8));
+            log.info("Trying to install {}", tempFile.getAbsoluteFile());
+            boolean res = certInstallProvider.install(tempFile.getAbsolutePath());
+            if (!res) {
+                throw new RuntimeException(resourceMessageProvider.getMessage("cert-install-failed.alert"));
+            }
+        } finally {
+            FileUtils.deleteQuietly(tempFile);
         }
     }
 
@@ -381,7 +385,7 @@ public class SimpleCertManager implements CertManager {
     }
 
     @Override
-    public CertificateConfig getDefaultCert() {
+    public synchronized CertificateConfig getDefaultCert() {
         if (this.defaultCert != null) {
             return this.defaultCert;
         }
@@ -400,6 +404,7 @@ public class SimpleCertManager implements CertManager {
                 config.setPrivateKey(AesUtils.decrypt(config.getPrivateKey(), secretKey));
                 assert DEFAULT_CERT_ID.equals(config.getId()) && DEFAULT_CERT_NAME.equals(config.getName())
                         && StringUtils.isNotBlank(config.getCert()) && StringUtils.isNotBlank(config.getPrivateKey());
+                this.defaultCert = config;
                 return config;
             } catch (Exception e) {
                 log.error("Error loading default cert.", e);
@@ -439,14 +444,14 @@ public class SimpleCertManager implements CertManager {
             return null;
         }
         X509Certificate cert;
-        Map<String, X509Certificate> portCertCache = serverCertCache.computeIfAbsent(port, k -> new HashMap<>());
+        Map<String, X509Certificate> portCertCache = serverCertCache.computeIfAbsent(port, k -> new ConcurrentHashMap<>());
         String key = host.trim().toLowerCase();
-        if (portCertCache.containsKey(key)) {
-            return portCertCache.get(key);
-        } else {
-            cert = certService.genCert(appConfig.getIssuer(), appConfig.getCaPriKey(),
+        cert = portCertCache.get(key);
+        if (cert == null) {
+            X509Certificate generated = certService.genCert(appConfig.getIssuer(), appConfig.getCaPriKey(),
                     appConfig.getCaNotBefore(), appConfig.getCaNotAfter(), appConfig.getServerPubKey(), key);
-            portCertCache.put(key, cert);
+            X509Certificate cached = portCertCache.putIfAbsent(key, generated);
+            cert = cached == null ? generated : cached;
         }
         return cert;
     }

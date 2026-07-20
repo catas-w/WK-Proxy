@@ -96,6 +96,7 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
         if (channelFuture == null || newRequest) {
             if (requestInfo.getClientType() == ProxyRequestInfo.ClientType.NORMAL
                     && (!(msg instanceof HttpRequest))) {
+                ctx.fireChannelRead(msg);
                 return;
             }
 
@@ -175,6 +176,7 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
                     ctx.fireChannelRead(msg);
                     synchronized (requestList) {
                         requestList.forEach(ctx::fireChannelRead);
+                        requestList.clear();
                     }
 
                     HttpResponse response = new DefaultFullHttpResponse(
@@ -213,6 +215,7 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         log.info("Server channel closing.");
+        releasePendingRequests();
         if (channelFuture != null) {
             channelFuture.channel().close();
         }
@@ -221,11 +224,18 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        // TODO channel close - log
         log.error("Server channel unexpected error, closing...", cause);
+        releasePendingRequests();
         if (channelFuture != null) {
             channelFuture.channel().close();
         }
         ctx.channel().close();
+    }
+
+    private void releasePendingRequests() {
+        synchronized (requestList) {
+            requestList.forEach(ReferenceCountUtil::release);
+            requestList.clear();
+        }
     }
 }

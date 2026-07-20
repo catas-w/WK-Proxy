@@ -34,13 +34,12 @@ public class MinimalClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        super.channelInactive(ctx);
-        // System.out.println("close client");
         synchronized (client) {
             if (client.responsePromise != null && !client.responsePromise.isDone()) {
-                client.responsePromise.setFailure(new IOException("Minimal httpClient error"));
+                client.responsePromise.tryFailure(new IOException("Minimal httpClient connection closed before a response was received"));
             }
         }
+        super.channelInactive(ctx);
     }
 
     @Override
@@ -75,7 +74,11 @@ public class MinimalClientHandler extends ChannelInboundHandlerAdapter {
     private void completeResponse() {
         synchronized (client) {
             if (client.responsePromise != null && !client.responsePromise.isDone()) {
-                client.responsePromise.setSuccess(response);
+                if (response == null) {
+                    client.responsePromise.tryFailure(new IOException("Minimal httpClient received an incomplete response"));
+                } else {
+                    client.responsePromise.trySuccess(response);
+                }
             } else if (response instanceof FullHttpResponse fullResponse) {
                 fullResponse.release();
             }
@@ -99,9 +102,9 @@ public class MinimalClientHandler extends ChannelInboundHandlerAdapter {
         log.error("Error in minimal client handler", cause);
         synchronized (client) {
             if (client.responsePromise != null) {
-                client.responsePromise.setFailure(cause);
+                client.responsePromise.tryFailure(cause);
             }
         }
-        throw new RuntimeException(cause);
+        ctx.close();
     }
 }

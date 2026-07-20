@@ -62,6 +62,11 @@ public class ServerPostRecorder extends ChannelDuplexHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ProxyRequestInfo requestInfo = ctx.channel().attr(requestInfoKey).get();
+        if (requestInfo == null) {
+            log.warn("Dropping post-processor message because request info is unavailable");
+            ReferenceCountUtil.release(msg);
+            return;
+        }
         if (!requestInfo.isRecording()) {
             ReferenceCountUtil.release(msg);
             return;

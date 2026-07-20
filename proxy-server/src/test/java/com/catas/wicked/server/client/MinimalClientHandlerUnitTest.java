@@ -15,6 +15,9 @@ import io.netty.util.CharsetUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
 public class MinimalClientHandlerUnitTest {
 
     @Test
@@ -58,6 +61,36 @@ public class MinimalClientHandlerUnitTest {
         Assert.assertEquals("ok", response.trailingHeaders().get("X-Checksum"));
 
         response.release();
+        channel.finishAndReleaseAll();
+    }
+
+    @Test
+    public void failsAnIncompleteResponseWithoutThrowingFromThePipeline() throws Exception {
+        MinimalHttpClient client = new MinimalHttpClient();
+        EmbeddedChannel channel = new EmbeddedChannel(new MinimalClientHandler(client));
+
+        channel.writeInbound(new DefaultLastHttpContent());
+
+        try {
+            client.response();
+            Assert.fail("Expected the response promise to fail");
+        } catch (ExecutionException exception) {
+            Assert.assertTrue(exception.getCause() instanceof IOException);
+        }
+        channel.finishAndReleaseAll();
+    }
+
+    @Test
+    public void ignoresALateFailureAfterThePromiseIsComplete() throws Exception {
+        MinimalHttpClient client = new MinimalHttpClient();
+        EmbeddedChannel channel = new EmbeddedChannel(new MinimalClientHandler(client));
+        DefaultHttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        RuntimeException failure = new RuntimeException("connection failed");
+        client.responsePromise.trySuccess(response);
+
+        channel.pipeline().fireExceptionCaught(failure);
+
+        Assert.assertSame(response, client.response());
         channel.finishAndReleaseAll();
     }
 }

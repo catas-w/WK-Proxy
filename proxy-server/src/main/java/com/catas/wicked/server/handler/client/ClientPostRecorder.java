@@ -45,8 +45,12 @@ public class ClientPostRecorder extends ChannelDuplexHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ProxyRequestInfo requestInfo = ctx.channel().attr(requestInfoKey).get();
+        if (requestInfo == null) {
+            log.warn("Skipping response recording because request info is unavailable");
+            ctx.fireChannelRead(msg);
+            return;
+        }
         if (!requestInfo.isRecording()) {
-            // ReferenceCountUtil.release(msg);
             ctx.fireChannelRead(msg);
             return;
         }
@@ -66,8 +70,8 @@ public class ClientPostRecorder extends ChannelDuplexHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        // ctx.channel().close();
         log.error("Error occurred in Proxy client.", cause);
+        ctx.fireExceptionCaught(cause);
     }
 
     private void recordUnParsedResponse(ChannelHandlerContext ctx, ProxyRequestInfo requestInfo) {

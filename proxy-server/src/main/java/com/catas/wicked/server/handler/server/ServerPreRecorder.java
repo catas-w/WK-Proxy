@@ -53,6 +53,11 @@ public class ServerPreRecorder extends ChannelDuplexHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ProxyRequestInfo requestInfo = ctx.channel().attr(requestInfoAttributeKey).get();
+        if (requestInfo == null) {
+            log.warn("Skipping request pre-recording because request info is unavailable");
+            ctx.fireChannelRead(msg);
+            return;
+        }
 
         boolean newRequest = false;
         String reqId = curRequestId.get();
