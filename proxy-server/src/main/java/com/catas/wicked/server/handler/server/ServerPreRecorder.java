@@ -179,6 +179,7 @@ public class ServerPreRecorder extends ChannelDuplexHandler {
         // requestMsg.setRemoteAddress(requestInfo.getRemoteAddress());
         requestMsg.setLocalAddress(requestInfo.getLocalAddress());
         requestMsg.setLocalPort(requestInfo.getLocalPort());
+        requestMsg.setProcessInfo(requestInfo.getProcessInfo());
         // requestMsg.setClientStatus(requestInfo.getClientStatus().copy());
     }
 }

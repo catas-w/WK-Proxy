@@ -28,6 +28,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>${oshi.version}</version>
+        </dependency>
+
         <!-- <dependency> -->
         <!--     <groupId>io.micronaut</groupId> -->
         <!--     <artifactId>micronaut-runtime</artifactId> -->

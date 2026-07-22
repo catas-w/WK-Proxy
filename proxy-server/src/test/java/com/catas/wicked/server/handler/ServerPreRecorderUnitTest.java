@@ -1,6 +1,7 @@
 package com.catas.wicked.server.handler;
 
 import com.catas.wicked.common.bean.ProxyRequestInfo;
+import com.catas.wicked.common.bean.ProcessInfo;
 import com.catas.wicked.common.bean.message.BaseMessage;
 import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.constant.ProxyConstant;
@@ -47,6 +48,7 @@ public class ServerPreRecorderUnitTest {
         Assert.assertEquals("POST", recorded.getMethod());
         Assert.assertEquals("http://example.test/items", recorded.getRequestUrl());
         Assert.assertEquals("text/plain", recorded.getHeaders().get(HttpHeaderNames.CONTENT_TYPE.toString()));
+        Assert.assertEquals(99L, recorded.getProcessInfo().getOwnerPid());
 
         Assert.assertEquals(Topic.UPDATE_MSG, messages.get(1).topic());
         RequestMessage update = (RequestMessage) messages.get(1).message();
@@ -90,6 +92,10 @@ public class ServerPreRecorderUnitTest {
         requestInfo.setHost("example.test");
         requestInfo.setPort(80);
         requestInfo.setRecording(recording);
+        requestInfo.setProcessInfo(ProcessInfo.builder()
+                .ownerPid(99)
+                .lookupStatus(ProcessInfo.LookupStatus.FOUND)
+                .build());
         return requestInfo;
     }
 }

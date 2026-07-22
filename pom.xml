@@ -55,6 +55,8 @@
         <jfoenix.version>9.0.10</jfoenix.version>
         <ikonli.version>12.3.1</ikonli.version>
         <netty.version>4.1.90.Final</netty.version>
+        <oshi.version>7.4.1</oshi.version>
+        <jna.version>5.19.1</jna.version>
         <jakarta.version>2.0.1</jakarta.version>
         <ehcache.version>3.10.8</ehcache.version>
         <richtextfx.version>0.11.5</richtextfx.version>

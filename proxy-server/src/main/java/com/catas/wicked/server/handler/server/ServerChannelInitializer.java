@@ -5,6 +5,7 @@ import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.provider.CertManager;
 import com.catas.wicked.server.handler.RearHttpAggregator;
+import com.catas.wicked.server.process.ProcessInfoLookupService;
 import com.catas.wicked.server.strategy.DefaultSkipPredicate;
 import com.catas.wicked.server.strategy.StrategyList;
 import com.catas.wicked.server.strategy.StrategyManager;
@@ -36,12 +37,16 @@ public class ServerChannelInitializer extends ChannelInitializer {
     private CertManager certManager;
 
     @Inject
+    private ProcessInfoLookupService processInfoLookupService;
+
+    @Inject
     @Named("tail")
     private StrategyManager strategyManager;
 
     @Override
     protected void initChannel(Channel ch) throws Exception {
         StrategyList strategyList = defaultStrategyList();
+        ch.pipeline().addLast(PROCESS_INFO.name(), strategyList.getSupplier(PROCESS_INFO.name()).get());
         ch.pipeline().addLast(HTTP_CODEC.name(), strategyList.getSupplier(HTTP_CODEC.name()).get());
         ch.pipeline().addLast(SERVER_STRATEGY.name(), strategyList.getSupplier(SERVER_STRATEGY.name()).get());
         ch.pipeline().addLast(PREV_RECORDER.name(), strategyList.getSupplier(PREV_RECORDER.name()).get());
@@ -51,10 +56,11 @@ public class ServerChannelInitializer extends ChannelInitializer {
 
     private StrategyList defaultStrategyList() {
         StrategyList list = new StrategyList();
+        list.addAnchored(PROCESS_INFO.name(), () -> new ProcessInfoLookupHandler(processInfoLookupService));
         list.add(SSL_HANDLER.name(), false, () -> null);
         list.add(HTTP_CODEC.name(), true, HttpServerCodec::new);
         list.addAnchored(SERVER_STRATEGY.name(), () -> new ServerStrategyHandler(
-                appConfig, certManager, idGenerator, defaultStrategyList(), strategyManager));
+                appConfig, certManager, idGenerator, messageQueue, defaultStrategyList(), strategyManager));
         list.addAnchored(PREV_RECORDER.name(), () -> new ServerPreRecorder(appConfig, messageQueue));
         list.add(THROTTLE_HANDLER.name(), false, () -> null);
         list.addAnchored(SERVER_PROCESSOR.name(), () -> new ServerProcessHandler(appConfig, messageQueue, strategyManager));

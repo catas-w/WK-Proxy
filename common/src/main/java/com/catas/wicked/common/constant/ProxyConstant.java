@@ -9,6 +9,10 @@ public class ProxyConstant {
      */
     public static final String REQUEST_INFO = "requestInfo";
 
+    public static final String PROCESS_INFO = "processInfo";
+
+    public static final String PROCESS_INFO_FUTURE = "processInfoFuture";
+
     public static final String UNPARSED_ALIAS = "<Encrypted>";
 
     public static final String OVERSIZE_MSG = "<Content Oversize>";

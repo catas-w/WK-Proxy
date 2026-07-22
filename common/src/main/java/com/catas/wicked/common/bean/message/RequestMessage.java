@@ -1,6 +1,7 @@
 package com.catas.wicked.common.bean.message;
 
 import com.catas.wicked.common.constant.ClientStatus;
+import com.catas.wicked.common.bean.ProcessInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -59,6 +60,8 @@ public class RequestMessage extends BaseMessage{
 
     private ClientStatus clientStatus;
 
+    private ProcessInfo processInfo;
+
     public RequestMessage() {}
 
     public RequestMessage(String requestUrl) {
@@ -85,4 +88,3 @@ public class RequestMessage extends BaseMessage{
         }
     }
 }
-

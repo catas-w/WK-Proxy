@@ -44,6 +44,8 @@ public class ProxyRequestInfo {
 
     private ClientStatus clientStatus;
 
+    private ProcessInfo processInfo;
+
     private volatile long requestStartTime;
     private volatile long requestEndTime;
     private volatile long responseStartTime;

@@ -9,6 +9,8 @@ import com.catas.wicked.common.constant.ConnectionStatus;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.ThrottlePreset;
 import com.catas.wicked.common.provider.CertManager;
+import com.catas.wicked.common.pipeline.MessageQueue;
+import com.catas.wicked.server.process.ProcessInfoMessageBinder;
 import com.catas.wicked.common.util.AntMatcherUtils;
 import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.server.strategy.Handler;
@@ -72,6 +74,8 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
 
     private IdGenerator idGenerator;
 
+    private final ProcessInfoMessageBinder processInfoMessageBinder;
+
     private StrategyList strategyList;
 
     private StrategyManager strategyManager;
@@ -81,6 +85,7 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
     public ServerStrategyHandler(ApplicationConfig applicationConfig,
                                  CertManager certManager,
                                  IdGenerator idGenerator,
+                                 MessageQueue messageQueue,
                                  StrategyList strategyList,
                                  StrategyManager strategyManager) {
         this.appConfig = applicationConfig;
@@ -88,6 +93,7 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
         this.certManager = certManager;
         this.status = ConnectionStatus.INIT;
         this.idGenerator = idGenerator;
+        this.processInfoMessageBinder = new ProcessInfoMessageBinder(messageQueue);
         this.strategyList = strategyList;
         this.strategyManager = strategyManager;
     }
@@ -150,6 +156,7 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
         requestInfo.setThrottling(appConfig.getSettings().isThrottle());
         requestInfo.updateClientStatus(ClientStatus.Status.WAITING);
         requestInfo.resetBasicInfo();
+        processInfoMessageBinder.bind(ctx, requestInfo);
 
         SocketAddress remoteAddress = ctx.channel().remoteAddress();
         SocketAddress localAddress = ctx.channel().localAddress();

@@ -2,6 +2,7 @@ package com.catas.wicked.server.strategy;
 
 public enum Handler {
 
+    PROCESS_INFO,
     SERVER_STRATEGY,
     CLIENT_STRATEGY,
     HTTP_CODEC,

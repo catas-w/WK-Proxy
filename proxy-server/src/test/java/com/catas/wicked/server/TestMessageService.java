@@ -49,6 +49,9 @@ public class TestMessageService {
             if (updateMsg.getHeaders() != null) {
                 requestMessage.getHeaders().putAll(updateMsg.getHeaders());
             }
+            if (updateMsg.getProcessInfo() != null) {
+                requestMessage.setProcessInfo(updateMsg.getProcessInfo());
+            }
             requestCache.put(requestMessage.getRequestId(), requestMessage);
         } else if (msg instanceof ResponseMessage updateMsg) {
             RequestMessage requestMessage = requestCache.get(updateMsg.getRequestId());

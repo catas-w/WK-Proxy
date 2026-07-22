@@ -13,6 +13,12 @@
       "name":"com.catas.wicked.common.bean.message.RequestMessage"
     },
     {
+      "name":"com.catas.wicked.common.bean.ProcessInfo"
+    },
+    {
+      "name":"com.catas.wicked.common.bean.ProcessInfo$LookupStatus"
+    },
+    {
       "name":"com.catas.wicked.common.bean.message.ResponseMessage"
     },
     {

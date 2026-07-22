@@ -3,13 +3,13 @@
   "includes":[
     {
       "pattern":"\\QMETA-INF/native/netty_tcnative_windows_x86_64.dll\\E"
-    }, 
+    },
     {
       "pattern":"\\QMETA-INF/resources/fontawesome5/5.15.3/fonts/fa-brands-400.ttf\\E"
-    }, 
+    },
     {
       "pattern":"\\QMETA-INF/resources/fontawesome5/5.15.3/fonts/fa-regular-400.ttf\\E"
-    }, 
+    },
     {
       "pattern":"\\QMETA-INF/resources/fontawesome5/5.15.3/fonts/fa-solid-900.ttf\\E"
     }, 
@@ -31,6 +31,9 @@
     {
       "pattern":"\\QMETA-INF/services/org.slf4j.spi.SLF4JServiceProvider\\E"
     }, 
+    {
+      "pattern":"\\QMETA-INF/services/oshi.spi.SystemInfoProvider\\E"
+    },
     {
       "pattern":"\\Qapplication.properties\\E"
     }, 
@@ -61,6 +64,12 @@
     {
       "pattern":"\\Qcom/sun/jna/win32-x86-64/jnidispatch.dll\\E"
     }, 
+    {
+      "pattern":"\\Qoshi.architecture.properties\\E"
+    },
+    {
+      "pattern":"\\Qoshi.properties\\E"
+    },
     {
       "pattern":"\\Qcss/app.css\\E"
     }, 

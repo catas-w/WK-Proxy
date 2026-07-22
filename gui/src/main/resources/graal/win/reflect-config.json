@@ -138,6 +138,15 @@
   "name":"com.catas.wicked.common.bean.message.RequestMessage"
 },
 {
+  "name":"com.catas.wicked.common.bean.ProcessInfo",
+  "allDeclaredConstructors":true,
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true
+},
+{
+  "name":"com.catas.wicked.common.bean.ProcessInfo$LookupStatus"
+},
+{
   "name":"com.catas.wicked.common.bean.message.ResponseMessage"
 },
 {

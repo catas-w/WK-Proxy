@@ -6,6 +6,12 @@
     "interfaces":["com.catas.wicked.common.jna.WindowBlurLibrary"]
   },
   {
+    "interfaces":["com.sun.jna.platform.mac.SystemB"]
+  },
+  {
+    "interfaces":["oshi.jna.platform.mac.SystemB"]
+  },
+  {
     "interfaces":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]
   },
   {
