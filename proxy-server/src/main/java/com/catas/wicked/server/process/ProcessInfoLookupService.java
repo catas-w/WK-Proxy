@@ -13,20 +13,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Singleton
 public class ProcessInfoLookupService {
 
-    static final int QUEUE_CAPACITY = 64;
+    static final int QUEUE_CAPACITY = 1024;
     static final long LOOKUP_TIMEOUT_SECONDS = 1L;
 
     private final ProcessInfoResolver resolver;
     private final ExecutorService executor;
+    private final AtomicBoolean linkageFailureLogged = new AtomicBoolean();
 
     @Inject
     public ProcessInfoLookupService(ProcessInfoResolver resolver) {
-        this(resolver, new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
+        this(resolver, new ThreadPoolExecutor(8, 8, 0L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(QUEUE_CAPACITY),
                 runnable -> {
                     Thread thread = new Thread(runnable, "process-info-lookup");
@@ -47,11 +49,16 @@ public class ProcessInfoLookupService {
             executor.execute(() -> {
                 try {
                     ProcessInfo processInfo = resolver.resolve(clientAddress, proxyAddress);
-                    // System.out.println("ProcessInfoLookupService.lookup: " + processInfo);
+                    log.info("ProcessInfoLookupService.lookup: {}", processInfo);
                     result.complete(processInfo == null ? ProcessInfo.unknown() : processInfo);
                 } catch (Exception exception) {
                     log.warn("Unexpected process lookup failure", exception);
                     result.complete(ProcessInfo.withStatus(ProcessInfo.LookupStatus.ERROR));
+                } catch (LinkageError error) {
+                    if (linkageFailureLogged.compareAndSet(false, true)) {
+                        log.warn("Process lookup dependency is unavailable: {}", error.toString());
+                    }
+                    result.complete(ProcessInfo.withStatus(ProcessInfo.LookupStatus.UNSUPPORTED));
                 }
             });
         } catch (RejectedExecutionException exception) {

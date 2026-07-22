@@ -72,8 +72,32 @@
 }
 
 .req-graphic-box {
-    /*-fx-background-color: green;*/
-    /*-fx-opacity: 0.6;*/
+    -fx-alignment: center-left;
+    -fx-max-width: Infinity;
+}
+
+.req-application-row {
+    -fx-padding: 2 4 2 0;
+}
+
+.application-icon {
+    -fx-icon-color: #647c80;
+    -fx-icon-size: 16;
+}
+
+.application-name {
+    -fx-text-fill: #353535;
+}
+
+.application-secondary {
+    -fx-font-size: 9px;
+    -fx-text-fill: #8a8a8a;
+}
+
+.request-count {
+    -fx-font-size: 10px;
+    -fx-text-fill: #777777;
+    -fx-padding: 0 3 0 5;
 }
 
 
@@ -195,4 +219,3 @@
 .req-icon {
     -fx-icon-color: #647c80
 }
-

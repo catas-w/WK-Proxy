@@ -5,11 +5,16 @@ import javafx.animation.FadeTransition;
 import javafx.beans.InvalidationListener;
 import javafx.beans.WeakInvalidationListener;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -92,6 +97,8 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
         if (hbox == null) {
             hbox = new HBox(3);
             hbox.getStyleClass().add("req-graphic-box");
+            hbox.prefWidthProperty().bind(widthProperty().subtract(35));
+            hbox.setMinWidth(0);
 
             pathLabel = new Label();
             pathLabel.getStyleClass().add("req-path-label");
@@ -99,13 +106,56 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
             selectedPane.getStyleClass().add("req-cell-bar");
             pathStackPane.getChildren().add(selectedPane);
             pathStackPane.getChildren().add(pathLabel);
-
-            hbox.getChildren().add(0, pathStackPane);
         }
+
+        hbox.getChildren().clear();
+        hbox.getStyleClass().remove("req-application-row");
+        setTooltip(null);
 
         if (requestCell.getPath() != null && !StringUtils.equals(requestCell.getPath(), pathLabel.getText())) {
             pathLabel.setText(requestCell.getPath());
         }
+        pathLabel.setTextOverrun(OverrunStyle.ELLIPSIS);
+        pathLabel.setMaxWidth(Double.MAX_VALUE);
+
+        if (requestCell.getNodeType() == RequestCell.NodeType.APPLICATION) {
+            String iconLiteral = switch (requestCell.getNodeKey()) {
+                case "__identifying__" -> "fas-search";
+                case "__unknown__" -> "fas-question-circle";
+                default -> "fas-window-maximize";
+            };
+            FontIcon applicationIcon = new FontIcon(iconLiteral);
+            applicationIcon.getStyleClass().add("application-icon");
+            Label primary = new Label(requestCell.getPath());
+            primary.getStyleClass().add("application-name");
+            primary.setTextOverrun(OverrunStyle.ELLIPSIS);
+            Label secondary = new Label(requestCell.getSecondaryText());
+            secondary.getStyleClass().add("application-secondary");
+            secondary.setTextOverrun(OverrunStyle.ELLIPSIS);
+            VBox labels = new VBox(0, primary, secondary);
+            labels.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(labels, Priority.ALWAYS);
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+            Label count = countLabel(requestCell);
+            hbox.getStyleClass().add("req-application-row");
+            hbox.getChildren().setAll(applicationIcon, labels, spacer, count);
+            if (StringUtils.isNotBlank(requestCell.getStatusText())) {
+                setTooltip(new Tooltip(requestCell.getStatusText()));
+            }
+            return;
+        }
+
+        if (requestCell.getNodeType() == RequestCell.NodeType.HOST) {
+            FontIcon hostIcon = new FontIcon("fas-globe-africa");
+            hostIcon.getStyleClass().add("req-icon");
+            Region spacer = new Region();
+            HBox.setHgrow(pathStackPane, Priority.ALWAYS);
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+            hbox.getChildren().setAll(hostIcon, pathStackPane, spacer, countLabel(requestCell));
+            return;
+        }
+
         if (requestCell.isLeaf()) {
             hbox.getStyleClass().add("req-leaf");
             if (methodLabel == null) {
@@ -121,10 +171,8 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
                     }
                 }
             }
-            hbox.getChildren().removeIf(node -> node instanceof Icon);
-            if (!hbox.getChildren().contains(methodLabel)) {
-                hbox.getChildren().add(0, methodLabel);
-            }
+            HBox.setHgrow(pathStackPane, Priority.ALWAYS);
+            hbox.getChildren().setAll(methodLabel, pathStackPane);
         } else {
             if (pathIcon == null) {
                 pathIcon = new FontIcon();
@@ -137,15 +185,19 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
                 pathIcon.setIconLiteral("fas-folder-minus");
             }
             // icon.getStyleClass().add("request-path-icon");
-            hbox.getChildren().removeIf(node -> node == methodLabel);
-            if (!hbox.getChildren().contains(pathIcon)) {
-                hbox.getChildren().add(0, pathIcon);
-            }
+            HBox.setHgrow(pathStackPane, Priority.ALWAYS);
+            hbox.getChildren().setAll(pathIcon, pathStackPane);
         }
         if (requestCell.isOnCreated()) {
             // TODO efficiency
             triggerFade();
         }
+    }
+
+    private Label countLabel(RequestCell requestCell) {
+        Label count = new Label(String.valueOf(requestCell.getCount()));
+        count.getStyleClass().add("request-count");
+        return count;
     }
 
     private void updateDisplay(T item, boolean empty) {

@@ -112,6 +112,26 @@ public class OshiProcessInfoResolverUnitTest {
                         .getLookupStatus());
     }
 
+    @Test
+    public void mapsMissingRuntimeDependenciesToUnsupported() {
+        OshiProcessInfoResolver.SystemQuery missingDependency = new OshiProcessInfoResolver.SystemQuery() {
+            @Override
+            public List<OshiProcessInfoResolver.ConnectionRecord> queryConnections() {
+                throw new NoClassDefFoundError("oshi/SystemInfo");
+            }
+
+            @Override
+            public OshiProcessInfoResolver.NativeProcess queryProcess(int pid) {
+                throw new NoClassDefFoundError("oshi/SystemInfo");
+            }
+        };
+
+        ProcessInfo result = resolver(missingDependency, "Mac OS X")
+                .resolve(address("127.0.0.1", 1), address("127.0.0.1", 2));
+
+        Assert.assertEquals(ProcessInfo.LookupStatus.UNSUPPORTED, result.getLookupStatus());
+    }
+
     private OshiProcessInfoResolver resolver(OshiProcessInfoResolver.SystemQuery query, String osName) {
         return new OshiProcessInfoResolver(query, osName, new AtomicLong(1)::get);
     }

@@ -275,7 +275,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.sureplugin.version}</version>
                 <configuration>
-                    <skip>true</skip>
+                    <skip>false</skip>
                     <classpathDependencyExcludes>org.graalvm.nativeimage</classpathDependencyExcludes>
                     <argLine>-ea</argLine>
                 </configuration>

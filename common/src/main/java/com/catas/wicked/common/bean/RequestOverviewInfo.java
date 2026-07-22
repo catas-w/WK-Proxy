@@ -20,6 +20,12 @@ public class RequestOverviewInfo {
     private final PairEntry clientHost = new PairEntry("Client Host");
     private final PairEntry clientPort = new PairEntry("Client Port");
 
+    private final PairEntry application = new PairEntry("Application");
+    private final PairEntry process = new PairEntry("Process");
+    private final PairEntry processPid = new PairEntry("PID");
+    private final PairEntry executable = new PairEntry("Executable");
+    private final PairEntry processStatus = new PairEntry("Lookup Status");
+
     private final PairEntry timeCost = new PairEntry("Time cost");
     private final PairEntry requestTime = new PairEntry("Request time");
     private final PairEntry requestStart = new PairEntry("Request start");
@@ -46,6 +52,11 @@ public class RequestOverviewInfo {
         remotePort.setKey(resourceMessageProvider.getMessage("remote-port.label"));
         clientHost.setKey(resourceMessageProvider.getMessage("client-host.label"));
         clientPort.setKey(resourceMessageProvider.getMessage("client-port.label"));
+        application.setKey(resourceMessageProvider.getMessage("source-application.label"));
+        process.setKey(resourceMessageProvider.getMessage("source-process.label"));
+        processPid.setKey(resourceMessageProvider.getMessage("source-pid.label"));
+        executable.setKey(resourceMessageProvider.getMessage("source-executable.label"));
+        processStatus.setKey(resourceMessageProvider.getMessage("source-status.label"));
 
         timeCost.setKey(resourceMessageProvider.getMessage("time-cost.label"));
         requestTime.setKey(resourceMessageProvider.getMessage("req-time-cost.label"));

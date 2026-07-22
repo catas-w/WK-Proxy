@@ -1,6 +1,7 @@
 package com.catas.wicked.proxy.render.tab;
 
 import com.catas.wicked.common.bean.PathOverviewInfo;
+import com.catas.wicked.common.bean.ProcessInfo;
 import com.catas.wicked.common.bean.RequestOverviewInfo;
 import com.catas.wicked.common.bean.PairEntry;
 import com.catas.wicked.common.bean.StatsData;
@@ -19,6 +20,7 @@ import javafx.scene.control.TreeItem;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.ehcache.Cache;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -172,6 +174,24 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         requestOverviewInfo.getClientHost().setVal(request.getLocalAddress());
         requestOverviewInfo.getClientPort().setVal(String.valueOf(request.getLocalPort()));
 
+        ProcessInfo processInfo = request.getProcessInfo();
+        String applicationName = processInfo == null ? null : StringUtils.firstNonBlank(
+                processInfo.getApplicationName(), processInfo.getOwnerProcessName());
+        String processName = processInfo == null ? null : processInfo.getOwnerProcessName();
+        long pid = processInfo == null ? 0 : processInfo.getOwnerPid() > 0
+                ? processInfo.getOwnerPid() : processInfo.getApplicationPid();
+        String executable = processInfo == null ? null : processInfo.getApplicationExecutablePath();
+        if (StringUtils.isBlank(executable) && processInfo != null) {
+            executable = processInfo.getOwnerExecutablePath();
+        }
+        requestOverviewInfo.getApplication().setVal(StringUtils.defaultIfBlank(applicationName, "-"));
+        requestOverviewInfo.getProcess().setVal(StringUtils.defaultIfBlank(processName, "-"));
+        requestOverviewInfo.getProcessPid().setVal(pid > 0 ? String.valueOf(pid) : "-");
+        requestOverviewInfo.getExecutable().setVal(StringUtils.defaultIfBlank(executable, "-"));
+        requestOverviewInfo.getExecutable().setTooltip(StringUtils.defaultIfBlank(executable, "-"));
+        requestOverviewInfo.getProcessStatus().setVal(processInfo == null || processInfo.getLookupStatus() == null
+                ? ProcessInfo.LookupStatus.UNKNOWN.name() : processInfo.getLookupStatus().name());
+
         // timing
         boolean noResp = response == null || response.getStartTime() == 0;
         requestOverviewInfo.getTimeCost().setVal(noResp ? "-": Math.max(0, response.getEndTime() - request.getStartTime()) + " ms");
@@ -217,6 +237,8 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         requestRoot = new TreeItem<>();
         String estimatedMsg = resourceMessageProvider.getMessage("estimate.tooltip");
         TreeItem<PairEntry> reqNode = new TreeItem<>(new PairEntry("General", null));
+        TreeItem<PairEntry> sourceNode = new TreeItem<>(new PairEntry(
+                resourceMessageProvider.getMessage("source-section.label"), null));
         TreeItem<PairEntry> sizeNode = new TreeItem<>(new PairEntry("Size", null, estimatedMsg));
         TreeItem<PairEntry> timingNode = new TreeItem<>(new PairEntry("Timing", null, estimatedMsg));
 
@@ -232,6 +254,12 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getRemotePort()));
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getClientHost()));
         reqNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getClientPort()));
+
+        sourceNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getApplication()));
+        sourceNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getProcess()));
+        sourceNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getProcessPid()));
+        sourceNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getExecutable()));
+        sourceNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getProcessStatus()));
 
         // timing info
         timingNode.getChildren().add(new TreeItem<>(requestOverviewInfo.getTimeCost()));
@@ -251,7 +279,8 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         reqNode.setExpanded(true);
         sizeNode.setExpanded(true);
         timingNode.setExpanded(true);
-        requestRoot.getChildren().addAll(reqNode, timingNode, sizeNode);
+        sourceNode.setExpanded(true);
+        requestRoot.getChildren().addAll(reqNode, sourceNode, timingNode, sizeNode);
     }
 
     @SuppressWarnings("unchecked")

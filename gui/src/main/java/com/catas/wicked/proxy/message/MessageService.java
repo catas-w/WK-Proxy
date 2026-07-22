@@ -42,6 +42,12 @@ import java.util.Set;
 @Singleton
 public class MessageService {
 
+    public enum SelectionSource {
+        TREE_VIEW,
+        LIST_VIEW,
+        APPLICATION_VIEW
+    }
+
     @Inject
     private ApplicationConfig appConfig;
 
@@ -64,6 +70,7 @@ public class MessageService {
     private OverViewTabRenderer overViewTabRenderer;
 
     private MessageTree messageTree;
+    private ApplicationMessageTree applicationMessageTree;
 
     @Getter
     private final SimpleIntegerProperty requestCntProperty = new SimpleIntegerProperty(0);
@@ -84,6 +91,7 @@ public class MessageService {
     private void resetMessageTree() {
         messageTree = new MessageTree();
         messageTree.setRequestViewController(requestViewController);
+        applicationMessageTree = new ApplicationMessageTree(requestViewController);
         requestCntProperty.set(0);
     }
 
@@ -148,22 +156,37 @@ public class MessageService {
      * @param requestId requestId
      * @param fromTreeView source
      */
-    public void selectRequestItem(String requestId, boolean fromTreeView) {
+    public void selectRequestItem(String requestId, SelectionSource source) {
         if (requestId == null) {
             return;
         }
 
         RequestMessage requestMessage = requestCache.get(requestId);
+        if (requestMessage == null) {
+            return;
+        }
         TreeNode treeNode = messageTree.findNodeByPath(requestMessage.getRequestUrl(), requestId);
         if (treeNode == null) {
             log.error("treeNode to select is null: {}", requestId);
             return;
         }
-        if (fromTreeView) {
+        if (source != SelectionSource.LIST_VIEW) {
             requestViewController.getReqListView().getSelectionModel().select(treeNode.getListItem());
-        } else {
+        }
+        if (source != SelectionSource.TREE_VIEW) {
             requestViewController.getReqTreeView().getSelectionModel().select(treeNode.getTreeItem());
         }
+        if (source != SelectionSource.APPLICATION_VIEW) {
+            applicationMessageTree.select(requestId);
+        }
+    }
+
+    public Set<String> getApplicationRequestIds(RequestCell requestCell) {
+        return applicationMessageTree.requestIds(requestCell);
+    }
+
+    public void deleteApplicationRequests(Set<String> requestIds) {
+        messageQueue.pushMsg(Topic.RECORD, new ApplicationDeleteMessage(requestIds));
     }
 
     /**
@@ -198,6 +221,13 @@ public class MessageService {
                 requestMessage.setProcessInfo(updateMsg.getProcessInfo());
             }
             requestCache.put(requestMessage.getRequestId(), requestMessage);
+            boolean selected = StringUtils.equals(
+                    appConfig.getObservableConfig().getCurrentRequestId(), requestMessage.getRequestId());
+            applicationMessageTree.update(requestMessage, selected);
+
+            if (selected) {
+                Platform.runLater(() -> overViewTabRenderer.displayOverView(requestMessage));
+            }
 
             // update time in treeNode
             updateTimeStats(requestMessage, updateMsg);
@@ -239,6 +269,7 @@ public class MessageService {
                     // put to cache
                     requestCache.put(requestMessage.getRequestId(), requestMessage);
                     messageTree.add(requestMessage);
+                    applicationMessageTree.add(requestMessage);
                     refreshCntProperty();
                 }
                 // TODO: deprecated
@@ -290,6 +321,10 @@ public class MessageService {
             }
             refreshCntProperty();
         }
+        if (msg instanceof ApplicationDeleteMessage deleteMessage) {
+            deleteRequestsById(deleteMessage.getRequestIds());
+            refreshCntProperty();
+        }
     }
 
     /**
@@ -311,16 +346,12 @@ public class MessageService {
         }
         log.info("Node to delete: {}", nodeToDelete.getFullPath());
 
-        if (deleteMessage.getSource() == DeleteMessage.Source.LIST_VIEW) {
-            // delete treeItem
-            // 直接删除 treeView 中对应的叶子节点
-            TreeItem<RequestCell> treeItemToDelete = nodeToDelete.getTreeItem();
-            Platform.runLater(() -> {
-                // treeItemToDelete.getParent().getChildren().remove(treeItemToDelete);
-                FilterableTreeItem<RequestCell> parent = (FilterableTreeItem<RequestCell>) treeItemToDelete.getParent();
-                parent.getInternalChildren().remove(treeItemToDelete);
-            });
-        }
+        TreeItem<RequestCell> treeItemToDelete = nodeToDelete.getTreeItem();
+        Platform.runLater(() -> {
+            if (treeItemToDelete.getParent() instanceof FilterableTreeItem<?> parent) {
+                ((FilterableTreeItem<RequestCell>) parent).getInternalChildren().remove(treeItemToDelete);
+            }
+        });
 
         Set<String> requestIdList = new HashSet<>();
         List<RequestCell> listItemList = new ArrayList<>();
@@ -337,22 +368,51 @@ public class MessageService {
             requestViewService.updateRequestTab(null);
         }
 
-        if (deleteMessage.getSource() == DeleteMessage.Source.TREE_VIEW) {
-            // delete listItem
-            // 若删除来自 treeView 需删除子结点中关联的 listItem
-            ListView<RequestCell> reqListView = requestViewController.getReqListView();
-            ObservableList<RequestCell> reqSourceList = requestViewController.getReqSourceList();
-            Platform.runLater(() -> {
-                // reqListView.getItems().removeAll(listItemList);
-                reqSourceList.removeAll(listItemList);
-            });
-        }
+        ObservableList<RequestCell> reqSourceList = requestViewController.getReqSourceList();
+        Platform.runLater(() -> reqSourceList.removeAll(listItemList));
         messageTree.delete(nodeToDelete);
         messageTree.subtractCnt(requestIdList.size());
+        applicationMessageTree.remove(requestIdList);
 
         // remove requestId from ehcache
         try {
             requestCache.removeAll(requestIdList);
+        } catch (BulkCacheWritingException e) {
+            log.error("Error in deleting in cache.", e);
+        }
+    }
+
+    private void deleteRequestsById(Set<String> requestIds) {
+        if (requestIds == null || requestIds.isEmpty()) {
+            return;
+        }
+        List<RequestCell> listItems = new ArrayList<>();
+        int removed = 0;
+        for (String requestId : requestIds) {
+            RequestMessage request = requestCache.get(requestId);
+            if (request == null) {
+                continue;
+            }
+            TreeNode node = messageTree.findNodeByPath(request.getRequestUrl(), requestId);
+            if (node == null) {
+                continue;
+            }
+            listItems.add(node.getListItem());
+            TreeItem<RequestCell> item = node.getTreeItem();
+            Platform.runLater(() -> {
+                if (item.getParent() instanceof FilterableTreeItem<?> parent) {
+                    ((FilterableTreeItem<RequestCell>) parent).getInternalChildren().remove(item);
+                }
+            });
+            messageTree.delete(node);
+            removed++;
+        }
+        messageTree.subtractCnt(removed);
+        applicationMessageTree.remove(requestIds);
+        Platform.runLater(() -> requestViewController.getReqSourceList().removeAll(listItems));
+        requestViewService.updateRequestTab(null);
+        try {
+            requestCache.removeAll(requestIds);
         } catch (BulkCacheWritingException e) {
             log.error("Error in deleting in cache.", e);
         }
@@ -377,6 +437,7 @@ public class MessageService {
         });
         treeNodeList.forEach(messageTree::delete);
         messageTree.resetCnt();
+        applicationMessageTree.clear();
         requestViewService.updateRequestTab(null);
 
         // delete all items in listView
@@ -397,6 +458,7 @@ public class MessageService {
     private void removeAll() {
         Platform.runLater(() -> {
             requestViewController.getTreeRoot().getInternalChildren().clear();
+            requestViewController.getApplicationTreeRoot().getInternalChildren().clear();
             requestViewController.getReqSourceList().clear();
         });
         resetMessageTree();

@@ -84,6 +84,8 @@ public class MessageTree {
         requestCell.setFullPath(node.getFullPath());
         requestCell.setLeaf(node.isLeaf());
         requestCell.setRequestId(node.getRequestId());
+        requestCell.setNodeType(node.isLeaf() ? RequestCell.NodeType.REQUEST : RequestCell.NodeType.URL_PATH);
+        requestCell.setSearchText(node.getFullPath() + " " + StringUtils.defaultString(requestCell.getMethod()));
 
         // treeItem.setValue(requestCell);
         FilterableTreeItem<RequestCell> treeItem = new FilterableTreeItem<>(requestCell);
@@ -146,6 +148,8 @@ public class MessageTree {
         requestCell.setRequestId(node.getRequestId());
         requestCell.setFullPath(node.getFullPath());
         requestCell.setLeaf(node.isLeaf());
+        requestCell.setNodeType(RequestCell.NodeType.REQUEST);
+        requestCell.setSearchText(node.getFullPath() + " " + StringUtils.defaultString(requestCell.getMethod()));
         node.setListItem(requestCell);
 
         // use filterableList

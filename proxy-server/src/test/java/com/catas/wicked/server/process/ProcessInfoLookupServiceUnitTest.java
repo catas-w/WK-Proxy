@@ -72,6 +72,28 @@ public class ProcessInfoLookupServiceUnitTest {
         }
     }
 
+    @Test
+    public void keepsTheWorkerAliveWhenAResolverDependencyIsMissing() throws Exception {
+        AtomicInteger calls = new AtomicInteger();
+        ProcessInfoResolver resolver = (client, proxy) -> {
+            if (calls.incrementAndGet() == 1) {
+                throw new NoClassDefFoundError("oshi/SystemInfo");
+            }
+            return ProcessInfo.withStatus(ProcessInfo.LookupStatus.FOUND);
+        };
+        ProcessInfoLookupService service = new ProcessInfoLookupService(resolver, executor(2));
+
+        try {
+            ProcessInfo unsupported = service.lookup(address(51004), address(9090)).get(1, TimeUnit.SECONDS);
+            ProcessInfo recovered = service.lookup(address(51005), address(9090)).get(1, TimeUnit.SECONDS);
+
+            Assert.assertEquals(ProcessInfo.LookupStatus.UNSUPPORTED, unsupported.getLookupStatus());
+            Assert.assertEquals(ProcessInfo.LookupStatus.FOUND, recovered.getLookupStatus());
+        } finally {
+            service.shutdown();
+        }
+    }
+
     private static ThreadPoolExecutor executor(int queueCapacity) {
         return new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(queueCapacity),

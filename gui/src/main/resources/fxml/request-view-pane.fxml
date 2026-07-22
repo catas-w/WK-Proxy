@@ -32,6 +32,12 @@
                 </StackPane.margin>
             </Button>
         </StackPane>
+        <CustomToggleNode fx:id="applicationViewToggleNode" styleClass="toggle-node">
+            <FontIcon iconLiteral="fas-window-maximize" iconSize="18"/>
+            <tooltip>
+                <Tooltip text="%application-view.tooltip" showDelay="50ms"/>
+            </tooltip>
+        </CustomToggleNode>
         <CustomToggleNode fx:id="treeViewToggleNode" styleClass="toggle-node">
             <FontIcon iconLiteral="fas-tree" iconSize="18"/>
             <tooltip>
@@ -50,6 +56,7 @@
         </HBox.margin>
     </HBox>
     <StackPane prefWidth="254.0" VBox.vgrow="ALWAYS">
+        <TreeView fx:id="reqApplicationTreeView" editable="true" prefHeight="553.0" prefWidth="254.0" showRoot="false" visible="false"/>
         <TreeView fx:id="reqTreeView" editable="true" prefHeight="553.0" prefWidth="254.0" showRoot="false"/>
         <ListView fx:id="reqListView" prefHeight="200.0" prefWidth="200.0" visible="false"/>
         <fx:define>

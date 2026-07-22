@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.LongSupplier;
 
 @Slf4j
@@ -28,6 +29,7 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
     private final String osName;
     private final LongSupplier nanoTime;
     private final Object snapshotLock = new Object();
+    private final AtomicBoolean linkageFailureLogged = new AtomicBoolean();
 
     private volatile ConnectionSnapshot snapshot = new ConnectionSnapshot(List.of(), 0L);
 
@@ -68,6 +70,11 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
         } catch (SecurityException exception) {
             log.debug("Process lookup access was denied", exception);
             return ProcessInfo.withStatus(ProcessInfo.LookupStatus.ACCESS_DENIED);
+        } catch (LinkageError error) {
+            if (linkageFailureLogged.compareAndSet(false, true)) {
+                log.warn("Process lookup is unavailable: {}", error.toString());
+            }
+            return ProcessInfo.withStatus(ProcessInfo.LookupStatus.UNSUPPORTED);
         } catch (Exception exception) {
             log.warn("Unable to resolve the source process for {} -> {}", clientAddress, proxyAddress, exception);
             return ProcessInfo.withStatus(ProcessInfo.LookupStatus.ERROR);

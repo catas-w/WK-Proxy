@@ -10,6 +10,13 @@ import java.util.Map;
 @Data
 public class RequestCell {
 
+    public enum NodeType {
+        URL_PATH,
+        APPLICATION,
+        HOST,
+        REQUEST
+    }
+
     private String requestId;
 
     private String path;
@@ -21,6 +28,18 @@ public class RequestCell {
     private boolean isLeaf;
 
     private String styleClass;
+
+    private NodeType nodeType = NodeType.REQUEST;
+
+    private String nodeKey;
+
+    private String secondaryText;
+
+    private String statusText;
+
+    private int count;
+
+    private String searchText;
 
     /**
      * if Show animation or not
@@ -58,5 +77,14 @@ public class RequestCell {
 
     public boolean isOnCreated() {
         return System.currentTimeMillis() - createdTime < 100;
+    }
+
+    public boolean matchesFilter(String filter) {
+        if (StringUtils.isBlank(filter)) {
+            return true;
+        }
+        String candidate = StringUtils.defaultString(searchText,
+                StringUtils.defaultString(fullPath, path));
+        return candidate.toLowerCase().contains(filter.trim().toLowerCase());
     }
 }

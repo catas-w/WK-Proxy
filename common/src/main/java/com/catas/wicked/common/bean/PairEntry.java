@@ -92,6 +92,9 @@ public class PairEntry extends RecursiveTreeObject<PairEntry> {
     }
 
     public void setTooltip(String tooltip) {
+        if (this.tooltip == null) {
+            this.tooltip = new SimpleStringProperty();
+        }
         this.tooltip.set(tooltip);
     }
 
