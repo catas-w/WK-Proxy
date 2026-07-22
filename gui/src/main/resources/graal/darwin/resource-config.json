@@ -155,6 +155,8 @@
   },{
     "pattern":"\\Qimage\/wk-proxy.2.ico\\E"
   },{
+    "pattern":"\\Qimage\/application\/\\E.*"
+  },{
     "pattern":"\\Qlang\/messages.properties\\E"
   },{
     "pattern":"\\Qlang\/messages_en.properties\\E"

@@ -37,6 +37,9 @@ public class RequestCell {
 
     private String statusText;
 
+    /** GUI-only source metadata used to resolve an application icon locally. */
+    private transient ProcessInfo processInfo;
+
     private int count;
 
     private String searchText;

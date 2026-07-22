@@ -28,6 +28,11 @@ public interface FoundationLibrary extends Library {
 
     NativeLong objc_msgSend(NativeLong receiver, Pointer selector);
 
+    NativeLong objc_msgSend(NativeLong receiver, Pointer selector, NativeLong objectAddress);
+
+    NativeLong objc_msgSend(NativeLong receiver, Pointer selector,
+                            NativeLong firstAddress, NativeLong secondAddress);
+
     NativeLong objc_msgSend(NativeLong receiver, Pointer selector, Pointer ...obj);
 
     NativeLong objc_msgSend(NativeLong receiver, Pointer selector, NativeLong ...objAddress);

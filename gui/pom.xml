@@ -117,8 +117,9 @@
                     </runtimeArgs>
                     <nativeImageArgs>
                         <arg>-H:+JNI</arg>
-                        <arg>-H:ExcludeResources='.*/libjnidispatch.a$'</arg>
+                        <arg>-H:ExcludeResources=.*/libjnidispatch\.a$</arg>
                         <arg>--allow-incomplete-classpath</arg>
+                        <arg>--initialize-at-run-time=com.sun.jna</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeNoCleanerDirectByteBuf</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.UnpooledByteBufAllocator</arg>
                         <arg>--initialize-at-run-time=io.netty.buffer.PooledSlicedByteBuf</arg>

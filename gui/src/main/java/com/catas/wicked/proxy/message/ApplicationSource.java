@@ -5,7 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
 
-record ApplicationSource(String key, String displayName, String secondaryText, String statusText) {
+record ApplicationSource(String key, String displayName, String secondaryText, String statusText,
+                         ProcessInfo processInfo) {
 
     static final String IDENTIFYING_KEY = "__identifying__";
     static final String UNKNOWN_KEY = "__unknown__";
@@ -13,10 +14,10 @@ record ApplicationSource(String key, String displayName, String secondaryText, S
     static ApplicationSource from(ProcessInfo info) {
         ProcessInfo.LookupStatus status = info == null ? ProcessInfo.LookupStatus.UNKNOWN : info.getLookupStatus();
         if (status == null || status == ProcessInfo.LookupStatus.UNKNOWN) {
-            return new ApplicationSource(IDENTIFYING_KEY, "Identifying...", "", "Identifying source application");
+            return new ApplicationSource(IDENTIFYING_KEY, "Identifying...", "", "Identifying source application", info);
         }
         if (status != ProcessInfo.LookupStatus.FOUND) {
-            return new ApplicationSource(UNKNOWN_KEY, "Unknown Application", "", "Lookup status: " + status);
+            return new ApplicationSource(UNKNOWN_KEY, "Unknown Application", "", "Lookup status: " + status, info);
         }
         String applicationName = StringUtils.firstNonBlank(
                 info.getApplicationName(), info.getOwnerProcessName(), "Unknown Application");
@@ -26,7 +27,7 @@ record ApplicationSource(String key, String displayName, String secondaryText, S
         String processName = StringUtils.firstNonBlank(info.getOwnerProcessName(), applicationName);
         long pid = info.getOwnerPid() > 0 ? info.getOwnerPid() : info.getApplicationPid();
         String secondary = processName + (pid > 0 ? "  PID " + pid : "");
-        return new ApplicationSource(key, applicationName, secondary, "Lookup status: FOUND");
+        return new ApplicationSource(key, applicationName, secondary, "Lookup status: FOUND", info);
     }
 
     static String normalizePath(String path) {

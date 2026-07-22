@@ -12,7 +12,7 @@
     },
     {
       "pattern":"\\QMETA-INF/resources/fontawesome5/5.15.3/fonts/fa-solid-900.ttf\\E"
-    }, 
+    },
     {
       "pattern":"\\QMETA-INF/resources/ikonli/0.0.0/fonts/ikonli.ttf\\E"
     }, 
@@ -109,6 +109,9 @@
     {
       "pattern":"\\Qimage/wk-proxy.2.png\\E"
     }, 
+    {
+      "pattern":"\\Qimage/application/\\E.*"
+    },
     {
       "pattern":"\\Qlogback.xml\\E"
     }, 

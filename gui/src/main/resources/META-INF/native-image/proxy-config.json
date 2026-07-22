@@ -1,41 +1,17 @@
 [
-  {
-    "interfaces":["com.catas.wicked.common.jna.CertInstallerLibrary"]}
-  ,
-  {
-    "interfaces":["com.catas.wicked.common.jna.FoundationLibrary"]}
-  ,
-  {
-    "interfaces":["com.catas.wicked.common.jna.WindowBlurLibrary"]}
-  ,
-  {
-    "interfaces":["com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP"]}
-  ,
-  {
-    "interfaces":["com.sun.jna.platform.mac.SystemB"]}
-  ,
-  {
-    "interfaces":["oshi.jna.platform.mac.SystemB"]}
-  ,
-  {
-    "interfaces":["com.sun.jna.platform.win32.Advapi32"]}
-  ,
-  {
-    "interfaces":["com.sun.jna.platform.win32.IPHlpAPI"]}
-  ,
-  {
-    "interfaces":["com.sun.jna.platform.win32.Kernel32"]}
-  ,
-  {
-    "interfaces":["com.sun.jna.platform.win32.Psapi"]}
-  ,
-  {
-    "interfaces":["oshi.jna.platform.windows.NtDll"]}
-  ,
-  {
-    "interfaces":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]}
-  ,
-  {
-    "interfaces":["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.WriteBackPortability","org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"]}
-  
+  { "interfaces": ["com.catas.wicked.common.jna.CertInstallerLibrary"] },
+  { "interfaces": ["com.catas.wicked.common.jna.FoundationLibrary"] },
+  { "interfaces": ["com.catas.wicked.common.jna.WindowBlurLibrary"] },
+  { "interfaces": ["com.catas.wicked.common.webpdecoderjn.WebPDecoder$LibWebP"] },
+  { "interfaces": ["com.catas.wicked.proxy.service.icon.MacApplicationIconProvider$AppKitLibrary"] },
+  { "interfaces": ["com.catas.wicked.proxy.service.icon.WindowsApplicationIconProvider$ShellIconLibrary"] },
+  { "interfaces": ["com.sun.jna.platform.mac.SystemB"] },
+  { "interfaces": ["oshi.jna.platform.mac.SystemB"] },
+  { "interfaces": ["com.sun.jna.platform.win32.Advapi32"] },
+  { "interfaces": ["com.sun.jna.platform.win32.IPHlpAPI"] },
+  { "interfaces": ["com.sun.jna.platform.win32.Kernel32"] },
+  { "interfaces": ["com.sun.jna.platform.win32.Psapi"] },
+  { "interfaces": ["oshi.jna.platform.windows.NtDll"] },
+  { "interfaces": ["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability", "org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"] },
+  { "interfaces": ["org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.WriteBackPortability", "org.ehcache.shadow.org.terracotta.offheapstore.disk.persistent.PersistentPortability"] }
 ]

@@ -3032,5 +3032,10 @@
 {
   "name":"sun.security.x509.SubjectKeyIdentifierExtension",
   "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.icon.WindowsApplicationIconProvider$ShellFileInfo",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 }
 ]

@@ -1,6 +1,8 @@
 package com.catas.wicked.proxy.gui.componet;
 
 import com.catas.wicked.common.bean.RequestCell;
+import com.catas.wicked.proxy.service.icon.ApplicationIconService;
+import javafx.application.Platform;
 import javafx.animation.FadeTransition;
 import javafx.beans.InvalidationListener;
 import javafx.beans.WeakInvalidationListener;
@@ -15,6 +17,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -43,6 +46,8 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
      */
     private FontIcon pathIcon;
     private FadeTransition fadeTransition;
+    private final ApplicationIconService applicationIconService;
+    private String pendingApplicationIconKey;
 
     private InvalidationListener treeItemGraphicInvalidationListener = observable -> updateDisplay(getItem(),
             isEmpty());
@@ -51,7 +56,8 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
 
     private WeakReference<TreeItem<T>> treeItemRef;
 
-    public RequestViewTreeCell(TreeView<RequestCell> treeView) {
+    public RequestViewTreeCell(TreeView<RequestCell> treeView, ApplicationIconService applicationIconService) {
+        this.applicationIconService = applicationIconService;
 
         final InvalidationListener treeItemInvalidationListener = observable -> {
             TreeItem<T> oldTreeItem = treeItemRef == null ? null : treeItemRef.get();
@@ -140,6 +146,7 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
             Label count = countLabel(requestCell);
             hbox.getStyleClass().add("req-application-row");
             hbox.getChildren().setAll(applicationIcon, labels, spacer, count);
+            loadApplicationIcon(requestCell, applicationIcon);
             if (StringUtils.isNotBlank(requestCell.getStatusText())) {
                 setTooltip(new Tooltip(requestCell.getStatusText()));
             }
@@ -194,6 +201,31 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
         }
     }
 
+    private void loadApplicationIcon(RequestCell requestCell, FontIcon fallbackIcon) {
+        if (requestCell.getProcessInfo() == null || "__identifying__".equals(requestCell.getNodeKey())
+                || "__unknown__".equals(requestCell.getNodeKey())) {
+            pendingApplicationIconKey = null;
+            return;
+        }
+        String requestKey = requestCell.getNodeKey();
+        pendingApplicationIconKey = requestKey;
+        applicationIconService.load(requestCell.getProcessInfo()).thenAccept(icon -> icon.ifPresent(image ->
+                Platform.runLater(() -> {
+                    RequestCell current = getItem() instanceof RequestCell cell ? cell : null;
+                    if (current == requestCell && requestKey.equals(pendingApplicationIconKey)
+                            && requestKey.equals(current.getNodeKey()) && hbox != null
+                            && hbox.getChildren().contains(fallbackIcon)) {
+                        ImageView imageView = new ImageView(image);
+                        imageView.setFitWidth(20);
+                        imageView.setFitHeight(20);
+                        imageView.setPreserveRatio(true);
+                        imageView.setSmooth(true);
+                        int index = hbox.getChildren().indexOf(fallbackIcon);
+                        hbox.getChildren().set(index, imageView);
+                    }
+                })));
+    }
+
     private Label countLabel(RequestCell requestCell) {
         Label count = new Label(String.valueOf(requestCell.getCount()));
         count.getStyleClass().add("request-count");
@@ -202,6 +234,7 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
 
     private void updateDisplay(T item, boolean empty) {
         if (item == null || empty) {
+            pendingApplicationIconKey = null;
             setText(null);
             setGraphic(null);
             if (this.fadeTransition != null) {

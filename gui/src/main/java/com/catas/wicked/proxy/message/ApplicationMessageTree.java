@@ -233,6 +233,7 @@ public class ApplicationMessageTree {
         cell.setPath(identity.displayName());
         cell.setSecondaryText(identity.secondaryText());
         cell.setStatusText(identity.statusText());
+        cell.setProcessInfo(identity.processInfo());
         cell.setSearchText(identity.displayName() + " " + identity.secondaryText());
     }
 
