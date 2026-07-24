@@ -56,8 +56,8 @@
         </HBox.margin>
     </HBox>
     <StackPane prefWidth="254.0" VBox.vgrow="ALWAYS">
-        <TreeView fx:id="reqApplicationTreeView" editable="true" prefHeight="553.0" prefWidth="254.0" showRoot="false" visible="false"/>
-        <TreeView fx:id="reqTreeView" editable="true" prefHeight="553.0" prefWidth="254.0" showRoot="false"/>
+        <TreeView fx:id="reqApplicationTreeView" editable="true" prefHeight="553.0" prefWidth="254.0" showRoot="false"/>
+        <TreeView fx:id="reqTreeView" editable="true" prefHeight="553.0" prefWidth="254.0" showRoot="false" visible="false"/>
         <ListView fx:id="reqListView" prefHeight="200.0" prefWidth="200.0" visible="false"/>
         <fx:define>
             <ContextMenu fx:id="contextMenu" prefWidth="75" styleClass="req-context-menu">

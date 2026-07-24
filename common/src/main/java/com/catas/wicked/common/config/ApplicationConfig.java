@@ -155,6 +155,7 @@ public class ApplicationConfig implements AutoCloseable {
         MessageSourceFactory.setCurrentLocal(settings.getLanguage().getLocale());
         observableConfig.setHandlingSSL(settings.isHandleSsl());
         observableConfig.setShowButtonLabel(settings.isShowButtonLabel());
+        observableConfig.setShowApplicationRequestCount(settings.isShowApplicationRequestCount());
         if (settings.isEnableSysProxyOnLaunch()) {
             // force update systemProxy
             settings.setSystemProxy(true);

@@ -27,6 +27,8 @@ public class AppObservableConfig {
 
     private final SimpleBooleanProperty showButtonLabel = new SimpleBooleanProperty(true);
 
+    private final SimpleBooleanProperty showApplicationRequestCount = new SimpleBooleanProperty(true);
+
     public AppObservableConfig() {
     }
 
@@ -112,5 +114,17 @@ public class AppObservableConfig {
 
     public void setShowButtonLabel(boolean showButtonLabel) {
         this.showButtonLabel.set(showButtonLabel);
+    }
+
+    public boolean isShowApplicationRequestCount() {
+        return showApplicationRequestCount.get();
+    }
+
+    public SimpleBooleanProperty showApplicationRequestCountProperty() {
+        return showApplicationRequestCount;
+    }
+
+    public void setShowApplicationRequestCount(boolean showApplicationRequestCount) {
+        this.showApplicationRequestCount.set(showApplicationRequestCount);
     }
 }

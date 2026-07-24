@@ -28,6 +28,9 @@ public class Settings {
     private boolean showButtonLabel = true;
 
     @JsonDeserialize(using = SafeBooleanDeserializer.class)
+    private boolean showApplicationRequestCount = true;
+
+    @JsonDeserialize(using = SafeBooleanDeserializer.class)
     private boolean recording = true;
 
     @JsonDeserialize(using = SafeIntegerDeserializer.class)

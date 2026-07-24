@@ -215,7 +215,7 @@ public class RequestViewController implements Initializable {
         applicationViewToggleNode.setToggleGroup(toggleGroup);
         treeViewToggleNode.setToggleGroup(toggleGroup);
         listViewToggleNode.setToggleGroup(toggleGroup);
-        treeViewToggleNode.setSelected(true);
+        applicationViewToggleNode.setSelected(true);
 
         // make at least & only one being selected
         toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {

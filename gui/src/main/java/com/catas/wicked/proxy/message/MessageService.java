@@ -71,6 +71,7 @@ public class MessageService {
 
     private MessageTree messageTree;
     private ApplicationMessageTree applicationMessageTree;
+    private boolean synchronizingSelection;
 
     @Getter
     private final SimpleIntegerProperty requestCntProperty = new SimpleIntegerProperty(0);
@@ -157,27 +158,32 @@ public class MessageService {
      * @param fromTreeView source
      */
     public void selectRequestItem(String requestId, SelectionSource source) {
-        if (requestId == null) {
+        if (requestId == null || synchronizingSelection) {
             return;
         }
 
-        RequestMessage requestMessage = requestCache.get(requestId);
-        if (requestMessage == null) {
-            return;
-        }
-        TreeNode treeNode = messageTree.findNodeByPath(requestMessage.getRequestUrl(), requestId);
-        if (treeNode == null) {
-            log.error("treeNode to select is null: {}", requestId);
-            return;
-        }
-        if (source != SelectionSource.LIST_VIEW) {
-            requestViewController.getReqListView().getSelectionModel().select(treeNode.getListItem());
-        }
-        if (source != SelectionSource.TREE_VIEW) {
-            requestViewController.getReqTreeView().getSelectionModel().select(treeNode.getTreeItem());
-        }
-        if (source != SelectionSource.APPLICATION_VIEW) {
-            applicationMessageTree.select(requestId);
+        synchronizingSelection = true;
+        try {
+            RequestMessage requestMessage = requestCache.get(requestId);
+            if (requestMessage == null) {
+                return;
+            }
+            TreeNode treeNode = messageTree.findNodeByPath(requestMessage.getRequestUrl(), requestId);
+            if (treeNode == null) {
+                log.error("treeNode to select is null: {}", requestId);
+                return;
+            }
+            if (source != SelectionSource.LIST_VIEW) {
+                requestViewController.getReqListView().getSelectionModel().select(treeNode.getListItem());
+            }
+            if (source != SelectionSource.TREE_VIEW) {
+                requestViewController.getReqTreeView().getSelectionModel().select(treeNode.getTreeItem());
+            }
+            if (source != SelectionSource.APPLICATION_VIEW) {
+                applicationMessageTree.select(requestId);
+            }
+        } finally {
+            synchronizingSelection = false;
         }
     }
 
