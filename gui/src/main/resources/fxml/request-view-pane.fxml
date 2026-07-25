@@ -16,45 +16,57 @@
         <URL value="@/css/common-design.css" />
         <URL value="@/css/request-view-pane.css" />
     </stylesheets>
-    <HBox prefHeight="31.0" prefWidth="254.0">
-        <StackPane alignment="CENTER_RIGHT" prefHeight="150.0" prefWidth="250.0" HBox.hgrow="ALWAYS">
-            <TextField fx:id="filterInput" promptText="Filter">
-                <StackPane.margin>
-                    <Insets bottom="2.0" left="5.0" top="2.0" />
-                </StackPane.margin>
-            </TextField>
-            <Button fx:id="filterCancelBtn" prefHeight="22.0" prefWidth="22.0">
+    <VBox styleClass="request-toolbar">
+        <HBox prefHeight="31.0" prefWidth="254.0">
+            <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                <TextField fx:id="filterInput" maxWidth="Infinity" promptText="Filter">
+                    <StackPane.margin>
+                        <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+                    </StackPane.margin>
+                </TextField>
+                <Button fx:id="filterCancelBtn" prefHeight="22.0" prefWidth="22.0">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-times"/>
+                    </graphic>
+                    <StackPane.margin>
+                        <Insets bottom="1.0" right="5.0" top="1.0" />
+                    </StackPane.margin>
+                </Button>
+            </StackPane>
+        </HBox>
+        <HBox maxWidth="Infinity" styleClass="request-view-switcher">
+            <CustomToggleNode fx:id="applicationViewToggleNode" maxWidth="Infinity"
+                              styleClass="toggle-node" text="%application-view.label" HBox.hgrow="ALWAYS">
                 <graphic>
-                    <FontIcon iconLiteral="fas-times"/>
+                    <FontIcon iconLiteral="fas-th-large" iconSize="14"/>
                 </graphic>
-                <StackPane.margin>
-                    <Insets bottom="1.0" top="1.0" />
-                </StackPane.margin>
-            </Button>
-        </StackPane>
-        <CustomToggleNode fx:id="applicationViewToggleNode" styleClass="toggle-node">
-            <FontIcon iconLiteral="fas-window-maximize" iconSize="18"/>
-            <tooltip>
-                <Tooltip text="%application-view.tooltip" showDelay="50ms"/>
-            </tooltip>
-        </CustomToggleNode>
-        <CustomToggleNode fx:id="treeViewToggleNode" styleClass="toggle-node">
-            <FontIcon iconLiteral="fas-tree" iconSize="18"/>
-            <tooltip>
-                <Tooltip text="%tree-view.tooltip" showDelay="50ms"/>
-            </tooltip>
-        </CustomToggleNode>
-        <CustomToggleNode fx:id="listViewToggleNode" styleClass="toggle-node" >
-            <FontIcon iconLiteral="fas-list-ul" iconSize="18"/>
-            <tooltip>
-                <Tooltip text="%list-view.tooltip" showDelay="50ms"/>
-            </tooltip>
-        </CustomToggleNode>
-
-        <HBox.margin>
-            <Insets right="5.0" />
-        </HBox.margin>
-    </HBox>
+                <tooltip>
+                    <Tooltip text="%application-view.tooltip" showDelay="50ms"/>
+                </tooltip>
+            </CustomToggleNode>
+            <CustomToggleNode fx:id="treeViewToggleNode" maxWidth="Infinity"
+                              styleClass="toggle-node" text="%tree-view.label" HBox.hgrow="ALWAYS">
+                <graphic>
+                    <FontIcon iconLiteral="fas-sitemap" iconSize="14"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="%tree-view.tooltip" showDelay="50ms"/>
+                </tooltip>
+            </CustomToggleNode>
+            <CustomToggleNode fx:id="listViewToggleNode" maxWidth="Infinity"
+                              styleClass="toggle-node" text="%list-view.label" HBox.hgrow="ALWAYS">
+                <graphic>
+                    <FontIcon iconLiteral="fas-list-ul" iconSize="14"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="%list-view.tooltip" showDelay="50ms"/>
+                </tooltip>
+            </CustomToggleNode>
+            <VBox.margin>
+                <Insets bottom="4.0" left="5.0" right="5.0" />
+            </VBox.margin>
+        </HBox>
+    </VBox>
     <StackPane prefWidth="254.0" VBox.vgrow="ALWAYS">
         <TreeView fx:id="reqApplicationTreeView" editable="true" prefHeight="553.0" prefWidth="254.0" showRoot="false"/>
         <TreeView fx:id="reqTreeView" editable="true" prefHeight="553.0" prefWidth="254.0" showRoot="false" visible="false"/>

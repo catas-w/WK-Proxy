@@ -100,17 +100,25 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
     protected void layoutChildren() {
         super.layoutChildren();
         Node disclosureNode = lookup(".tree-disclosure-node");
-        if (applicationRow && disclosureNode != null && hbox != null) {
-            Bounds disclosureBounds = disclosureNode.getBoundsInParent();
-            Bounds rowBounds = hbox.getBoundsInParent();
-            double rowCenter = rowBounds.getMinY() + rowBounds.getHeight() / 2;
-            double disclosureCenter = disclosureBounds.getMinY() + disclosureBounds.getHeight() / 2;
-            double adjustment = Math.rint(rowCenter - disclosureCenter);
-            if (adjustment != 0) {
-                disclosureNode.setTranslateY(disclosureNode.getTranslateY() + adjustment);
+        if (disclosureNode == null) {
+            return;
+        }
+
+        // TreeCellSkin can reposition a reused disclosure node. Always calculate
+        // an absolute offset from its un-translated position to the application logo.
+        disclosureNode.setTranslateY(0);
+        if (applicationRow && applicationIconContainer != null
+                && applicationIconContainer.getParent() != null) {
+            Bounds disclosureBounds = disclosureNode.localToScene(disclosureNode.getBoundsInLocal());
+            Bounds iconBounds = applicationIconContainer.localToScene(applicationIconContainer.getBoundsInLocal());
+            if (disclosureBounds != null && iconBounds != null) {
+                double iconCenter = iconBounds.getMinY() + iconBounds.getHeight() / 2;
+                double disclosureCenter = disclosureBounds.getMinY() + disclosureBounds.getHeight() / 2;
+                double translateY = Math.rint(iconCenter - disclosureCenter);
+                if (Double.isFinite(translateY)) {
+                    disclosureNode.setTranslateY(translateY);
+                }
             }
-        } else if (disclosureNode != null && disclosureNode.getTranslateY() != 0) {
-            disclosureNode.setTranslateY(0);
         }
     }
 
@@ -261,10 +269,16 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
         }
 
         String applicationKey = requestCell.getNodeKey();
-        if (!StringUtils.equals(applicationKey, displayedApplicationIconKey)) {
+        boolean imageVisible = applicationIconContainer.getChildren().stream()
+                .anyMatch(ImageView.class::isInstance);
+        if (ApplicationIconRenderState.shouldLoad(applicationKey, displayedApplicationIconKey, imageVisible)) {
+            boolean applicationChanged = !StringUtils.equals(applicationKey, displayedApplicationIconKey);
             displayedApplicationIconKey = applicationKey;
-            applicationFallbackIcon.setIconLiteral(fallbackIconLiteral);
-            applicationIconContainer.getChildren().setAll(applicationFallbackIcon);
+            if (applicationChanged || applicationIconContainer.getChildren().isEmpty()) {
+                pendingApplicationIconKey = null;
+                applicationFallbackIcon.setIconLiteral(fallbackIconLiteral);
+                applicationIconContainer.getChildren().setAll(applicationFallbackIcon);
+            }
             loadApplicationIcon(requestCell, applicationIconContainer, applicationFallbackIcon);
         }
         return applicationIconContainer;
@@ -303,6 +317,7 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
         iconContainer.getChildren().setAll(imageView);
+        pendingApplicationIconKey = null;
     }
 
     private Label countLabel(RequestCell requestCell) {

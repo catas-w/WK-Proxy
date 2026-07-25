@@ -183,7 +183,6 @@
     -fx-border-width: 0;
     -fx-border-radius: 12;
     /*-fx-border-color: rgba(131, 131, 131, 0.49);*/
-    -fx-pref-width: 200;
     -fx-pref-height: 22;
     -fx-padding: 0 25 1 10;
 
@@ -202,22 +201,56 @@
 }
 
 /********** toggle-node **********/
+.request-view-switcher {
+    -fx-border-color: rgba(133, 133, 133, 0.45);
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
 .toggle-node {
     -jfx-toggle-color: TRANSPARENT;
-    /*-jfx-rippler-disabled: true;*/
-    -fx-max-width: 25;
-    -fx-min-width: 25;
-    -fx-padding: 5 0 0 0;
+    -jfx-untoggle-color: TRANSPARENT;
+    -fx-min-width: 0;
+    -fx-min-height: 28;
+    -fx-pref-height: 28;
+    -fx-max-width: Infinity;
+    -fx-padding: 4 7;
+    -fx-content-display: LEFT;
+    -fx-graphic-text-gap: 6;
+    -fx-alignment: CENTER;
+    -fx-background-color: rgba(255, 255, 255, 0.22);
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-text-fill: #555555;
+    -fx-font-size: 11px;
 }
 .toggle-node:hover {
-    /*-fx-fill: #a6a6a6;*/
-    -fx-opacity: 0.5;
+    -fx-background-color: rgba(180, 180, 180, 0.28);
 }
 .toggle-node .ikonli-font-icon {
-    -fx-icon-color: rgba(133, 133, 133, 0.55);
+    -fx-icon-color: #686868;
+}
+.toggle-node:selected {
+    -fx-background-color: #23a88e;
+    -fx-text-fill: white;
+}
+.toggle-node:selected:hover {
+    -fx-background-color: #1f9a83;
 }
 .toggle-node:selected .ikonli-font-icon {
-    -fx-icon-color: #46a8a8
+    -fx-icon-color: white;
+}
+#applicationViewToggleNode {
+    -fx-background-radius: 2 0 0 2;
+}
+#treeViewToggleNode,
+#listViewToggleNode {
+    -fx-border-color: transparent transparent transparent rgba(133, 133, 133, 0.45);
+    -fx-border-width: 0 0 0 1;
+}
+#listViewToggleNode {
+    -fx-background-radius: 0 2 2 0;
 }
 
 /********** tree-cells **********/
