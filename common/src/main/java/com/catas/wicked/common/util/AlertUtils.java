@@ -15,7 +15,7 @@ public class AlertUtils {
     public static final String CSS_FILE = Objects.requireNonNull(AlertUtils.class.getResource("/css/app.css")).toExternalForm();
 
     public static Optional<ButtonType> alert(Alert.AlertType type, String title, String msg) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+        Alert alert = new Alert(type);
         alert.setTitle(title == null ? type.name(): title);
         alert.setHeaderText(null);
         alert.setContentText(msg);

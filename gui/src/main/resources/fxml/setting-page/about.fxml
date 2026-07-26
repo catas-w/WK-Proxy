@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<GridPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.catas.wicked.proxy.gui.controller.settings.AboutSettingsPageController"
+          styleClass="setting-grid-pane" vgap="8.0">
+    <padding><Insets left="35.0" right="35.0" top="35.0" bottom="35.0"/></padding>
+    <ImageView fitHeight="175" fitWidth="175" GridPane.rowSpan="6">
+        <Image url="@../../image/wk-proxy.2.png"/>
+    </ImageView>
+    <HBox GridPane.rowIndex="1" GridPane.columnIndex="1">
+        <Label prefHeight="45.0" text="WK Proxy" textFill="#707a7c">
+            <font><Font name="MiSans Demibold" size="26.0"/></font>
+        </Label>
+        <Label prefHeight="45.0" text="Http debug proxy tool." textFill="#949090">
+            <HBox.margin><Insets left="10.0" top="5.0"/></HBox.margin>
+        </Label>
+    </HBox>
+    <VBox GridPane.rowIndex="2" GridPane.columnIndex="1">
+        <Label fx:id="appVersionLabel" textFill="#949090"/>
+        <Label fx:id="licenseLink" text="GNU General Public License v3.0"
+               textFill="#949090" styleClass="link-label"/>
+    </VBox>
+    <HBox GridPane.rowIndex="4" GridPane.columnIndex="1">
+        <Label styleClass="link-label" text="GitHub:"/>
+        <Hyperlink fx:id="githubLink" styleClass="link"/>
+    </HBox>
+</GridPane>

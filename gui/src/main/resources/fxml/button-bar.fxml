@@ -139,7 +139,4 @@
         <fx:include source="app-update-dialog.fxml"/>
     </fx:define>
 
-    <fx:define>
-        <fx:include fx:id="settingScene" source="setting-page/settings.fxml"/>
-    </fx:define>
 </AnchorPane>

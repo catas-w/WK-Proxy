@@ -29,6 +29,18 @@ public class ExternalProxyConfig {
 
     private boolean proxyAuth;
 
+    public ExternalProxyConfig copy() {
+        ExternalProxyConfig copy = new ExternalProxyConfig();
+        copy.protocol = protocol;
+        copy.host = host;
+        copy.port = port;
+        copy.username = username;
+        copy.password = password;
+        copy.usingExternalProxy = usingExternalProxy;
+        copy.proxyAuth = proxyAuth;
+        return copy;
+    }
+
     public void setProxyAddress(String hostname, int port) {
         socketAddress = new InetSocketAddress(hostname, port);
     }
@@ -42,7 +54,17 @@ public class ExternalProxyConfig {
     }
 
     public String getHost() {
-        return "127.0.0.1";
+        return host == null ? "127.0.0.1" : host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+        this.socketAddress = null;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+        this.socketAddress = null;
     }
 
     public SocketAddress getSocketAddress() {

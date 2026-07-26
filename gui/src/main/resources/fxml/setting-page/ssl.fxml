@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+            xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.catas.wicked.proxy.gui.controller.settings.SslSettingsPageController">
+    <content>
+        <GridPane fx:id="sslGridPane" styleClass="setting-ssl, setting-grid-pane" vgap="2">
+            <padding><Insets left="20.0" right="20.0" top="10.0" bottom="10.0"/></padding>
+            <Label text="%ssl-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+            <Label text="%enable-ssl.label" styleClass="grid-label" GridPane.rowIndex="1"/>
+            <JFXToggleButton fx:id="sslBtn" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <Label text="%ssl-bypass.label" styleClass="grid-label" contentDisplay="RIGHT" GridPane.rowIndex="2">
+                <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
+                <tooltip><Tooltip text="%ant-path.tooltip" showDelay="500ms"/></tooltip>
+            </Label>
+            <TextArea fx:id="sslExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="2"
+                      GridPane.columnIndex="1" promptText="*.test.com/**; **.org/**"/>
+            <Label text="%root-cert.label" styleClass="grid-label" contentDisplay="RIGHT" GridPane.rowIndex="3">
+                <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
+                <tooltip><Tooltip text="%root-cert.tooltip" showDelay="500ms"/></tooltip>
+            </Label>
+            <Label fx:id="loadingLabel" text="%settings.loading" visible="false"
+                   styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            <HBox fx:id="importCertBox" styleClass="grid-element">
+                <JFXButton fx:id="importCertBtn" styleClass="import-btn" text="%import-cert.label"/>
+            </HBox>
+        </GridPane>
+    </content>
+</ScrollPane>

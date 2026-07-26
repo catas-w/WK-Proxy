@@ -23,13 +23,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBase;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +32,6 @@ import org.ehcache.Cache;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static com.catas.wicked.common.constant.StyleConstant.COLOR_SUSPEND;
@@ -48,8 +42,6 @@ public class ButtonBarController implements Initializable {
 
     @FXML
     private VBox buttonBox;
-    @FXML
-    private Node settingScene;
     @FXML
     private WKToggleNode recordBtn;
     @FXML
@@ -80,19 +72,16 @@ public class ButtonBarController implements Initializable {
     @Inject
     private ScheduledManager scheduledManager;
     @Inject
-    private SettingController settingController;
+    private SettingsDialogCoordinator settingsDialogCoordinator;
     @Inject
     private AppUpdateController appUpdateController;
 
     @Setter
     private MessageService messageService;
-    private Dialog<Node> settingPage;
-    private String settingDialogTitle = "Settings";
 
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        settingDialogTitle = resourceBundle.getString("setting-dialog.title");
         // listen on current request
         appConfig.getObservableConfig().currentRequestIdProperty().addListener((observable, oldValue, newValue) -> {
             boolean disableResend = newValue == null || RenderMessage.isOverviewOnly(newValue);
@@ -135,21 +124,35 @@ public class ButtonBarController implements Initializable {
 
         // toggle handle ssl button
         sslBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            appConfig.setHandleSSL(newValue);
-            appConfig.updateSettingsAsync();
+            if (appConfig.getSettings().isHandleSsl() != newValue) {
+                appConfig.setHandleSSL(newValue);
+                appConfig.updateSettingsAsync();
+            }
             String toolTip = resourceBundle.getString(newValue ? "ssl-btn.disable.tooltip": "ssl-btn.enable.tooltip");
             sslBtn.getTooltip().setText(toolTip);
         });
         sslBtn.setSelected(appConfig.getSettings().isHandleSsl());
+        appConfig.getObservableConfig().handlingSSLProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && sslBtn.isSelected() != newValue) {
+                sslBtn.setSelected(newValue);
+            }
+        });
 
         // init throttle button
         throttleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            appConfig.getSettings().setThrottle(newValue);
-            appConfig.updateSettingsAsync();
+            if (appConfig.getSettings().isThrottle() != newValue) {
+                appConfig.getSettings().setThrottle(newValue);
+                appConfig.updateSettingsAsync();
+            }
             String toolTip = resourceBundle.getString(newValue ? "throttle-btn.disable.tooltip": "throttle-btn.enable.tooltip");
             throttleBtn.getTooltip().setText(toolTip);
         });
         throttleBtn.setSelected(appConfig.getSettings().isThrottle());
+        appConfig.getObservableConfig().throttlingProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && throttleBtn.isSelected() != newValue) {
+                throttleBtn.setSelected(newValue);
+            }
+        });
 
         // init sysProxyBtn
         appConfig.getObservableConfig().systemProxyStatusProperty().addListener((observable, oldValue, newValue) -> {
@@ -191,62 +194,19 @@ public class ButtonBarController implements Initializable {
     }
 
     public void displayProxySettingPage() {
-        if (settingPage == null) {
-            initSettingPage();
-        }
-        settingController.getSettingTabPane().getSelectionModel().select(settingController.getProxySettingTab());
-        displaySettingPage();
-        settingController.focusOnPortField();
+        settingsDialogCoordinator.open(SettingsTab.PROXY, recordBtn.getScene().getWindow());
     }
 
     public void displayAboutPage() {
-        if (settingPage == null) {
-            initSettingPage();
-        }
-        settingController.getSettingTabPane().getSelectionModel().select(settingController.getInfoSettingTab());
-        displaySettingPage(320);
+        settingsDialogCoordinator.open(SettingsTab.ABOUT, recordBtn.getScene().getWindow());
     }
 
     public void displaySSlSettingPage() {
-        if (settingPage == null) {
-            initSettingPage();
-        }
-        settingController.getSettingTabPane().getSelectionModel().select(settingController.getSslSettingTab());
-        displaySettingPage(500);
+        settingsDialogCoordinator.open(SettingsTab.SSL, recordBtn.getScene().getWindow());
     }
 
     public void displaySettingPage() {
-        displaySettingPage(450);
-    }
-
-    public void displaySettingPage(long targetHeight) {
-        if (settingPage == null) {
-            initSettingPage();
-        }
-
-        settingController.initValues();
-        adjustSettingDialogHeight(targetHeight);
-        settingPage.showAndWait();
-    }
-
-    /**
-     * init settings page
-     */
-    private void initSettingPage() {
-        settingController.setButtonBarController(this);
-
-        settingPage = new Dialog<>();
-        settingPage.setTitle(this.settingDialogTitle);
-        settingPage.initModality(Modality.APPLICATION_MODAL);
-        //指定父窗口，子窗口会显示父窗口相同的图标
-        settingPage.initOwner(recordBtn.getScene().getWindow());
-        DialogPane dialogPane = settingPage.getDialogPane();
-        dialogPane.setContent(settingScene);
-        dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/dialog.css")).toExternalForm());
-        dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/app.css")).toExternalForm());
-        dialogPane.getStyleClass().add("myDialog");
-        Window window = dialogPane.getScene().getWindow();
-        window.setOnCloseRequest(e -> window.hide());
+        settingsDialogCoordinator.open(SettingsTab.GENERAL, recordBtn.getScene().getWindow());
     }
 
     public void checkUpdate() {
@@ -255,17 +215,6 @@ public class ButtonBarController implements Initializable {
         }
         appConfig.getObservableConfig().setHasNewVersion(false);
         appUpdateController.checkUpdateAndShowAlert();
-    }
-
-    public void adjustSettingDialogHeight(double targetHeight) {
-        if (settingPage == null || settingPage.getDialogPane() == null) {
-            return;
-        }
-
-        settingPage.getDialogPane().setPrefHeight(targetHeight);
-        settingPage.getDialogPane().setMaxHeight(targetHeight);
-        Stage stage = (Stage) settingPage.getDialogPane().getScene().getWindow();
-        stage.sizeToScene();
     }
 
     /**

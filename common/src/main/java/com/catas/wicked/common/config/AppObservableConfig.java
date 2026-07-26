@@ -29,6 +29,8 @@ public class AppObservableConfig {
 
     private final SimpleBooleanProperty showApplicationRequestCount = new SimpleBooleanProperty(true);
 
+    private final SimpleBooleanProperty throttling = new SimpleBooleanProperty(false);
+
     public AppObservableConfig() {
     }
 
@@ -126,5 +128,17 @@ public class AppObservableConfig {
 
     public void setShowApplicationRequestCount(boolean showApplicationRequestCount) {
         this.showApplicationRequestCount.set(showApplicationRequestCount);
+    }
+
+    public boolean isThrottling() {
+        return throttling.get();
+    }
+
+    public SimpleBooleanProperty throttlingProperty() {
+        return throttling;
+    }
+
+    public void setThrottling(boolean throttling) {
+        this.throttling.set(throttling);
     }
 }

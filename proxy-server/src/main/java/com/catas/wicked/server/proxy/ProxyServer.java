@@ -82,6 +82,14 @@ public class ProxyServer {
         }
     }
 
+    public synchronized void restart() {
+        log.info("--- Restarting proxy server ---");
+        if (channelFuture != null) {
+            channelFuture.channel().close().syncUninterruptibly();
+        }
+        start();
+    }
+
     @PostConstruct
     private void init() {
         setStatus(ServerStatus.INIT);

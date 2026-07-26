@@ -1,0 +1,118 @@
+package com.catas.wicked.proxy.gui.controller.settings;
+
+import com.catas.wicked.common.config.Settings;
+import com.catas.wicked.common.constant.ThrottlePreset;
+import com.catas.wicked.proxy.gui.componet.EnumLabel;
+import com.catas.wicked.proxy.service.settings.SettingsDraft;
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXToggleButton;
+import io.micronaut.context.annotation.Prototype;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TextArea;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+@Prototype
+public class ProxySettingsPageController implements SettingsPageController, Initializable {
+
+    @FXML private JFXTextField portField;
+    @FXML private JFXToggleButton throttleBtn;
+    @FXML private JFXComboBox<EnumLabel<ThrottlePreset>> throttleComboBox;
+    @FXML private JFXCheckBox sysProxyOnLaunchBtn;
+    @FXML private TextArea sysProxyExcludeArea;
+
+    private SettingsDraft draft;
+    private Runnable changeListener = () -> {};
+    private boolean loading;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        SettingsFormSupport.require(portField, resources.getString("validation.required"));
+        SettingsFormSupport.positiveInteger(portField, resources.getString("validation.positive-integer"));
+        for (ThrottlePreset preset : ThrottlePreset.values()) {
+            throttleComboBox.getItems().add(new EnumLabel<>(preset, preset::getDesc));
+        }
+        portField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!loading && draft != null && newValue.matches("[1-9][0-9]*")) {
+                draft.value().setPort(Integer.parseInt(newValue));
+                changed();
+            }
+        });
+        throttleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            throttleComboBox.setDisable(!newValue);
+            if (!loading && draft != null) {
+                draft.value().setThrottle(newValue);
+                changed();
+            }
+        });
+        throttleComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (!loading && draft != null && newValue != null) {
+                draft.value().setThrottlePreset(newValue.getEnum());
+                changed();
+            }
+        });
+        sysProxyOnLaunchBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!loading && draft != null) {
+                draft.value().setEnableSysProxyOnLaunch(newValue);
+                changed();
+            }
+        });
+        sysProxyExcludeArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!loading && draft != null) {
+                draft.value().setSysProxyBypassList(SettingsFormSupport.parseList(newValue));
+                changed();
+            }
+        });
+    }
+
+    @Override
+    public void load(SettingsDraft draft, Runnable changeListener) {
+        this.draft = draft;
+        this.changeListener = changeListener == null ? () -> {} : changeListener;
+        Settings settings = draft.value();
+        loading = true;
+        try {
+            portField.setText(String.valueOf(settings.getPort()));
+            throttleBtn.setSelected(settings.isThrottle());
+            throttleComboBox.setDisable(!settings.isThrottle());
+            ThrottlePreset selected = settings.getThrottlePreset();
+            if (selected == null && !throttleComboBox.getItems().isEmpty()) {
+                throttleComboBox.getSelectionModel().selectFirst();
+            } else {
+                throttleComboBox.getItems().stream()
+                        .filter(item -> item.getEnum() == selected)
+                        .findFirst().ifPresent(throttleComboBox.getSelectionModel()::select);
+            }
+            sysProxyOnLaunchBtn.setSelected(settings.isEnableSysProxyOnLaunch());
+            sysProxyExcludeArea.setText(SettingsFormSupport.formatList(settings.getSysProxyBypassList()));
+        } finally {
+            loading = false;
+        }
+    }
+
+    @Override
+    public boolean validate() {
+        return portField.validate();
+    }
+
+    @Override
+    public void focusFirstError() {
+        if (!portField.validate()) {
+            portField.requestFocus();
+            portField.selectAll();
+        }
+    }
+
+    public void focusPort() {
+        portField.requestFocus();
+        portField.selectAll();
+    }
+
+    private void changed() {
+        changeListener.run();
+    }
+}

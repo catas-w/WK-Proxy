@@ -80,7 +80,7 @@ public class Settings {
     private boolean enableExProxy;
 
     @JsonDeserialize(using = SafeExternalProxyDeserializer.class)
-    private ExternalProxyConfig externalProxy;
+    private ExternalProxyConfig externalProxy = new ExternalProxyConfig();
 
     /**
      * Throttle settings
@@ -104,7 +104,38 @@ public class Settings {
     }
 
     public ExternalProxyConfig getExternalProxy() {
-        return externalProxy == null ? new ExternalProxyConfig() : externalProxy ;
+        if (externalProxy == null) {
+            externalProxy = new ExternalProxyConfig();
+        }
+        return externalProxy;
+    }
+
+    public Settings copy() {
+        Settings copy = new Settings();
+        copy.language = language;
+        copy.showButtonLabel = showButtonLabel;
+        copy.showApplicationRequestCount = showApplicationRequestCount;
+        copy.recording = recording;
+        copy.maxContentSize = maxContentSize;
+        copy.recordIncludeList = copyList(recordIncludeList);
+        copy.recordExcludeList = copyList(recordExcludeList);
+        copy.port = port;
+        copy.systemProxy = systemProxy;
+        copy.enableSysProxyOnLaunch = enableSysProxyOnLaunch;
+        copy.sysProxyBypassList = copyList(sysProxyBypassList);
+        copy.connectTimeout = connectTimeout;
+        copy.handleSsl = handleSsl;
+        copy.selectedCert = selectedCert;
+        copy.sslExcludeList = copyList(sslExcludeList);
+        copy.enableExProxy = enableExProxy;
+        copy.externalProxy = getExternalProxy().copy();
+        copy.throttle = throttle;
+        copy.throttlePreset = throttlePreset;
+        return copy;
+    }
+
+    private static List<String> copyList(List<String> source) {
+        return source == null ? null : List.copyOf(source);
     }
 
     static class SafeIntegerDeserializer extends JsonDeserializer<Integer> {

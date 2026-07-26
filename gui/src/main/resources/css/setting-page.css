@@ -77,6 +77,36 @@
     -fx-background-radius: 5;
 }
 
+.settings-action-bar {
+    -fx-border-color: #dddddd transparent transparent transparent;
+    -fx-background-color: #f7f7f7;
+}
+
+.settings-action-bar .button {
+    -fx-min-width: 82;
+    -fx-pref-height: 32;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+.settings-action-bar .cancel-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #b8b8b8;
+}
+
+.settings-action-bar .apply-btn {
+    -fx-background-color: #009688;
+    -fx-text-fill: white;
+}
+
+.settings-action-bar .apply-btn:disabled {
+    -fx-opacity: 0.45;
+}
+
+.settings-status-label {
+    -fx-text-fill: #6e6e6e;
+}
+
 
 /****** input fields ******/
 .setting-tab-pane .jfx-toggle-button {

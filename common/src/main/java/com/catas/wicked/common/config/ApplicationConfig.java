@@ -32,6 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
@@ -92,13 +94,7 @@ public class ApplicationConfig implements AutoCloseable {
 
         // update settings file
         messageQueue.subscribe(Topic.UPDATE_SETTING_FILE, msg -> {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ignored) {}
-
-            // update once
             messageQueue.clearMsg(Topic.UPDATE_SETTING_FILE);
-            // System.out.println("update settings File " + System.currentTimeMillis());
             updateSettingFile();
         });
 
@@ -156,6 +152,7 @@ public class ApplicationConfig implements AutoCloseable {
         observableConfig.setHandlingSSL(settings.isHandleSsl());
         observableConfig.setShowButtonLabel(settings.isShowButtonLabel());
         observableConfig.setShowApplicationRequestCount(settings.isShowApplicationRequestCount());
+        observableConfig.setThrottling(settings.isThrottle());
         if (settings.isEnableSysProxyOnLaunch()) {
             // force update systemProxy
             settings.setSystemProxy(true);
@@ -163,14 +160,9 @@ public class ApplicationConfig implements AutoCloseable {
         }
     }
 
-    public void updateSettingFile() {
+    public synchronized void updateSettingFile() {
         try {
-            File file = getLocalConfigFile();
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-            objectMapper.writeValue(file, settings);
+            persistSettings();
         } catch (Exception e) {
             log.error("Error updating local config.", e);
             Locale locale = this.getSettings().getLanguage().getLocale();
@@ -181,8 +173,40 @@ public class ApplicationConfig implements AutoCloseable {
         }
     }
 
+    public synchronized void persistSettings() throws IOException {
+        File file = getLocalConfigFile();
+        Path target = file.toPath();
+        Path parent = target.getParent();
+        if (parent != null) {
+            Files.createDirectories(parent);
+        }
+        Path temporary = Files.createTempFile(parent, "config-", ".json.tmp");
+        try {
+            objectMapper.writeValue(temporary.toFile(), settings);
+            try {
+                Files.move(temporary, target, StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (java.nio.file.AtomicMoveNotSupportedException ignored) {
+                Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            Files.deleteIfExists(temporary);
+        }
+    }
+
     public void updateSettingsAsync() {
         messageQueue.clearAndPushMsg(Topic.UPDATE_SETTING_FILE, new BaseMessage());
+    }
+
+    public synchronized Settings snapshotSettings() {
+        return settings.copy();
+    }
+
+    public synchronized void replaceSettings(Settings newSettings) {
+        if (newSettings == null) {
+            throw new IllegalArgumentException("newSettings cannot be null");
+        }
+        settings = newSettings.copy();
     }
 
     public int getMaxContentSize() {

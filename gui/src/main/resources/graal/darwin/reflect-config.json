@@ -595,6 +595,50 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.catas.wicked.proxy.gui.controller.$SettingsDialogCoordinator$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.$AboutSettingsPageController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.$ExternalProxySettingsPageController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.$GeneralSettingsPageController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.$ProxySettingsPageController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.$SslSettingsPageController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.AboutSettingsPageController",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.ExternalProxySettingsPageController",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.GeneralSettingsPageController",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.ProxySettingsPageController",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.SslSettingsPageController",
+  "allDeclaredFields":true
+},
+{
   "name":"com.catas.wicked.proxy.gui.controller.AppController",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
@@ -773,36 +817,12 @@
   ]
 },
 {
-  "name":"com.catas.wicked.proxy.service.settings.$AboutSettingService$Definition$Reference",
+  "name":"com.catas.wicked.proxy.service.settings.$DefaultPortAvailabilityChecker$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.catas.wicked.proxy.service.settings.$ExternalProxySettingService$Definition$Reference",
+  "name":"com.catas.wicked.proxy.service.settings.$SettingsCommitService$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.catas.wicked.proxy.service.settings.$GeneralSettingService$Definition$Reference",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.catas.wicked.proxy.service.settings.$ProxySettingService$Definition$Reference",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.catas.wicked.proxy.service.settings.$SslSettingService$Definition$Reference",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.catas.wicked.proxy.service.settings.GeneralSettingService",
-  "fields":[{"name":"applicationConfig"}]
-},
-{
-  "name":"com.catas.wicked.proxy.service.settings.ProxySettingService",
-  "fields":[{"name":"resourceMessageProvider"}]
-},
-{
-  "name":"com.catas.wicked.proxy.service.settings.SslSettingService",
-  "fields":[{"name":"certManager"}]
 },
 {
   "name":"com.catas.wicked.server.cert.$CertService$Definition$Reference",

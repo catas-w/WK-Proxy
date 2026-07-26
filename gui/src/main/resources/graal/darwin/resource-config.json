@@ -149,7 +149,11 @@
   },{
     "pattern":"\\Qfont\/MiSans-Normal.ttf\\E"
   },{
+    "pattern":"\\Qcss\/setting-page.css\\E"
+  },{
     "pattern":"\\Qfxml\/application.fxml\\E"
+  },{
+    "pattern":"\\Qfxml\/setting-page\/\\E.*"
   },{
     "pattern":"\\Qfxml\/component\/side_bar.fxml\\E"
   },{

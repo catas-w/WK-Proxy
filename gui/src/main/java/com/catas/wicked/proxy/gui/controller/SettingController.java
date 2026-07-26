@@ -1,311 +1,236 @@
 package com.catas.wicked.proxy.gui.controller;
 
+import app.supernaut.fx.fxml.FxmlLoaderFactory;
 import com.catas.wicked.common.config.ApplicationConfig;
-import com.catas.wicked.common.constant.LanguagePreset;
-import com.catas.wicked.common.constant.ProxyProtocol;
-import com.catas.wicked.common.constant.ThrottlePreset;
 import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.AlertUtils;
-import com.catas.wicked.common.worker.ScheduledManager;
-import com.catas.wicked.proxy.gui.componet.CertSelectComponent;
-import com.catas.wicked.proxy.gui.componet.EnumLabel;
-import com.catas.wicked.proxy.service.settings.ExternalProxySettingService;
-import com.catas.wicked.proxy.service.settings.GeneralSettingService;
-import com.catas.wicked.proxy.service.settings.ProxySettingService;
-import com.catas.wicked.proxy.service.settings.SettingService;
-import com.catas.wicked.proxy.service.settings.SslSettingService;
-import com.catas.wicked.server.proxy.ProxyServer;
+import com.catas.wicked.proxy.gui.controller.settings.ProxySettingsPageController;
+import com.catas.wicked.proxy.gui.controller.settings.SettingsPageController;
+import com.catas.wicked.proxy.service.settings.SettingsApplyResult;
+import com.catas.wicked.proxy.service.settings.SettingsCommitService;
+import com.catas.wicked.proxy.service.settings.SettingsDraft;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXToggleButton;
-import io.micronaut.core.util.CollectionUtils;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import javafx.event.ActionEvent;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
-import java.util.List;
+import java.util.EnumMap;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.function.Consumer;
 
-@Getter
 @Slf4j
 @Singleton
-// @RequiredArgsConstructor(onConstructor_={@Inject})
 public class SettingController implements Initializable {
 
-    public JFXToggleButton exProxyBtn;
-    public JFXComboBox<EnumLabel<ProxyProtocol>> proxyComboBox;
-    public JFXTextField exProxyHost;
-    public JFXTextField exProxyPort;
-    public JFXTextField exUsername;
-    public JFXTextField exPassword;
-    public JFXToggleButton exProxyAuth;
-    public Label exUsernameLabel;
-    public Label exPasswordLabel;
-    public JFXComboBox<EnumLabel<LanguagePreset>> languageComboBox;
-    public TextArea recordExcludeArea;
-    public TextArea sysProxyExcludeArea;
-    public JFXToggleButton sslBtn;
-    public TextArea sslExcludeArea;
-    public JFXToggleButton throttleBtn;
-    public JFXComboBox<EnumLabel<ThrottlePreset>> throttleComboBox;
+    @FXML private BorderPane root;
+    @FXML private TabPane settingTabPane;
+    @FXML private Tab generalSettingTab;
+    @FXML private Tab proxySettingTab;
+    @FXML private Tab sslSettingTab;
+    @FXML private Tab externalSettingTab;
+    @FXML private Tab infoSettingTab;
+    @FXML private JFXButton applyButton;
+    @FXML private JFXButton cancelButton;
+    @FXML private Label applyStatusLabel;
 
-    public Tab generalSettingTab;
-    public Tab proxySettingTab;
-    public Tab sslSettingTab;
-    public Tab externalSettingTab;
-    public Tab infoSettingTab;
-    public HBox importCertBox;
-    public Button importCertBtn;
-    public GridPane sslGridPane;
-    public GridPane exProxyGridPane;
-    public Label langAlertLabel;
-    public Label appVersionLabel;
-    public Hyperlink githubLink;
-    public Hyperlink twitterLink;
-    public JFXToggleButton buttonLabelBtn;
-    @FXML
-    private Label licenseLink;
-    @FXML
-    private JFXCheckBox sysProxyOnLaunchBtn;
-    @FXML
-    private TabPane settingTabPane;
-    @FXML
-    private JFXTextField portField;
-    @FXML
-    private JFXTextField maxSizeField;
-    @Inject
-    private ApplicationConfig appConfig;
-    @Setter
-    private ButtonBarController buttonBarController;
-    @Inject
-    private ProxyServer proxyServer;
-    @Inject
-    private ScheduledManager scheduledManager;
-    @Inject
-    private List<SettingService> settingServiceList;
-    @Inject
-    private ResourceMessageProvider resourceMessageProvider;
+    @Inject private FxmlLoaderFactory loaderFactory;
+    @Inject private ApplicationConfig applicationConfig;
+    @Inject private SettingsCommitService commitService;
+    @Inject private ResourceMessageProvider messages;
+
+    private final Map<SettingsTab, Tab> tabs = new EnumMap<>(SettingsTab.class);
+    private final Map<Tab, String> pageResources = new LinkedHashMap<>();
+    private final Map<Tab, SettingsPageController> loadedPages = new LinkedHashMap<>();
+    private SettingsDraft draft;
+    private Runnable closeAction = () -> {};
+    private boolean applying;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        // initServers();
-        settingServiceList.forEach(settingService -> settingService.setSettingController(this));
-        settingServiceList.forEach(SettingService::init);
+    public void initialize(URL location, ResourceBundle resources) {
+        tabs.put(SettingsTab.GENERAL, generalSettingTab);
+        tabs.put(SettingsTab.PROXY, proxySettingTab);
+        tabs.put(SettingsTab.SSL, sslSettingTab);
+        tabs.put(SettingsTab.EXTERNAL_PROXY, externalSettingTab);
+        tabs.put(SettingsTab.ABOUT, infoSettingTab);
 
-        // set icons
+        pageResources.put(generalSettingTab, "/fxml/setting-page/general.fxml");
+        pageResources.put(proxySettingTab, "/fxml/setting-page/proxy.fxml");
+        pageResources.put(sslSettingTab, "/fxml/setting-page/ssl.fxml");
+        pageResources.put(externalSettingTab, "/fxml/setting-page/external-proxy.fxml");
+        pageResources.put(infoSettingTab, "/fxml/setting-page/about.fxml");
+
         configTabStyle(generalSettingTab, "fas-sliders-h");
         configTabStyle(proxySettingTab, "fas-hat-cowboy");
         configTabStyle(sslSettingTab, "fas-key");
         configTabStyle(externalSettingTab, "fas-monument");
         configTabStyle(infoSettingTab, "fas-info-circle");
 
-        // scroll pane
-        for (Tab tab : List.of(generalSettingTab, proxySettingTab, sslSettingTab, infoSettingTab)) {
-            AnchorPane anchorPane = (AnchorPane) tab.getContent();
-            Node child = anchorPane.getChildren().get(0);
-            if (child instanceof ScrollPane scrollPane) {
-                scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-                scrollPane.setFitToWidth(true);
-            }
-        }
-
-        // adjust height
-        settingTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null) {
-                return;
-            }
-            AnchorPane anchorPane = (AnchorPane) newValue.getContent();
-            for (Node child : anchorPane.getChildren()) {
-                if (child instanceof ScrollPane scrollPane) {
-                    if (scrollPane.getContent() instanceof GridPane gridPane) {
-                        double targetHeight = gridPane.heightProperty().get();
-                        // System.out.println("target height: " + targetHeight);
-                        buttonBarController.adjustSettingDialogHeight(targetHeight + 100.0);
-                        break;
-                    }
+        settingTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
+            if (newTab != null && draft != null) {
+                SettingsPageController page = ensurePageLoaded(newTab);
+                if (page != null) {
+                    page.onShown();
                 }
+            }
+        });
+        applyButton.setOnAction(event -> apply());
+        cancelButton.setOnAction(event -> {
+            if (!applying) {
+                closeAction.run();
             }
         });
     }
 
+    public void beginSession(SettingsTab initialTab, Runnable closeAction) {
+        this.closeAction = closeAction == null ? () -> {} : closeAction;
+        draft = SettingsDraft.from(applicationConfig.snapshotSettings());
+        applyStatusLabel.setText("");
+        setApplying(false);
+
+        SettingsPageController general = ensurePageLoaded(generalSettingTab);
+        if (general != null) {
+            general.load(draft, this::onDraftChanged);
+        }
+        for (Map.Entry<Tab, SettingsPageController> entry : loadedPages.entrySet()) {
+            if (entry.getKey() != generalSettingTab) {
+                entry.getValue().load(draft, this::onDraftChanged);
+            }
+        }
+        Tab target = tabs.getOrDefault(initialTab, generalSettingTab);
+        settingTabPane.getSelectionModel().select(target);
+        SettingsPageController selected = ensurePageLoaded(target);
+        if (selected != null) {
+            selected.onShown();
+        }
+        updateDirtyState();
+
+        if (initialTab == SettingsTab.PROXY && selected instanceof ProxySettingsPageController proxyPage) {
+            Platform.runLater(proxyPage::focusPort);
+        }
+    }
+
+    public boolean isDirty() {
+        return draft != null && draft.isDirty();
+    }
+
+    public boolean isApplying() {
+        return applying;
+    }
+
+    private SettingsPageController ensurePageLoaded(Tab tab) {
+        SettingsPageController existing = loadedPages.get(tab);
+        if (existing != null) {
+            return existing;
+        }
+        String resource = pageResources.get(tab);
+        if (resource == null) {
+            return null;
+        }
+        try {
+            URL location = getClass().getResource(resource);
+            FXMLLoader loader = loaderFactory.get(location);
+            Locale locale = applicationConfig.getSettings().getLanguage().getLocale();
+            loader.setResources(ResourceBundle.getBundle("lang.messages", locale));
+            Parent content = loader.load();
+            SettingsPageController controller = loader.getController();
+            tab.setContent(content);
+            loadedPages.put(tab, controller);
+            if (draft != null) {
+                controller.load(draft, this::onDraftChanged);
+            }
+            return controller;
+        } catch (Exception error) {
+            log.error("Unable to load settings page: {}", resource, error);
+            applyStatusLabel.setText(error.getMessage());
+            return null;
+        }
+    }
+
+    private void apply() {
+        if (applying || draft == null) {
+            return;
+        }
+        for (Map.Entry<Tab, SettingsPageController> entry : loadedPages.entrySet()) {
+            if (!entry.getValue().validate()) {
+                settingTabPane.getSelectionModel().select(entry.getKey());
+                entry.getValue().focusFirstError();
+                AlertUtils.alertWarning(messages.getMessage("alert.type.warning"),
+                        messages.getMessage("alert.msg.illegal-settings"));
+                return;
+            }
+        }
+
+        setApplying(true);
+        applyStatusLabel.setText(messages.getMessage("settings.applying"));
+        commitService.apply(draft).whenComplete((result, error) ->
+                Platform.runLater(() -> finishApply(result, error)));
+    }
+
+    private void finishApply(SettingsApplyResult result, Throwable error) {
+        setApplying(false);
+        if (error != null || result == null || !result.success()) {
+            String message = error != null ? error.getMessage()
+                    : result == null ? messages.getMessage("alert.msg.settings-update-error")
+                    : result.errorMessage();
+            applyStatusLabel.setText(message);
+            AlertUtils.alertWarning(messages.getMessage("alert.type.warning"), message);
+            updateDirtyState();
+            return;
+        }
+
+        draft.markApplied();
+        syncObservableSettings();
+        applyStatusLabel.setText(messages.getMessage("settings.apply-success"));
+        updateDirtyState();
+    }
+
+    private void syncObservableSettings() {
+        var settings = applicationConfig.getSettings();
+        var observable = applicationConfig.getObservableConfig();
+        observable.setHandlingSSL(settings.isHandleSsl());
+        observable.setShowButtonLabel(settings.isShowButtonLabel());
+        observable.setShowApplicationRequestCount(settings.isShowApplicationRequestCount());
+        observable.setThrottling(settings.isThrottle());
+    }
+
+    private void onDraftChanged() {
+        applyStatusLabel.setText("");
+        updateDirtyState();
+    }
+
+    private void updateDirtyState() {
+        applyButton.setDisable(applying || !isDirty());
+    }
+
+    private void setApplying(boolean applying) {
+        this.applying = applying;
+        settingTabPane.setDisable(applying);
+        cancelButton.setDisable(applying);
+        updateDirtyState();
+    }
+
     private void configTabStyle(Tab tab, String iconCode) {
-        if (tab == null) {
-            return;
-        }
-
-        final String styleClass = "setting-icon-pane";
-        FontIcon icon = new FontIcon();
-        icon.setIconLiteral(iconCode);
-        // icon.setIconSize(36);
-
+        FontIcon icon = new FontIcon(iconCode);
         Label label = new Label(tab.getText());
-
-        BorderPane tabPane = new BorderPane();
-        tabPane.setPrefWidth(90);
-        tabPane.setCenter(icon);
-        tabPane.setBottom(label);
-        tabPane.getStyleClass().add(styleClass);
-
+        BorderPane graphic = new BorderPane();
+        graphic.setPrefWidth(90);
+        graphic.setCenter(icon);
+        graphic.setBottom(label);
+        graphic.getStyleClass().add("setting-icon-pane");
         tab.setText(null);
-        tab.setGraphic(tabPane);
-    }
-
-    @Deprecated
-    public void save(ActionEvent event) {
-        // valid textFields
-        boolean isValidated = true;
-        for (Tab tab : settingTabPane.getTabs()) {
-            Pane tabContent = (Pane) tab.getContent();
-            Set<Node> textFields = tabContent.lookupAll(".jfx-text-field");
-            if (isValidated && textFields != null && !textFields.isEmpty()) {
-                for (Node textField : textFields) {
-                    if (textField instanceof JFXTextField jfxTextField && !jfxTextField.validate()) {
-                        isValidated = false;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!isValidated) {
-            AlertUtils.alertWarning(resourceMessageProvider.getMessage("alert.type.warning"),
-                    resourceMessageProvider.getMessage("alert.msg.illegal-settings"));
-            return;
-        }
-
-        settingServiceList.forEach(settingService -> settingService.update(appConfig));
-
-        // update config file
-        appConfig.updateSettingFile();
-        cancel(event);
-    }
-
-    @Deprecated
-    public void cancel(ActionEvent event) {
-        if (event == null) {
-            return;
-        }
-        List<Window> windows = Stage.getWindows().stream().filter(Window::isShowing).filter(Window::isFocused).toList();
-        for (Window window : windows) {
-            Parent root = window.getScene().getRoot();
-            if (root instanceof DialogPane dialogPane) {
-                window.hide();
-            }
-        }
-    }
-
-    @Deprecated
-    public void apply(ActionEvent event) {
-        save(null);
-    }
-
-    /**
-     * initialize form values
-     */
-    public void initValues() {
-        if (appConfig == null) {
-            return;
-        }
-
-        settingServiceList.forEach(settingService -> settingService.initValues(appConfig));
-    }
-
-    /**
-     * reset current page
-     */
-    @Deprecated
-    public void reset() {
-        Tab selectedTab = settingTabPane.getSelectionModel().getSelectedItem();
-        List<String> styleList = selectedTab.getStyleClass()
-                .stream()
-                .filter(style -> style.startsWith("setting-") && !style.startsWith("setting-tab"))
-                .toList();
-        Class targetServiceType = null;
-        switch (styleList.get(0)) {
-            case "setting-general" -> targetServiceType = GeneralSettingService.class;
-            case "setting-server" -> targetServiceType = ProxySettingService.class;
-            case "setting-ssl" -> targetServiceType = SslSettingService.class;
-            case "setting-external" -> targetServiceType = ExternalProxySettingService.class;
-        }
-
-        if (targetServiceType != null) {
-            for (SettingService service : settingServiceList) {
-                if (service.getClass().equals(targetServiceType)) {
-                    service.initValues(appConfig);
-                }
-            }
-        }
-    }
-
-    public void updateThrottleBtn(boolean selected) {
-        buttonBarController.updateThrottleBtn(selected);
-    }
-
-    public void updateSslBtn(boolean selected) {
-        buttonBarController.updateSSlBtn(selected);
-    }
-
-    public void setSelectableCert(List<? extends Node> certList) {
-        if (CollectionUtils.isEmpty(certList)) {
-            return;
-        }
-
-        // clean old
-        final int startRowIndex = 3;
-        sslGridPane.getChildren().remove(importCertBox);
-        sslGridPane.getChildren().removeIf(item -> item instanceof CertSelectComponent);
-
-        // add
-        int rowIndex = startRowIndex;
-        for (Node node : certList) {
-            sslGridPane.add(node, 1, rowIndex);
-            rowIndex ++;
-        }
-
-        sslGridPane.add(importCertBox, 1, rowIndex);
-    }
-
-    public void setImportCertEvent(Consumer<ActionEvent> consumer) {
-        if (consumer != null) {
-            importCertBtn.setOnAction(consumer::accept);
-        }
-    }
-
-    public void setImportCertBtnStatus(boolean disabled) {
-        importCertBtn.setDisable(disabled);
-    }
-
-    public void focusOnPortField() {
-        // focus and select all
-        portField.requestFocus();
-        portField.selectAll();
+        tab.setGraphic(graphic);
     }
 }
