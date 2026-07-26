@@ -1,7 +1,16 @@
 package com.catas.wicked.common.bean;
 
 import io.netty.handler.codec.http.HttpMethod;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -21,6 +30,12 @@ public class RequestCell {
 
     private String path;
 
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private final transient StringProperty pathProperty = new SimpleStringProperty(this, "path");
+
     private String fullPath;
 
     private String method;
@@ -35,12 +50,25 @@ public class RequestCell {
 
     private String secondaryText;
 
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private final transient StringProperty secondaryTextProperty =
+            new SimpleStringProperty(this, "secondaryText");
+
     private String statusText;
 
     /** GUI-only source metadata used to resolve an application icon locally. */
     private transient ProcessInfo processInfo;
 
     private int count;
+
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private final transient IntegerProperty countProperty = new SimpleIntegerProperty(this, "count");
 
     private String searchText;
 
@@ -66,9 +94,48 @@ public class RequestCell {
     }
 
     public RequestCell(String path, String method) {
-        this.path = path;
+        setPath(path);
         this.method = method;
         this.createdTime = System.currentTimeMillis();
+    }
+
+    public String getPath() {
+        return pathProperty.get();
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+        pathProperty.set(path);
+    }
+
+    public StringProperty pathProperty() {
+        return pathProperty;
+    }
+
+    public String getSecondaryText() {
+        return secondaryTextProperty.get();
+    }
+
+    public void setSecondaryText(String secondaryText) {
+        this.secondaryText = secondaryText;
+        secondaryTextProperty.set(secondaryText);
+    }
+
+    public StringProperty secondaryTextProperty() {
+        return secondaryTextProperty;
+    }
+
+    public int getCount() {
+        return countProperty.get();
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+        countProperty.set(count);
+    }
+
+    public IntegerProperty countProperty() {
+        return countProperty;
     }
 
     public String getMethod() {
@@ -87,7 +154,7 @@ public class RequestCell {
             return true;
         }
         String candidate = StringUtils.defaultString(searchText,
-                StringUtils.defaultString(fullPath, path));
+                StringUtils.defaultString(fullPath, getPath()));
         return candidate.toLowerCase().contains(filter.trim().toLowerCase());
     }
 }

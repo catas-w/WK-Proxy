@@ -71,6 +71,7 @@ public class MessageService {
 
     private MessageTree messageTree;
     private ApplicationMessageTree applicationMessageTree;
+    private final ResponseUpdateBuffer responseUpdateBuffer = new ResponseUpdateBuffer();
     private boolean synchronizingSelection;
 
     @Getter
@@ -244,28 +245,18 @@ public class MessageService {
             updateTimeStats(requestMessage, updateMsg);
             requestViewService.refreshCurrentApplicationGroup();
         } else if (msg instanceof ResponseMessage updateMsg) {
-            RequestMessage requestMessage = requestCache.get(updateMsg.getRequestId());
-            if (requestMessage == null) {
-                System.out.println("requestMessage is null");
-                return;
-            }
-            if (requestMessage.getResponse() == null ) {
-                if (updateMsg.getRetryTimes() > 0) {
-                    updateMsg.setRetryTimes(updateMsg.getRetryTimes() - 1);
-                    messageQueue.pushMsg(Topic.UPDATE_MSG, updateMsg);
+            RequestMessage requestMessage;
+            synchronized (responseUpdateBuffer) {
+                requestMessage = requestCache.get(updateMsg.getRequestId());
+                if (requestMessage != null && requestMessage.getResponse() != null) {
+                    ResponseUpdateBuffer.apply(requestMessage.getResponse(), updateMsg);
+                    requestCache.put(requestMessage.getRequestId(), requestMessage);
                 } else {
-                    log.warn("Cannot update responseMsg, requestID = {}", requestMessage.getRequestId());
+                    responseUpdateBuffer.defer(updateMsg);
+                    return;
                 }
-                return;
             }
-            // TODO 分开resp
-            requestMessage.getResponse().setSize(updateMsg.getSize());
-            requestMessage.getResponse().setEndTime(updateMsg.getEndTime());
-            requestCache.put(requestMessage.getRequestId(), requestMessage);
-
-            // update timeStatsData
-            updateTimeStats(requestMessage, updateMsg);
-            requestViewService.refreshCurrentApplicationGroup();
+            updateResponseStats(requestMessage);
         } else {
             log.warn("Unrecognized requestMsg");
         }
@@ -302,14 +293,19 @@ public class MessageService {
         if (msg instanceof ResponseMessage responseMessage) {
             switch (responseMessage.getType()) {
                 case RESPONSE -> {
-                    RequestMessage data = requestCache.get(responseMessage.getRequestId());
+                    RequestMessage data;
+                    synchronized (responseUpdateBuffer) {
+                        data = requestCache.get(responseMessage.getRequestId());
+                        if (data != null) {
+                            data.setResponse(responseMessage);
+                            ResponseMessage pendingUpdate =
+                                    responseUpdateBuffer.drain(responseMessage.getRequestId());
+                            ResponseUpdateBuffer.apply(responseMessage, pendingUpdate);
+                            requestCache.put(data.getRequestId(), data);
+                        }
+                    }
                     if (data != null) {
-                        data.setResponse(responseMessage);
-                        requestCache.put(data.getRequestId(), data);
-
-                        // update timeStatsData
-                        updateTimeStats(data, responseMessage);
-                        requestViewService.refreshCurrentApplicationGroup();
+                        updateResponseStats(data);
                     }
                 }
                 // Deprecated
@@ -388,6 +384,7 @@ public class MessageService {
         messageTree.delete(nodeToDelete);
         messageTree.subtractCnt(requestIdList.size());
         applicationMessageTree.remove(requestIdList);
+        responseUpdateBuffer.removeAll(requestIdList);
 
         // remove requestId from ehcache
         try {
@@ -424,6 +421,7 @@ public class MessageService {
         }
         messageTree.subtractCnt(removed);
         applicationMessageTree.remove(requestIds);
+        responseUpdateBuffer.removeAll(requestIds);
         Platform.runLater(() -> requestViewController.getReqSourceList().removeAll(listItems));
         requestViewService.updateRequestTab(null);
         try {
@@ -453,6 +451,7 @@ public class MessageService {
         treeNodeList.forEach(messageTree::delete);
         messageTree.resetCnt();
         applicationMessageTree.clear();
+        responseUpdateBuffer.removeAll(requestIdList);
         requestViewService.updateRequestTab(null);
 
         // delete all items in listView
@@ -478,6 +477,7 @@ public class MessageService {
         });
         resetMessageTree();
         messageTree.resetCnt();
+        responseUpdateBuffer.clear();
         requestViewService.updateRequestTab(null);
 
         try {
@@ -509,5 +509,10 @@ public class MessageService {
         } else {
             log.warn("Unexpected msg type");
         }
+    }
+
+    private void updateResponseStats(RequestMessage requestMessage) {
+        updateTimeStats(requestMessage, requestMessage.getResponse());
+        requestViewService.refreshCurrentApplicationGroup();
     }
 }

@@ -28,9 +28,14 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.javafx.Icon;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class RequestViewTreeCell<T> extends TreeCell<T> {
+
+    private static final String DEFAULT_APPLICATION_ICON = "fas-window-maximize";
+    private static final int APPLICATION_FALLBACK_ICON_SIZE = 28;
+    private static final int DEFAULT_APPLICATION_ICON_SIZE = 24;
 
     private HBox hbox;
     private StackPane pathStackPane = new StackPane();
@@ -59,6 +64,15 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
     private StackPane applicationIconContainer;
     private FontIcon applicationFallbackIcon;
     private boolean applicationRow;
+    private Label applicationNameLabel;
+    private Label applicationSecondaryLabel;
+    private Label applicationCountLabel;
+    private HBox applicationTitle;
+    private VBox applicationLabels;
+    private RequestCell boundApplicationCell;
+    private Label groupCountLabel;
+    private Region groupCountSpacer;
+    private RequestCell boundGroupCountCell;
 
     private InvalidationListener treeItemGraphicInvalidationListener = observable -> updateDisplay(getItem(),
             isEmpty());
@@ -154,7 +168,6 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
             pathStackPane.setMinWidth(0);
         }
 
-        hbox.getChildren().clear();
         hbox.getStyleClass().remove("req-application-row");
         applicationRow = requestCell.getNodeType() == RequestCell.NodeType.APPLICATION;
         setTooltip(null);
@@ -166,58 +179,51 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
         pathLabel.setMaxWidth(Double.MAX_VALUE);
 
         if (requestCell.getNodeType() == RequestCell.NodeType.APPLICATION) {
+            unbindGroupCount();
             String iconLiteral = switch (requestCell.getNodeKey()) {
                 case "__identifying__" -> "fas-search";
                 case "__unknown__" -> "fas-question-circle";
-                default -> "fas-window-maximize";
+                default -> DEFAULT_APPLICATION_ICON;
             };
             StackPane iconContainer = applicationIcon(requestCell, iconLiteral);
-            Label primary = new Label(requestCell.getPath());
-            primary.getStyleClass().add("application-name");
-            primary.setTextOverrun(OverrunStyle.ELLIPSIS);
-            primary.setMinWidth(0);
-            primary.setMaxWidth(Double.MAX_VALUE);
-            HBox title = new HBox(4, primary);
-            title.setMinWidth(0);
-            title.setMaxWidth(Double.MAX_VALUE);
+            createApplicationLabels();
+            bindApplicationLabels(requestCell);
             if (showApplicationRequestCount.get()) {
-                Label count = new Label("(" + requestCell.getCount() + ")");
-                count.getStyleClass().add("application-request-count");
-                count.setMinWidth(Region.USE_PREF_SIZE);
-                title.getChildren().add(count);
+                setChildrenIfChanged(applicationTitle, applicationNameLabel, applicationCountLabel);
+            } else {
+                setChildrenIfChanged(applicationTitle, applicationNameLabel);
             }
-            Label secondary = new Label(requestCell.getSecondaryText());
-            secondary.getStyleClass().add("application-secondary");
-            secondary.setTextOverrun(OverrunStyle.ELLIPSIS);
-            VBox labels = new VBox(0, title, secondary);
-            labels.setMinWidth(0);
-            labels.setMaxWidth(Double.MAX_VALUE);
-            HBox.setHgrow(labels, Priority.ALWAYS);
             hbox.getStyleClass().add("req-application-row");
-            hbox.getChildren().setAll(iconContainer, labels);
+            setChildrenIfChanged(hbox, iconContainer, applicationLabels);
             if (StringUtils.isNotBlank(requestCell.getStatusText())) {
                 setTooltip(new Tooltip(requestCell.getStatusText()));
             }
             return;
         }
 
+        unbindApplicationLabels();
         if (requestCell.getNodeType() == RequestCell.NodeType.HOST) {
             if (hostIcon == null) {
                 hostIcon = new FontIcon("fas-globe-africa");
                 hostIcon.getStyleClass().add("req-icon");
                 hostIcon.setIconSize(14);
             }
-            Region spacer = new Region();
+            if (groupCountSpacer == null) {
+                groupCountSpacer = new Region();
+            }
             HBox.setHgrow(pathStackPane, Priority.ALWAYS);
-            HBox.setHgrow(spacer, Priority.ALWAYS);
+            HBox.setHgrow(groupCountSpacer, Priority.ALWAYS);
             if (showApplicationRequestCount.get()) {
-                hbox.getChildren().setAll(hostIcon, pathStackPane, spacer, countLabel(requestCell));
+                setChildrenIfChanged(hbox, hostIcon, pathStackPane, groupCountSpacer,
+                        countLabel(requestCell));
             } else {
-                hbox.getChildren().setAll(hostIcon, pathStackPane);
+                unbindGroupCount();
+                setChildrenIfChanged(hbox, hostIcon, pathStackPane);
             }
             return;
         }
 
+        unbindGroupCount();
         if (requestCell.isLeaf()) {
             hbox.getStyleClass().add("req-leaf");
             if (methodLabel == null) {
@@ -235,7 +241,7 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
                 }
             }
             HBox.setHgrow(pathStackPane, Priority.ALWAYS);
-            hbox.getChildren().setAll(methodLabel, pathStackPane);
+            setChildrenIfChanged(hbox, methodLabel, pathStackPane);
         } else {
             if (pathIcon == null) {
                 pathIcon = new FontIcon();
@@ -249,7 +255,7 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
             }
             // icon.getStyleClass().add("request-path-icon");
             HBox.setHgrow(pathStackPane, Priority.ALWAYS);
-            hbox.getChildren().setAll(pathIcon, pathStackPane);
+            setChildrenIfChanged(hbox, pathIcon, pathStackPane);
         }
         if (requestCell.isOnCreated()) {
             // TODO efficiency
@@ -261,13 +267,14 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
         if (applicationIconContainer == null) {
             applicationFallbackIcon = new FontIcon();
             applicationFallbackIcon.getStyleClass().add("application-icon");
-            applicationFallbackIcon.setIconSize(28);
             applicationIconContainer = new StackPane();
             applicationIconContainer.setMinSize(30, 30);
             applicationIconContainer.setPrefSize(30, 30);
             applicationIconContainer.setMaxSize(30, 30);
         }
 
+        applicationFallbackIcon.setIconSize(DEFAULT_APPLICATION_ICON.equals(fallbackIconLiteral)
+                ? DEFAULT_APPLICATION_ICON_SIZE : APPLICATION_FALLBACK_ICON_SIZE);
         String applicationKey = requestCell.getNodeKey();
         boolean imageVisible = applicationIconContainer.getChildren().stream()
                 .anyMatch(ImageView.class::isInstance);
@@ -321,15 +328,96 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
     }
 
     private Label countLabel(RequestCell requestCell) {
-        Label count = new Label(String.valueOf(requestCell.getCount()));
-        count.getStyleClass().add("request-count");
-        return count;
+        if (groupCountLabel == null) {
+            groupCountLabel = new Label();
+            groupCountLabel.getStyleClass().add("request-count");
+        }
+        if (boundGroupCountCell != requestCell) {
+            unbindGroupCount();
+            groupCountLabel.textProperty().bind(requestCell.countProperty().asString());
+            boundGroupCountCell = requestCell;
+        }
+        return groupCountLabel;
+    }
+
+    private void createApplicationLabels() {
+        if (applicationLabels != null) {
+            return;
+        }
+        applicationNameLabel = new Label();
+        applicationNameLabel.getStyleClass().add("application-name");
+        applicationNameLabel.setTextOverrun(OverrunStyle.ELLIPSIS);
+        applicationNameLabel.setMinWidth(0);
+        applicationNameLabel.setMaxWidth(Double.MAX_VALUE);
+
+        applicationCountLabel = new Label();
+        applicationCountLabel.getStyleClass().add("application-request-count");
+        applicationCountLabel.setMinWidth(Region.USE_PREF_SIZE);
+
+        applicationTitle = new HBox(4, applicationNameLabel);
+        applicationTitle.setMinWidth(0);
+        applicationTitle.setMaxWidth(Double.MAX_VALUE);
+
+        applicationSecondaryLabel = new Label();
+        applicationSecondaryLabel.getStyleClass().add("application-secondary");
+        applicationSecondaryLabel.setTextOverrun(OverrunStyle.ELLIPSIS);
+
+        applicationLabels = new VBox(0, applicationTitle, applicationSecondaryLabel);
+        applicationLabels.setMinWidth(0);
+        applicationLabels.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(applicationLabels, Priority.ALWAYS);
+    }
+
+    private void bindApplicationLabels(RequestCell requestCell) {
+        if (boundApplicationCell == requestCell) {
+            return;
+        }
+        unbindApplicationLabels();
+        applicationNameLabel.textProperty().bind(requestCell.pathProperty());
+        applicationSecondaryLabel.textProperty().bind(requestCell.secondaryTextProperty());
+        applicationCountLabel.textProperty().bind(requestCell.countProperty().asString("(%d)"));
+        boundApplicationCell = requestCell;
+    }
+
+    private void unbindApplicationLabels() {
+        if (boundApplicationCell == null) {
+            return;
+        }
+        applicationNameLabel.textProperty().unbind();
+        applicationSecondaryLabel.textProperty().unbind();
+        applicationCountLabel.textProperty().unbind();
+        boundApplicationCell = null;
+    }
+
+    private void unbindGroupCount() {
+        if (boundGroupCountCell != null) {
+            groupCountLabel.textProperty().unbind();
+            boundGroupCountCell = null;
+        }
+    }
+
+    private static void setChildrenIfChanged(HBox box, Node... nodes) {
+        if (box.getChildren().size() == nodes.length) {
+            boolean unchanged = true;
+            for (int i = 0; i < nodes.length; i++) {
+                if (box.getChildren().get(i) != nodes[i]) {
+                    unchanged = false;
+                    break;
+                }
+            }
+            if (unchanged) {
+                return;
+            }
+        }
+        box.getChildren().setAll(Arrays.asList(nodes));
     }
 
     private void updateDisplay(T item, boolean empty) {
         if (item == null || empty) {
             pendingApplicationIconKey = null;
             applicationRow = false;
+            unbindApplicationLabels();
+            unbindGroupCount();
             setText(null);
             setGraphic(null);
             if (this.fadeTransition != null) {

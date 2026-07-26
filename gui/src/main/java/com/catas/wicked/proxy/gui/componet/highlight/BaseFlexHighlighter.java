@@ -22,20 +22,39 @@ public class BaseFlexHighlighter<T extends DefaultJFlexLexer> implements Highlig
 
     @Override
     public StyleSpans<Collection<String>> computeHighlight(String text) {
+        String source = text == null ? "" : text;
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+        Collection<String> defaultStyle = Collections.singleton(TokenType.DEFAULT.name().toLowerCase());
         try {
-            lexer.yyreset(new StringReader(text));
+            lexer.yyreset(new StringReader(source));
 
             int lastEnd = 0;
 
             for (Token token: lexer.parse()) {
-                spansBuilder.add(Collections.singleton(TokenType.DEFAULT.name().toLowerCase()), token.start - lastEnd);
-                spansBuilder.add(Collections.singleton(token.type.name().toLowerCase()), token.length);
+                if (token.start > lastEnd) {
+                    spansBuilder.add(defaultStyle, token.start - lastEnd);
+                }
+                if (token.length > 0) {
+                    spansBuilder.add(Collections.singleton(token.type.name().toLowerCase()), token.length);
+                }
                 lastEnd = token.end();
+            }
+            if (lastEnd < source.length()) {
+                spansBuilder.add(defaultStyle, source.length() - lastEnd);
+            } else if (source.isEmpty()) {
+                spansBuilder.add(defaultStyle, 0);
             }
         } catch (Exception e) {
             log.error("Error in computing highlight: ", e);
+            return defaultHighlight(source, defaultStyle);
         }
+        return spansBuilder.create();
+    }
+
+    private StyleSpans<Collection<String>> defaultHighlight(
+            String text, Collection<String> defaultStyle) {
+        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+        spansBuilder.add(defaultStyle, text.length());
         return spansBuilder.create();
     }
 }

@@ -42,13 +42,12 @@ public class ApplicationMessageTree {
         RequestEntry entry = createRequest(application, hostGroup, message);
         hostGroup.requests.put(message.getRequestId(), entry);
         requests.put(message.getRequestId(), entry);
-        incrementCounts(application, hostGroup);
 
         Platform.runLater(() -> {
+            incrementCounts(application, hostGroup);
             attachApplication(application);
             attachHost(application, hostGroup);
             hostGroup.item.getInternalChildren().add(entry.item);
-            controller.getReqApplicationTreeView().refresh();
         });
     }
 
@@ -63,12 +62,17 @@ public class ApplicationMessageTree {
         }
         ApplicationSource identity = ApplicationSource.from(message.getProcessInfo());
         if (StringUtils.equals(current.application.key, identity.key())) {
-            updateApplicationCell(current.application, identity);
-            Platform.runLater(() -> controller.getReqApplicationTreeView().refresh());
+            Platform.runLater(() -> {
+                synchronized (ApplicationMessageTree.this) {
+                    if (applications.get(identity.key()) == current.application) {
+                        updateApplicationCell(current.application, identity);
+                    }
+                }
+            });
             return;
         }
 
-        removeInternal(current, false);
+        removeInternal(current);
         add(message);
         if (restoreSelection) {
             Platform.runLater(() -> select(message.getRequestId()));
@@ -82,10 +86,9 @@ public class ApplicationMessageTree {
         for (String requestId : new ArrayList<>(requestIds)) {
             RequestEntry entry = requests.get(requestId);
             if (entry != null) {
-                removeInternal(entry, true);
+                removeInternal(entry);
             }
         }
-        Platform.runLater(() -> controller.getReqApplicationTreeView().refresh());
     }
 
     public synchronized Set<String> requestIds(RequestCell cell) {
@@ -192,10 +195,9 @@ public class ApplicationMessageTree {
         return new RequestEntry(message.getRequestId(), application, host, new FilterableTreeItem<>(cell));
     }
 
-    private void removeInternal(RequestEntry entry, boolean removeFromUi) {
+    private void removeInternal(RequestEntry entry) {
         requests.remove(entry.requestId);
         entry.host.requests.remove(entry.requestId);
-        decrementCounts(entry.application, entry.host);
         boolean removeHost = entry.host.requests.isEmpty();
         boolean removeApplication = removeHost && entry.application.hosts.size() == 1;
         if (removeHost) {
@@ -208,15 +210,13 @@ public class ApplicationMessageTree {
 
         boolean finalRemoveApplication = removeApplication;
         Platform.runLater(() -> {
+            decrementCounts(entry.application, entry.host);
             entry.host.item.getInternalChildren().remove(entry.item);
             if (entry.host.requests.isEmpty()) {
                 entry.application.item.getInternalChildren().remove(entry.host.item);
             }
             if (finalRemoveApplication) {
                 root().getInternalChildren().remove(entry.application.item);
-            }
-            if (removeFromUi) {
-                controller.getReqApplicationTreeView().refresh();
             }
         });
     }
