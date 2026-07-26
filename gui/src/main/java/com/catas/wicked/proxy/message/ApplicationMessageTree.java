@@ -112,6 +112,36 @@ public class ApplicationMessageTree {
         return Collections.emptySet();
     }
 
+    synchronized ApplicationGroupSnapshot snapshot(RequestCell.NodeType nodeType, String nodeKey) {
+        if (nodeType == RequestCell.NodeType.APPLICATION) {
+            ApplicationGroup application = applications.get(nodeKey);
+            if (application == null) {
+                return null;
+            }
+            RequestCell cell = application.item.getValue();
+            return new ApplicationGroupSnapshot(nodeType, nodeKey, cell.getPath(), null,
+                    cell.getProcessInfo(), new LinkedHashSet<>(application.hosts.keySet()),
+                    collect(application.hosts.values()));
+        }
+        if (nodeType == RequestCell.NodeType.HOST) {
+            int separator = StringUtils.defaultString(nodeKey).indexOf(KEY_SEPARATOR);
+            if (separator < 0) {
+                return null;
+            }
+            ApplicationGroup application = applications.get(nodeKey.substring(0, separator));
+            String hostName = nodeKey.substring(separator + 1);
+            HostGroup host = application == null ? null : application.hosts.get(hostName);
+            if (host == null) {
+                return null;
+            }
+            RequestCell applicationCell = application.item.getValue();
+            return new ApplicationGroupSnapshot(nodeType, nodeKey, applicationCell.getPath(), hostName,
+                    applicationCell.getProcessInfo(), Set.of(hostName),
+                    new LinkedHashSet<>(host.requests.keySet()));
+        }
+        return null;
+    }
+
     public synchronized TreeItem<RequestCell> item(String requestId) {
         RequestEntry entry = requests.get(requestId);
         return entry == null ? null : entry.item;

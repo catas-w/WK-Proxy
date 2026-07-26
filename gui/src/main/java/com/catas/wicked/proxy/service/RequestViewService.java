@@ -3,6 +3,7 @@ package com.catas.wicked.proxy.service;
 import com.catas.wicked.common.bean.message.BaseMessage;
 import com.catas.wicked.common.bean.message.RenderMessage;
 import com.catas.wicked.common.bean.message.RequestMessage;
+import com.catas.wicked.common.bean.RequestCell;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
@@ -13,6 +14,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import javafx.application.Platform;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +27,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -77,6 +80,7 @@ public class RequestViewService {
     private static final String RESP_DETAIL = "responseDetail";
 
     private static final String ERROR_DATA = "<Error loading data>";
+    private final AtomicBoolean applicationGroupRefreshScheduled = new AtomicBoolean();
 
 
     @PostConstruct
@@ -124,7 +128,7 @@ public class RequestViewService {
         messageQueue.clearMsg(Topic.RENDER);
 
         // display path info
-        if (requestId != null && requestId.startsWith(RenderMessage.PATH_MSG)) {
+        if (RenderMessage.isOverviewOnly(requestId)) {
             messageQueue.pushMsg(Topic.RENDER, new RenderMessage(toSend, RenderMessage.Tab.OVERVIEW));
             return;
         }
@@ -154,5 +158,34 @@ public class RequestViewService {
             // pushMsg(messages.poll());
             messageQueue.pushMsg(Topic.RENDER, messages.poll());
         }
+    }
+
+    public void updateApplicationGroupTab(RequestCell requestCell) {
+        if (requestCell == null) {
+            updateRequestTab(null);
+            return;
+        }
+        String prefix = requestCell.getNodeType() == RequestCell.NodeType.HOST
+                ? RenderMessage.APPLICATION_HOST_MSG : RenderMessage.APPLICATION_MSG;
+        updateRequestTab(prefix + requestCell.getNodeKey());
+    }
+
+    public void refreshCurrentApplicationGroup() {
+        String selectionId = appConfig.getObservableConfig().getCurrentRequestId();
+        if (selectionId == null || (!selectionId.startsWith(RenderMessage.APPLICATION_MSG)
+                && !selectionId.startsWith(RenderMessage.APPLICATION_HOST_MSG))
+                || !applicationGroupRefreshScheduled.compareAndSet(false, true)) {
+            return;
+        }
+        Platform.runLater(() -> {
+            applicationGroupRefreshScheduled.set(false);
+            String currentSelection = appConfig.getObservableConfig().getCurrentRequestId();
+            if (!StringUtils.equals(selectionId, currentSelection)) {
+                return;
+            }
+            messageQueue.clearMsg(Topic.RENDER);
+            messageQueue.pushMsg(Topic.RENDER,
+                    new RenderMessage(currentSelection, RenderMessage.Tab.OVERVIEW));
+        });
     }
 }

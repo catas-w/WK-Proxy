@@ -191,6 +191,11 @@ public class MessageService {
         return applicationMessageTree.requestIds(requestCell);
     }
 
+    public ApplicationGroupOverview applicationGroupOverview(RequestCell.NodeType nodeType, String nodeKey) {
+        ApplicationGroupSnapshot snapshot = applicationMessageTree.snapshot(nodeType, nodeKey);
+        return ApplicationGroupStatistics.aggregate(snapshot, requestCache::get);
+    }
+
     public void deleteApplicationRequests(Set<String> requestIds) {
         messageQueue.pushMsg(Topic.RECORD, new ApplicationDeleteMessage(requestIds));
     }
@@ -237,6 +242,7 @@ public class MessageService {
 
             // update time in treeNode
             updateTimeStats(requestMessage, updateMsg);
+            requestViewService.refreshCurrentApplicationGroup();
         } else if (msg instanceof ResponseMessage updateMsg) {
             RequestMessage requestMessage = requestCache.get(updateMsg.getRequestId());
             if (requestMessage == null) {
@@ -259,6 +265,7 @@ public class MessageService {
 
             // update timeStatsData
             updateTimeStats(requestMessage, updateMsg);
+            requestViewService.refreshCurrentApplicationGroup();
         } else {
             log.warn("Unrecognized requestMsg");
         }
@@ -277,6 +284,7 @@ public class MessageService {
                     messageTree.add(requestMessage);
                     applicationMessageTree.add(requestMessage);
                     refreshCntProperty();
+                    requestViewService.refreshCurrentApplicationGroup();
                 }
                 // TODO: deprecated
                 case REQUEST_CONTENT -> {
@@ -301,6 +309,7 @@ public class MessageService {
 
                         // update timeStatsData
                         updateTimeStats(data, responseMessage);
+                        requestViewService.refreshCurrentApplicationGroup();
                     }
                 }
                 // Deprecated

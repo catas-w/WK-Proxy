@@ -1,7 +1,9 @@
 package com.catas.wicked.proxy.render.tab;
 
+import com.catas.wicked.common.bean.ApplicationGroupOverviewInfo;
 import com.catas.wicked.common.bean.PathOverviewInfo;
 import com.catas.wicked.common.bean.ProcessInfo;
+import com.catas.wicked.common.bean.RequestCell;
 import com.catas.wicked.common.bean.RequestOverviewInfo;
 import com.catas.wicked.common.bean.PairEntry;
 import com.catas.wicked.common.bean.StatsData;
@@ -13,6 +15,7 @@ import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
 import com.catas.wicked.proxy.message.MessageService;
+import com.catas.wicked.proxy.message.ApplicationGroupOverview;
 import io.netty.handler.codec.http.HttpMethod;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -29,8 +32,10 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Singleton
@@ -51,6 +56,9 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
     @Inject
     private PathOverviewInfo pathOverviewInfo;
 
+    @Inject
+    private ApplicationGroupOverviewInfo applicationGroupOverviewInfo;
+
     @Setter
     private MessageService messageService;
 
@@ -59,6 +67,8 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
 
     private TreeItem<PairEntry> requestRoot;
     private TreeItem<PairEntry> pathRoot;
+    private TreeItem<PairEntry> applicationGroupRoot;
+    private TreeItem<PairEntry> applicationHostRoot;
 
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
@@ -70,7 +80,10 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
             detailTabController.hideRequestOnlyTabs();
             return;
         }
-        if (renderMsg.isPath()) {
+        if (renderMsg.isApplicationGroup()) {
+            detailTabController.hideRequestOnlyTabs();
+            displayApplicationGroupOverview(renderMsg);
+        } else if (renderMsg.isPath()) {
             // display path info
             detailTabController.hideRequestOnlyTabs();
             displayPathOverview(renderMsg);
@@ -80,6 +93,85 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
             displayOverView(request);
         }
 
+    }
+
+    private void displayApplicationGroupOverview(RenderMessage renderMsg) {
+        RequestCell.NodeType nodeType;
+        String nodeKey;
+        if (renderMsg.isApplicationHost()) {
+            nodeType = RequestCell.NodeType.HOST;
+            nodeKey = renderMsg.getRequestId().substring(RenderMessage.APPLICATION_HOST_MSG.length());
+        } else {
+            nodeType = RequestCell.NodeType.APPLICATION;
+            nodeKey = renderMsg.getRequestId().substring(RenderMessage.APPLICATION_MSG.length());
+        }
+
+        ApplicationGroupOverview overview = messageService.applicationGroupOverview(nodeType, nodeKey);
+        if (overview == null) {
+            detailTabController.getOverViewMsgLabel().setVisible(true);
+            return;
+        }
+        detailTabController.getOverViewMsgLabel().setVisible(false);
+        boolean hostOverview = nodeType == RequestCell.NodeType.HOST;
+        if (hostOverview && applicationHostRoot == null) {
+            applicationHostRoot = initApplicationGroupRoot(true);
+        } else if (!hostOverview && applicationGroupRoot == null) {
+            applicationGroupRoot = initApplicationGroupRoot(false);
+        }
+        detailTabController.setOverviewTableRoot(hostOverview ? applicationHostRoot : applicationGroupRoot);
+
+        setValue(applicationGroupOverviewInfo.getApplication(), overview.applicationName());
+        setValue(applicationGroupOverviewInfo.getHost(), overview.host());
+        setValue(applicationGroupOverviewInfo.getDomainCount(), String.valueOf(overview.domainCount()));
+        setCollectionValue(applicationGroupOverviewInfo.getProtocols(), overview.protocols());
+        setCollectionValue(applicationGroupOverviewInfo.getPorts(), overview.ports());
+        setCollectionValue(applicationGroupOverviewInfo.getProcesses(), overview.processNames());
+        setCollectionValue(applicationGroupOverviewInfo.getOwnerPids(), overview.ownerPids());
+        setCollectionValue(applicationGroupOverviewInfo.getApplicationPids(), overview.applicationPids());
+        setValue(applicationGroupOverviewInfo.getExecutable(), overview.executablePath());
+        applicationGroupOverviewInfo.getExecutable().setTooltip(
+                StringUtils.defaultIfBlank(overview.executablePath(), "-"));
+        setCollectionValue(applicationGroupOverviewInfo.getLookupStatus(), overview.lookupStatuses());
+
+        StatsData statistics = overview.statistics();
+        Map<HttpMethod, Integer> countMap = statistics.getCountMap();
+        int getCount = countMap.getOrDefault(HttpMethod.GET, 0);
+        int postCount = countMap.getOrDefault(HttpMethod.POST, 0);
+        applicationGroupOverviewInfo.getTotalCnt().setVal(String.valueOf(statistics.getCount()));
+        applicationGroupOverviewInfo.getGetCnt().setVal(String.valueOf(getCount));
+        applicationGroupOverviewInfo.getPostCnt().setVal(String.valueOf(postCount));
+        applicationGroupOverviewInfo.getOtherCnt().setVal(
+                String.valueOf(Math.max(0, statistics.getCount() - getCount - postCount)));
+
+        applicationGroupOverviewInfo.getTimeCost().setVal(
+                statistics.getTimeCost() > 0 ? statistics.getTimeCost() + " ms" : "-");
+        applicationGroupOverviewInfo.getStartTime().setVal(formatDate(statistics.getStartTime()));
+        applicationGroupOverviewInfo.getEndTime().setVal(formatDate(statistics.getEndTime()));
+        applicationGroupOverviewInfo.getAverageSpeed().setVal(statistics.getAverageSpeed() > 0
+                ? String.format("%.2f KB/s", statistics.getAverageSpeed()) : "-");
+        applicationGroupOverviewInfo.getTotalSize().setVal(statistics.getTotalSize() > 0
+                ? WebUtils.getHSize(statistics.getTotalSize()) : "-");
+        applicationGroupOverviewInfo.getRequestsSize().setVal(statistics.getRequestsSize() > 0
+                ? WebUtils.getHSize(statistics.getRequestsSize()) : "-");
+        applicationGroupOverviewInfo.getResponsesSize().setVal(statistics.getResponsesSize() > 0
+                ? WebUtils.getHSize(statistics.getResponsesSize()) : "-");
+        detailTabController.refreshOverviewTable();
+    }
+
+    private String formatDate(Date value) {
+        return value != null && value.getTime() > 0 ? dateFormat.format(value) : "-";
+    }
+
+    private void setValue(PairEntry entry, String value) {
+        entry.setVal(StringUtils.defaultIfBlank(value, "-"));
+    }
+
+    private void setCollectionValue(PairEntry entry, Collection<?> values) {
+        String fullValue = values == null || values.isEmpty() ? "-" : values.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(", "));
+        entry.setVal(fullValue.length() > 80 ? fullValue.substring(0, 77) + "..." : fullValue);
+        entry.setTooltip(fullValue);
     }
 
     private void displayPathOverview(RenderMessage renderMsg) {
@@ -314,5 +406,52 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         sizeNode.setExpanded(true);
         timingNode.setExpanded(true);
         pathRoot.getChildren().addAll(generalNode, timingNode, sizeNode);
+    }
+
+    @SuppressWarnings("unchecked")
+    private TreeItem<PairEntry> initApplicationGroupRoot(boolean hostOverview) {
+        TreeItem<PairEntry> root = new TreeItem<>();
+        String estimatedMsg = resourceMessageProvider.getMessage("estimate.tooltip");
+        TreeItem<PairEntry> generalNode = new TreeItem<>(new PairEntry("General", null));
+        if (hostOverview) {
+            generalNode.getChildren().addAll(
+                    new TreeItem<>(applicationGroupOverviewInfo.getHost()),
+                    new TreeItem<>(applicationGroupOverviewInfo.getApplication()),
+                    new TreeItem<>(applicationGroupOverviewInfo.getProtocols()),
+                    new TreeItem<>(applicationGroupOverviewInfo.getPorts()));
+        } else {
+            generalNode.getChildren().addAll(
+                    new TreeItem<>(applicationGroupOverviewInfo.getApplication()),
+                    new TreeItem<>(applicationGroupOverviewInfo.getApplicationPids()),
+                    new TreeItem<>(applicationGroupOverviewInfo.getProcesses()),
+                    new TreeItem<>(applicationGroupOverviewInfo.getOwnerPids()),
+                    new TreeItem<>(applicationGroupOverviewInfo.getExecutable()),
+                    new TreeItem<>(applicationGroupOverviewInfo.getLookupStatus()),
+                    new TreeItem<>(applicationGroupOverviewInfo.getDomainCount()));
+        }
+        generalNode.getChildren().addAll(
+                new TreeItem<>(applicationGroupOverviewInfo.getTotalCnt()),
+                new TreeItem<>(applicationGroupOverviewInfo.getGetCnt()),
+                new TreeItem<>(applicationGroupOverviewInfo.getPostCnt()),
+                new TreeItem<>(applicationGroupOverviewInfo.getOtherCnt()));
+
+        TreeItem<PairEntry> timingNode = new TreeItem<>(new PairEntry("Timing", null, estimatedMsg));
+        timingNode.getChildren().addAll(
+                new TreeItem<>(applicationGroupOverviewInfo.getTimeCost()),
+                new TreeItem<>(applicationGroupOverviewInfo.getStartTime()),
+                new TreeItem<>(applicationGroupOverviewInfo.getEndTime()),
+                new TreeItem<>(applicationGroupOverviewInfo.getAverageSpeed()));
+
+        TreeItem<PairEntry> sizeNode = new TreeItem<>(new PairEntry("Size", null, estimatedMsg));
+        sizeNode.getChildren().addAll(
+                new TreeItem<>(applicationGroupOverviewInfo.getTotalSize()),
+                new TreeItem<>(applicationGroupOverviewInfo.getRequestsSize()),
+                new TreeItem<>(applicationGroupOverviewInfo.getResponsesSize()));
+
+        generalNode.setExpanded(true);
+        timingNode.setExpanded(true);
+        sizeNode.setExpanded(true);
+        root.getChildren().addAll(generalNode, timingNode, sizeNode);
+        return root;
     }
 }

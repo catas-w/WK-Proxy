@@ -12,6 +12,8 @@ public class RenderMessage extends BaseMessage {
     public final static String EMPTY_MSG = "_EMPTY_";
 
     public final static String PATH_MSG = "PATH_";
+    public final static String APPLICATION_MSG = "APPLICATION_";
+    public final static String APPLICATION_HOST_MSG = "APPLICATION_HOST_";
 
     private String requestId;
 
@@ -20,6 +22,8 @@ public class RenderMessage extends BaseMessage {
     private boolean isEmpty;
 
     private boolean isPath;
+    private boolean isApplication;
+    private boolean isApplicationHost;
 
     public RenderMessage() {
     }
@@ -29,6 +33,18 @@ public class RenderMessage extends BaseMessage {
         this.targetTab = tab;
         this.isEmpty = StringUtils.equals(requestId, EMPTY_MSG);
         this.isPath = requestId.startsWith(PATH_MSG);
+        this.isApplicationHost = requestId.startsWith(APPLICATION_HOST_MSG);
+        this.isApplication = !isApplicationHost && requestId.startsWith(APPLICATION_MSG);
+    }
+
+    public boolean isApplicationGroup() {
+        return isApplication || isApplicationHost;
+    }
+
+    public static boolean isOverviewOnly(String requestId) {
+        return requestId != null && (requestId.startsWith(PATH_MSG)
+                || requestId.startsWith(APPLICATION_MSG)
+                || requestId.startsWith(APPLICATION_HOST_MSG));
     }
 
     @Getter

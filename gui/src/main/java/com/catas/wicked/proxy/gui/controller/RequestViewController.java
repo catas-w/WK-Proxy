@@ -199,7 +199,7 @@ public class RequestViewController implements Initializable {
                 reqListView.getSelectionModel().clearSelection();
                 removeItem.setDisable(false);
                 resendItem.setDisable(true);
-                requestViewService.updateRequestTab(null);
+                requestViewService.updateApplicationGroupTab(requestCell);
             }
         });
 

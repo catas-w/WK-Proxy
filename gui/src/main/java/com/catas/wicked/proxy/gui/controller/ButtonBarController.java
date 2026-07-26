@@ -95,7 +95,7 @@ public class ButtonBarController implements Initializable {
         settingDialogTitle = resourceBundle.getString("setting-dialog.title");
         // listen on current request
         appConfig.getObservableConfig().currentRequestIdProperty().addListener((observable, oldValue, newValue) -> {
-            boolean disableResend = newValue == null || newValue.startsWith(RenderMessage.PATH_MSG);
+            boolean disableResend = newValue == null || RenderMessage.isOverviewOnly(newValue);
             resendBtn.setDisable(disableResend);
             locateBtn.setDisable(newValue == null);
 
