@@ -55,11 +55,20 @@ public class SettingsCommitService {
         }
     }
 
+    public CompletionStage<Boolean> checkPortAvailability(int port) {
+        try {
+            return CompletableFuture.supplyAsync(
+                    () -> portAvailabilityChecker.isAvailable(port), executor);
+        } catch (RuntimeException error) {
+            return CompletableFuture.failedFuture(error);
+        }
+    }
+
     private SettingsApplyResult applyInternal(Settings before, Settings candidate, SettingsChangeSet changes) {
         boolean switchedPort = false;
         try {
             if (changes.portChanged() && !portAvailabilityChecker.isAvailable(candidate.getPort())) {
-                throw new IllegalStateException("Port " + candidate.getPort() + " is unavailable");
+                return SettingsApplyResult.portUnavailable(changes, candidate.getPort());
             }
 
             if (changes.certificateChanged()) {

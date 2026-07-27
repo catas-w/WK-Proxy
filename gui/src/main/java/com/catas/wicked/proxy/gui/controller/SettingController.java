@@ -6,6 +6,7 @@ import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.proxy.gui.controller.settings.ProxySettingsPageController;
 import com.catas.wicked.proxy.gui.controller.settings.SettingsPageController;
+import com.catas.wicked.proxy.service.settings.SettingsApplyFailureType;
 import com.catas.wicked.proxy.service.settings.SettingsApplyResult;
 import com.catas.wicked.proxy.service.settings.SettingsCommitService;
 import com.catas.wicked.proxy.service.settings.SettingsDraft;
@@ -182,6 +183,12 @@ public class SettingController implements Initializable {
     private void finishApply(SettingsApplyResult result, Throwable error) {
         setApplying(false);
         if (error != null || result == null || !result.success()) {
+            if (error == null && result != null
+                    && result.failureType() == SettingsApplyFailureType.PORT_UNAVAILABLE) {
+                showPortUnavailable(result.rejectedPort());
+                updateDirtyState();
+                return;
+            }
             String message = error != null ? error.getMessage()
                     : result == null ? messages.getMessage("alert.msg.settings-update-error")
                     : result.errorMessage();
@@ -195,6 +202,21 @@ public class SettingController implements Initializable {
         syncObservableSettings();
         applyStatusLabel.setText(messages.getMessage("settings.apply-success"));
         updateDirtyState();
+    }
+
+    private void showPortUnavailable(Integer port) {
+        int rejectedPort = port == null ? draft.value().getPort() : port;
+        Tab proxyTab = tabs.get(SettingsTab.PROXY);
+        SettingsPageController page = ensurePageLoaded(proxyTab);
+        settingTabPane.getSelectionModel().select(proxyTab);
+        if (page instanceof ProxySettingsPageController proxyPage) {
+            proxyPage.showPortUnavailable(rejectedPort);
+            Platform.runLater(proxyPage::focusPort);
+        }
+        String message = String.format(
+                messages.getMessage("validation.port-unavailable"), rejectedPort);
+        applyStatusLabel.setText(message);
+        AlertUtils.alertWarning(messages.getMessage("alert.type.warning"), message);
     }
 
     private void syncObservableSettings() {

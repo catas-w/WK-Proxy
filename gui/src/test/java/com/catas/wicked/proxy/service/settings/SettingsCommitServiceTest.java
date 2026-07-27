@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
@@ -38,6 +39,8 @@ public class SettingsCommitServiceTest {
         SettingsApplyResult result = service.apply(draft).toCompletableFuture().get(2, TimeUnit.SECONDS);
 
         assertFalse(result.success());
+        assertEquals(SettingsApplyFailureType.PORT_UNAVAILABLE, result.failureType());
+        assertEquals(Integer.valueOf(8877), result.rejectedPort());
         assertEquals(9966, config.getSettings().getPort().intValue());
         assertEquals(0, server.restartCount);
         assertEquals(0, config.persistCount);
@@ -94,6 +97,69 @@ public class SettingsCommitServiceTest {
                 .toCompletableFuture().get(2, TimeUnit.SECONDS);
 
         assertTrue(result.success());
+        assertEquals(0, server.restartCount);
+        assertEquals(0, config.persistCount);
+    }
+
+    @Test
+    public void unchangedPortDoesNotRunAvailabilityCheck() throws Exception {
+        FakeApplicationConfig config = new FakeApplicationConfig();
+        Settings settings = new Settings();
+        settings.setPort(9966);
+        config.setSettings(settings);
+        FakeProxyServer server = new FakeProxyServer();
+        AtomicInteger checkCount = new AtomicInteger();
+        service = new SettingsCommitService(config, server, null, port -> {
+            checkCount.incrementAndGet();
+            return true;
+        });
+
+        SettingsDraft draft = SettingsDraft.from(settings);
+        draft.value().setThrottle(!settings.isThrottle());
+        SettingsApplyResult result = service.apply(draft)
+                .toCompletableFuture().get(2, TimeUnit.SECONDS);
+
+        assertTrue(result.success());
+        assertEquals(0, checkCount.get());
+    }
+
+    @Test
+    public void asyncAvailabilityCheckDoesNotMutateSettings() throws Exception {
+        FakeApplicationConfig config = new FakeApplicationConfig();
+        Settings settings = new Settings();
+        settings.setPort(9966);
+        config.setSettings(settings);
+        FakeProxyServer server = new FakeProxyServer();
+        service = new SettingsCommitService(config, server, null, port -> false);
+
+        boolean available = service.checkPortAvailability(8877)
+                .toCompletableFuture().get(2, TimeUnit.SECONDS);
+
+        assertFalse(available);
+        assertEquals(9966, config.getSettings().getPort().intValue());
+        assertEquals(0, server.restartCount);
+        assertEquals(0, config.persistCount);
+    }
+
+    @Test
+    public void availabilityCheckFailureIsReportedAsApplyError() throws Exception {
+        FakeApplicationConfig config = new FakeApplicationConfig();
+        Settings settings = new Settings();
+        settings.setPort(9966);
+        config.setSettings(settings);
+        FakeProxyServer server = new FakeProxyServer();
+        service = new SettingsCommitService(config, server, null, port -> {
+            throw new IllegalStateException("check failed");
+        });
+
+        SettingsDraft draft = SettingsDraft.from(settings);
+        draft.value().setPort(8877);
+        SettingsApplyResult result = service.apply(draft)
+                .toCompletableFuture().get(2, TimeUnit.SECONDS);
+
+        assertFalse(result.success());
+        assertEquals(SettingsApplyFailureType.APPLY_ERROR, result.failureType());
+        assertEquals(9966, config.getSettings().getPort().intValue());
         assertEquals(0, server.restartCount);
         assertEquals(0, config.persistCount);
     }
