@@ -213,10 +213,7 @@ public class SettingController implements Initializable {
             proxyPage.showPortUnavailable(rejectedPort);
             Platform.runLater(proxyPage::focusPort);
         }
-        String message = String.format(
-                messages.getMessage("validation.port-unavailable"), rejectedPort);
-        applyStatusLabel.setText(message);
-        AlertUtils.alertWarning(messages.getMessage("alert.type.warning"), message);
+        applyStatusLabel.setText("");
     }
 
     private void syncObservableSettings() {

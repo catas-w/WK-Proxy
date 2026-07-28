@@ -19,11 +19,14 @@ import java.util.ResourceBundle;
 @Prototype
 public class AboutSettingsPageController implements SettingsPageController, Initializable {
 
-    private static final String REPOSITORY_URL = "https://github.com/catas-w/HumBird-Proxy";
-    private static final String LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.html";
+    static final String REPOSITORY_URL = "https://github.com/catas-w/HumBird-Proxy/";
+    static final String LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.html";
+    static final String EMAIL_ADDRESS = "catasw@foxmail.com";
+    static final String EMAIL_URI = "mailto:" + EMAIL_ADDRESS;
 
     @FXML private Label appVersionLabel;
     @FXML private Hyperlink githubLink;
+    @FXML private Hyperlink emailLink;
     @FXML private Label licenseLink;
 
     @Inject private ApplicationConfig applicationConfig;
@@ -35,8 +38,10 @@ public class AboutSettingsPageController implements SettingsPageController, Init
         appVersionLabel.setText(resourceMessageProvider.getMessage("version.label")
                 + " " + applicationConfig.getAppVersion());
         githubLink.setText(REPOSITORY_URL);
-        githubLink.setOnAction(event -> browse(REPOSITORY_URL));
-        licenseLink.setOnMouseClicked(event -> browse(LICENSE_URL));
+        githubLink.setOnAction(event -> openRepository());
+        emailLink.setText(EMAIL_ADDRESS);
+        emailLink.setOnAction(event -> openEmail());
+        licenseLink.setOnMouseClicked(event -> openLicense());
     }
 
     @Override
@@ -46,6 +51,18 @@ public class AboutSettingsPageController implements SettingsPageController, Init
     @Override
     public boolean validate() {
         return true;
+    }
+
+    void openRepository() {
+        browse(REPOSITORY_URL);
+    }
+
+    void openLicense() {
+        browse(LICENSE_URL);
+    }
+
+    void openEmail() {
+        browse(EMAIL_URI);
     }
 
     private void browse(String url) {

@@ -6,12 +6,9 @@ import javafx.scene.control.TextInputControl;
 public class PortValidator extends ValidatorBase {
 
     private final String rangeMessage;
-    private final String unavailableMessage;
-    private Integer unavailablePort;
 
-    public PortValidator(String rangeMessage, String unavailableMessage) {
+    public PortValidator(String rangeMessage) {
         this.rangeMessage = rangeMessage;
-        this.unavailableMessage = unavailableMessage;
     }
 
     @Override
@@ -27,20 +24,11 @@ public class PortValidator extends ValidatorBase {
             hasErrors.set(true);
             return;
         }
-        if (port.equals(unavailablePort)) {
-            setMessage(String.format(unavailableMessage, port));
-            hasErrors.set(true);
-            return;
-        }
         hasErrors.set(false);
     }
 
-    public void setUnavailablePort(int port) {
-        unavailablePort = port;
-    }
-
-    public void clearUnavailablePort() {
-        unavailablePort = null;
+    public static boolean isAllowedInput(String value) {
+        return value != null && value.matches("[0-9]{0,5}");
     }
 
     public static Integer parse(String value) {

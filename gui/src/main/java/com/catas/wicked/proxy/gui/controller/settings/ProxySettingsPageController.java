@@ -13,9 +13,12 @@ import com.jfoenix.controls.JFXToggleButton;
 import io.micronaut.context.annotation.Prototype;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextFormatter;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -23,9 +26,12 @@ import java.util.ResourceBundle;
 @Prototype
 public class ProxySettingsPageController implements SettingsPageController, Initializable {
 
+    private static final PseudoClass ERROR_PSEUDO_CLASS = PseudoClass.getPseudoClass("error");
+
     @Inject private SettingsCommitService commitService;
 
     @FXML private JFXTextField portField;
+    @FXML private Label portUnavailableLabel;
     @FXML private JFXToggleButton throttleBtn;
     @FXML private JFXComboBox<EnumLabel<ThrottlePreset>> throttleComboBox;
     @FXML private JFXCheckBox sysProxyOnLaunchBtn;
@@ -35,14 +41,16 @@ public class ProxySettingsPageController implements SettingsPageController, Init
     private Runnable changeListener = () -> {};
     private boolean loading;
     private PortValidator portValidator;
+    private String portUnavailableMessage;
     private long portCheckSequence;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        portValidator = new PortValidator(
-                resources.getString("validation.port-range"),
-                resources.getString("validation.port-unavailable"));
+        portValidator = new PortValidator(resources.getString("validation.port-range"));
+        portUnavailableMessage = resources.getString("validation.port-unavailable");
         portField.getValidators().add(portValidator);
+        portField.setTextFormatter(new TextFormatter<>(change ->
+                PortValidator.isAllowedInput(change.getControlNewText()) ? change : null));
         for (ThrottlePreset preset : ThrottlePreset.values()) {
             throttleComboBox.getItems().add(new EnumLabel<>(preset, preset::getDesc));
         }
@@ -59,7 +67,13 @@ public class ProxySettingsPageController implements SettingsPageController, Init
         });
         portField.focusedProperty().addListener((observable, wasFocused, focused) -> {
             if (wasFocused && !focused) {
-                preflightPort();
+                Integer port = PortValidator.parse(portField.getText());
+                if (port == null) {
+                    clearPortUnavailable();
+                    portField.validate();
+                } else {
+                    preflightPort(port);
+                }
             }
         });
         throttleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -118,7 +132,11 @@ public class ProxySettingsPageController implements SettingsPageController, Init
 
     @Override
     public boolean validate() {
-        return portField.validate();
+        boolean valid = portField.validate();
+        if (valid && portUnavailableLabel.isVisible()) {
+            portField.pseudoClassStateChanged(ERROR_PSEUDO_CLASS, true);
+        }
+        return valid;
     }
 
     @Override
@@ -135,23 +153,30 @@ public class ProxySettingsPageController implements SettingsPageController, Init
     }
 
     public void showPortUnavailable(int port) {
-        portValidator.setUnavailablePort(port);
-        portField.validate();
+        portUnavailableLabel.setText(String.format(portUnavailableMessage, port));
+        portUnavailableLabel.setManaged(true);
+        portUnavailableLabel.setVisible(true);
+        portField.pseudoClassStateChanged(ERROR_PSEUDO_CLASS, true);
     }
 
     public void clearPortUnavailable() {
-        if (portValidator != null) {
-            portValidator.clearUnavailablePort();
+        if (portUnavailableLabel != null) {
+            portUnavailableLabel.setManaged(false);
+            portUnavailableLabel.setVisible(false);
+            portUnavailableLabel.setText("");
+        }
+        if (portField != null) {
             portField.resetValidation();
+            portField.pseudoClassStateChanged(ERROR_PSEUDO_CLASS, false);
         }
     }
 
-    private void preflightPort() {
+    private void preflightPort(Integer port) {
         if (draft == null) {
             return;
         }
-        Integer port = PortValidator.parse(portField.getText());
-        if (port == null || port.equals(draft.baseline().getPort())) {
+        if (port.equals(draft.baseline().getPort())) {
+            clearPortUnavailable();
             return;
         }
 
@@ -165,6 +190,8 @@ public class ProxySettingsPageController implements SettingsPageController, Init
                     }
                     if (error == null && Boolean.FALSE.equals(available)) {
                         showPortUnavailable(port);
+                    } else if (error == null) {
+                        clearPortUnavailable();
                     }
                 }));
     }

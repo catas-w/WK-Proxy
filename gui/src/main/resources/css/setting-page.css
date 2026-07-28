@@ -145,6 +145,11 @@
     -fx-prompt-text-fill: #4D4D4D;
     -fx-border-color: #d3140e;
 }
+.port-unavailable-label {
+    -fx-text-fill: #d3140e;
+    -fx-font-size: 12px;
+    -fx-alignment: CENTER-LEFT;
+}
 .record-size-input {
     -fx-padding: 0.333333em 2.5em 0.333333em 0.5em !important;
 }
@@ -395,6 +400,30 @@
     -fx-border-width: 0;
 }
 .link:hover {
+    -fx-opacity: 0.65;
+}
+
+.about-page {
+    -fx-background-color: transparent;
+}
+.about-license-link {
+    -fx-cursor: hand;
+}
+.about-license-link:hover {
+    -fx-opacity: 0.65;
+}
+.about-link-label {
+    -fx-min-width: 72px;
+    -fx-pref-width: 72px;
+    -fx-alignment: CENTER-LEFT;
+}
+.about-link {
+    -fx-padding: 0;
+    -fx-text-fill: #0f6ae1;
+    -fx-underline: true;
+    -fx-border-width: 0;
+}
+.about-link:hover {
     -fx-opacity: 0.65;
 }
 

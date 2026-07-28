@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
@@ -20,9 +21,12 @@
             <padding><Insets left="20.0" right="20.0" top="10.0" bottom="10.0"/></padding>
             <Label text="%proxy-server-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
             <Label text="%port.label" styleClass="grid-label" GridPane.rowIndex="1"/>
-            <CustomTextField fx:id="portField" styleClass="grid-element" GridPane.rowIndex="1"
-                             GridPane.columnIndex="1" maxWidth="140.0"
-                             errorPaneTranslateX="140.0" errorPaneTranslateY="-40.0"/>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                <CustomTextField fx:id="portField" styleClass="grid-element" maxWidth="140.0"
+                                 errorPaneTranslateX="140.0" errorPaneTranslateY="-40.0"/>
+                <Label fx:id="portUnavailableLabel" styleClass="port-unavailable-label"
+                       managed="false" visible="false"/>
+            </HBox>
             <Label text="%throttle.label" styleClass="grid-label" GridPane.rowIndex="2"/>
             <JFXToggleButton fx:id="throttleBtn" styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
             <Label text="%throttle-preset.label" styleClass="grid-label" GridPane.rowIndex="3"/>
