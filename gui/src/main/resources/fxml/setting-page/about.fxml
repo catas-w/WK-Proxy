@@ -12,18 +12,18 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="CENTER_LEFT" spacing="25.0"
+<HBox alignment="CENTER_LEFT" spacing="16.0"
       xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.catas.wicked.proxy.gui.controller.settings.AboutSettingsPageController"
       styleClass="about-page">
-    <padding><Insets left="35.0" right="35.0" top="30.0" bottom="30.0"/></padding>
-    <ImageView fitHeight="175.0" fitWidth="175.0" preserveRatio="true">
+    <padding><Insets left="20.0" right="20.0" top="24.0" bottom="24.0"/></padding>
+    <ImageView fitHeight="110.0" fitWidth="110.0" preserveRatio="true">
         <Image url="@../../image/wk-proxy.2.png"/>
     </ImageView>
     <VBox alignment="CENTER_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
         <HBox alignment="CENTER_LEFT">
             <Label prefHeight="45.0" text="WK Proxy" textFill="#707a7c">
-                <font><Font name="MiSans Demibold" size="26.0"/></font>
+                <font><Font name="MiSans Demibold" size="24.0"/></font>
             </Label>
             <Label prefHeight="45.0" text="Http debug proxy tool." textFill="#949090">
                 <HBox.margin><Insets left="10.0" top="5.0"/></HBox.margin>

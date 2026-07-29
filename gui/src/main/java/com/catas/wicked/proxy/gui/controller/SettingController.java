@@ -19,15 +19,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
 import java.util.EnumMap;
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -37,12 +36,13 @@ import java.util.ResourceBundle;
 public class SettingController implements Initializable {
 
     @FXML private BorderPane root;
-    @FXML private TabPane settingTabPane;
-    @FXML private Tab generalSettingTab;
-    @FXML private Tab proxySettingTab;
-    @FXML private Tab sslSettingTab;
-    @FXML private Tab externalSettingTab;
-    @FXML private Tab infoSettingTab;
+    @FXML private ToggleGroup settingsNavigationGroup;
+    @FXML private ToggleButton generalNavigationButton;
+    @FXML private ToggleButton proxyNavigationButton;
+    @FXML private ToggleButton sslNavigationButton;
+    @FXML private ToggleButton aboutNavigationButton;
+    @FXML private Label pageTitleLabel;
+    @FXML private StackPane pageHost;
     @FXML private JFXButton applyButton;
     @FXML private JFXButton cancelButton;
     @FXML private Label applyStatusLabel;
@@ -52,41 +52,33 @@ public class SettingController implements Initializable {
     @Inject private SettingsCommitService commitService;
     @Inject private ResourceMessageProvider messages;
 
-    private final Map<SettingsTab, Tab> tabs = new EnumMap<>(SettingsTab.class);
-    private final Map<Tab, String> pageResources = new LinkedHashMap<>();
-    private final Map<Tab, SettingsPageController> loadedPages = new LinkedHashMap<>();
+    private final Map<SettingsTab, ToggleButton> navigationButtons = new EnumMap<>(SettingsTab.class);
+    private final Map<SettingsTab, String> pageResources = new EnumMap<>(SettingsTab.class);
+    private final Map<SettingsTab, SettingsPageController> loadedPages = new EnumMap<>(SettingsTab.class);
     private SettingsDraft draft;
     private Runnable closeAction = () -> {};
+    private SettingsTab selectedTab = SettingsTab.GENERAL;
     private boolean applying;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        tabs.put(SettingsTab.GENERAL, generalSettingTab);
-        tabs.put(SettingsTab.PROXY, proxySettingTab);
-        tabs.put(SettingsTab.SSL, sslSettingTab);
-        tabs.put(SettingsTab.EXTERNAL_PROXY, externalSettingTab);
-        tabs.put(SettingsTab.ABOUT, infoSettingTab);
+        navigationButtons.put(SettingsTab.GENERAL, generalNavigationButton);
+        navigationButtons.put(SettingsTab.PROXY, proxyNavigationButton);
+        navigationButtons.put(SettingsTab.SSL, sslNavigationButton);
+        navigationButtons.put(SettingsTab.ABOUT, aboutNavigationButton);
 
-        pageResources.put(generalSettingTab, "/fxml/setting-page/general.fxml");
-        pageResources.put(proxySettingTab, "/fxml/setting-page/proxy.fxml");
-        pageResources.put(sslSettingTab, "/fxml/setting-page/ssl.fxml");
-        pageResources.put(externalSettingTab, "/fxml/setting-page/external-proxy.fxml");
-        pageResources.put(infoSettingTab, "/fxml/setting-page/about.fxml");
+        pageResources.put(SettingsTab.GENERAL, "/fxml/setting-page/general.fxml");
+        pageResources.put(SettingsTab.PROXY, "/fxml/setting-page/proxy.fxml");
+        pageResources.put(SettingsTab.SSL, "/fxml/setting-page/ssl.fxml");
+        pageResources.put(SettingsTab.ABOUT, "/fxml/setting-page/about.fxml");
 
-        configTabStyle(generalSettingTab, "fas-sliders-h");
-        configTabStyle(proxySettingTab, "fas-hat-cowboy");
-        configTabStyle(sslSettingTab, "fas-key");
-        configTabStyle(externalSettingTab, "fas-monument");
-        configTabStyle(infoSettingTab, "fas-info-circle");
-
-        settingTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
-            if (newTab != null && draft != null) {
-                SettingsPageController page = ensurePageLoaded(newTab);
-                if (page != null) {
-                    page.onShown();
-                }
+        navigationButtons.forEach((tab, button) -> button.setOnAction(event -> selectPage(tab)));
+        settingsNavigationGroup.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
+            if (newToggle == null) {
+                navigationButtons.get(selectedTab).setSelected(true);
             }
         });
+
         applyButton.setOnAction(event -> apply());
         cancelButton.setOnAction(event -> {
             if (!applying) {
@@ -101,25 +93,24 @@ public class SettingController implements Initializable {
         applyStatusLabel.setText("");
         setApplying(false);
 
-        SettingsPageController general = ensurePageLoaded(generalSettingTab);
+        SettingsPageController general = ensurePageLoaded(SettingsTab.GENERAL);
         if (general != null) {
             general.load(draft, this::onDraftChanged);
         }
-        for (Map.Entry<Tab, SettingsPageController> entry : loadedPages.entrySet()) {
-            if (entry.getKey() != generalSettingTab) {
-                entry.getValue().load(draft, this::onDraftChanged);
+        loadedPages.forEach((tab, page) -> {
+            if (tab != SettingsTab.GENERAL) {
+                page.load(draft, this::onDraftChanged);
             }
-        }
-        Tab target = tabs.getOrDefault(initialTab, generalSettingTab);
-        settingTabPane.getSelectionModel().select(target);
-        SettingsPageController selected = ensurePageLoaded(target);
-        if (selected != null) {
-            selected.onShown();
-        }
-        updateDirtyState();
+        });
 
-        if (initialTab == SettingsTab.PROXY && selected instanceof ProxySettingsPageController proxyPage) {
-            Platform.runLater(proxyPage::focusPort);
+        SettingsTab target = navigationButtons.containsKey(initialTab) ? initialTab : SettingsTab.GENERAL;
+        selectPage(target);
+        updateDirtyState();
+        if (target == SettingsTab.PROXY) {
+            SettingsPageController page = loadedPages.get(SettingsTab.PROXY);
+            if (page instanceof ProxySettingsPageController proxyPage) {
+                Platform.runLater(proxyPage::focusPort);
+            }
         }
     }
 
@@ -131,7 +122,24 @@ public class SettingController implements Initializable {
         return applying;
     }
 
-    private SettingsPageController ensurePageLoaded(Tab tab) {
+    private void selectPage(SettingsTab tab) {
+        selectedTab = tab;
+        ToggleButton button = navigationButtons.get(tab);
+        if (button != null && !button.isSelected()) {
+            button.setSelected(true);
+        }
+        pageTitleLabel.setText(button == null ? "" : button.getText());
+        SettingsPageController page = ensurePageLoaded(tab);
+        if (page != null) {
+            Parent content = (Parent) pageHost.getProperties().get(tab);
+            if (content != null) {
+                pageHost.getChildren().setAll(content);
+            }
+            page.onShown();
+        }
+    }
+
+    private SettingsPageController ensurePageLoaded(SettingsTab tab) {
         SettingsPageController existing = loadedPages.get(tab);
         if (existing != null) {
             return existing;
@@ -147,8 +155,8 @@ public class SettingController implements Initializable {
             loader.setResources(ResourceBundle.getBundle("lang.messages", locale));
             Parent content = loader.load();
             SettingsPageController controller = loader.getController();
-            tab.setContent(content);
             loadedPages.put(tab, controller);
+            pageHost.getProperties().put(tab, content);
             if (draft != null) {
                 controller.load(draft, this::onDraftChanged);
             }
@@ -164,9 +172,9 @@ public class SettingController implements Initializable {
         if (applying || draft == null) {
             return;
         }
-        for (Map.Entry<Tab, SettingsPageController> entry : loadedPages.entrySet()) {
+        for (Map.Entry<SettingsTab, SettingsPageController> entry : loadedPages.entrySet()) {
             if (!entry.getValue().validate()) {
-                settingTabPane.getSelectionModel().select(entry.getKey());
+                selectPage(entry.getKey());
                 entry.getValue().focusFirstError();
                 AlertUtils.alertWarning(messages.getMessage("alert.type.warning"),
                         messages.getMessage("alert.msg.illegal-settings"));
@@ -206,9 +214,8 @@ public class SettingController implements Initializable {
 
     private void showPortUnavailable(Integer port) {
         int rejectedPort = port == null ? draft.value().getPort() : port;
-        Tab proxyTab = tabs.get(SettingsTab.PROXY);
-        SettingsPageController page = ensurePageLoaded(proxyTab);
-        settingTabPane.getSelectionModel().select(proxyTab);
+        selectPage(SettingsTab.PROXY);
+        SettingsPageController page = loadedPages.get(SettingsTab.PROXY);
         if (page instanceof ProxySettingsPageController proxyPage) {
             proxyPage.showPortUnavailable(rejectedPort);
             Platform.runLater(proxyPage::focusPort);
@@ -236,20 +243,8 @@ public class SettingController implements Initializable {
 
     private void setApplying(boolean applying) {
         this.applying = applying;
-        settingTabPane.setDisable(applying);
+        root.getCenter().setDisable(applying);
         cancelButton.setDisable(applying);
         updateDirtyState();
-    }
-
-    private void configTabStyle(Tab tab, String iconCode) {
-        FontIcon icon = new FontIcon(iconCode);
-        Label label = new Label(tab.getText());
-        BorderPane graphic = new BorderPane();
-        graphic.setPrefWidth(90);
-        graphic.setCenter(icon);
-        graphic.setBottom(label);
-        graphic.getStyleClass().add("setting-icon-pane");
-        tab.setText(null);
-        tab.setGraphic(graphic);
     }
 }

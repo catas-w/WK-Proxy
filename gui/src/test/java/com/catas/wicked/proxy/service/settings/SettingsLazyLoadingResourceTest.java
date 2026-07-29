@@ -22,9 +22,38 @@ public class SettingsLazyLoadingResourceTest {
 
     @Test
     public void everyLazySettingsPageIsPackaged() {
-        for (String page : new String[]{"settings", "general", "proxy", "ssl", "external-proxy", "about"}) {
+        for (String page : new String[]{"settings", "general", "proxy", "ssl", "about"}) {
             assertNotNull(page, getClass().getResource("/fxml/setting-page/" + page + ".fxml"));
         }
+    }
+
+    @Test
+    public void settingsShellUsesSidebarNavigationInsteadOfTopTabs() throws Exception {
+        String fxml = read("/fxml/setting-page/settings.fxml");
+        assertFalse(fxml.contains("JFXTabPane"));
+        assertTrue(fxml.contains("fx:id=\"generalNavigationButton\""));
+        assertTrue(fxml.contains("fx:id=\"proxyNavigationButton\""));
+        assertTrue(fxml.contains("fx:id=\"sslNavigationButton\""));
+        assertTrue(fxml.contains("fx:id=\"aboutNavigationButton\""));
+        assertTrue(fxml.contains("styleClass=\"settings-sidebar\""));
+        assertTrue(fxml.contains("fx:id=\"pageHost\""));
+    }
+
+    @Test
+    public void proxyPageIncludesProgressiveUpstreamProxySection() throws Exception {
+        String proxyFxml = read("/fxml/setting-page/proxy.fxml");
+        String upstreamFxml = read("/fxml/setting-page/external-proxy.fxml");
+        assertTrue(proxyFxml.contains("fx:id=\"upstreamProxySection\""));
+        assertTrue(proxyFxml.contains("source=\"external-proxy.fxml\""));
+        assertTrue(upstreamFxml.contains("fx:id=\"exProxyDetails\""));
+        assertTrue(upstreamFxml.contains("fx:id=\"exProxyAuthDetails\""));
+    }
+
+    @Test
+    public void sslPageShowsCertificateStatusSection() throws Exception {
+        String fxml = read("/fxml/setting-page/ssl.fxml");
+        assertTrue(fxml.contains("text=\"%certificate-management-sep.label\""));
+        assertTrue(fxml.contains("fx:id=\"importCertBtn\""));
     }
 
     @Test
@@ -40,17 +69,21 @@ public class SettingsLazyLoadingResourceTest {
 
     @Test
     public void aboutPageContainsCompleteProductInformation() throws Exception {
-        try (InputStream input = getClass().getResourceAsStream("/fxml/setting-page/about.fxml")) {
+        String fxml = read("/fxml/setting-page/about.fxml");
+        assertTrue(fxml.contains("wk-proxy.2.png"));
+        assertTrue(fxml.contains("text=\"WK Proxy\""));
+        assertTrue(fxml.contains("text=\"Http debug proxy tool.\""));
+        assertTrue(fxml.contains("fx:id=\"appVersionLabel\""));
+        assertTrue(fxml.contains("fx:id=\"licenseLink\""));
+        assertTrue(fxml.contains("fx:id=\"githubLink\""));
+        assertTrue(fxml.contains("fx:id=\"emailLink\""));
+        assertTrue(fxml.contains("text=\"%email-link.label\""));
+    }
+
+    private String read(String resource) throws Exception {
+        try (InputStream input = getClass().getResourceAsStream(resource)) {
             assertNotNull(input);
-            String fxml = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-            assertTrue(fxml.contains("wk-proxy.2.png"));
-            assertTrue(fxml.contains("text=\"WK Proxy\""));
-            assertTrue(fxml.contains("text=\"Http debug proxy tool.\""));
-            assertTrue(fxml.contains("fx:id=\"appVersionLabel\""));
-            assertTrue(fxml.contains("fx:id=\"licenseLink\""));
-            assertTrue(fxml.contains("fx:id=\"githubLink\""));
-            assertTrue(fxml.contains("fx:id=\"emailLink\""));
-            assertTrue(fxml.contains("text=\"%email-link.label\""));
+            return new String(input.readAllBytes(), StandardCharsets.UTF_8);
         }
     }
 }

@@ -8,44 +8,56 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.StackPane?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="settings-page-scroll"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.catas.wicked.proxy.gui.controller.settings.GeneralSettingsPageController">
     <content>
-        <GridPane styleClass="setting-general, setting-grid-pane" vgap="5">
-            <padding><Insets left="20.0" right="20.0" top="10.0" bottom="10.0"/></padding>
-            <Label text="%language-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
-            <Label text="%language.label" styleClass="grid-label" GridPane.rowIndex="1"/>
-            <HBox GridPane.rowIndex="1" GridPane.columnIndex="1">
-                <JFXComboBox fx:id="languageComboBox" styleClass="grid-element"/>
+        <GridPane styleClass="settings-form, setting-general" hgap="16.0" vgap="8.0">
+            <padding><Insets left="28.0" right="28.0" top="8.0" bottom="20.0"/></padding>
+            <columnConstraints>
+                <ColumnConstraints minWidth="130.0" prefWidth="130.0"/>
+                <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
+            </columnConstraints>
+            <Label text="%interface-sep.label" styleClass="settings-section-title"
+                   GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+            <Label text="%language.label" styleClass="settings-field-label" GridPane.rowIndex="1"/>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                <JFXComboBox fx:id="languageComboBox" styleClass="settings-control"/>
                 <Label fx:id="langAlertLabel" visible="false" text="%language-alert.label"
                        styleClass="alert-label, lang-alert-label">
                     <graphic><FontIcon iconLiteral="fas-exclamation-triangle"/></graphic>
                 </Label>
             </HBox>
-            <Label text="%show-btn-label.label" styleClass="grid-label" GridPane.rowIndex="2"/>
-            <JFXToggleButton fx:id="buttonLabelBtn" styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-            <Label text="%record-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="3" GridPane.columnSpan="2"/>
-            <Label text="%record-size.label" styleClass="grid-label" contentDisplay="RIGHT" GridPane.rowIndex="4">
+            <Label text="%show-btn-label.label" styleClass="settings-field-label" GridPane.rowIndex="2"/>
+            <JFXToggleButton fx:id="buttonLabelBtn" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label text="%record-sep.label" styleClass="settings-section-title"
+                   GridPane.rowIndex="3" GridPane.columnSpan="2"/>
+            <Label text="%record-size.label" styleClass="settings-field-label" contentDisplay="RIGHT"
+                   GridPane.rowIndex="4">
                 <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
                 <tooltip><Tooltip text="%record-size.tooltip" showDelay="500ms"/></tooltip>
             </Label>
-            <StackPane styleClass="grid-element" GridPane.rowIndex="4" GridPane.columnIndex="1" maxWidth="140.0">
-                <CustomTextField fx:id="maxSizeField" maxWidth="140.0"
-                                 errorPaneTranslateX="140.0" errorPaneTranslateY="-40.0"/>
-                <Label text="Mb" styleClass="record-size-label"/>
-            </StackPane>
-            <Label text="%record-bypass.label" styleClass="grid-label" contentDisplay="RIGHT" GridPane.rowIndex="5">
+            <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                <CustomTextField fx:id="maxSizeField" maxWidth="120.0" prefWidth="120.0"
+                                 errorPaneTranslateX="120.0" errorPaneTranslateY="-40.0"/>
+                <Label text="MB" styleClass="settings-unit-label"/>
+            </HBox>
+            <Label text="%record-bypass.label" styleClass="settings-field-label" contentDisplay="RIGHT"
+                   GridPane.rowIndex="5">
                 <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
                 <tooltip><Tooltip text="%ant-path.tooltip" showDelay="500ms"/></tooltip>
             </Label>
-            <TextArea fx:id="recordExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="5"
-                      GridPane.columnIndex="1" promptText="*.test.com/**; **.org/**"/>
+            <TextArea fx:id="recordExcludeArea" prefRowCount="3" wrapText="true"
+                      GridPane.rowIndex="5" GridPane.columnIndex="1"
+                      promptText="*.test.com/**; **.org/**"/>
         </GridPane>
     </content>
 </ScrollPane>

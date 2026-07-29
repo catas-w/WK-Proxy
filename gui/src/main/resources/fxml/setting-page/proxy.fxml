@@ -9,37 +9,55 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="settings-page-scroll"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.catas.wicked.proxy.gui.controller.settings.ProxySettingsPageController">
     <content>
-        <GridPane styleClass="setting-server, setting-grid-pane" vgap="5">
-            <padding><Insets left="20.0" right="20.0" top="10.0" bottom="10.0"/></padding>
-            <Label text="%proxy-server-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
-            <Label text="%port.label" styleClass="grid-label" GridPane.rowIndex="1"/>
+        <GridPane styleClass="settings-form, setting-server" hgap="16.0" vgap="8.0">
+            <padding><Insets left="28.0" right="28.0" top="8.0" bottom="20.0"/></padding>
+            <columnConstraints>
+                <ColumnConstraints minWidth="130.0" prefWidth="130.0"/>
+                <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
+            </columnConstraints>
+            <Label text="%local-proxy-sep.label" styleClass="settings-section-title"
+                   GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+            <Label text="%listen-port.label" styleClass="settings-field-label" GridPane.rowIndex="1"/>
             <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.rowIndex="1" GridPane.columnIndex="1">
-                <CustomTextField fx:id="portField" styleClass="grid-element" maxWidth="140.0"
-                                 errorPaneTranslateX="140.0" errorPaneTranslateY="-40.0"/>
+                <CustomTextField fx:id="portField" maxWidth="120.0" prefWidth="120.0"
+                                 errorPaneTranslateX="120.0" errorPaneTranslateY="-40.0"/>
                 <Label fx:id="portUnavailableLabel" styleClass="port-unavailable-label"
-                       managed="false" visible="false"/>
+                       maxWidth="190.0" wrapText="true" managed="false" visible="false"/>
             </HBox>
-            <Label text="%throttle.label" styleClass="grid-label" GridPane.rowIndex="2"/>
-            <JFXToggleButton fx:id="throttleBtn" styleClass="grid-element" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-            <Label text="%throttle-preset.label" styleClass="grid-label" GridPane.rowIndex="3"/>
-            <JFXComboBox fx:id="throttleComboBox" styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-            <Label text="%sys-proxy-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
-            <Label text="%enable-sys-proxy.label" styleClass="grid-label" GridPane.rowIndex="5"/>
-            <JFXCheckBox fx:id="sysProxyOnLaunchBtn" styleClass="grid-element" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-            <Label text="%sys-proxy-bypass.label" styleClass="grid-label" contentDisplay="RIGHT" GridPane.rowIndex="6">
+
+            <Label text="%sys-proxy-sep.label" styleClass="settings-section-title"
+                   GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+            <Label text="%enable-sys-proxy.label" styleClass="settings-field-label" GridPane.rowIndex="3"/>
+            <JFXCheckBox fx:id="sysProxyOnLaunchBtn" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            <Label text="%sys-proxy-bypass.label" styleClass="settings-field-label" contentDisplay="RIGHT"
+                   GridPane.rowIndex="4">
                 <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
                 <tooltip><Tooltip text="%host-path.tooltip" showDelay="500ms"/></tooltip>
             </Label>
-            <TextArea fx:id="sysProxyExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="6"
-                      GridPane.columnIndex="1" promptText="*.test.com; 127.0.0.1;"/>
+            <TextArea fx:id="sysProxyExcludeArea" prefRowCount="2" wrapText="true"
+                      GridPane.rowIndex="4" GridPane.columnIndex="1"
+                      promptText="localhost; 127.0.0.1"/>
+
+            <Label text="%network-throttle-sep.label" styleClass="settings-section-title"
+                   GridPane.rowIndex="5" GridPane.columnSpan="2"/>
+            <Label text="%throttle.label" styleClass="settings-field-label" GridPane.rowIndex="6"/>
+            <JFXToggleButton fx:id="throttleBtn" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+            <Label text="%throttle-preset.label" styleClass="settings-field-label" GridPane.rowIndex="7"/>
+            <JFXComboBox fx:id="throttleComboBox" styleClass="settings-control"
+                         GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+
+            <fx:include fx:id="upstreamProxySection" source="external-proxy.fxml"
+                        GridPane.rowIndex="8" GridPane.columnSpan="2"/>
         </GridPane>
     </content>
 </ScrollPane>

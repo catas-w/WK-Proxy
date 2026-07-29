@@ -7,12 +7,9 @@ import javafx.event.Event;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -24,11 +21,10 @@ import java.util.function.Consumer;
 public class CertSelectComponent extends HBox {
 
     private final CertRadioButton radioBtn;
-    private Pane pane = new Pane();
-    private final Label label = new Label();
-    private final Label clickLabel = new Label();
-    private JFXButton previewBtn = new JFXButton();
-    private JFXButton operateBtn = new JFXButton();
+    private final Pane pane = new Pane();
+    private final Label statusLabel = new Label();
+    private final JFXButton previewBtn = new JFXButton();
+    private final JFXButton operateBtn = new JFXButton();
 
     public CertSelectComponent(String option, String certId, String operateIconStr) {
         radioBtn = new CertRadioButton(option, certId);
@@ -53,13 +49,12 @@ public class CertSelectComponent extends HBox {
         operateToolTip.setShowDelay(Duration.millis(100));
         operateBtn.setTooltip(operateToolTip);
 
-        label.getStyleClass().add("alert-label");
-        clickLabel.getStyleClass().add("click-label");
+        statusLabel.getStyleClass().add("cert-status-label");
         previewBtn.getStyleClass().add("preview-btn");
         operateBtn.getStyleClass().add("operate-btn");
 
-        this.getStyleClass().add("grid-element");
-        this.getChildren().addAll(radioBtn, label, clickLabel, pane, previewBtn, operateBtn);
+        this.getStyleClass().add("certificate-row");
+        this.getChildren().addAll(radioBtn, pane, statusLabel, previewBtn, operateBtn);
     }
 
     public void setToggleGroup(ToggleGroup toggleGroup) {
@@ -68,18 +63,16 @@ public class CertSelectComponent extends HBox {
         }
     }
 
-    public void setAlertLabel(String str, String clickStr) {
-        this.label.setText(str);
-        FontIcon icon = new FontIcon();
-        icon.setIconLiteral("fas-exclamation-triangle");
-        this.label.setGraphic(icon);
-
-        this.clickLabel.setText(clickStr);
-        this.clickLabel.setVisible(true);
+    public void setInstallationStatus(boolean installed, String text) {
+        statusLabel.setText(text);
+        statusLabel.getStyleClass().removeAll("cert-status-installed", "cert-status-not-installed");
+        statusLabel.getStyleClass().add(installed
+                ? "cert-status-installed" : "cert-status-not-installed");
     }
 
-    public void setOnClickLabelAction(Consumer<Event> consumer) {
-        clickLabel.setOnMouseClicked(consumer::accept);
+    public void setStatusAction(Consumer<Event> consumer) {
+        statusLabel.setOnMouseClicked(consumer == null ? null : consumer::accept);
+        statusLabel.setMouseTransparent(consumer == null);
     }
 
     public void setOperateIcon(String iconStr) {

@@ -53,6 +53,7 @@ import java.util.concurrent.TimeUnit;
 public class SslSettingsPageController implements SettingsPageController, Initializable {
 
     private static final int MAX_CERT_SIZE = 5;
+    private static final int FIRST_CERTIFICATE_ROW = 5;
 
     @FXML private GridPane sslGridPane;
     @FXML private JFXToggleButton sslBtn;
@@ -139,7 +140,7 @@ public class SslSettingsPageController implements SettingsPageController, Initia
 
     private void reloadCertificates() {
         certificatesLoaded = true;
-        loadingLabel.setVisible(true);
+        setLoading(true);
         importCertBtn.setDisable(true);
         CompletableFuture.supplyAsync(() -> {
             List<CertificateRow> rows = new ArrayList<>();
@@ -148,7 +149,7 @@ public class SslSettingsPageController implements SettingsPageController, Initia
             }
             return rows;
         }, executor).whenComplete((rows, error) -> Platform.runLater(() -> {
-            loadingLabel.setVisible(false);
+            setLoading(false);
             if (error != null) {
                 certificatesLoaded = false;
                 showError(error);
@@ -162,7 +163,7 @@ public class SslSettingsPageController implements SettingsPageController, Initia
         clearCertificateRows();
         renderingCertificates = true;
         try {
-            int rowIndex = 3;
+            int rowIndex = FIRST_CERTIFICATE_ROW;
             String selectedId = draft.value().getSelectedCert();
             for (CertificateRow row : rows) {
                 CertificateConfig config = row.config();
@@ -173,6 +174,9 @@ public class SslSettingsPageController implements SettingsPageController, Initia
                 component.setSelected(StringUtils.equals(selectedId, config.getId()));
                 component.setPreviewTooltip(messages.getMessage("cert-preview.tooltip"));
                 component.setPreviewEvent(event -> displayPreviewDialog(config.getId()));
+                component.setInstallationStatus(row.installed(),
+                        messages.getMessage(row.installed()
+                                ? "cert-status.installed" : "cert-status.not-installed"));
                 if (config.isDefault()) {
                     component.setOperateTooltip(messages.getMessage("cert-export.tooltip"));
                     component.setOperateEvent(event -> saveCertificate(config));
@@ -181,15 +185,13 @@ public class SslSettingsPageController implements SettingsPageController, Initia
                     component.setOperateEvent(event -> deleteCertificate(config.getId()));
                 }
                 if (!row.installed()) {
-                    component.setAlertLabel(messages.getMessage("cert-install-alert.label"),
-                            messages.getMessage("cert-install-click.label"));
-                    component.setOnClickLabelAction(event -> installCertificate(config.getId()));
+                    component.setStatusAction(event -> installCertificate(config.getId()));
                 }
                 component.setDisable(!sslBtn.isSelected());
                 sslGridPane.add(component, 1, rowIndex++);
             }
             sslGridPane.add(importCertBox, 1, rowIndex);
-            importCertBtn.setDisable(rows.size() >= MAX_CERT_SIZE);
+            importCertBtn.setDisable(!sslBtn.isSelected() || rows.size() >= MAX_CERT_SIZE);
         } finally {
             renderingCertificates = false;
         }
@@ -212,11 +214,11 @@ public class SslSettingsPageController implements SettingsPageController, Initia
     private void displayImportDialog() {
         CertImportDialog dialog = new CertImportDialog(messages);
         dialog.showAndWait().ifPresent(data -> {
-            loadingLabel.setVisible(true);
+            setLoading(true);
             CompletableFuture.runAsync(() ->
                     certManager.importCert(fetch(data.getKey()), fetch(data.getValue())), executor
             ).whenComplete((unused, error) -> Platform.runLater(() -> {
-                loadingLabel.setVisible(false);
+                setLoading(false);
                 if (error != null) {
                     showError(error);
                 } else {
@@ -256,7 +258,7 @@ public class SslSettingsPageController implements SettingsPageController, Initia
     }
 
     private void runCertificateCommand(CheckedRunnable command) {
-        loadingLabel.setVisible(true);
+        setLoading(true);
         CompletableFuture.runAsync(() -> {
             try {
                 command.run();
@@ -264,7 +266,7 @@ public class SslSettingsPageController implements SettingsPageController, Initia
                 throw new IllegalStateException(error);
             }
         }, executor).whenComplete((unused, error) -> Platform.runLater(() -> {
-            loadingLabel.setVisible(false);
+            setLoading(false);
             if (error != null) {
                 showError(error);
             } else {
@@ -272,6 +274,11 @@ public class SslSettingsPageController implements SettingsPageController, Initia
                 reloadCertificates();
             }
         }));
+    }
+
+    private void setLoading(boolean loading) {
+        loadingLabel.setManaged(loading);
+        loadingLabel.setVisible(loading);
     }
 
     @SuppressWarnings("unchecked")

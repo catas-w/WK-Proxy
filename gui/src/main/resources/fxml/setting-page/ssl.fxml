@@ -7,33 +7,45 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="settings-page-scroll"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.catas.wicked.proxy.gui.controller.settings.SslSettingsPageController">
     <content>
-        <GridPane fx:id="sslGridPane" styleClass="setting-ssl, setting-grid-pane" vgap="2">
-            <padding><Insets left="20.0" right="20.0" top="10.0" bottom="10.0"/></padding>
-            <Label text="%ssl-sep.label" styleClass="grid-sep-label" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
-            <Label text="%enable-ssl.label" styleClass="grid-label" GridPane.rowIndex="1"/>
+        <GridPane fx:id="sslGridPane" styleClass="settings-form, setting-ssl" hgap="16.0" vgap="8.0">
+            <padding><Insets left="28.0" right="28.0" top="8.0" bottom="20.0"/></padding>
+            <columnConstraints>
+                <ColumnConstraints minWidth="130.0" prefWidth="130.0"/>
+                <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
+            </columnConstraints>
+            <Label text="%https-inspection-sep.label" styleClass="settings-section-title"
+                   GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+            <Label text="%enable-ssl.label" styleClass="settings-field-label" GridPane.rowIndex="1"/>
             <JFXToggleButton fx:id="sslBtn" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-            <Label text="%ssl-bypass.label" styleClass="grid-label" contentDisplay="RIGHT" GridPane.rowIndex="2">
+
+            <Label text="%ssl-bypass-sep.label" styleClass="settings-section-title"
+                   GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+            <Label text="%ssl-bypass.label" styleClass="settings-field-label" contentDisplay="RIGHT"
+                   GridPane.rowIndex="3">
                 <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
                 <tooltip><Tooltip text="%ant-path.tooltip" showDelay="500ms"/></tooltip>
             </Label>
-            <TextArea fx:id="sslExcludeArea" styleClass="grid-element-lg" GridPane.rowIndex="2"
-                      GridPane.columnIndex="1" promptText="*.test.com/**; **.org/**"/>
-            <Label text="%root-cert.label" styleClass="grid-label" contentDisplay="RIGHT" GridPane.rowIndex="3">
-                <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
-                <tooltip><Tooltip text="%root-cert.tooltip" showDelay="500ms"/></tooltip>
-            </Label>
-            <Label fx:id="loadingLabel" text="%settings.loading" visible="false"
-                   styleClass="grid-element" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-            <HBox fx:id="importCertBox" styleClass="grid-element">
-                <JFXButton fx:id="importCertBtn" styleClass="import-btn" text="%import-cert.label"/>
+            <TextArea fx:id="sslExcludeArea" prefRowCount="3" wrapText="true"
+                      GridPane.rowIndex="3" GridPane.columnIndex="1"
+                      promptText="*.apple.com; updates.example.com"/>
+
+            <Label text="%certificate-management-sep.label" styleClass="settings-section-title"
+                   GridPane.rowIndex="4" GridPane.columnSpan="2"/>
+            <Label fx:id="loadingLabel" text="%settings.loading" visible="false" managed="false"
+                   GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+            <HBox fx:id="importCertBox" alignment="CENTER_LEFT">
+                <JFXButton fx:id="importCertBtn" styleClass="settings-secondary-button"
+                           text="%import-cert.label"/>
             </HBox>
         </GridPane>
     </content>

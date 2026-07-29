@@ -10,7 +10,6 @@ import com.jfoenix.controls.JFXToggleButton;
 import io.micronaut.context.annotation.Prototype;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
 import java.net.URL;
@@ -19,15 +18,14 @@ import java.util.ResourceBundle;
 @Prototype
 public class ExternalProxySettingsPageController implements SettingsPageController, Initializable {
 
-    @FXML private GridPane exProxyGridPane;
+    @FXML private GridPane exProxyDetails;
+    @FXML private GridPane exProxyAuthDetails;
     @FXML private JFXToggleButton exProxyBtn;
     @FXML private JFXComboBox<EnumLabel<ProxyProtocol>> proxyComboBox;
     @FXML private JFXTextField exProxyHost;
     @FXML private JFXTextField exProxyPort;
     @FXML private JFXToggleButton exProxyAuth;
-    @FXML private Label exUsernameLabel;
     @FXML private JFXTextField exUsername;
-    @FXML private Label exPasswordLabel;
     @FXML private JFXTextField exPassword;
 
     private SettingsDraft draft;
@@ -120,19 +118,15 @@ public class ExternalProxySettingsPageController implements SettingsPageControll
     }
 
     private void updateEnabledState(boolean enabled) {
-        exProxyGridPane.getChildren().forEach(node -> {
-            Integer row = GridPane.getRowIndex(node);
-            if (row != null && row > 1) {
-                node.setDisable(!enabled);
-            }
-        });
+        exProxyDetails.setManaged(enabled);
+        exProxyDetails.setVisible(enabled);
+        exProxyDetails.setDisable(!enabled);
+        updateAuthState(enabled && exProxyAuth.isSelected());
     }
 
     private void updateAuthState(boolean visible) {
-        exUsernameLabel.setVisible(visible);
-        exUsername.setVisible(visible);
-        exPasswordLabel.setVisible(visible);
-        exPassword.setVisible(visible);
+        exProxyAuthDetails.setManaged(visible);
+        exProxyAuthDetails.setVisible(visible);
     }
 
     private void changed() {

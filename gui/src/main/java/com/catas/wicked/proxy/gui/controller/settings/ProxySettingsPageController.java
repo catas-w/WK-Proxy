@@ -36,6 +36,7 @@ public class ProxySettingsPageController implements SettingsPageController, Init
     @FXML private JFXComboBox<EnumLabel<ThrottlePreset>> throttleComboBox;
     @FXML private JFXCheckBox sysProxyOnLaunchBtn;
     @FXML private TextArea sysProxyExcludeArea;
+    @FXML private ExternalProxySettingsPageController upstreamProxySectionController;
 
     private SettingsDraft draft;
     private Runnable changeListener = () -> {};
@@ -128,6 +129,7 @@ public class ProxySettingsPageController implements SettingsPageController, Init
         } finally {
             loading = false;
         }
+        upstreamProxySectionController.load(draft, changeListener);
     }
 
     @Override
@@ -136,7 +138,7 @@ public class ProxySettingsPageController implements SettingsPageController, Init
         if (valid && portUnavailableLabel.isVisible()) {
             portField.pseudoClassStateChanged(ERROR_PSEUDO_CLASS, true);
         }
-        return valid;
+        return valid && upstreamProxySectionController.validate();
     }
 
     @Override
@@ -144,7 +146,14 @@ public class ProxySettingsPageController implements SettingsPageController, Init
         if (!portField.validate()) {
             portField.requestFocus();
             portField.selectAll();
+        } else {
+            upstreamProxySectionController.focusFirstError();
         }
+    }
+
+    @Override
+    public void dispose() {
+        upstreamProxySectionController.dispose();
     }
 
     public void focusPort() {

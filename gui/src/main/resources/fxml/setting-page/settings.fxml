@@ -1,38 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXTabPane?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import java.net.URL?>
 
-<BorderPane prefHeight="500.0" prefWidth="700.0"
+<BorderPane fx:id="root" prefHeight="500.0" prefWidth="700.0" styleClass="settings-root"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.catas.wicked.proxy.gui.controller.SettingController">
+    <fx:define>
+        <ToggleGroup fx:id="settingsNavigationGroup"/>
+    </fx:define>
     <stylesheets>
         <URL value="@../../css/setting-page.css"/>
         <URL value="@../../css/common-design.css"/>
     </stylesheets>
     <center>
-        <JFXTabPane fx:id="settingTabPane" styleClass="setting-tab-pane" tabClosingPolicy="UNAVAILABLE">
-            <tabs>
-                <Tab fx:id="generalSettingTab" text="%general-tab.label" styleClass="setting-general, setting-tab"/>
-                <Tab fx:id="proxySettingTab" text="%proxy-tab.label" styleClass="setting-server, setting-tab"/>
-                <Tab fx:id="sslSettingTab" text="%ssl-tab.label" styleClass="setting-ssl, setting-tab"/>
-                <Tab fx:id="externalSettingTab" text="%ex-proxy-tab.label" styleClass="setting-external, setting-tab"/>
-                <Tab fx:id="infoSettingTab" text="%about-tab.label" styleClass="setting-info, setting-tab"/>
-            </tabs>
-        </JFXTabPane>
+        <HBox>
+            <VBox prefWidth="165.0" minWidth="165.0" maxWidth="165.0" styleClass="settings-sidebar">
+                <padding><Insets top="18.0" right="10.0" bottom="12.0" left="10.0"/></padding>
+                <ToggleButton fx:id="generalNavigationButton" text="%general-tab.label" selected="true"
+                              toggleGroup="$settingsNavigationGroup" styleClass="settings-navigation-button">
+                    <graphic><FontIcon iconLiteral="fas-cog"/></graphic>
+                </ToggleButton>
+                <ToggleButton fx:id="proxyNavigationButton" text="%proxy-tab.label"
+                              toggleGroup="$settingsNavigationGroup" styleClass="settings-navigation-button">
+                    <graphic><FontIcon iconLiteral="fas-globe"/></graphic>
+                </ToggleButton>
+                <ToggleButton fx:id="sslNavigationButton" text="%ssl-tab.label"
+                              toggleGroup="$settingsNavigationGroup" styleClass="settings-navigation-button">
+                    <graphic><FontIcon iconLiteral="fas-shield-alt"/></graphic>
+                </ToggleButton>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Separator/>
+                <ToggleButton fx:id="aboutNavigationButton" text="%about-tab.label"
+                              toggleGroup="$settingsNavigationGroup"
+                              styleClass="settings-navigation-button, settings-about-button">
+                    <graphic><FontIcon iconLiteral="fas-info-circle"/></graphic>
+                </ToggleButton>
+            </VBox>
+            <BorderPane styleClass="settings-content" HBox.hgrow="ALWAYS">
+                <top>
+                    <VBox styleClass="settings-page-header">
+                        <Label fx:id="pageTitleLabel" styleClass="settings-page-title"/>
+                        <Separator/>
+                    </VBox>
+                </top>
+                <center>
+                    <StackPane fx:id="pageHost" styleClass="settings-page-host"/>
+                </center>
+            </BorderPane>
+        </HBox>
     </center>
     <bottom>
-        <HBox alignment="CENTER_RIGHT" prefHeight="46.0" spacing="8.0" styleClass="settings-action-bar">
-            <padding>
-                <Insets bottom="7.0" left="12.0" right="12.0" top="7.0"/>
-            </padding>
+        <HBox alignment="CENTER_RIGHT" prefHeight="48.0" spacing="8.0" styleClass="settings-action-bar">
+            <padding><Insets bottom="8.0" left="12.0" right="12.0" top="8.0"/></padding>
             <Label fx:id="applyStatusLabel" maxWidth="420.0" styleClass="settings-status-label"/>
             <Pane HBox.hgrow="ALWAYS"/>
             <JFXButton fx:id="cancelButton" text="%cancel.label" styleClass="cancel-btn"/>
