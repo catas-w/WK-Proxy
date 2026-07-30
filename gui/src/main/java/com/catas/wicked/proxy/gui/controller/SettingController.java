@@ -6,6 +6,7 @@ import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.proxy.gui.controller.settings.ProxySettingsPageController;
 import com.catas.wicked.proxy.gui.controller.settings.SettingsPageController;
+import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.proxy.service.settings.SettingsApplyFailureType;
 import com.catas.wicked.proxy.service.settings.SettingsApplyResult;
 import com.catas.wicked.proxy.service.settings.SettingsCommitService;
@@ -51,6 +52,7 @@ public class SettingController implements Initializable {
     @Inject private ApplicationConfig applicationConfig;
     @Inject private SettingsCommitService commitService;
     @Inject private ResourceMessageProvider messages;
+    @Inject private LocalizationService localization;
 
     private final Map<SettingsTab, ToggleButton> navigationButtons = new EnumMap<>(SettingsTab.class);
     private final Map<SettingsTab, String> pageResources = new EnumMap<>(SettingsTab.class);
@@ -62,6 +64,17 @@ public class SettingController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        localization.bind(generalNavigationButton.textProperty(), "general-tab.label");
+        localization.bind(proxyNavigationButton.textProperty(), "proxy-tab.label");
+        localization.bind(sslNavigationButton.textProperty(), "ssl-tab.label");
+        localization.bind(aboutNavigationButton.textProperty(), "about-tab.label");
+        localization.bind(cancelButton.textProperty(), "cancel.label");
+        localization.bind(applyButton.textProperty(), "apply.label");
+        localization.languageProperty().addListener((observable, oldValue, newValue) -> {
+            loadedPages.values().forEach(SettingsPageController::onLocaleChanged);
+            updatePageTitle();
+        });
+
         navigationButtons.put(SettingsTab.GENERAL, generalNavigationButton);
         navigationButtons.put(SettingsTab.PROXY, proxyNavigationButton);
         navigationButtons.put(SettingsTab.SSL, sslNavigationButton);
@@ -128,7 +141,7 @@ public class SettingController implements Initializable {
         if (button != null && !button.isSelected()) {
             button.setSelected(true);
         }
-        pageTitleLabel.setText(button == null ? "" : button.getText());
+        updatePageTitle();
         SettingsPageController page = ensurePageLoaded(tab);
         if (page != null) {
             Parent content = (Parent) pageHost.getProperties().get(tab);
@@ -207,6 +220,9 @@ public class SettingController implements Initializable {
         }
 
         draft.markApplied();
+        if (result.changes().languageChanged()) {
+            localization.switchLanguage(draft.value().getLanguage());
+        }
         syncObservableSettings();
         applyStatusLabel.setText(messages.getMessage("settings.apply-success"));
         updateDirtyState();
@@ -239,6 +255,11 @@ public class SettingController implements Initializable {
 
     private void updateDirtyState() {
         applyButton.setDisable(applying || !isDirty());
+    }
+
+    private void updatePageTitle() {
+        ToggleButton button = navigationButtons.get(selectedTab);
+        pageTitleLabel.setText(button == null ? "" : button.getText());
     }
 
     private void setApplying(boolean applying) {

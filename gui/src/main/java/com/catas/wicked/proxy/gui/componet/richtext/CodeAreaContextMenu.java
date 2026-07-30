@@ -2,9 +2,9 @@ package com.catas.wicked.proxy.gui.componet.richtext;
 
 import com.catas.wicked.common.bean.message.OutputMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
-import com.catas.wicked.common.factory.MessageSourceFactory;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.proxy.event.OutputFileEventHandler;
+import com.catas.wicked.proxy.service.LocalizationService;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -36,7 +36,8 @@ public class CodeAreaContextMenu extends ContextMenu {
     @Setter
     private CodeArea codeArea;
 
-    public CodeAreaContextMenu(MessageQueue messageQueue, ApplicationConfig appConfig, OutputMessage.Source source) {
+    public CodeAreaContextMenu(MessageQueue messageQueue, ApplicationConfig appConfig,
+                               LocalizationService localization, OutputMessage.Source source) {
         this.messageQueue = messageQueue;
         this.appConfig = appConfig;
         this.source = source;
@@ -52,7 +53,8 @@ public class CodeAreaContextMenu extends ContextMenu {
         //     unfold();
         // });
 
-        MenuItem selectAllItem = new MenuItem(MessageSourceFactory.getMessage("context.menu.select-all"));
+        MenuItem selectAllItem = new MenuItem();
+        localization.bind(selectAllItem.textProperty(), "context.menu.select-all");
         selectAllItem.setOnAction(event -> {
             hide();
             if (codeArea != null) {
@@ -60,7 +62,8 @@ public class CodeAreaContextMenu extends ContextMenu {
             }
         });
 
-        copyItem = new MenuItem(MessageSourceFactory.getMessage("context.menu.copy"));
+        copyItem = new MenuItem();
+        localization.bind(copyItem.textProperty(), "context.menu.copy");
         copyItem.setDisable(true); // TODO
         copyItem.setOnAction(event -> {
             hide();
@@ -73,7 +76,8 @@ public class CodeAreaContextMenu extends ContextMenu {
             }
         });
 
-        MenuItem saveItem = new MenuItem(MessageSourceFactory.getMessage("context.menu.save"));
+        MenuItem saveItem = new MenuItem();
+        localization.bind(saveItem.textProperty(), "context.menu.save");
         saveItem.disableProperty().bind(saveItemDisabled);
         saveItem.setOnAction(new OutputFileEventHandler<>(source, messageQueue, appConfig, () -> getOwnerNode().getScene().getWindow()));
 
@@ -103,4 +107,3 @@ public class CodeAreaContextMenu extends ContextMenu {
         area.unfoldParagraphs( area.getCurrentParagraph() );
     }
 }
-

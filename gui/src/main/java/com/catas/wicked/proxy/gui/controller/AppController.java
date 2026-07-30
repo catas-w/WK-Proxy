@@ -3,12 +3,14 @@ package com.catas.wicked.proxy.gui.controller;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.ServerStatus;
 import com.catas.wicked.common.provider.ResourceMessageProvider;
+import com.catas.wicked.proxy.service.LocalizationService;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
@@ -31,6 +33,8 @@ public class AppController implements Initializable {
     @FXML
     private Label serverStatusLabel;
     @FXML
+    private Tooltip portTooltip;
+    @FXML
     @Getter
     private VBox rootVBox;
 
@@ -42,9 +46,15 @@ public class AppController implements Initializable {
 
     @Inject
     private ResourceMessageProvider resourceMessageProvider;
+    @Inject
+    private LocalizationService localization;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        localization.bind(certStatusLabel.textProperty(), "cert-install-alert.label");
+        localization.bind(portTooltip.textProperty(), "port-label.tooltip");
+        localization.languageProperty().addListener((observable, oldValue, newValue) ->
+                refreshServerStatusDisplay(appConfig.getObservableConfig().getServerStatus()));
         // update server status label
         refreshServerStatusDisplay(appConfig.getObservableConfig().getServerStatus());
         appConfig.getObservableConfig().serverStatusProperty().addListener((observable, oldValue, newValue) -> {

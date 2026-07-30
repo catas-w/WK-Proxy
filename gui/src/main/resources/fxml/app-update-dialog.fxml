@@ -20,7 +20,7 @@
     </stylesheets>
     <JFXDialogLayout fx:id="dialogLayout">
         <heading>
-            <Label text="Check for Update"/>
+            <Label fx:id="updateTitleLabel" text="Check for Update"/>
         </heading>
         <body>
             <HBox styleClass="main-hbox">
@@ -28,7 +28,7 @@
                     <Image url="@../image/wk-proxy.2.png"/>
                 </ImageView>
                 <VBox styleClass="v-box">
-                    <Label text="Checking for Update...">
+                    <Label fx:id="updateStatusLabel" text="Checking for Update...">
                         <VBox.margin>
                             <Insets top="10.0" bottom="15"/>
                         </VBox.margin>

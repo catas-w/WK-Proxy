@@ -3,6 +3,7 @@ package com.catas.wicked.proxy.gui.controller;
 import app.supernaut.fx.fxml.FxmlLoaderFactory;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.provider.ResourceMessageProvider;
+import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.common.util.AlertUtils;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -25,6 +26,7 @@ public class SettingsDialogCoordinator {
     @Inject private FxmlLoaderFactory loaderFactory;
     @Inject private ApplicationConfig applicationConfig;
     @Inject private ResourceMessageProvider messages;
+    @Inject private LocalizationService localization;
 
     private Dialog<Void> dialog;
     private SettingController controller;
@@ -53,6 +55,8 @@ public class SettingsDialogCoordinator {
 
             dialog = new Dialog<>();
             dialog.setTitle(messages.getMessage("setting-dialog.title"));
+            localization.languageProperty().addListener((observable, oldValue, newValue) ->
+                    dialog.setTitle(localization.getMessage("setting-dialog.title")));
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(owner);
             DialogPane pane = dialog.getDialogPane();

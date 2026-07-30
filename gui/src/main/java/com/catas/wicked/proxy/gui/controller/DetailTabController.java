@@ -10,6 +10,7 @@ import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.util.TableUtils;
 import com.catas.wicked.proxy.event.OutputFileEventHandler;
 import com.catas.wicked.proxy.gui.componet.OverviewTreeTableCell;
+import com.catas.wicked.proxy.gui.componet.HeaderTitledPane;
 import com.catas.wicked.proxy.gui.componet.SelectableTableCell;
 import com.catas.wicked.proxy.gui.componet.MessageLabel;
 import com.catas.wicked.proxy.gui.componet.SelectableTreeTableCell;
@@ -18,8 +19,10 @@ import com.catas.wicked.proxy.gui.componet.ZoomImageView;
 import com.catas.wicked.proxy.gui.componet.builder.PairTextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.builder.TextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.highlight.CodeStyleLabel;
+import com.catas.wicked.proxy.gui.componet.highlight.CodeStyleButton;
 import com.catas.wicked.proxy.gui.componet.richtext.CodeAreaContextMenu;
 import com.catas.wicked.proxy.gui.componet.richtext.DisplayCodeArea;
+import com.catas.wicked.proxy.service.LocalizationService;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTreeTableView;
@@ -39,6 +42,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -134,7 +138,7 @@ public class DetailTabController implements Initializable {
     @FXML
     private JFXTabPane reqPayloadTabPane;
     @FXML
-    private TitledPane respHeaderPane;
+    private HeaderTitledPane respHeaderPane;
     @FXML
     private TitledPane reqParamPane;
     @FXML
@@ -155,6 +159,23 @@ public class DetailTabController implements Initializable {
     private DisplayCodeArea respContentArea;
     @FXML
     private TableView<HeaderEntry> respHeaderTable;
+    @FXML private Tab requestContentTab;
+    @FXML private Tab queryParametersTab;
+    @FXML private CodeStyleButton multipartParsedButton;
+    @FXML private CodeStyleButton queryParsedButton;
+    @FXML private CodeStyleButton requestOriginButton;
+    @FXML private CodeStyleButton requestHexButton;
+    @FXML private CodeStyleButton queryTabParsedButton;
+    @FXML private CodeStyleButton queryTabOriginButton;
+    @FXML private CodeStyleButton queryTabHexButton;
+    @FXML private CodeStyleButton responseOriginButton;
+    @FXML private CodeStyleButton responseHexButton;
+    @FXML private Label timingTypeLabel;
+    @FXML private Label timingDurationLabel;
+    @FXML private Label requestSendLabel;
+    @FXML private Label responseWaitLabel;
+    @FXML private Label responseAcceptLabel;
+    @FXML private Label totalTimeLabel;
 
     @Inject
     private RequestOverviewInfo requestOverviewInfo;
@@ -164,6 +185,8 @@ public class DetailTabController implements Initializable {
 
     @Inject
     private ApplicationConfig applicationConfig;
+    @Inject
+    private LocalizationService localization;
 
     private final Map<SplitPane, double[]> dividerPositionMap = new HashMap<>();
 
@@ -175,6 +198,7 @@ public class DetailTabController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        bindLocalizedText();
         dividerPositionMap.put(reqSplitPane, reqSplitPane.getDividerPositions().clone());
         dividerPositionMap.put(respSplitPane, respSplitPane.getDividerPositions().clone());
 
@@ -201,14 +225,47 @@ public class DetailTabController implements Initializable {
         initOverviewTable(overviewTable);
 
         // init codeArea context menu
-        reqPayloadCodeArea.setContextMenu(new CodeAreaContextMenu(messageQueue, applicationConfig, OutputMessage.Source.REQ_CONTENT));
-        respContentArea.setContextMenu(new CodeAreaContextMenu(messageQueue, applicationConfig, OutputMessage.Source.RESP_CONTENT));
-        reqImageView.initContextMenu(messageQueue, applicationConfig, OutputMessage.Source.REQ_CONTENT);
-        respImageView.initContextMenu(messageQueue, applicationConfig, OutputMessage.Source.RESP_CONTENT);
+        reqPayloadCodeArea.setContextMenu(new CodeAreaContextMenu(
+                messageQueue, applicationConfig, localization, OutputMessage.Source.REQ_CONTENT));
+        respContentArea.setContextMenu(new CodeAreaContextMenu(
+                messageQueue, applicationConfig, localization, OutputMessage.Source.RESP_CONTENT));
+        reqImageView.initContextMenu(
+                messageQueue, applicationConfig, localization, OutputMessage.Source.REQ_CONTENT);
+        respImageView.initContextMenu(
+                messageQueue, applicationConfig, localization, OutputMessage.Source.RESP_CONTENT);
 
         // init output message label
         initOutputMsgLabel(reqOutputMsgLabel, OutputMessage.Source.REQ_CONTENT);
         initOutputMsgLabel(respOutputMsgLabel, OutputMessage.Source.RESP_CONTENT);
+    }
+
+    private void bindLocalizedText() {
+        localization.bind(overviewTab.textProperty(), "overview-tab.label");
+        localization.bind(requestTab.textProperty(), "request-tab.label");
+        localization.bind(respTab.textProperty(), "response-tab.label");
+        localization.bind(timingTab.textProperty(), "timing-tab.label");
+        localization.bind(reqHeaderPane.textProperty(), "headers.label");
+        localization.bind(reqPayloadTitlePane.textProperty(), "payload.label");
+        localization.bind(respHeaderPane.textProperty(), "headers.label");
+        localization.bind(respHeaderPane.checkBoxTitleProperty(), "raw.label");
+        localization.bind(respDataPane.textProperty(), "content.label");
+        localization.bind(requestContentTab.textProperty(), "content.label");
+        localization.bind(queryParametersTab.textProperty(), "query-params.label");
+        localization.bind(multipartParsedButton.textProperty(), "parsed.label");
+        localization.bind(queryParsedButton.textProperty(), "parsed.label");
+        localization.bind(requestOriginButton.textProperty(), "origin.label");
+        localization.bind(requestHexButton.textProperty(), "hex.label");
+        localization.bind(queryTabParsedButton.textProperty(), "parsed.label");
+        localization.bind(queryTabOriginButton.textProperty(), "origin.label");
+        localization.bind(queryTabHexButton.textProperty(), "hex.label");
+        localization.bind(responseOriginButton.textProperty(), "origin.label");
+        localization.bind(responseHexButton.textProperty(), "hex.label");
+        localization.bind(timingTypeLabel.textProperty(), "type.label");
+        localization.bind(timingDurationLabel.textProperty(), "duration.label");
+        localization.bind(requestSendLabel.textProperty(), "req-send.label");
+        localization.bind(responseWaitLabel.textProperty(), "resp-wait.label");
+        localization.bind(responseAcceptLabel.textProperty(), "resp-accept.label");
+        localization.bind(totalTimeLabel.textProperty(), "total-time.label");
     }
 
     public void setOverviewTableRoot(TreeItem<PairEntry> root) {
@@ -239,7 +296,8 @@ public class DetailTabController implements Initializable {
 
     @SuppressWarnings("unchecked")
     private void initOverviewTable(TreeTableView<PairEntry> tableView) {
-        TreeTableColumn<PairEntry, String> nameColumn = new TreeTableColumn<>("Name");
+        TreeTableColumn<PairEntry, String> nameColumn = new TreeTableColumn<>();
+        localization.bind(nameColumn.textProperty(), "name.label");
         nameColumn.setPrefWidth(130);
         nameColumn.setMaxWidth(200);
         nameColumn.setMinWidth(100);
@@ -253,7 +311,8 @@ public class DetailTabController implements Initializable {
                 new OverviewTreeTableCell());
 
 
-        TreeTableColumn<PairEntry, PairEntry> valueColumn = new TreeTableColumn<>("Value");
+        TreeTableColumn<PairEntry, PairEntry> valueColumn = new TreeTableColumn<>();
+        localization.bind(valueColumn.textProperty(), "value.label");
         valueColumn.setSortable(false );
         nameColumn.getStyleClass().add("headers-value");
         valueColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<PairEntry, PairEntry> param) ->
@@ -289,7 +348,7 @@ public class DetailTabController implements Initializable {
 
         // set key column
         TableColumn<HeaderEntry, String> keyColumn = new TableColumn<>();
-        keyColumn.setText("Name");
+        localization.bind(keyColumn.textProperty(), "name.label");
         keyColumn.getStyleClass().add("table-key");
         keyColumn.setSortable(false);
         keyColumn.setCellValueFactory(new PropertyValueFactory<>("key"));
@@ -306,7 +365,7 @@ public class DetailTabController implements Initializable {
 
         // set value column
         TableColumn<HeaderEntry, String> valColumn = new TableColumn<>();
-        valColumn.setText("Value");
+        localization.bind(valColumn.textProperty(), "value.label");
         valColumn.getStyleClass().add("table-value");
         valColumn.setSortable(false);
         valColumn.setEditable(true);

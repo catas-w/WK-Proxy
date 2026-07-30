@@ -4,6 +4,7 @@ import com.catas.wicked.common.config.Settings;
 import com.catas.wicked.common.constant.ThrottlePreset;
 import com.catas.wicked.proxy.gui.componet.EnumLabel;
 import com.catas.wicked.proxy.gui.componet.validator.PortValidator;
+import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.proxy.service.settings.SettingsCommitService;
 import com.catas.wicked.proxy.service.settings.SettingsDraft;
 import com.jfoenix.controls.JFXCheckBox;
@@ -19,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.Tooltip;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -29,9 +31,19 @@ public class ProxySettingsPageController implements SettingsPageController, Init
     private static final PseudoClass ERROR_PSEUDO_CLASS = PseudoClass.getPseudoClass("error");
 
     @Inject private SettingsCommitService commitService;
+    @Inject private LocalizationService localization;
 
+    @FXML private Label localProxySectionLabel;
+    @FXML private Label listenPortLabel;
     @FXML private JFXTextField portField;
     @FXML private Label portUnavailableLabel;
+    @FXML private Label systemProxySectionLabel;
+    @FXML private Label enableSystemProxyLabel;
+    @FXML private Label systemProxyBypassLabel;
+    @FXML private Tooltip systemProxyBypassTooltip;
+    @FXML private Label throttleSectionLabel;
+    @FXML private Label throttleLabel;
+    @FXML private Label throttlePresetLabel;
     @FXML private JFXToggleButton throttleBtn;
     @FXML private JFXComboBox<EnumLabel<ThrottlePreset>> throttleComboBox;
     @FXML private JFXCheckBox sysProxyOnLaunchBtn;
@@ -47,6 +59,15 @@ public class ProxySettingsPageController implements SettingsPageController, Init
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        localization.bind(localProxySectionLabel.textProperty(), "local-proxy-sep.label");
+        localization.bind(listenPortLabel.textProperty(), "listen-port.label");
+        localization.bind(systemProxySectionLabel.textProperty(), "sys-proxy-sep.label");
+        localization.bind(enableSystemProxyLabel.textProperty(), "enable-sys-proxy.label");
+        localization.bind(systemProxyBypassLabel.textProperty(), "sys-proxy-bypass.label");
+        localization.bind(systemProxyBypassTooltip.textProperty(), "host-path.tooltip");
+        localization.bind(throttleSectionLabel.textProperty(), "network-throttle-sep.label");
+        localization.bind(throttleLabel.textProperty(), "throttle.label");
+        localization.bind(throttlePresetLabel.textProperty(), "throttle-preset.label");
         portValidator = new PortValidator(resources.getString("validation.port-range"));
         portUnavailableMessage = resources.getString("validation.port-unavailable");
         portField.getValidators().add(portValidator);
@@ -154,6 +175,19 @@ public class ProxySettingsPageController implements SettingsPageController, Init
     @Override
     public void dispose() {
         upstreamProxySectionController.dispose();
+    }
+
+    @Override
+    public void onLocaleChanged() {
+        portValidator.setRangeMessage(localization.getMessage("validation.port-range"));
+        portUnavailableMessage = localization.getMessage("validation.port-unavailable");
+        if (portUnavailableLabel.isVisible()) {
+            Integer port = PortValidator.parse(portField.getText());
+            if (port != null) {
+                showPortUnavailable(port);
+            }
+        }
+        upstreamProxySectionController.onLocaleChanged();
     }
 
     public void focusPort() {

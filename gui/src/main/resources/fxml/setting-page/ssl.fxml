@@ -23,23 +23,23 @@
                 <ColumnConstraints minWidth="205.0" prefWidth="205.0" maxWidth="205.0"/>
                 <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
             </columnConstraints>
-            <Label text="%https-inspection-sep.label" styleClass="settings-section-title"
+            <Label fx:id="httpsInspectionSectionLabel" text="%https-inspection-sep.label" styleClass="settings-section-title"
                    GridPane.rowIndex="0" GridPane.columnSpan="2"/>
-            <Label text="%enable-ssl.label" styleClass="settings-field-label" GridPane.rowIndex="1"/>
+            <Label fx:id="enableSslLabel" text="%enable-ssl.label" styleClass="settings-field-label" GridPane.rowIndex="1"/>
             <JFXToggleButton fx:id="sslBtn" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-            <Label text="%ssl-bypass-sep.label" styleClass="settings-section-title"
+            <Label fx:id="sslBypassSectionLabel" text="%ssl-bypass-sep.label" styleClass="settings-section-title"
                    GridPane.rowIndex="2" GridPane.columnSpan="2"/>
-            <Label text="%ssl-bypass.label" styleClass="settings-field-label" contentDisplay="RIGHT"
+            <Label fx:id="sslBypassLabel" text="%ssl-bypass.label" styleClass="settings-field-label" contentDisplay="RIGHT"
                    GridPane.rowIndex="3">
                 <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
-                <tooltip><Tooltip text="%ant-path.tooltip" showDelay="500ms"/></tooltip>
+                <tooltip><Tooltip fx:id="sslBypassTooltip" text="%ant-path.tooltip" showDelay="500ms"/></tooltip>
             </Label>
             <TextArea fx:id="sslExcludeArea" prefRowCount="3" wrapText="true"
                       GridPane.rowIndex="3" GridPane.columnIndex="1"
                       promptText="*.apple.com; updates.example.com"/>
 
-            <Label text="%certificate-management-sep.label" styleClass="settings-section-title"
+            <Label fx:id="certificateSectionLabel" text="%certificate-management-sep.label" styleClass="settings-section-title"
                    GridPane.rowIndex="4" GridPane.columnSpan="2"/>
             <Label fx:id="loadingLabel" text="%settings.loading" visible="false" managed="false"
                    GridPane.rowIndex="5" GridPane.columnIndex="1"/>

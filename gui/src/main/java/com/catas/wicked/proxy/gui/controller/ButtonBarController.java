@@ -14,7 +14,7 @@ import com.catas.wicked.proxy.gui.componet.button.WKToggleNode;
 import com.catas.wicked.proxy.gui.componet.button.WkButton;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.service.RequestMockService;
-import com.jfoenix.controls.JFXButton;
+import com.catas.wicked.proxy.service.LocalizationService;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.application.Platform;
@@ -24,6 +24,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -47,9 +48,9 @@ public class ButtonBarController implements Initializable {
     @FXML
     private WKToggleNode sslBtn;
     @FXML
-    private JFXButton locateBtn;
+    private WkButton locateBtn;
     @FXML
-    private JFXButton resendBtn;
+    private WkButton resendBtn;
     @FXML
     private WKToggleNode throttleBtn;
     @FXML
@@ -58,6 +59,16 @@ public class ButtonBarController implements Initializable {
     private WkButton clearBtn;
     @FXML
     private MenuItem checkUpdateBtn;
+    @FXML private MenuItem settingBtn;
+    @FXML private MenuItem aboutBtn;
+    @FXML private MenuItem quitBtn;
+    @FXML private Tooltip recordTooltip;
+    @FXML private Tooltip sslTooltip;
+    @FXML private Tooltip systemProxyTooltip;
+    @FXML private Tooltip throttleTooltip;
+    @FXML private Tooltip clearTooltip;
+    @FXML private Tooltip resendTooltip;
+    @FXML private Tooltip locateTooltip;
 
     @Inject
     private MessageQueue messageQueue;
@@ -75,6 +86,8 @@ public class ButtonBarController implements Initializable {
     private SettingsDialogCoordinator settingsDialogCoordinator;
     @Inject
     private AppUpdateController appUpdateController;
+    @Inject
+    private LocalizationService localization;
 
     @Setter
     private MessageService messageService;
@@ -82,6 +95,23 @@ public class ButtonBarController implements Initializable {
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        localization.bind(recordBtn.labelTextProperty(), "record-btn.label");
+        localization.bind(sslBtn.labelTextProperty(), "ssl-btn.label");
+        localization.bind(sysProxyBtn.labelTextProperty(), "sys-proxy-btn.label");
+        localization.bind(throttleBtn.labelTextProperty(), "throttle-btn.label");
+        localization.bind(clearBtn.labelTextProperty(), "clear-btn.label");
+        localization.bind(resendBtn.labelTextProperty(), "resend-btn.label");
+        localization.bind(locateBtn.labelTextProperty(), "locate-btn.label");
+        localization.bind(systemProxyTooltip.textProperty(), "sys-proxy-btn.tooltip");
+        localization.bind(clearTooltip.textProperty(), "clear-btn.tooltip");
+        localization.bind(resendTooltip.textProperty(), "resend-btn.tooltip");
+        localization.bind(locateTooltip.textProperty(), "locate-btn.tooltip");
+        localization.bind(settingBtn.textProperty(), "setting-btn.label");
+        localization.bind(checkUpdateBtn.textProperty(), "release-btn.label");
+        localization.bind(aboutBtn.textProperty(), "about-btn.label");
+        localization.bind(quitBtn.textProperty(), "quit-btn.label");
+        localization.languageProperty().addListener((observable, oldValue, newValue) ->
+                refreshDynamicTooltips());
         // listen on current request
         appConfig.getObservableConfig().currentRequestIdProperty().addListener((observable, oldValue, newValue) -> {
             boolean disableResend = newValue == null || RenderMessage.isOverviewOnly(newValue);
@@ -117,8 +147,7 @@ public class ButtonBarController implements Initializable {
         // toggle record button
         recordBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
             appConfig.getSettings().setRecording(newValue);
-            String toolTip = resourceBundle.getString(newValue ? "record-btn.disable.tooltip": "record-btn.enable.tooltip");
-            recordBtn.getTooltip().setText(toolTip);
+            refreshDynamicTooltips();
         });
         recordBtn.setSelected(true);
 
@@ -128,8 +157,7 @@ public class ButtonBarController implements Initializable {
                 appConfig.setHandleSSL(newValue);
                 appConfig.updateSettingsAsync();
             }
-            String toolTip = resourceBundle.getString(newValue ? "ssl-btn.disable.tooltip": "ssl-btn.enable.tooltip");
-            sslBtn.getTooltip().setText(toolTip);
+            refreshDynamicTooltips();
         });
         sslBtn.setSelected(appConfig.getSettings().isHandleSsl());
         appConfig.getObservableConfig().handlingSSLProperty().addListener((observable, oldValue, newValue) -> {
@@ -144,8 +172,7 @@ public class ButtonBarController implements Initializable {
                 appConfig.getSettings().setThrottle(newValue);
                 appConfig.updateSettingsAsync();
             }
-            String toolTip = resourceBundle.getString(newValue ? "throttle-btn.disable.tooltip": "throttle-btn.enable.tooltip");
-            throttleBtn.getTooltip().setText(toolTip);
+            refreshDynamicTooltips();
         });
         throttleBtn.setSelected(appConfig.getSettings().isThrottle());
         appConfig.getObservableConfig().throttlingProperty().addListener((observable, oldValue, newValue) -> {
@@ -175,6 +202,16 @@ public class ButtonBarController implements Initializable {
         }
 
         bindUpdateBadge();
+        refreshDynamicTooltips();
+    }
+
+    private void refreshDynamicTooltips() {
+        recordTooltip.setText(localization.getMessage(recordBtn.isSelected()
+                ? "record-btn.disable.tooltip" : "record-btn.enable.tooltip"));
+        sslTooltip.setText(localization.getMessage(sslBtn.isSelected()
+                ? "ssl-btn.disable.tooltip" : "ssl-btn.enable.tooltip"));
+        throttleTooltip.setText(localization.getMessage(throttleBtn.isSelected()
+                ? "throttle-btn.disable.tooltip" : "throttle-btn.enable.tooltip"));
     }
 
     public void mockTreeItem() {

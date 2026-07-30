@@ -35,7 +35,7 @@
                 <Insets left="2.0"/>
             </HBox.margin>
         </FontIcon>
-        <Label fx:id="certStatusLabel" visible="false" text="Root Certificate is Not Installed" styleClass="display-label, error">
+        <Label fx:id="certStatusLabel" visible="false" text="%cert-install-alert.label" styleClass="display-label, error">
             <HBox.margin>
                 <Insets right="8.0"/>
             </HBox.margin>
@@ -48,7 +48,7 @@
                 <Insets left="-2.0" right="10.0"/>
             </HBox.margin>
             <tooltip>
-                <Tooltip text="%port-label.tooltip" showDelay="50ms" />
+                <Tooltip fx:id="portTooltip" text="%port-label.tooltip" showDelay="50ms" />
             </tooltip>
         </Label>
     </HBox>

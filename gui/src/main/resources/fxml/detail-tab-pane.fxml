@@ -51,30 +51,30 @@
                     <TitledPane fx:id="reqPayloadTitlePane" animated="false" maxHeight="Infinity" text="Payload" VBox.vgrow="ALWAYS">
                         <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="code-anchor-pane">
                             <JFXTabPane fx:id="reqPayloadTabPane" styleClass="payload-tab-pane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <Tab text="Content">
+                                <Tab fx:id="requestContentTab" text="Content">
                                     <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="code-anchor-pane">
                                         <DisplayCodeArea fx:id="reqPayloadCodeArea" codeStyle="JSON" />
                                         <TableView fx:id="reqContentTable" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                                         <ZoomImageView fx:id="reqImageView" visible="false" />
 
                                         <SideBar fx:id="reqContentSideBar" prefHeight="25" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-                                            <CodeStyleButton text="Parsed" codeStyle="MULTIPART_FORM" styleClass="selected"/>
-                                            <CodeStyleButton text="Parsed" codeStyle="QUERY_FORM" styleClass="selected"/>
+                                            <CodeStyleButton fx:id="multipartParsedButton" text="Parsed" codeStyle="MULTIPART_FORM" styleClass="selected"/>
+                                            <CodeStyleButton fx:id="queryParsedButton" text="Parsed" codeStyle="QUERY_FORM" styleClass="selected"/>
                                             <!-- hide in form-data -->
                                             <JFXComboBox fx:id="reqComboBox"/>
-                                            <CodeStyleButton text="Origin" codeStyle="origin"/>
-                                            <CodeStyleButton text="Hex" codeStyle="hex"/>
+                                            <CodeStyleButton fx:id="requestOriginButton" text="Origin" codeStyle="origin"/>
+                                            <CodeStyleButton fx:id="requestHexButton" text="Hex" codeStyle="hex"/>
                                         </SideBar>
                                     </AnchorPane>
                                 </Tab>
-                                <Tab text="Query Params">
+                                <Tab fx:id="queryParametersTab" text="Query Params">
                                     <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="code-anchor-pane">
                                         <DisplayCodeArea fx:id="reqParamArea" codeStyle="QUERY_FORM" />
 
                                         <SideBar fx:id="reqQuerySideBar" prefHeight="25" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-                                            <CodeStyleButton text="Parsed" codeStyle="QUERY_FORM" styleClass="selected"/>
-                                            <CodeStyleButton text="Origin" codeStyle="origin"/>
-                                            <CodeStyleButton text="Hex" codeStyle="hex"/>
+                                            <CodeStyleButton fx:id="queryTabParsedButton" text="Parsed" codeStyle="QUERY_FORM" styleClass="selected"/>
+                                            <CodeStyleButton fx:id="queryTabOriginButton" text="Origin" codeStyle="origin"/>
+                                            <CodeStyleButton fx:id="queryTabHexButton" text="Hex" codeStyle="hex"/>
                                         </SideBar>
                                     </AnchorPane>
                                 </Tab>
@@ -111,8 +111,8 @@
                             <SideBar fx:id="respSideBar" prefHeight="25" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
                                 <!-- <JFXButton text="Text" /> -->
                                 <JFXComboBox fx:id="respComboBox" styleClass="selected"/>
-                                <CodeStyleButton text="Origin" codeStyle="origin"/>
-                                <CodeStyleButton text="Hex" codeStyle="hex"/>
+                                <CodeStyleButton fx:id="responseOriginButton" text="Origin" codeStyle="origin"/>
+                                <CodeStyleButton fx:id="responseHexButton" text="Hex" codeStyle="hex"/>
                             </SideBar>
                             <HBox fx:id="respMsgLabelBox" style="-fx-background-color: #ffffff"
                                     AnchorPane.leftAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
@@ -145,12 +145,12 @@
                         <RowConstraints maxHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES"/>
                     </rowConstraints>
 
-                    <Label text="%type.label" styleClass="grid-header" GridPane.rowIndex="0"/>
-                    <Label text="%duration.label" styleClass="grid-header" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
-                    <Label text="%req-send.label" styleClass="timing-header" GridPane.rowIndex="1"/>
-                    <Label text="%resp-wait.label" styleClass="timing-header" GridPane.rowIndex="2"/>
-                    <Label text="%resp-accept.label" styleClass="timing-header" GridPane.rowIndex="3"/>
-                    <Label text="%total-time.label" styleClass="timing-header" GridPane.rowIndex="4"/>
+                    <Label fx:id="timingTypeLabel" text="%type.label" styleClass="grid-header" GridPane.rowIndex="0"/>
+                    <Label fx:id="timingDurationLabel" text="%duration.label" styleClass="grid-header" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                    <Label fx:id="requestSendLabel" text="%req-send.label" styleClass="timing-header" GridPane.rowIndex="1"/>
+                    <Label fx:id="responseWaitLabel" text="%resp-wait.label" styleClass="timing-header" GridPane.rowIndex="2"/>
+                    <Label fx:id="responseAcceptLabel" text="%resp-accept.label" styleClass="timing-header" GridPane.rowIndex="3"/>
+                    <Label fx:id="totalTimeLabel" text="%total-time.label" styleClass="timing-header" GridPane.rowIndex="4"/>
 
                     <TimeSplitPane displayOrder="0" displayColor="#0090de" GridPane.rowIndex="1"
                                    GridPane.columnIndex="1"/>

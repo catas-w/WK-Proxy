@@ -2,11 +2,11 @@ package com.catas.wicked.proxy.gui.componet;
 
 import com.catas.wicked.common.bean.message.OutputMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
-import com.catas.wicked.common.factory.MessageSourceFactory;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.util.ImageUtils;
 import com.catas.wicked.common.webpdecoderjn.WebPDecoder;
 import com.catas.wicked.proxy.event.OutputFileEventHandler;
+import com.catas.wicked.proxy.service.LocalizationService;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
@@ -64,8 +64,9 @@ public class ZoomImageView extends ScrollPane {
         zoomWithScroll();
     }
 
-    public void initContextMenu(MessageQueue messageQueue, ApplicationConfig appConfig, OutputMessage.Source source) {
-        this.setContextMenu(new ImageViewContextMenu(this, messageQueue, appConfig, source));
+    public void initContextMenu(MessageQueue messageQueue, ApplicationConfig appConfig,
+                                LocalizationService localization, OutputMessage.Source source) {
+        this.setContextMenu(new ImageViewContextMenu(this, messageQueue, appConfig, localization, source));
     }
 
     public Image getImage() {
@@ -174,15 +175,19 @@ public class ZoomImageView extends ScrollPane {
         public ImageViewContextMenu(ZoomImageView zoomImageView,
                                     MessageQueue messageQueue,
                                     ApplicationConfig appConfig,
+                                    LocalizationService localization,
                                     OutputMessage.Source source) {
             this.zoomImageView = zoomImageView;
             this.source = source;
             this.messageQueue = messageQueue;
             this.appConfig = appConfig;
 
-            MenuItem download = new MenuItem(MessageSourceFactory.getMessage("context.menu.save"));
-            MenuItem rotateClockwise = new MenuItem(MessageSourceFactory.getMessage("context.menu.rotate") + "-90°");
-            MenuItem rotateAntiClock = new MenuItem(MessageSourceFactory.getMessage("context.menu.rotate") + "+90°");
+            MenuItem download = new MenuItem();
+            MenuItem rotateClockwise = new MenuItem();
+            MenuItem rotateAntiClock = new MenuItem();
+            localization.bind(download.textProperty(), "context.menu.save");
+            rotateClockwise.textProperty().bind(localization.binding("rotate-angle.label", "-90°"));
+            rotateAntiClock.textProperty().bind(localization.binding("rotate-angle.label", "+90°"));
             rotateClockwise.setOnAction(e -> {
                 zoomImageView.rotate(-90);
             });

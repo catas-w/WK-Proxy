@@ -2,8 +2,8 @@ package com.catas.wicked.proxy.gui.controller.settings;
 
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.provider.DesktopProvider;
-import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.proxy.service.settings.SettingsDraft;
+import com.catas.wicked.proxy.service.LocalizationService;
 import io.micronaut.context.annotation.Prototype;
 import jakarta.inject.Inject;
 import javafx.fxml.FXML;
@@ -25,18 +25,24 @@ public class AboutSettingsPageController implements SettingsPageController, Init
     static final String EMAIL_URI = "mailto:" + EMAIL_ADDRESS;
 
     @FXML private Label appVersionLabel;
+    @FXML private Label descriptionLabel;
+    @FXML private Label githubLabel;
+    @FXML private Label emailLabel;
     @FXML private Hyperlink githubLink;
     @FXML private Hyperlink emailLink;
     @FXML private Label licenseLink;
 
     @Inject private ApplicationConfig applicationConfig;
     @Inject private DesktopProvider desktopProvider;
-    @Inject private ResourceMessageProvider resourceMessageProvider;
+    @Inject private LocalizationService localization;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        appVersionLabel.setText(resourceMessageProvider.getMessage("version.label")
-                + " " + applicationConfig.getAppVersion());
+        localization.bind(descriptionLabel.textProperty(), "about-description.label");
+        localization.bind(githubLabel.textProperty(), "github-link.label");
+        localization.bind(emailLabel.textProperty(), "email-link.label");
+        appVersionLabel.textProperty().bind(localization.binding(
+                "version-value.label", applicationConfig.getAppVersion()));
         githubLink.setText(REPOSITORY_URL);
         githubLink.setOnAction(event -> openRepository());
         emailLink.setText(EMAIL_ADDRESS);

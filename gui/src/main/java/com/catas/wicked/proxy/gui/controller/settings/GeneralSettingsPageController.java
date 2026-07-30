@@ -3,15 +3,20 @@ package com.catas.wicked.proxy.gui.controller.settings;
 import com.catas.wicked.common.config.Settings;
 import com.catas.wicked.common.constant.LanguagePreset;
 import com.catas.wicked.proxy.gui.componet.EnumLabel;
+import com.catas.wicked.proxy.gui.componet.validator.PositiveIntegerValidator;
+import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.proxy.service.settings.SettingsDraft;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
 import io.micronaut.context.annotation.Prototype;
+import jakarta.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
+import com.jfoenix.validation.RequiredFieldValidator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,10 +25,19 @@ import java.util.ResourceBundle;
 public class GeneralSettingsPageController implements SettingsPageController, Initializable {
 
     @FXML private JFXComboBox<EnumLabel<LanguagePreset>> languageComboBox;
-    @FXML private Label langAlertLabel;
+    @FXML private Label interfaceSectionLabel;
+    @FXML private Label languageLabel;
+    @FXML private Label showButtonLabel;
+    @FXML private Label recordSectionLabel;
+    @FXML private Label recordSizeLabel;
+    @FXML private Tooltip recordSizeTooltip;
+    @FXML private Label recordBypassLabel;
+    @FXML private Tooltip recordBypassTooltip;
     @FXML private JFXToggleButton buttonLabelBtn;
     @FXML private JFXTextField maxSizeField;
     @FXML private TextArea recordExcludeArea;
+
+    @Inject private LocalizationService localization;
 
     private SettingsDraft draft;
     private Runnable changeListener = () -> {};
@@ -31,6 +45,14 @@ public class GeneralSettingsPageController implements SettingsPageController, In
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        localization.bind(interfaceSectionLabel.textProperty(), "interface-sep.label");
+        localization.bind(languageLabel.textProperty(), "language.label");
+        localization.bind(showButtonLabel.textProperty(), "show-btn-label.label");
+        localization.bind(recordSectionLabel.textProperty(), "record-sep.label");
+        localization.bind(recordSizeLabel.textProperty(), "record-size.label");
+        localization.bind(recordSizeTooltip.textProperty(), "record-size.tooltip");
+        localization.bind(recordBypassLabel.textProperty(), "record-bypass.label");
+        localization.bind(recordBypassTooltip.textProperty(), "ant-path.tooltip");
         for (LanguagePreset value : LanguagePreset.values()) {
             languageComboBox.getItems().add(new EnumLabel<>(value, value::getDesc));
         }
@@ -40,7 +62,6 @@ public class GeneralSettingsPageController implements SettingsPageController, In
         languageComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (!loading && draft != null && newValue != null) {
                 draft.value().setLanguage(newValue.getEnum());
-                langAlertLabel.setVisible(true);
                 changed();
             }
         });
@@ -77,7 +98,6 @@ public class GeneralSettingsPageController implements SettingsPageController, In
             buttonLabelBtn.setSelected(settings.isShowButtonLabel());
             maxSizeField.setText(String.valueOf(settings.getMaxContentSize()));
             recordExcludeArea.setText(SettingsFormSupport.formatList(settings.getRecordExcludeList()));
-            langAlertLabel.setVisible(false);
         } finally {
             loading = false;
         }
@@ -93,6 +113,17 @@ public class GeneralSettingsPageController implements SettingsPageController, In
         if (!maxSizeField.validate()) {
             maxSizeField.requestFocus();
         }
+    }
+
+    @Override
+    public void onLocaleChanged() {
+        maxSizeField.getValidators().forEach(validator -> {
+            if (validator instanceof RequiredFieldValidator) {
+                validator.setMessage(localization.getMessage("validation.required"));
+            } else if (validator instanceof PositiveIntegerValidator) {
+                validator.setMessage(localization.getMessage("validation.positive-integer"));
+            }
+        });
     }
 
     private void changed() {

@@ -10,6 +10,7 @@ import com.catas.wicked.proxy.gui.componet.CertSelectComponent;
 import com.catas.wicked.proxy.gui.componet.SelectableTableCell;
 import com.catas.wicked.proxy.gui.componet.builder.TextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.dialog.CertImportDialog;
+import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.proxy.service.settings.SettingsDraft;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleButton;
@@ -27,6 +28,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -56,6 +58,12 @@ public class SslSettingsPageController implements SettingsPageController, Initia
     private static final int FIRST_CERTIFICATE_ROW = 5;
 
     @FXML private GridPane sslGridPane;
+    @FXML private Label httpsInspectionSectionLabel;
+    @FXML private Label enableSslLabel;
+    @FXML private Label sslBypassSectionLabel;
+    @FXML private Label sslBypassLabel;
+    @FXML private Tooltip sslBypassTooltip;
+    @FXML private Label certificateSectionLabel;
     @FXML private JFXToggleButton sslBtn;
     @FXML private TextArea sslExcludeArea;
     @FXML private HBox importCertBox;
@@ -64,6 +72,7 @@ public class SslSettingsPageController implements SettingsPageController, Initia
 
     @Inject private CertManager certManager;
     @Inject private ResourceMessageProvider messages;
+    @Inject private LocalizationService localization;
 
     private final ToggleGroup certSelectGroup = new ToggleGroup();
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(
@@ -79,9 +88,18 @@ public class SslSettingsPageController implements SettingsPageController, Initia
     private boolean loadingForm;
     private boolean certificatesLoaded;
     private boolean renderingCertificates;
+    private List<CertificateRow> certificateRows = List.of();
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
+        localization.bind(httpsInspectionSectionLabel.textProperty(), "https-inspection-sep.label");
+        localization.bind(enableSslLabel.textProperty(), "enable-ssl.label");
+        localization.bind(sslBypassSectionLabel.textProperty(), "ssl-bypass-sep.label");
+        localization.bind(sslBypassLabel.textProperty(), "ssl-bypass.label");
+        localization.bind(sslBypassTooltip.textProperty(), "ant-path.tooltip");
+        localization.bind(certificateSectionLabel.textProperty(), "certificate-management-sep.label");
+        localization.bind(loadingLabel.textProperty(), "settings.loading");
+        localization.bind(importCertBtn.textProperty(), "import-cert.label");
         sslBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
             updateEnabledState(newValue);
             if (!loadingForm && draft != null) {
@@ -138,6 +156,13 @@ public class SslSettingsPageController implements SettingsPageController, Initia
         executor.shutdownNow();
     }
 
+    @Override
+    public void onLocaleChanged() {
+        if (certificatesLoaded && !certificateRows.isEmpty()) {
+            renderCertificates(certificateRows);
+        }
+    }
+
     private void reloadCertificates() {
         certificatesLoaded = true;
         setLoading(true);
@@ -160,6 +185,7 @@ public class SslSettingsPageController implements SettingsPageController, Initia
     }
 
     private void renderCertificates(List<CertificateRow> rows) {
+        certificateRows = List.copyOf(rows);
         clearCertificateRows();
         renderingCertificates = true;
         try {

@@ -5,10 +5,15 @@ import javafx.scene.control.TextInputControl;
 
 public class PortValidator extends ValidatorBase {
 
-    private final String rangeMessage;
+    private String rangeMessage;
 
     public PortValidator(String rangeMessage) {
         this.rangeMessage = rangeMessage;
+    }
+
+    public void setRangeMessage(String rangeMessage) {
+        this.rangeMessage = rangeMessage;
+        setMessage(rangeMessage);
     }
 
     @Override

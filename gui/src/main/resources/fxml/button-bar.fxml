@@ -26,7 +26,7 @@
                 <Insets top="20.0"/>
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%record-btn.enable.tooltip" showDelay="50ms" />
+                <Tooltip fx:id="recordTooltip" text="%record-btn.enable.tooltip" showDelay="50ms" />
             </tooltip>
         </WKToggleNode>
 
@@ -35,7 +35,7 @@
                 <Insets top="5.0"/>
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%ssl-btn.enable.tooltip" showDelay="50ms" />
+                <Tooltip fx:id="sslTooltip" text="%ssl-btn.enable.tooltip" showDelay="50ms" />
             </tooltip>
         </WKToggleNode>
 
@@ -44,7 +44,7 @@
                 <Insets top="5.0"/>
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%sys-proxy-btn.tooltip" showDelay="50ms" />
+                <Tooltip fx:id="systemProxyTooltip" text="%sys-proxy-btn.tooltip" showDelay="50ms" />
             </tooltip>
         </WKToggleNode>
 
@@ -53,7 +53,7 @@
                 <Insets top="5.0"/>
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%throttle-btn.enable.tooltip" showDelay="50ms" />
+                <Tooltip fx:id="throttleTooltip" text="%throttle-btn.enable.tooltip" showDelay="50ms" />
             </tooltip>
         </WKToggleNode>
 
@@ -69,7 +69,7 @@
                 <Insets top="5.0" />
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%clear-btn.tooltip" showDelay="50ms" />
+                <Tooltip fx:id="clearTooltip" text="%clear-btn.tooltip" showDelay="50ms" />
             </tooltip>
         </WkButton>
 
@@ -79,7 +79,7 @@
                 <Insets top="5.0" />
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%resend-btn.tooltip" showDelay="50ms"/>
+                <Tooltip fx:id="resendTooltip" text="%resend-btn.tooltip" showDelay="50ms"/>
             </tooltip>
         </WkButton>
         <WkButton fx:id="locateBtn" onAction="#locateToSelectedItem"
@@ -88,7 +88,7 @@
                 <Insets top="5.0" />
             </VBox.margin>
             <tooltip>
-                <Tooltip text="%locate-btn.tooltip" />
+                <Tooltip fx:id="locateTooltip" text="%locate-btn.tooltip" />
             </tooltip>
         </WkButton>
         <WkButton onAction="#mockTreeItem" iconLiteral="fas-marker" labelText="Mock" visible="false">

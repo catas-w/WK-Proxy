@@ -2,6 +2,7 @@ package com.catas.wicked.proxy.service.settings;
 
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.Settings;
+import com.catas.wicked.common.constant.LanguagePreset;
 import com.catas.wicked.server.proxy.ProxyServer;
 import org.junit.After;
 import org.junit.Test;
@@ -121,6 +122,32 @@ public class SettingsCommitServiceTest {
 
         assertTrue(result.success());
         assertEquals(0, checkCount.get());
+    }
+
+    @Test
+    public void languageOnlyChangePersistsWithoutPortCheckOrRestart() throws Exception {
+        FakeApplicationConfig config = new FakeApplicationConfig();
+        Settings settings = new Settings();
+        settings.setLanguage(LanguagePreset.ENGLISH);
+        config.setSettings(settings);
+        FakeProxyServer server = new FakeProxyServer();
+        AtomicInteger checkCount = new AtomicInteger();
+        service = new SettingsCommitService(config, server, null, port -> {
+            checkCount.incrementAndGet();
+            return true;
+        });
+
+        SettingsDraft draft = SettingsDraft.from(settings);
+        draft.value().setLanguage(LanguagePreset.CHINESE);
+        SettingsApplyResult result = service.apply(draft)
+                .toCompletableFuture().get(2, TimeUnit.SECONDS);
+
+        assertTrue(result.success());
+        assertTrue(result.changes().languageChanged());
+        assertEquals(LanguagePreset.CHINESE, config.getSettings().getLanguage());
+        assertEquals(0, checkCount.get());
+        assertEquals(0, server.restartCount);
+        assertEquals(1, config.persistCount);
     }
 
     @Test

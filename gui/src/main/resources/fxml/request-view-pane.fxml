@@ -19,7 +19,7 @@
     <VBox styleClass="request-toolbar">
         <HBox prefHeight="31.0" prefWidth="254.0">
             <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-                <TextField fx:id="filterInput" maxWidth="Infinity" promptText="Filter">
+                <TextField fx:id="filterInput" maxWidth="Infinity" promptText="%filter.prompt">
                     <StackPane.margin>
                         <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
                     </StackPane.margin>
@@ -41,7 +41,7 @@
                     <FontIcon iconLiteral="fas-th-large" iconSize="14"/>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="%application-view.tooltip" showDelay="50ms"/>
+                    <Tooltip fx:id="applicationViewTooltip" text="%application-view.tooltip" showDelay="50ms"/>
                 </tooltip>
             </CustomToggleNode>
             <CustomToggleNode fx:id="treeViewToggleNode" maxWidth="Infinity"
@@ -50,7 +50,7 @@
                     <FontIcon iconLiteral="fas-sitemap" iconSize="14"/>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="%tree-view.tooltip" showDelay="50ms"/>
+                    <Tooltip fx:id="treeViewTooltip" text="%tree-view.tooltip" showDelay="50ms"/>
                 </tooltip>
             </CustomToggleNode>
             <CustomToggleNode fx:id="listViewToggleNode" maxWidth="Infinity"
@@ -59,7 +59,7 @@
                     <FontIcon iconLiteral="fas-list-ul" iconSize="14"/>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="%list-view.tooltip" showDelay="50ms"/>
+                    <Tooltip fx:id="listViewTooltip" text="%list-view.tooltip" showDelay="50ms"/>
                 </tooltip>
             </CustomToggleNode>
             <VBox.margin>

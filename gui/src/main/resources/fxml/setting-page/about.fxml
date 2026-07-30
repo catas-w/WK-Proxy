@@ -25,7 +25,7 @@
             <Label prefHeight="45.0" text="WK Proxy" textFill="#707a7c">
                 <font><Font name="MiSans Demibold" size="24.0"/></font>
             </Label>
-            <Label prefHeight="45.0" text="Http debug proxy tool." textFill="#949090">
+            <Label fx:id="descriptionLabel" prefHeight="45.0" text="Http debug proxy tool." textFill="#949090">
                 <HBox.margin><Insets left="10.0" top="5.0"/></HBox.margin>
             </Label>
         </HBox>
@@ -36,10 +36,10 @@
         </VBox>
         <Region prefHeight="16.0" VBox.vgrow="NEVER"/>
         <GridPane hgap="8.0" vgap="6.0">
-            <Label text="GitHub:" styleClass="about-link-label" GridPane.rowIndex="0"/>
+            <Label fx:id="githubLabel" text="GitHub:" styleClass="about-link-label" GridPane.rowIndex="0"/>
             <Hyperlink fx:id="githubLink" styleClass="about-link" wrapText="true"
                        GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-            <Label text="%email-link.label" styleClass="about-link-label" GridPane.rowIndex="1"/>
+            <Label fx:id="emailLabel" text="%email-link.label" styleClass="about-link-label" GridPane.rowIndex="1"/>
             <Hyperlink fx:id="emailLink" styleClass="about-link"
                        GridPane.rowIndex="1" GridPane.columnIndex="1"/>
         </GridPane>

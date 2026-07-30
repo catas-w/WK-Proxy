@@ -5,6 +5,7 @@ import com.catas.wicked.common.config.Settings;
 import java.util.Objects;
 
 public record SettingsChangeSet(
+        boolean languageChanged,
         boolean generalChanged,
         boolean uiChanged,
         boolean portChanged,
@@ -18,8 +19,8 @@ public record SettingsChangeSet(
         Objects.requireNonNull(before, "before");
         Objects.requireNonNull(after, "after");
         return new SettingsChangeSet(
-                before.getLanguage() != after.getLanguage()
-                        || !Objects.equals(before.getMaxContentSize(), after.getMaxContentSize())
+                before.getLanguage() != after.getLanguage(),
+                !Objects.equals(before.getMaxContentSize(), after.getMaxContentSize())
                         || !Objects.equals(before.getRecordExcludeList(), after.getRecordExcludeList()),
                 before.isShowButtonLabel() != after.isShowButtonLabel()
                         || before.isShowApplicationRequestCount() != after.isShowApplicationRequestCount(),
@@ -37,7 +38,7 @@ public record SettingsChangeSet(
     }
 
     public boolean hasChanges() {
-        return generalChanged || uiChanged || portChanged || proxyChanged || sslChanged
+        return languageChanged || generalChanged || uiChanged || portChanged || proxyChanged || sslChanged
                 || certificateChanged || externalProxyChanged;
     }
 }

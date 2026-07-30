@@ -25,35 +25,31 @@
                 <ColumnConstraints minWidth="205.0" prefWidth="205.0" maxWidth="205.0"/>
                 <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
             </columnConstraints>
-            <Label text="%interface-sep.label" styleClass="settings-section-title"
+            <Label fx:id="interfaceSectionLabel" text="%interface-sep.label" styleClass="settings-section-title"
                    GridPane.rowIndex="0" GridPane.columnSpan="2"/>
-            <Label text="%language.label" styleClass="settings-field-label" GridPane.rowIndex="1"/>
+            <Label fx:id="languageLabel" text="%language.label" styleClass="settings-field-label" GridPane.rowIndex="1"/>
             <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.rowIndex="1" GridPane.columnIndex="1">
                 <JFXComboBox fx:id="languageComboBox" styleClass="settings-control"/>
-                <Label fx:id="langAlertLabel" visible="false" text="%language-alert.label"
-                       styleClass="alert-label, lang-alert-label">
-                    <graphic><FontIcon iconLiteral="fas-exclamation-triangle"/></graphic>
-                </Label>
             </HBox>
-            <Label text="%show-btn-label.label" styleClass="settings-field-label" GridPane.rowIndex="2"/>
+            <Label fx:id="showButtonLabel" text="%show-btn-label.label" styleClass="settings-field-label" GridPane.rowIndex="2"/>
             <JFXToggleButton fx:id="buttonLabelBtn" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-            <Label text="%record-sep.label" styleClass="settings-section-title"
+            <Label fx:id="recordSectionLabel" text="%record-sep.label" styleClass="settings-section-title"
                    GridPane.rowIndex="3" GridPane.columnSpan="2"/>
-            <Label text="%record-size.label" styleClass="settings-field-label" contentDisplay="RIGHT"
+            <Label fx:id="recordSizeLabel" text="%record-size.label" styleClass="settings-field-label" contentDisplay="RIGHT"
                    GridPane.rowIndex="4">
                 <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
-                <tooltip><Tooltip text="%record-size.tooltip" showDelay="500ms"/></tooltip>
+                <tooltip><Tooltip fx:id="recordSizeTooltip" text="%record-size.tooltip" showDelay="500ms"/></tooltip>
             </Label>
             <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.rowIndex="4" GridPane.columnIndex="1">
                 <CustomTextField fx:id="maxSizeField" maxWidth="120.0" prefWidth="120.0"
                                  errorPaneTranslateX="120.0" errorPaneTranslateY="-40.0"/>
                 <Label text="MB" styleClass="settings-unit-label"/>
             </HBox>
-            <Label text="%record-bypass.label" styleClass="settings-field-label" contentDisplay="RIGHT"
+            <Label fx:id="recordBypassLabel" text="%record-bypass.label" styleClass="settings-field-label" contentDisplay="RIGHT"
                    GridPane.rowIndex="5">
                 <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
-                <tooltip><Tooltip text="%ant-path.tooltip" showDelay="500ms"/></tooltip>
+                <tooltip><Tooltip fx:id="recordBypassTooltip" text="%ant-path.tooltip" showDelay="500ms"/></tooltip>
             </Label>
             <TextArea fx:id="recordExcludeArea" prefRowCount="3" wrapText="true"
                       GridPane.rowIndex="5" GridPane.columnIndex="1"

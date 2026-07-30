@@ -17,6 +17,7 @@ import com.catas.wicked.proxy.gui.componet.TreeItemPredicate;
 import com.catas.wicked.proxy.gui.componet.ViewCellFactory;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.service.RequestViewService;
+import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.server.client.MinimalHttpClient;
 import com.jfoenix.controls.JFXToggleNode;
 import io.netty.handler.codec.http.HttpMethod;
@@ -36,6 +37,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
@@ -80,6 +82,9 @@ public class RequestViewController implements Initializable {
     private MenuItem removeItem;
     @FXML
     private MenuItem resendItem;
+    @FXML private Tooltip applicationViewTooltip;
+    @FXML private Tooltip treeViewTooltip;
+    @FXML private Tooltip listViewTooltip;
     @Inject
     private ViewCellFactory cellFactory;
     @Inject
@@ -90,6 +95,8 @@ public class RequestViewController implements Initializable {
     private ApplicationConfig appConfig;
     @Inject
     private Cache<String, RequestMessage> requestCache;
+    @Inject
+    private LocalizationService localization;
 
     private ResourceMessageProvider resourceMessageProvider;
 
@@ -127,6 +134,15 @@ public class RequestViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        localization.bind(filterInput.promptTextProperty(), "filter.prompt");
+        localization.bind(applicationViewToggleNode.textProperty(), "application-view.label");
+        localization.bind(treeViewToggleNode.textProperty(), "tree-view.label");
+        localization.bind(listViewToggleNode.textProperty(), "list-view.label");
+        localization.bind(applicationViewTooltip.textProperty(), "application-view.tooltip");
+        localization.bind(treeViewTooltip.textProperty(), "tree-view.tooltip");
+        localization.bind(listViewTooltip.textProperty(), "list-view.tooltip");
+        localization.bind(removeItem.textProperty(), "delete.label");
+        localization.bind(resendItem.textProperty(), "resend.label");
         reqTreeView.setRoot(new FilterableTreeItem<>());
         reqApplicationTreeView.setRoot(new FilterableTreeItem<>());
 

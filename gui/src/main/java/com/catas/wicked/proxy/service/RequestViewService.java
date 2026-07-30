@@ -54,6 +54,8 @@ public class RequestViewService {
 
     @Inject
     private MessageQueue messageQueue;
+    @Inject
+    private LocalizationService localization;
     private BlockingQueue<BaseMessage> queue;
 
     @Named("request")
@@ -105,6 +107,8 @@ public class RequestViewService {
                 log.warn("cannot to process message type: {}", msg);
             }
         });
+        localization.languageProperty().addListener((observable, oldValue, newValue) ->
+                refreshCurrentOverview());
     }
 
     /**
@@ -187,5 +191,15 @@ public class RequestViewService {
             messageQueue.pushMsg(Topic.RENDER,
                     new RenderMessage(currentSelection, RenderMessage.Tab.OVERVIEW));
         });
+    }
+
+    private void refreshCurrentOverview() {
+        String selectionId = appConfig.getObservableConfig().getCurrentRequestId();
+        if (selectionId == null) {
+            return;
+        }
+        messageQueue.clearMsg(Topic.RENDER);
+        messageQueue.pushMsg(Topic.RENDER,
+                new RenderMessage(selectionId, RenderMessage.Tab.OVERVIEW));
     }
 }

@@ -16,15 +16,15 @@
 <VBox spacing="8.0"
       xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.catas.wicked.proxy.gui.controller.settings.ExternalProxySettingsPageController">
-    <Label text="%upstream-proxy-sep.label" styleClass="settings-section-title"/>
+    <Label fx:id="upstreamProxySectionLabel" text="%upstream-proxy-sep.label" styleClass="settings-section-title"/>
     <GridPane hgap="16.0" vgap="8.0">
         <columnConstraints>
             <ColumnConstraints minWidth="205.0" prefWidth="205.0" maxWidth="205.0"/>
             <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
         </columnConstraints>
-        <Label text="%enable-ex-proxy.label" styleClass="settings-field-label" contentDisplay="RIGHT">
+        <Label fx:id="enableExternalProxyLabel" text="%enable-ex-proxy.label" styleClass="settings-field-label" contentDisplay="RIGHT">
             <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
-            <tooltip><Tooltip text="%ex-proxy.tooltip" showDelay="500ms"/></tooltip>
+            <tooltip><Tooltip fx:id="externalProxyTooltip" text="%ex-proxy.tooltip" showDelay="500ms"/></tooltip>
         </Label>
         <JFXToggleButton fx:id="exProxyBtn" GridPane.columnIndex="1"/>
     </GridPane>
@@ -33,15 +33,15 @@
             <ColumnConstraints minWidth="205.0" prefWidth="205.0" maxWidth="205.0"/>
             <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
         </columnConstraints>
-        <Label text="%ex-proxy-type.label" styleClass="settings-field-label"/>
+        <Label fx:id="externalProxyTypeLabel" text="%ex-proxy-type.label" styleClass="settings-field-label"/>
         <JFXComboBox fx:id="proxyComboBox" styleClass="settings-control" GridPane.columnIndex="1"/>
-        <Label text="%ex-proxy-addr.label" styleClass="settings-field-label" GridPane.rowIndex="1"/>
+        <Label fx:id="externalProxyAddressLabel" text="%ex-proxy-addr.label" styleClass="settings-field-label" GridPane.rowIndex="1"/>
         <HBox alignment="CENTER_LEFT" GridPane.rowIndex="1" GridPane.columnIndex="1">
             <CustomTextField fx:id="exProxyHost" minWidth="150.0" prefWidth="180.0" HBox.hgrow="ALWAYS"/>
             <Label text=":"><HBox.margin><Insets left="5.0" right="5.0"/></HBox.margin></Label>
             <CustomTextField fx:id="exProxyPort" maxWidth="72.0" prefWidth="72.0"/>
         </HBox>
-        <Label text="%ex-proxy-auth.label" styleClass="settings-field-label" GridPane.rowIndex="2"/>
+        <Label fx:id="externalProxyAuthLabel" text="%ex-proxy-auth.label" styleClass="settings-field-label" GridPane.rowIndex="2"/>
         <JFXToggleButton fx:id="exProxyAuth" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
         <GridPane fx:id="exProxyAuthDetails" hgap="16.0" vgap="8.0"
                   GridPane.rowIndex="3" GridPane.columnSpan="2">
@@ -49,9 +49,9 @@
                 <ColumnConstraints minWidth="205.0" prefWidth="205.0" maxWidth="205.0"/>
                 <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
             </columnConstraints>
-            <Label text="%ex-proxy-username.label" styleClass="settings-field-label"/>
+            <Label fx:id="externalProxyUsernameLabel" text="%ex-proxy-username.label" styleClass="settings-field-label"/>
             <CustomTextField fx:id="exUsername" GridPane.columnIndex="1"/>
-            <Label text="%ex-proxy-pwd.label" styleClass="settings-field-label" GridPane.rowIndex="1"/>
+            <Label fx:id="externalProxyPasswordLabel" text="%ex-proxy-pwd.label" styleClass="settings-field-label" GridPane.rowIndex="1"/>
             <CustomTextField fx:id="exPassword" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
         </GridPane>
     </GridPane>

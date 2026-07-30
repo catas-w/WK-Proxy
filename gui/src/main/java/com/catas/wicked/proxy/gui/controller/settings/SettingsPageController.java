@@ -14,6 +14,9 @@ public interface SettingsPageController {
     default void onShown() {
     }
 
+    default void onLocaleChanged() {
+    }
+
     default void dispose() {
     }
 }

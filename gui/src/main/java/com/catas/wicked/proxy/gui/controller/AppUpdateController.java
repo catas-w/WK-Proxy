@@ -4,6 +4,7 @@ import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.executor.ThreadPoolService;
 import com.catas.wicked.common.provider.DesktopProvider;
 import com.catas.wicked.common.provider.ResourceMessageProvider;
+import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.common.provider.VersionCheckProvider;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.CommonUtils;
@@ -51,6 +52,10 @@ public class AppUpdateController implements Initializable {
 
     @FXML
     private JFXButton closeUpdateDialogBtn;
+    @FXML
+    private Label updateTitleLabel;
+    @FXML
+    private Label updateStatusLabel;
 
     private Timeline timeline;
 
@@ -72,11 +77,16 @@ public class AppUpdateController implements Initializable {
 
     @Inject
     private ResourceMessageProvider resourceMessageProvider;
+    @Inject
+    private LocalizationService localization;
 
     public static final String RELEASE_URL = "https://github.com/catas-w/WK-Proxy/releases/latest";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        localization.bind(updateTitleLabel.textProperty(), "release-btn.label");
+        localization.bind(updateStatusLabel.textProperty(), "check-update.checking.label");
+        localization.bind(closeUpdateDialogBtn.textProperty(), "cancel.label");
         updateProgressBar.setSkin(new CustomJFXProgressBarSkin(updateProgressBar));
         dialogLayout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/update-dialog.css")).toExternalForm());
         dialogLayout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/app.css")).toExternalForm());
