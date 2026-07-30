@@ -15,7 +15,8 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import java.net.URL?>
 
-<BorderPane fx:id="root" prefHeight="500.0" prefWidth="700.0" styleClass="settings-root"
+<BorderPane fx:id="root" minHeight="460.0" minWidth="720.0"
+            prefHeight="540.0" prefWidth="780.0" styleClass="settings-root"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.catas.wicked.proxy.gui.controller.SettingController">
     <fx:define>
@@ -27,7 +28,7 @@
     </stylesheets>
     <center>
         <HBox>
-            <VBox prefWidth="165.0" minWidth="165.0" maxWidth="165.0" styleClass="settings-sidebar">
+            <VBox prefWidth="195.0" minWidth="195.0" maxWidth="195.0" styleClass="settings-sidebar">
                 <padding><Insets top="18.0" right="10.0" bottom="12.0" left="10.0"/></padding>
                 <ToggleButton fx:id="generalNavigationButton" text="%general-tab.label" selected="true"
                               toggleGroup="$settingsNavigationGroup" styleClass="settings-navigation-button">

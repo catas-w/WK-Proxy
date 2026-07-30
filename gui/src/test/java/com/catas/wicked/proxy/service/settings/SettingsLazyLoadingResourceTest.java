@@ -40,6 +40,25 @@ public class SettingsLazyLoadingResourceTest {
     }
 
     @Test
+    public void settingsLayoutReservesSpaceForLocalizedLabels() throws Exception {
+        String shell = read("/fxml/setting-page/settings.fxml");
+        assertTrue(shell.contains("minHeight=\"460.0\" minWidth=\"720.0\""));
+        assertTrue(shell.contains("prefHeight=\"540.0\" prefWidth=\"780.0\""));
+        assertTrue(shell.contains("prefWidth=\"195.0\" minWidth=\"195.0\" maxWidth=\"195.0\""));
+
+        String css = read("/css/setting-page.css");
+        assertTrue(css.contains("-fx-pref-width: 175px;"));
+        assertTrue(css.contains("-fx-max-width: infinity;"));
+        assertTrue(css.contains("-fx-text-alignment: right;"));
+        assertTrue(css.contains("-fx-wrap-text: true;"));
+
+        assertLabelColumnWidth("/fxml/setting-page/general.fxml", 1);
+        assertLabelColumnWidth("/fxml/setting-page/proxy.fxml", 1);
+        assertLabelColumnWidth("/fxml/setting-page/ssl.fxml", 1);
+        assertLabelColumnWidth("/fxml/setting-page/external-proxy.fxml", 3);
+    }
+
+    @Test
     public void proxyPageIncludesProgressiveUpstreamProxySection() throws Exception {
         String proxyFxml = read("/fxml/setting-page/proxy.fxml");
         String upstreamFxml = read("/fxml/setting-page/external-proxy.fxml");
@@ -85,5 +104,13 @@ public class SettingsLazyLoadingResourceTest {
             assertNotNull(input);
             return new String(input.readAllBytes(), StandardCharsets.UTF_8);
         }
+    }
+
+    private void assertLabelColumnWidth(String resource, int expectedCount) throws Exception {
+        String fxml = read(resource);
+        String constraint = "<ColumnConstraints minWidth=\"205.0\" prefWidth=\"205.0\" maxWidth=\"205.0\"/>";
+        assertFalse(fxml.contains("minWidth=\"130.0\" prefWidth=\"130.0\""));
+        assertTrue(resource, fxml.split(java.util.regex.Pattern.quote(constraint), -1).length - 1
+                == expectedCount);
     }
 }

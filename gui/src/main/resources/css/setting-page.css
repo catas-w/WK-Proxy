@@ -21,7 +21,7 @@
 }
 
 .settings-navigation-button {
-    -fx-pref-width: 145px;
+    -fx-pref-width: 175px;
     -fx-pref-height: 44px;
     -fx-min-height: 44px;
     -fx-alignment: CENTER-LEFT;
@@ -113,10 +113,13 @@
 }
 
 .settings-field-label {
+    -fx-max-width: infinity;
     -fx-min-height: 34px;
     -fx-alignment: CENTER-RIGHT;
     -fx-padding: 0 8px 0 0;
+    -fx-text-alignment: right;
     -fx-text-fill: #4f5353;
+    -fx-wrap-text: true;
 }
 
 .settings-unit-label,

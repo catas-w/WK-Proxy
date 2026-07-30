@@ -22,7 +22,7 @@
         <GridPane styleClass="settings-form, setting-server" hgap="16.0" vgap="8.0">
             <padding><Insets left="28.0" right="28.0" top="8.0" bottom="20.0"/></padding>
             <columnConstraints>
-                <ColumnConstraints minWidth="130.0" prefWidth="130.0"/>
+                <ColumnConstraints minWidth="205.0" prefWidth="205.0" maxWidth="205.0"/>
                 <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
             </columnConstraints>
             <Label text="%local-proxy-sep.label" styleClass="settings-section-title"

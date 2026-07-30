@@ -232,7 +232,7 @@
     -fx-icon-color: #686868;
 }
 .toggle-node:selected {
-    -fx-background-color: #23a88e;
+    -fx-background-color: #23a8a4;
     -fx-text-fill: white;
 }
 .toggle-node:selected:hover {

@@ -61,8 +61,8 @@ public class SettingsDialogCoordinator {
             Node hiddenCancelButton = pane.lookupButton(ButtonType.CANCEL);
             hiddenCancelButton.setVisible(false);
             hiddenCancelButton.setManaged(false);
-            pane.setPrefSize(700, 500);
-            pane.setMinSize(620, 420);
+            pane.setPrefSize(780, 540);
+            pane.setMinSize(720, 460);
             pane.getStylesheets().add(Objects.requireNonNull(
                     getClass().getResource("/css/dialog.css")).toExternalForm());
             pane.getStylesheets().add(Objects.requireNonNull(

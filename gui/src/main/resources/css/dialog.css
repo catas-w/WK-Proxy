@@ -1,6 +1,9 @@
 .myDialog{
     -fx-background-color: TRANSPARENT;
 }
+.myDialog > .content {
+    -fx-padding: 0;
+}
 .myDialog > *.button-bar > *.container{
     -fx-background-color: TRANSPARENT;
     -fx-padding: 0;

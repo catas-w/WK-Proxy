@@ -19,7 +19,7 @@
     <Label text="%upstream-proxy-sep.label" styleClass="settings-section-title"/>
     <GridPane hgap="16.0" vgap="8.0">
         <columnConstraints>
-            <ColumnConstraints minWidth="130.0" prefWidth="130.0"/>
+            <ColumnConstraints minWidth="205.0" prefWidth="205.0" maxWidth="205.0"/>
             <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
         </columnConstraints>
         <Label text="%enable-ex-proxy.label" styleClass="settings-field-label" contentDisplay="RIGHT">
@@ -30,7 +30,7 @@
     </GridPane>
     <GridPane fx:id="exProxyDetails" hgap="16.0" vgap="8.0">
         <columnConstraints>
-            <ColumnConstraints minWidth="130.0" prefWidth="130.0"/>
+            <ColumnConstraints minWidth="205.0" prefWidth="205.0" maxWidth="205.0"/>
             <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
         </columnConstraints>
         <Label text="%ex-proxy-type.label" styleClass="settings-field-label"/>
@@ -46,7 +46,7 @@
         <GridPane fx:id="exProxyAuthDetails" hgap="16.0" vgap="8.0"
                   GridPane.rowIndex="3" GridPane.columnSpan="2">
             <columnConstraints>
-                <ColumnConstraints minWidth="130.0" prefWidth="130.0"/>
+                <ColumnConstraints minWidth="205.0" prefWidth="205.0" maxWidth="205.0"/>
                 <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
             </columnConstraints>
             <Label text="%ex-proxy-username.label" styleClass="settings-field-label"/>
