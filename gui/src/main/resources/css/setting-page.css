@@ -221,6 +221,7 @@
 }
 
 .settings-action-bar .cancel-btn,
+.settings-action-bar .apply-btn,
 .settings-secondary-button {
     -fx-background-color: #ffffff;
     -fx-border-color: #b8bcbc;
@@ -228,12 +229,12 @@
     -fx-text-fill: #454949;
 }
 
-.settings-action-bar .apply-btn {
+.settings-action-bar .ok-btn {
     -fx-background-color: -settings-accent;
     -fx-text-fill: #ffffff;
 }
 
-.settings-action-bar .apply-btn:disabled {
+.settings-action-bar .button:disabled {
     -fx-opacity: 0.45;
 }
 

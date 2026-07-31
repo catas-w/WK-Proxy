@@ -70,6 +70,7 @@
             <Pane HBox.hgrow="ALWAYS"/>
             <JFXButton fx:id="cancelButton" text="%cancel.label" styleClass="cancel-btn"/>
             <JFXButton fx:id="applyButton" text="%apply.label" styleClass="apply-btn" disable="true"/>
+            <JFXButton fx:id="okButton" text="%ok.label" styleClass="ok-btn" defaultButton="true"/>
         </HBox>
     </bottom>
 </BorderPane>

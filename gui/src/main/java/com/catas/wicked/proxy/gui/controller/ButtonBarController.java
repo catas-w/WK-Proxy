@@ -47,8 +47,8 @@ import static com.catas.wicked.common.constant.StyleConstant.COLOR_SUSPEND;
 @Singleton
 public class ButtonBarController implements Initializable {
 
-    private static final double LABELED_WIDTH = 72.0;
-    private static final double COMPACT_WIDTH = 50.0;
+    private static final double LABELED_WIDTH = 60.0;
+    private static final double COMPACT_WIDTH = 52.0;
     private static final PseudoClass COMPACT = PseudoClass.getPseudoClass("compact");
     private static final PseudoClass WARNING = PseudoClass.getPseudoClass("warning");
     private static final PseudoClass SUSPENDED = PseudoClass.getPseudoClass("suspended");

@@ -46,6 +46,7 @@ public class SettingController implements Initializable {
     @FXML private StackPane pageHost;
     @FXML private JFXButton applyButton;
     @FXML private JFXButton cancelButton;
+    @FXML private JFXButton okButton;
     @FXML private Label applyStatusLabel;
 
     @Inject private FxmlLoaderFactory loaderFactory;
@@ -70,6 +71,7 @@ public class SettingController implements Initializable {
         localization.bind(aboutNavigationButton.textProperty(), "about-tab.label");
         localization.bind(cancelButton.textProperty(), "cancel.label");
         localization.bind(applyButton.textProperty(), "apply.label");
+        localization.bind(okButton.textProperty(), "ok.label");
         localization.languageProperty().addListener((observable, oldValue, newValue) -> {
             loadedPages.values().forEach(SettingsPageController::onLocaleChanged);
             updatePageTitle();
@@ -92,7 +94,8 @@ public class SettingController implements Initializable {
             }
         });
 
-        applyButton.setOnAction(event -> apply());
+        applyButton.setOnAction(event -> apply(false));
+        okButton.setOnAction(event -> confirm());
         cancelButton.setOnAction(event -> {
             if (!applying) {
                 closeAction.run();
@@ -181,7 +184,18 @@ public class SettingController implements Initializable {
         }
     }
 
-    private void apply() {
+    private void confirm() {
+        if (applying || draft == null) {
+            return;
+        }
+        if (!isDirty()) {
+            closeAction.run();
+            return;
+        }
+        apply(true);
+    }
+
+    private void apply(boolean closeOnSuccess) {
         if (applying || draft == null) {
             return;
         }
@@ -198,10 +212,10 @@ public class SettingController implements Initializable {
         setApplying(true);
         applyStatusLabel.setText(messages.getMessage("settings.applying"));
         commitService.apply(draft).whenComplete((result, error) ->
-                Platform.runLater(() -> finishApply(result, error)));
+                Platform.runLater(() -> finishApply(result, error, closeOnSuccess)));
     }
 
-    private void finishApply(SettingsApplyResult result, Throwable error) {
+    private void finishApply(SettingsApplyResult result, Throwable error, boolean closeOnSuccess) {
         setApplying(false);
         if (error != null || result == null || !result.success()) {
             if (error == null && result != null
@@ -226,6 +240,9 @@ public class SettingController implements Initializable {
         syncObservableSettings();
         applyStatusLabel.setText(messages.getMessage("settings.apply-success"));
         updateDirtyState();
+        if (closeOnSuccess) {
+            closeAction.run();
+        }
     }
 
     private void showPortUnavailable(Integer port) {
@@ -266,6 +283,7 @@ public class SettingController implements Initializable {
         this.applying = applying;
         root.getCenter().setDisable(applying);
         cancelButton.setDisable(applying);
+        okButton.setDisable(applying);
         updateDirtyState();
     }
 }

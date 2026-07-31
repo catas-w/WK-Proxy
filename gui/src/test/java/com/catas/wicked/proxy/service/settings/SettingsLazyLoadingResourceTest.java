@@ -4,7 +4,10 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -37,6 +40,22 @@ public class SettingsLazyLoadingResourceTest {
         assertTrue(fxml.contains("fx:id=\"aboutNavigationButton\""));
         assertTrue(fxml.contains("styleClass=\"settings-sidebar\""));
         assertTrue(fxml.contains("fx:id=\"pageHost\""));
+    }
+
+    @Test
+    public void settingsShellProvidesCancelApplyAndOkActions() throws Exception {
+        String fxml = read("/fxml/setting-page/settings.fxml");
+        int cancelIndex = fxml.indexOf("fx:id=\"cancelButton\"");
+        int applyIndex = fxml.indexOf("fx:id=\"applyButton\"");
+        int okIndex = fxml.indexOf("fx:id=\"okButton\"");
+
+        assertTrue(cancelIndex >= 0);
+        assertTrue(applyIndex > cancelIndex);
+        assertTrue(okIndex > applyIndex);
+        assertTrue(fxml.contains("text=\"%ok.label\""));
+        assertTrue(fxml.contains("defaultButton=\"true\""));
+        assertEquals("OK", ResourceBundle.getBundle("lang.messages", Locale.ENGLISH).getString("ok.label"));
+        assertEquals("确定", ResourceBundle.getBundle("lang.messages", Locale.SIMPLIFIED_CHINESE).getString("ok.label"));
     }
 
     @Test
