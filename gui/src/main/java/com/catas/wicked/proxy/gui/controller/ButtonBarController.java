@@ -49,7 +49,9 @@ public class ButtonBarController implements Initializable {
 
     private static final double LABELED_WIDTH = 60.0;
     private static final double COMPACT_WIDTH = 52.0;
+    private static final boolean SHOW_SELECTION_INDICATOR = true;
     private static final PseudoClass COMPACT = PseudoClass.getPseudoClass("compact");
+    private static final PseudoClass SELECTION_INDICATOR = PseudoClass.getPseudoClass("selection-indicator");
     private static final PseudoClass WARNING = PseudoClass.getPseudoClass("warning");
     private static final PseudoClass SUSPENDED = PseudoClass.getPseudoClass("suspended");
 
@@ -118,6 +120,7 @@ public class ButtonBarController implements Initializable {
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        buttonBarRoot.pseudoClassStateChanged(SELECTION_INDICATOR, SHOW_SELECTION_INDICATOR);
         localization.bind(recordBtn.labelTextProperty(), "record-btn.label");
         localization.bind(sslBtn.labelTextProperty(), "ssl-btn.label");
         localization.bind(sysProxyBtn.labelTextProperty(), "sys-proxy-btn.label");

@@ -38,8 +38,8 @@
 
 .main-button-bar .buttonbar-control:selected {
     -fx-background-color: transparent;
-    -fx-border-color: transparent transparent transparent #0bb4ac;
-    -fx-border-width: 0 0 0 3px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
 }
 
 .main-button-bar .buttonbar-control:selected:hover {
@@ -47,9 +47,17 @@
 }
 
 .main-button-bar .buttonbar-control:selected:focused {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
+}
+
+.main-button-bar:selection-indicator .buttonbar-control:selected,
+.main-button-bar:selection-indicator .buttonbar-control:selected:focused {
     -fx-border-color: transparent transparent transparent #0bb4ac;
     -fx-border-width: 0 0 0 3px;
-    -fx-border-insets: 0;
+    -fx-border-insets: 10px 0 10px 0;
+    -fx-border-radius: 0;
 }
 
 .main-button-bar .buttonbar-control:suspended,

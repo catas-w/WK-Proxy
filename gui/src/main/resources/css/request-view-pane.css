@@ -202,10 +202,10 @@
 
 /********** toggle-node **********/
 .request-view-switcher {
-    -fx-border-color: rgba(133, 133, 133, 0.45);
-    -fx-border-width: 1;
-    -fx-border-radius: 3;
-    -fx-background-radius: 3;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-color: rgba(255, 255, 255, 0.22);
+    -fx-background-radius: 14px;
 }
 
 .toggle-node {
@@ -219,7 +219,7 @@
     -fx-content-display: LEFT;
     -fx-graphic-text-gap: 6;
     -fx-alignment: CENTER;
-    -fx-background-color: rgba(255, 255, 255, 0.22);
+    -fx-background-color: transparent;
     -fx-background-radius: 0;
     -fx-border-width: 0;
     -fx-text-fill: #555555;
@@ -242,15 +242,15 @@
     -fx-icon-color: white;
 }
 #applicationViewToggleNode {
-    -fx-background-radius: 2 0 0 2;
+    -fx-background-radius: 14px 0 0 14px;
 }
 #treeViewToggleNode,
 #listViewToggleNode {
-    -fx-border-color: transparent transparent transparent rgba(133, 133, 133, 0.45);
-    -fx-border-width: 0 0 0 1;
+    -fx-border-color: transparent transparent transparent #c3c3c3;
+    -fx-border-width: 0 0 0 1px;
 }
 #listViewToggleNode {
-    -fx-background-radius: 0 2 2 0;
+    -fx-background-radius: 0 14px 14px 0;
 }
 
 /********** tree-cells **********/

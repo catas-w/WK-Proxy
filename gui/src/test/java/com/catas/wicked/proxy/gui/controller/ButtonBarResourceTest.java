@@ -40,14 +40,15 @@ public class ButtonBarResourceTest {
         assertEquals("transparent", propertyValue(css, ".main-button-bar", "-fx-background-color"));
         assertEquals("transparent", propertyValue(css, ".main-button-bar .buttonbar-control:selected",
                 "-fx-background-color"));
+        assertEquals("0", propertyValue(css, ".main-button-bar .buttonbar-control:selected",
+                "-fx-border-width"));
         assertEquals("transparent", propertyValue(css, ".main-button-bar .buttonbar-control:focused",
                 "-fx-border-color"));
         assertEquals("0", propertyValue(css, ".main-button-bar .buttonbar-control:focused",
                 "-fx-border-width"));
-        assertEquals("transparent transparent transparent #0bb4ac",
-                propertyValue(css, ".main-button-bar .buttonbar-control:selected:focused", "-fx-border-color"));
-        assertEquals("0 0 0 3px",
-                propertyValue(css, ".main-button-bar .buttonbar-control:selected:focused", "-fx-border-width"));
+        assertTrue(css.contains(".main-button-bar:selection-indicator .buttonbar-control:selected"));
+        assertTrue(css.contains("-fx-border-insets: 10px 0 10px 0;"));
+        assertTrue(css.contains("-fx-border-width: 0 0 0 3px;"));
     }
 
     private String propertyValue(String css, String selector, String property) {
