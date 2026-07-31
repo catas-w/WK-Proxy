@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /** Maintains the independent application -> host -> request view. */
 public class ApplicationMessageTree {
@@ -26,9 +27,15 @@ public class ApplicationMessageTree {
     private final Map<String, ApplicationGroup> applications = new LinkedHashMap<>();
     private final Map<String, RequestEntry> requests = new LinkedHashMap<>();
     private final RequestViewController controller;
+    private final Consumer<Runnable> uiScheduler;
 
     public ApplicationMessageTree(RequestViewController controller) {
+        this(controller, Platform::runLater);
+    }
+
+    ApplicationMessageTree(RequestViewController controller, Consumer<Runnable> uiScheduler) {
         this.controller = controller;
+        this.uiScheduler = uiScheduler;
     }
 
     public synchronized void add(RequestMessage message) {
@@ -43,7 +50,7 @@ public class ApplicationMessageTree {
         hostGroup.requests.put(message.getRequestId(), entry);
         requests.put(message.getRequestId(), entry);
 
-        Platform.runLater(() -> {
+        runOnUiThread(() -> {
             incrementCounts(application, hostGroup);
             attachApplication(application);
             attachHost(application, hostGroup);
@@ -62,7 +69,7 @@ public class ApplicationMessageTree {
         }
         ApplicationSource identity = ApplicationSource.from(message.getProcessInfo());
         if (StringUtils.equals(current.application.key, identity.key())) {
-            Platform.runLater(() -> {
+            runOnUiThread(() -> {
                 synchronized (ApplicationMessageTree.this) {
                     if (applications.get(identity.key()) == current.application) {
                         updateApplicationCell(current.application, identity);
@@ -75,7 +82,7 @@ public class ApplicationMessageTree {
         removeInternal(current);
         add(message);
         if (restoreSelection) {
-            Platform.runLater(() -> select(message.getRequestId()));
+            runOnUiThread(() -> select(message.getRequestId()));
         }
     }
 
@@ -162,7 +169,23 @@ public class ApplicationMessageTree {
     public synchronized void clear() {
         applications.clear();
         requests.clear();
-        Platform.runLater(() -> root().getInternalChildren().clear());
+        runOnUiThread(() -> root().getInternalChildren().clear());
+    }
+
+    /** Removes request leaves while retaining application and host grouping nodes. */
+    synchronized void cleanLeaves() {
+        Collection<RequestEntry> removedEntries = new ArrayList<>(requests.values());
+        Collection<ApplicationGroup> retainedApplications = new ArrayList<>(applications.values());
+        Collection<HostGroup> retainedHosts = new ArrayList<>();
+        retainedApplications.forEach(application -> retainedHosts.addAll(application.hosts.values()));
+        requests.clear();
+        retainedHosts.forEach(host -> host.requests.clear());
+
+        runOnUiThread(() -> {
+            retainedApplications.forEach(application -> application.item.getValue().setCount(0));
+            retainedHosts.forEach(host -> host.item.getValue().setCount(0));
+            removedEntries.forEach(entry -> entry.host.item.getInternalChildren().remove(entry.item));
+        });
     }
 
     private ApplicationGroup createApplication(ApplicationSource identity) {
@@ -209,7 +232,7 @@ public class ApplicationMessageTree {
         }
 
         boolean finalRemoveApplication = removeApplication;
-        Platform.runLater(() -> {
+        runOnUiThread(() -> {
             decrementCounts(entry.application, entry.host);
             entry.host.item.getInternalChildren().remove(entry.item);
             if (entry.host.requests.isEmpty()) {
@@ -240,6 +263,10 @@ public class ApplicationMessageTree {
 
     private FilterableTreeItem<RequestCell> root() {
         return controller.getApplicationTreeRoot();
+    }
+
+    private void runOnUiThread(Runnable action) {
+        uiScheduler.accept(action);
     }
 
     private void attachHost(ApplicationGroup application, HostGroup host) {

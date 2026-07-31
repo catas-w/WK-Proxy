@@ -450,7 +450,7 @@ public class MessageService {
         });
         treeNodeList.forEach(messageTree::delete);
         messageTree.resetCnt();
-        applicationMessageTree.clear();
+        applicationMessageTree.cleanLeaves();
         responseUpdateBuffer.removeAll(requestIdList);
         requestViewService.updateRequestTab(null);
 
