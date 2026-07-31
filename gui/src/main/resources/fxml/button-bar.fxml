@@ -9,8 +9,8 @@
 <?import com.catas.wicked.proxy.gui.componet.CustomMenuButton?>
 <?import com.catas.wicked.proxy.gui.componet.button.WKToggleNode?>
 <?import com.catas.wicked.proxy.gui.componet.button.WkButton?>
-<AnchorPane maxWidth="55.0" minWidth="50.0" prefHeight="545.0" prefWidth="50.0"
-            style="-fx-background-color: TRANSPARENT; -fx-border-color: rgba(119,119,119,0.38); -fx-border-width: 0 0.6 0 0;"
+<AnchorPane fx:id="buttonBarRoot" maxWidth="72.0" minWidth="72.0" prefHeight="545.0" prefWidth="72.0"
+            styleClass="main-button-bar"
             xmlns="http://javafx.com/javafx/11.0.14-internal"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.catas.wicked.proxy.gui.controller.ButtonBarController">
@@ -18,75 +18,69 @@
         <URL value="@../css/common-design.css" />
         <URL value="@../css/button-bar.css" />
     </stylesheets>
-    <VBox fx:id="buttonBox" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: TRANSPARENT;" alignment="CENTER"
-          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="20.0">
-        <WKToggleNode fx:id="recordBtn"
-                      labelText="%record-btn.label" activeIconLiteral="fas-record-vinyl" inactiveIconLiteral="far-play-circle">
-            <VBox.margin>
-                <Insets top="20.0"/>
-            </VBox.margin>
-            <tooltip>
-                <Tooltip fx:id="recordTooltip" text="%record-btn.enable.tooltip" showDelay="50ms" />
-            </tooltip>
-        </WKToggleNode>
+    <VBox alignment="TOP_CENTER" spacing="2.0"
+          AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="4.0">
+        <StackPane styleClass="buttonbar-cell">
+            <WKToggleNode fx:id="recordBtn" maxHeight="Infinity" maxWidth="Infinity" prefHeight="56.0"
+                          styleClass="buttonbar-control, record-control"
+                          labelText="%record-btn.label" activeIconLiteral="fas-record-vinyl" inactiveIconLiteral="far-play-circle">
+                <tooltip>
+                    <Tooltip fx:id="recordTooltip" text="%record-btn.enable.tooltip" showDelay="50ms" />
+                </tooltip>
+            </WKToggleNode>
+            <Label fx:id="recordingBadge" text="" mouseTransparent="true" managed="false" visible="false"
+                   StackPane.alignment="TOP_RIGHT" styleClass="buttonbar-badge, recording-badge"/>
+        </StackPane>
 
-        <WKToggleNode fx:id="sslBtn" labelText="%ssl-btn.label" iconLiteral="fas-mask">
-            <VBox.margin>
-                <Insets top="5.0"/>
-            </VBox.margin>
-            <tooltip>
-                <Tooltip fx:id="sslTooltip" text="%ssl-btn.enable.tooltip" showDelay="50ms" />
-            </tooltip>
-        </WKToggleNode>
+        <StackPane styleClass="buttonbar-cell">
+            <WKToggleNode fx:id="sslBtn" maxHeight="Infinity" maxWidth="Infinity" prefHeight="56.0"
+                          styleClass="buttonbar-control" labelText="%ssl-btn.label" iconLiteral="fas-mask">
+                <tooltip>
+                    <Tooltip fx:id="sslTooltip" text="%ssl-btn.enable.tooltip" showDelay="50ms" />
+                </tooltip>
+            </WKToggleNode>
+            <Label fx:id="sslWarningBadge" text="!" mouseTransparent="true" managed="false" visible="false"
+                   StackPane.alignment="TOP_RIGHT" styleClass="buttonbar-badge, warning-badge"/>
+        </StackPane>
 
-        <WKToggleNode fx:id="sysProxyBtn" onAction="#onSysProxy" labelText="%sys-proxy-btn.label" iconLiteral="fas-burn">
-            <VBox.margin>
-                <Insets top="5.0"/>
-            </VBox.margin>
+        <WKToggleNode fx:id="sysProxyBtn" onAction="#onSysProxy" maxHeight="Infinity" maxWidth="Infinity" prefHeight="56.0"
+                      styleClass="buttonbar-control" labelText="%sys-proxy-btn.label" iconLiteral="fas-burn">
             <tooltip>
                 <Tooltip fx:id="systemProxyTooltip" text="%sys-proxy-btn.tooltip" showDelay="50ms" />
             </tooltip>
         </WKToggleNode>
 
-        <WKToggleNode fx:id="throttleBtn" labelText="%throttle-btn.label" iconLiteral="fas-hourglass-half">
-            <VBox.margin>
-                <Insets top="5.0"/>
-            </VBox.margin>
+        <WKToggleNode fx:id="throttleBtn" maxHeight="Infinity" maxWidth="Infinity" prefHeight="56.0"
+                      styleClass="buttonbar-control" labelText="%throttle-btn.label" iconLiteral="fas-hourglass-half">
             <tooltip>
                 <Tooltip fx:id="throttleTooltip" text="%throttle-btn.enable.tooltip" showDelay="50ms" />
             </tooltip>
         </WKToggleNode>
 
-        <Separator prefWidth="200.0" >
+        <Separator maxHeight="1.0" minHeight="1.0" prefHeight="1.0" maxWidth="Infinity" prefWidth="200.0">
              <VBox.margin>
-                <Insets top="20.0" />
+                <Insets bottom="2.0" left="7.0" right="7.0" top="2.0" />
              </VBox.margin>
         </Separator>
 
-        <WkButton fx:id="clearBtn" onAction="#clearLeafNode"
+        <WkButton fx:id="clearBtn" onAction="#clearLeafNode" maxHeight="Infinity" maxWidth="Infinity" prefHeight="56.0"
+                  styleClass="buttonbar-control, clear-control"
                   iconLiteral="fas-quidditch" labelText="%clear-btn.label" disable="true">
-            <VBox.margin>
-                <Insets top="5.0" />
-            </VBox.margin>
             <tooltip>
                 <Tooltip fx:id="clearTooltip" text="%clear-btn.tooltip" showDelay="50ms" />
             </tooltip>
         </WkButton>
 
-        <WkButton fx:id="resendBtn" onAction="#resendRequest"
+        <WkButton fx:id="resendBtn" onAction="#resendRequest" maxHeight="Infinity" maxWidth="Infinity" prefHeight="56.0"
+                  styleClass="buttonbar-control"
                   iconLiteral="fas-redo-alt" labelText="%resend-btn.label" disable="true">
-            <VBox.margin>
-                <Insets top="5.0" />
-            </VBox.margin>
             <tooltip>
                 <Tooltip fx:id="resendTooltip" text="%resend-btn.tooltip" showDelay="50ms"/>
             </tooltip>
         </WkButton>
-        <WkButton fx:id="locateBtn" onAction="#locateToSelectedItem"
+        <WkButton fx:id="locateBtn" onAction="#locateToSelectedItem" maxHeight="Infinity" maxWidth="Infinity" prefHeight="56.0"
+                  styleClass="buttonbar-control"
                   iconLiteral="fas-crosshairs" labelText="%locate-btn.label" disable="true">
-            <VBox.margin>
-                <Insets top="5.0" />
-            </VBox.margin>
             <tooltip>
                 <Tooltip fx:id="locateTooltip" text="%locate-btn.tooltip" />
             </tooltip>
@@ -98,41 +92,44 @@
         </WkButton>
 
         <Pane VBox.vgrow="ALWAYS" />
-        <CustomMenuButton mnemonicParsing="false" popupSide="TOP"
-                          iconLiteral="fas-cog" labelText="" styleClass="main-menu-btn">
-            <items>
-                <MenuItem fx:id="settingBtn" styleClass="main-menu-item" onAction="#displaySettingPage" text="%setting-btn.label">
-                    <graphic>
-                        <FontIcon iconLiteral="fas-cogs" iconSize="18" />
-                    </graphic>
-                </MenuItem>
-                <MenuItem fx:id="checkUpdateBtn" styleClass="main-menu-item" onAction="#checkUpdate" text="%release-btn.label">
-                    <graphic>
-                        <HBox>
-                            <FontIcon iconLiteral="fas-book-reader" iconSize="18"/>
-                            <FontIcon iconLiteral="fas-circle" visible="false" styleClass="check-update-badge"/>
-                        </HBox>
-                    </graphic>
-                </MenuItem>
-                <MenuItem fx:id="aboutBtn" styleClass="main-menu-item" onAction="#displayAboutPage" text="%about-btn.label">
-                    <graphic>
-                        <FontIcon iconLiteral="fas-info-circle" iconSize="18" />
-                    </graphic>
-                </MenuItem>
-                <MenuItem fx:id="quitBtn" styleClass="main-menu-item" onAction="#exit" text="%quit-btn.label">
-                    <graphic>
-                        <FontIcon iconLiteral="fas-sign-in-alt" iconSize="18" />
-                    </graphic>
-                </MenuItem>
-            </items>
-
-            <!-- <graphic> -->
-            <!--     <FontIcon iconColor="#616161" iconLiteral="fas-cog" iconSize="18" /> -->
-            <!-- </graphic> -->
-            <!-- <VBox.margin> -->
-            <!--     <Insets bottom="0.0" left="3" /> -->
-            <!-- </VBox.margin> -->
-        </CustomMenuButton>
+        <StackPane styleClass="buttonbar-cell">
+            <CustomMenuButton fx:id="settingsMenuBtn" mnemonicParsing="false" popupSide="TOP"
+                              maxHeight="Infinity" maxWidth="Infinity" prefHeight="56.0"
+                              iconLiteral="fas-cog" labelText="%setting-btn.label"
+                              styleClass="main-menu-btn, buttonbar-control">
+                <tooltip>
+                    <Tooltip fx:id="settingsTooltip" text="%setting-btn.label" showDelay="50ms"/>
+                </tooltip>
+                <items>
+                    <MenuItem fx:id="settingBtn" styleClass="main-menu-item" onAction="#displaySettingPage" text="%setting-btn.label">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-cogs" iconSize="18" />
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="checkUpdateBtn" styleClass="main-menu-item" onAction="#checkUpdate" text="%release-btn.label">
+                        <graphic>
+                            <HBox>
+                                <FontIcon iconLiteral="fas-book-reader" iconSize="18"/>
+                                <FontIcon fx:id="menuUpdateBadge" iconLiteral="fas-circle" managed="false" visible="false"
+                                          styleClass="check-update-badge"/>
+                            </HBox>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="aboutBtn" styleClass="main-menu-item" onAction="#displayAboutPage" text="%about-btn.label">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-info-circle" iconSize="18" />
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="quitBtn" styleClass="main-menu-item" onAction="#exit" text="%quit-btn.label">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-sign-in-alt" iconSize="18" />
+                        </graphic>
+                    </MenuItem>
+                </items>
+            </CustomMenuButton>
+            <Label fx:id="settingsUpdateBadge" text="" mouseTransparent="true" managed="false" visible="false"
+                   StackPane.alignment="TOP_RIGHT" styleClass="buttonbar-badge, update-badge"/>
+        </StackPane>
     </VBox>
 
     <fx:define>

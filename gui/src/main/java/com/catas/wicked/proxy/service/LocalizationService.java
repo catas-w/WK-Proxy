@@ -10,6 +10,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.MessageFormat;
@@ -51,8 +52,17 @@ public class LocalizationService {
                 () -> getMessage(key, arguments), language);
     }
 
+    public StringBinding binding(ObservableValue<String> key) {
+        return Bindings.createStringBinding(
+                () -> getMessage(key.getValue()), language, key);
+    }
+
     public void bind(StringProperty property, String key, Object... arguments) {
         property.bind(binding(key, arguments));
+    }
+
+    public void bind(StringProperty property, ObservableValue<String> key) {
+        property.bind(binding(key));
     }
 
     public void switchLanguage(LanguagePreset newLanguage) {

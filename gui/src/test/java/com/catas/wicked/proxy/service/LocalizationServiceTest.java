@@ -45,6 +45,25 @@ public class LocalizationServiceTest {
     }
 
     @Test
+    public void boundTextTracksResourceKeyAndLanguageChanges() {
+        LocalizationService service = new LocalizationService(config(LanguagePreset.ENGLISH));
+        SimpleStringProperty key = new SimpleStringProperty("payload.label");
+        SimpleStringProperty text = new SimpleStringProperty();
+
+        service.bind(text, key);
+        assertEquals("Payload", text.get());
+
+        key.set("content.label");
+        assertEquals("Content", text.get());
+
+        service.switchLanguage(LanguagePreset.CHINESE);
+        assertEquals("内容", text.get());
+
+        key.set("query-params.label");
+        assertEquals("查询参数", text.get());
+    }
+
+    @Test
     public void formatsMessagesAndFallsBackToTheKeyWhenMissing() {
         LocalizationService service = new LocalizationService(config(LanguagePreset.ENGLISH));
 

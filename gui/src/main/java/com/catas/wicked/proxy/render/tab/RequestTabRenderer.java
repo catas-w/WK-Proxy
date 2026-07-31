@@ -34,6 +34,10 @@ import static com.catas.wicked.common.constant.ProxyConstant.OVERSIZE_MSG;
 @Singleton
 public class RequestTabRenderer extends AbstractTabRenderer {
 
+    private static final String PAYLOAD_TITLE_KEY = "payload.label";
+    private static final String QUERY_PARAMETERS_TITLE_KEY = "query-params.label";
+    private static final String CONTENT_TITLE_KEY = "content.label";
+
     @Inject
     private DetailTabController detailTabController;
 
@@ -105,7 +109,7 @@ public class RequestTabRenderer extends AbstractTabRenderer {
         // System.out.printf("hasQuery: %s, hasContent: %s\n", hasQuery, hasContent);
         SingleSelectionModel<Tab> selectionModel = detailTabController.getReqPayloadTabPane().getSelectionModel();
 
-        String title = "Payload";
+        String titleKey = PAYLOAD_TITLE_KEY;
         detailTabController.getReqContentMsgLabel().setVisible(false);
         if (hasQuery && hasContent) {
             detailTabController.getReqPayloadTabPane().setTabMaxHeight(20);
@@ -113,20 +117,18 @@ public class RequestTabRenderer extends AbstractTabRenderer {
         } else if (hasQuery) {
             selectionModel.clearAndSelect(1);
             detailTabController.getReqPayloadTabPane().setTabMaxHeight(0);
-            title = "Query Parameters";
+            titleKey = QUERY_PARAMETERS_TITLE_KEY;
         } else if (hasContent) {
             selectionModel.clearAndSelect(0);
             detailTabController.getReqPayloadTabPane().setTabMaxHeight(0);
-            title = "Content";
+            titleKey = CONTENT_TITLE_KEY;
         } else {
             // detailTabController.getReqPayloadTitlePane().setExpanded(false);
             detailTabController.getReqContentMsgLabel().setVisible(true);
         }
 
-        String finalTitle = title;
-        Platform.runLater(() -> {
-            detailTabController.getReqPayloadTitlePane().setText(finalTitle);
-        });
+        String finalTitleKey = titleKey;
+        Platform.runLater(() -> detailTabController.setRequestPayloadTitleKey(finalTitleKey));
     }
 
     private void renderRequestContent(byte[] content, ContentType contentType, Node target) {

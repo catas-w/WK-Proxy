@@ -9,6 +9,7 @@ import com.catas.wicked.common.constant.WorkerConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.worker.ScheduledManager;
+import com.catas.wicked.proxy.gui.componet.CustomMenuButton;
 import com.catas.wicked.proxy.gui.componet.button.UnderLabelWrapper;
 import com.catas.wicked.proxy.gui.componet.button.WKToggleNode;
 import com.catas.wicked.proxy.gui.componet.button.WkButton;
@@ -18,14 +19,16 @@ import com.catas.wicked.proxy.service.LocalizationService;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBase;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.AnchorPane;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -33,16 +36,25 @@ import org.ehcache.Cache;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import static com.catas.wicked.common.constant.StyleConstant.COLOR_INACTIVE;
+import static com.catas.wicked.common.constant.StyleConstant.COLOR_RED;
 import static com.catas.wicked.common.constant.StyleConstant.COLOR_SUSPEND;
 
 @Slf4j
 @Singleton
 public class ButtonBarController implements Initializable {
 
+    private static final double LABELED_WIDTH = 72.0;
+    private static final double COMPACT_WIDTH = 50.0;
+    private static final PseudoClass COMPACT = PseudoClass.getPseudoClass("compact");
+    private static final PseudoClass WARNING = PseudoClass.getPseudoClass("warning");
+    private static final PseudoClass SUSPENDED = PseudoClass.getPseudoClass("suspended");
+
     @FXML
-    private VBox buttonBox;
+    private AnchorPane buttonBarRoot;
     @FXML
     private WKToggleNode recordBtn;
     @FXML
@@ -58,6 +70,16 @@ public class ButtonBarController implements Initializable {
     @FXML
     private WkButton clearBtn;
     @FXML
+    private CustomMenuButton settingsMenuBtn;
+    @FXML
+    private Label recordingBadge;
+    @FXML
+    private Label sslWarningBadge;
+    @FXML
+    private Label settingsUpdateBadge;
+    @FXML
+    private FontIcon menuUpdateBadge;
+    @FXML
     private MenuItem checkUpdateBtn;
     @FXML private MenuItem settingBtn;
     @FXML private MenuItem aboutBtn;
@@ -69,6 +91,7 @@ public class ButtonBarController implements Initializable {
     @FXML private Tooltip clearTooltip;
     @FXML private Tooltip resendTooltip;
     @FXML private Tooltip locateTooltip;
+    @FXML private Tooltip settingsTooltip;
 
     @Inject
     private MessageQueue messageQueue;
@@ -102,14 +125,17 @@ public class ButtonBarController implements Initializable {
         localization.bind(clearBtn.labelTextProperty(), "clear-btn.label");
         localization.bind(resendBtn.labelTextProperty(), "resend-btn.label");
         localization.bind(locateBtn.labelTextProperty(), "locate-btn.label");
+        localization.bind(settingsMenuBtn.labelTextProperty(), "setting-btn.label");
         localization.bind(systemProxyTooltip.textProperty(), "sys-proxy-btn.tooltip");
         localization.bind(clearTooltip.textProperty(), "clear-btn.tooltip");
         localization.bind(resendTooltip.textProperty(), "resend-btn.tooltip");
         localization.bind(locateTooltip.textProperty(), "locate-btn.tooltip");
+        localization.bind(settingsTooltip.textProperty(), "setting-btn.label");
         localization.bind(settingBtn.textProperty(), "setting-btn.label");
         localization.bind(checkUpdateBtn.textProperty(), "release-btn.label");
         localization.bind(aboutBtn.textProperty(), "about-btn.label");
         localization.bind(quitBtn.textProperty(), "quit-btn.label");
+        bindButtonAccessibility();
         localization.languageProperty().addListener((observable, oldValue, newValue) ->
                 refreshDynamicTooltips());
         // listen on current request
@@ -131,6 +157,13 @@ public class ButtonBarController implements Initializable {
                 requestViewController.updateFocusPseudoClass(newValue);
             }
         });
+        clearBtn.hoverProperty().addListener((observable, oldValue, hovered) ->
+                clearBtn.setIconColor(hovered && !clearBtn.isDisabled() ? COLOR_RED : COLOR_INACTIVE));
+        clearBtn.disabledProperty().addListener((observable, oldValue, disabled) -> {
+            if (disabled) {
+                clearBtn.setIconColor(COLOR_INACTIVE);
+            }
+        });
 
         // clear request event
         messageService.getRequestCntProperty().addListener((observable, oldValue, newValue) -> {
@@ -147,9 +180,11 @@ public class ButtonBarController implements Initializable {
         // toggle record button
         recordBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
             appConfig.getSettings().setRecording(newValue);
+            refreshRecordingState();
             refreshDynamicTooltips();
         });
-        recordBtn.setSelected(true);
+        recordBtn.setSelected(appConfig.getSettings().isRecording());
+        refreshRecordingState();
 
         // toggle handle ssl button
         sslBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -162,9 +197,13 @@ public class ButtonBarController implements Initializable {
         sslBtn.setSelected(appConfig.getSettings().isHandleSsl());
         appConfig.getObservableConfig().handlingSSLProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && sslBtn.isSelected() != newValue) {
-                sslBtn.setSelected(newValue);
+                runOnFxThread(() -> sslBtn.setSelected(newValue));
             }
+            refreshSslWarningState();
         });
+        appConfig.getObservableConfig().certInstalledStatusProperty().addListener((observable, oldValue, newValue) ->
+                refreshSslWarningState());
+        refreshSslWarningState();
 
         // init throttle button
         throttleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -177,29 +216,20 @@ public class ButtonBarController implements Initializable {
         throttleBtn.setSelected(appConfig.getSettings().isThrottle());
         appConfig.getObservableConfig().throttlingProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && throttleBtn.isSelected() != newValue) {
-                throttleBtn.setSelected(newValue);
+                runOnFxThread(() -> throttleBtn.setSelected(newValue));
             }
         });
 
         // init sysProxyBtn
         appConfig.getObservableConfig().systemProxyStatusProperty().addListener((observable, oldValue, newValue) -> {
-            sysProxyBtn.setDisable(newValue == SystemProxyStatus.DISABLED);
-            sysProxyBtn.setSelected(newValue == SystemProxyStatus.ON);
-
-            // SUSPENDED 状态视为 unselected, 只能流转为 selected
-            if (newValue == SystemProxyStatus.SUSPENDED) {
-                sysProxyBtn.setIconColor(COLOR_SUSPEND);
-            }
+            refreshSystemProxyState(newValue);
         });
+        refreshSystemProxyState(appConfig.getObservableConfig().getSystemProxyStatus());
 
         // listen on display button label
-        for (Node node : buttonBox.getChildren()) {
-            if (node instanceof ButtonBase buttonBase) {
-                if (buttonBase.getGraphic() instanceof UnderLabelWrapper underLabelWrapper) {
-                    underLabelWrapper.getLabelVisibleProperty().bind(appConfig.getObservableConfig().showButtonLabelProperty());
-                }
-            }
-        }
+        appConfig.getObservableConfig().showButtonLabelProperty().addListener((observable, oldValue, newValue) ->
+                applyButtonBarMode(newValue));
+        applyButtonBarMode(appConfig.getObservableConfig().isShowButtonLabel());
 
         bindUpdateBadge();
         refreshDynamicTooltips();
@@ -219,14 +249,87 @@ public class ButtonBarController implements Initializable {
     }
 
     public void bindUpdateBadge() {
-        Node updateBadge = checkUpdateBtn.getGraphic().lookup(".check-update-badge");
-        if (updateBadge != null) {
-            appConfig.getObservableConfig().hasNewVersionProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue == null) {
-                    return;
+        appConfig.getObservableConfig().hasNewVersionProperty().addListener((observable, oldValue, newValue) ->
+                refreshUpdateBadge(Boolean.TRUE.equals(newValue)));
+        refreshUpdateBadge(appConfig.getObservableConfig().isHasNewVersion());
+    }
+
+    private void applyButtonBarMode(boolean showLabels) {
+        runOnFxThread(() -> {
+            double width = showLabels ? LABELED_WIDTH : COMPACT_WIDTH;
+            buttonBarRoot.setMinWidth(width);
+            buttonBarRoot.setPrefWidth(width);
+            buttonBarRoot.setMaxWidth(width);
+            buttonBarRoot.pseudoClassStateChanged(COMPACT, !showLabels);
+            buttonControls().forEach(button -> {
+                if (button.getGraphic() instanceof UnderLabelWrapper wrapper) {
+                    wrapper.setLabelVisible(showLabels);
                 }
-                updateBadge.setVisible(newValue);
             });
+        });
+    }
+
+    private List<ButtonBase> buttonControls() {
+        return List.of(recordBtn, sslBtn, sysProxyBtn, throttleBtn,
+                clearBtn, resendBtn, locateBtn, settingsMenuBtn);
+    }
+
+    private void bindButtonAccessibility() {
+        buttonControls().forEach(button -> {
+            if (button.getGraphic() instanceof UnderLabelWrapper wrapper) {
+                button.accessibleTextProperty().bind(wrapper.labelTextPropertyProperty());
+            }
+        });
+    }
+
+    private void refreshRecordingState() {
+        runOnFxThread(() -> setBadgeVisible(recordingBadge, recordBtn.isSelected()));
+    }
+
+    private void refreshSslWarningState() {
+        boolean warning = appConfig.getObservableConfig().isHandlingSSL()
+                && !appConfig.getObservableConfig().isCertInstalledStatus();
+        runOnFxThread(() -> {
+            setBadgeVisible(sslWarningBadge, warning);
+            sslBtn.pseudoClassStateChanged(WARNING, warning);
+        });
+    }
+
+    private void refreshSystemProxyState(SystemProxyStatus status) {
+        if (status == null) {
+            return;
+        }
+        runOnFxThread(() -> {
+            boolean suspended = status == SystemProxyStatus.SUSPENDED;
+            sysProxyBtn.setDisable(status == SystemProxyStatus.DISABLED);
+            sysProxyBtn.setSelected(status == SystemProxyStatus.ON);
+            sysProxyBtn.pseudoClassStateChanged(SUSPENDED, suspended);
+            if (suspended) {
+                sysProxyBtn.setIconColor(COLOR_SUSPEND);
+            } else if (status != SystemProxyStatus.ON) {
+                sysProxyBtn.setIconColor(COLOR_INACTIVE);
+            }
+        });
+    }
+
+    private void refreshUpdateBadge(boolean visible) {
+        runOnFxThread(() -> {
+            setBadgeVisible(settingsUpdateBadge, visible);
+            menuUpdateBadge.setManaged(visible);
+            menuUpdateBadge.setVisible(visible);
+        });
+    }
+
+    private void setBadgeVisible(Node badge, boolean visible) {
+        badge.setManaged(visible);
+        badge.setVisible(visible);
+    }
+
+    private void runOnFxThread(Runnable action) {
+        if (Platform.isFxApplicationThread()) {
+            action.run();
+        } else {
+            Platform.runLater(action);
         }
     }
 

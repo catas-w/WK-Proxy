@@ -45,7 +45,7 @@ public class UnderLabelWrapper extends VBox {
 
     public UnderLabelWrapper(StringProperty iconLiteral, StringProperty labelText, Paint iconColor) {
         this(iconLiteral, labelText,
-                new SimpleObjectProperty<>(iconColor), new SimpleIntegerProperty(18));
+                new SimpleObjectProperty<>(iconColor), new SimpleIntegerProperty(21));
     }
 
     public UnderLabelWrapper(StringProperty iconLiteral, StringProperty labelText, ObjectProperty<Paint> iconColor) {
@@ -89,6 +89,7 @@ public class UnderLabelWrapper extends VBox {
         label = new Text();
         label.getStyleClass().add("wk-node-label");
         label.textProperty().bind(this.labelTextProperty);
+        label.managedProperty().bind(label.visibleProperty());
         VBox.setMargin(label, new Insets(0, 0, 0, 0));
 
         this.setAlignment(Pos.CENTER);
@@ -98,6 +99,10 @@ public class UnderLabelWrapper extends VBox {
 
     public BooleanProperty getLabelVisibleProperty() {
         return label.visibleProperty();
+    }
+
+    public void setLabelVisible(boolean visible) {
+        label.setVisible(visible);
     }
 
     public String getLabelTextProperty() {

@@ -33,6 +33,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -196,6 +198,8 @@ public class DetailTabController implements Initializable {
 
     private boolean midTitleCollapse;
 
+    private final StringProperty requestPayloadTitleKey = new SimpleStringProperty("payload.label");
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         bindLocalizedText();
@@ -245,7 +249,7 @@ public class DetailTabController implements Initializable {
         localization.bind(respTab.textProperty(), "response-tab.label");
         localization.bind(timingTab.textProperty(), "timing-tab.label");
         localization.bind(reqHeaderPane.textProperty(), "headers.label");
-        localization.bind(reqPayloadTitlePane.textProperty(), "payload.label");
+        localization.bind(reqPayloadTitlePane.textProperty(), requestPayloadTitleKey);
         localization.bind(respHeaderPane.textProperty(), "headers.label");
         localization.bind(respHeaderPane.checkBoxTitleProperty(), "raw.label");
         localization.bind(respDataPane.textProperty(), "content.label");
@@ -266,6 +270,10 @@ public class DetailTabController implements Initializable {
         localization.bind(responseWaitLabel.textProperty(), "resp-wait.label");
         localization.bind(responseAcceptLabel.textProperty(), "resp-accept.label");
         localization.bind(totalTimeLabel.textProperty(), "total-time.label");
+    }
+
+    public void setRequestPayloadTitleKey(String resourceKey) {
+        requestPayloadTitleKey.set(resourceKey);
     }
 
     public void setOverviewTableRoot(TreeItem<PairEntry> root) {
