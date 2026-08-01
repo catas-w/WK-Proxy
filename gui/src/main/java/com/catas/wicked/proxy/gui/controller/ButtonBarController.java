@@ -49,7 +49,7 @@ public class ButtonBarController implements Initializable {
 
     private static final double LABELED_WIDTH = 60.0;
     private static final double COMPACT_WIDTH = 52.0;
-    private static final boolean SHOW_SELECTION_INDICATOR = true;
+    private static final boolean SHOW_SELECTION_INDICATOR = false;
     private static final PseudoClass COMPACT = PseudoClass.getPseudoClass("compact");
     private static final PseudoClass SELECTION_INDICATOR = PseudoClass.getPseudoClass("selection-indicator");
     private static final PseudoClass WARNING = PseudoClass.getPseudoClass("warning");

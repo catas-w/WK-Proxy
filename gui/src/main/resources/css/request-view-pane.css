@@ -236,7 +236,7 @@
     -fx-text-fill: white;
 }
 .toggle-node:selected:hover {
-    -fx-background-color: #1f9a83;
+    -fx-background-color: #23a8a4;
 }
 .toggle-node:selected .ikonli-font-icon {
     -fx-icon-color: white;

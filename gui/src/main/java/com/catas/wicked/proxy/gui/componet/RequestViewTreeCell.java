@@ -34,8 +34,8 @@ import java.util.Optional;
 public class RequestViewTreeCell<T> extends TreeCell<T> {
 
     private static final String DEFAULT_APPLICATION_ICON = "fas-window-maximize";
-    private static final int APPLICATION_FALLBACK_ICON_SIZE = 28;
-    private static final int DEFAULT_APPLICATION_ICON_SIZE = 24;
+    private static final int APPLICATION_FALLBACK_ICON_SIZE = 22;
+    private static final int DEFAULT_APPLICATION_ICON_SIZE = 22;
 
     private HBox hbox;
     private StackPane pathStackPane = new StackPane();
