@@ -71,6 +71,7 @@ public class MessageService {
 
     private MessageTree messageTree;
     private ApplicationMessageTree applicationMessageTree;
+    private final RequestUpdateBuffer requestUpdateBuffer = new RequestUpdateBuffer();
     private final ResponseUpdateBuffer responseUpdateBuffer = new ResponseUpdateBuffer();
     private boolean synchronizingSelection;
 
@@ -206,43 +207,22 @@ public class MessageService {
      * @param msg updateMsg
      */
     private void processUpdate(Message msg) {
-        // TODO 更新 current request
         if (msg instanceof RequestMessage updateMsg) {
-            RequestMessage requestMessage = requestCache.get(updateMsg.getRequestId());
-            if (requestMessage == null) {
-                // TODO: avoid
-                System.out.println("requestMessage is null");
-                return;
+            RequestMessage requestMessage;
+            synchronized (requestUpdateBuffer) {
+                requestMessage = requestCache.get(updateMsg.getRequestId());
+                if (requestMessage == null) {
+                    requestUpdateBuffer.defer(updateMsg);
+                    return;
+                }
+                RequestUpdateBuffer.apply(requestMessage, updateMsg);
+                requestCache.put(requestMessage.getRequestId(), requestMessage);
             }
-            requestMessage.setOversize(updateMsg.isOversize());
-            requestMessage.setSize(updateMsg.getSize());
-            requestMessage.setEndTime(updateMsg.getEndTime());
-            if (updateMsg.getClientStatus() != null) {
-                requestMessage.setClientStatus(updateMsg.getClientStatus());
-            }
-            if (updateMsg.getBody() != null) {
-                requestMessage.setBody(updateMsg.getBody());
-            }
-            if (updateMsg.getHeaders() != null) {
-                requestMessage.getHeaders().putAll(updateMsg.getHeaders());
-            }
-            if (StringUtils.isNoneEmpty(updateMsg.getRemoteAddress())) {
-                requestMessage.setRemoteAddress(updateMsg.getRemoteAddress());
-            }
-            if (updateMsg.getProcessInfo() != null) {
-                requestMessage.setProcessInfo(updateMsg.getProcessInfo());
-            }
-            requestCache.put(requestMessage.getRequestId(), requestMessage);
             boolean selected = StringUtils.equals(
                     appConfig.getObservableConfig().getCurrentRequestId(), requestMessage.getRequestId());
             applicationMessageTree.update(requestMessage, selected);
-
-            if (selected) {
-                Platform.runLater(() -> overViewTabRenderer.displayOverView(requestMessage));
-            }
-
-            // update time in treeNode
-            updateTimeStats(requestMessage, updateMsg);
+            updateTimeStats(requestMessage, requestMessage);
+            requestViewService.refreshCurrentRequest(requestMessage.getRequestId());
             requestViewService.refreshCurrentApplicationGroup();
         } else if (msg instanceof ResponseMessage updateMsg) {
             RequestMessage requestMessage;
@@ -270,10 +250,13 @@ public class MessageService {
         if (msg instanceof RequestMessage requestMessage) {
             switch (requestMessage.getType()) {
                 case REQUEST -> {
-                    // put to cache
-                    requestCache.put(requestMessage.getRequestId(), requestMessage);
-                    messageTree.add(requestMessage);
-                    applicationMessageTree.add(requestMessage);
+                    synchronized (requestUpdateBuffer) {
+                        RequestUpdateBuffer.apply(
+                                requestMessage, requestUpdateBuffer.drain(requestMessage.getRequestId()));
+                        messageTree.add(requestMessage);
+                        applicationMessageTree.add(requestMessage);
+                        requestCache.put(requestMessage.getRequestId(), requestMessage);
+                    }
                     refreshCntProperty();
                     requestViewService.refreshCurrentApplicationGroup();
                 }
@@ -384,6 +367,7 @@ public class MessageService {
         messageTree.delete(nodeToDelete);
         messageTree.subtractCnt(requestIdList.size());
         applicationMessageTree.remove(requestIdList);
+        requestUpdateBuffer.removeAll(requestIdList);
         responseUpdateBuffer.removeAll(requestIdList);
 
         // remove requestId from ehcache
@@ -421,6 +405,7 @@ public class MessageService {
         }
         messageTree.subtractCnt(removed);
         applicationMessageTree.remove(requestIds);
+        requestUpdateBuffer.removeAll(requestIds);
         responseUpdateBuffer.removeAll(requestIds);
         Platform.runLater(() -> requestViewController.getReqSourceList().removeAll(listItems));
         requestViewService.updateRequestTab(null);
@@ -451,6 +436,7 @@ public class MessageService {
         treeNodeList.forEach(messageTree::delete);
         messageTree.resetCnt();
         applicationMessageTree.cleanLeaves();
+        requestUpdateBuffer.removeAll(requestIdList);
         responseUpdateBuffer.removeAll(requestIdList);
         requestViewService.updateRequestTab(null);
 
@@ -477,6 +463,7 @@ public class MessageService {
         });
         resetMessageTree();
         messageTree.resetCnt();
+        requestUpdateBuffer.clear();
         responseUpdateBuffer.clear();
         requestViewService.updateRequestTab(null);
 
@@ -513,6 +500,7 @@ public class MessageService {
 
     private void updateResponseStats(RequestMessage requestMessage) {
         updateTimeStats(requestMessage, requestMessage.getResponse());
+        requestViewService.refreshCurrentRequest(requestMessage.getRequestId());
         requestViewService.refreshCurrentApplicationGroup();
     }
 }

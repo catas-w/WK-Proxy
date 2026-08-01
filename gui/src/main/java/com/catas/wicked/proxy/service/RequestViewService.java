@@ -83,6 +83,7 @@ public class RequestViewService {
 
     private static final String ERROR_DATA = "<Error loading data>";
     private final AtomicBoolean applicationGroupRefreshScheduled = new AtomicBoolean();
+    private final AtomicBoolean currentRequestRefreshScheduled = new AtomicBoolean();
 
 
     @PostConstruct
@@ -190,6 +191,26 @@ public class RequestViewService {
             messageQueue.clearMsg(Topic.RENDER);
             messageQueue.pushMsg(Topic.RENDER,
                     new RenderMessage(currentSelection, RenderMessage.Tab.OVERVIEW));
+        });
+    }
+
+    public void refreshCurrentRequest(String requestId) {
+        String selectionId = appConfig.getObservableConfig().getCurrentRequestId();
+        if (requestId == null || !StringUtils.equals(requestId, selectionId)
+                || RenderMessage.isOverviewOnly(selectionId)
+                || !currentRequestRefreshScheduled.compareAndSet(false, true)) {
+            return;
+        }
+        Platform.runLater(() -> {
+            currentRequestRefreshScheduled.set(false);
+            if (!StringUtils.equals(requestId,
+                    appConfig.getObservableConfig().getCurrentRequestId())) {
+                return;
+            }
+            messageQueue.pushMsg(Topic.RENDER,
+                    new RenderMessage(requestId, RenderMessage.Tab.OVERVIEW));
+            messageQueue.pushMsg(Topic.RENDER,
+                    new RenderMessage(requestId, RenderMessage.Tab.TIMING));
         });
     }
 

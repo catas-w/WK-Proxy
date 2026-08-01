@@ -152,18 +152,18 @@
                     <Label fx:id="responseAcceptLabel" text="%resp-accept.label" styleClass="timing-header" GridPane.rowIndex="3"/>
                     <Label fx:id="totalTimeLabel" text="%total-time.label" styleClass="timing-header" GridPane.rowIndex="4"/>
 
-                    <TimeSplitPane displayOrder="0" displayColor="#0090de" GridPane.rowIndex="1"
+                    <TimeSplitPane fx:id="requestTimeSplit" displayOrder="0" displayColor="#0090de" GridPane.rowIndex="1"
                                    GridPane.columnIndex="1"/>
-                    <TimeSplitPane displayOrder="1" displayColor="#02b250" GridPane.rowIndex="2"
+                    <TimeSplitPane fx:id="waitingTimeSplit" displayOrder="1" displayColor="#02b250" GridPane.rowIndex="2"
                                    GridPane.columnIndex="1"/>
-                    <TimeSplitPane displayOrder="2" displayColor="#dc9000" GridPane.rowIndex="3"
+                    <TimeSplitPane fx:id="responseTimeSplit" displayOrder="2" displayColor="#dc9000" GridPane.rowIndex="3"
                                    GridPane.columnIndex="1"/>
-                    <Pane style="-fx-background-color: #c2c2c2" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    <Pane fx:id="totalTimeBar" style="-fx-background-color: #c2c2c2" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
-                    <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
-                    <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
-                    <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
-                    <Label text="0 ms" styleClass="duration-label" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
+                    <Label fx:id="requestDurationLabel" text="-" styleClass="duration-label" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                    <Label fx:id="waitingDurationLabel" text="-" styleClass="duration-label" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+                    <Label fx:id="responseDurationLabel" text="-" styleClass="duration-label" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+                    <Label fx:id="totalDurationLabel" text="-" styleClass="duration-label" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
                 </GridPane>
                 <MessageLabel fx:id="timingMsgLabel" text="Empty"/>
             </AnchorPane>

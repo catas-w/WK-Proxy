@@ -2,15 +2,14 @@ package com.catas.wicked.proxy.render.tab;
 
 import com.catas.wicked.common.bean.message.RenderMessage;
 import com.catas.wicked.common.bean.message.RequestMessage;
-import com.catas.wicked.common.bean.message.ResponseMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.proxy.gui.componet.TimeSplitPane;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
+import com.catas.wicked.proxy.message.RequestTiming;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
+import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;
 
 import java.util.List;
@@ -24,51 +23,54 @@ public class TimingTabRenderer extends AbstractTabRenderer {
     @Inject
     private Cache<String, RequestMessage> requestCache;
 
-
     @Inject
     private ApplicationConfig appConfig;
 
     @Override
     public void render(RenderMessage renderMsg) {
-        // System.out.println("--render timing --");
-        detailTabController.getTimingMsgLabel().setVisible(renderMsg.isEmpty());
-        if (renderMsg.isEmpty()) {
-            setEmptyMsgLabel(detailTabController.getTimingMsgLabel());
-            return;
-        }
         if (renderMsg.isPath()) {
             return;
         }
-        detailTabController.showRequestOnlyTabs();
-        RequestMessage request = requestCache.get(renderMsg.getRequestId());
-        ResponseMessage response = request.getResponse();
+        String requestId = renderMsg.getRequestId();
+        RequestMessage request = renderMsg.isEmpty() ? null : requestCache.get(requestId);
+        RequestTiming timing = RequestTiming.from(request);
 
-        long requestTime = request.getEndTime() - request.getStartTime();
-        long waitingTime = response == null ? 0 : Math.max(0, response.getStartTime() - request.getEndTime());
-        long respTime = response == null ? 0 : response.getEndTime() - response.getStartTime();
-        long total = requestTime + waitingTime + respTime;
-        double dividerPos1 = (double) requestTime / total;
-        double dividerPos2 = (double) (requestTime + waitingTime) / total;
-
-        // normalize
-        double finalDividerPos1 = Math.max(0.01, dividerPos1);
-        double finalDividerPos2 = Math.min(0.99, dividerPos2);
-
-        GridPane timingPane = detailTabController.getTimingGridPane();
-        List<TimeSplitPane> timeSplits = timingPane.getChildren()
-                .stream()
-                .filter(node -> node instanceof TimeSplitPane)
-                .map(node -> (TimeSplitPane) node).toList();
-        List<Label> timeLabels = timingPane.lookupAll(".duration-label")
-                .stream()
-                .map(node -> (Label) node).toList();
-
-        timeSplits.forEach(splitPane -> splitPane.setDividerPositions(finalDividerPos1, finalDividerPos2));
         Platform.runLater(() -> {
-            timeLabels.get(0).setText(requestTime + " ms");
-            timeLabels.get(1).setText(waitingTime + " ms");
-            timeLabels.get(2).setText(response == null ? "-": respTime + " ms");
-            timeLabels.get(3).setText(total + " ms");
+            String currentRequestId = appConfig.getObservableConfig().getCurrentRequestId();
+            if ((renderMsg.isEmpty() && currentRequestId != null)
+                    || (!renderMsg.isEmpty() && !StringUtils.equals(requestId, currentRequestId))) {
+                return;
+            }
+            boolean empty = renderMsg.isEmpty() || request == null;
+            detailTabController.getTimingMsgLabel().setVisible(empty);
+            if (empty) {
+                setEmptyMsgLabel(detailTabController.getTimingMsgLabel());
+                return;
+            }
+
+            detailTabController.showRequestOnlyTabs();
+            double firstDivider = timing.firstDivider();
+            double secondDivider = timing.secondDivider();
+            List<TimeSplitPane> splitPanes = List.of(
+                    detailTabController.getRequestTimeSplit(),
+                    detailTabController.getWaitingTimeSplit(),
+                    detailTabController.getResponseTimeSplit());
+            splitPanes.forEach(splitPane ->
+                    splitPane.setDividerPositions(firstDivider, secondDivider));
+
+            detailTabController.getRequestDurationLabel().setText(
+                    RequestTiming.formatDuration(timing.requestDuration()));
+            detailTabController.getWaitingDurationLabel().setText(
+                    RequestTiming.formatDuration(timing.waitingDuration()));
+            detailTabController.getResponseDurationLabel().setText(
+                    RequestTiming.formatDuration(timing.responseDuration()));
+            detailTabController.getTotalDurationLabel().setText(
+                    RequestTiming.formatDuration(timing.totalDuration()));
+
+            detailTabController.getRequestTimeSplit().setSegmentVisible(timing.requestDuration().isPresent());
+            detailTabController.getWaitingTimeSplit().setSegmentVisible(timing.waitingDuration().isPresent());
+            detailTabController.getResponseTimeSplit().setSegmentVisible(timing.responseDuration().isPresent());
+            detailTabController.getTotalTimeBar().setVisible(timing.totalDuration().isPresent());
         });
     }
 }

@@ -16,6 +16,7 @@ import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.message.ApplicationGroupOverview;
+import com.catas.wicked.proxy.message.RequestTiming;
 import io.netty.handler.codec.http.HttpMethod;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -35,6 +36,7 @@ import java.util.Date;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
+import java.util.OptionalLong;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -284,31 +286,35 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
         requestOverviewInfo.getProcessStatus().setVal(processInfo == null || processInfo.getLookupStatus() == null
                 ? ProcessInfo.LookupStatus.UNKNOWN.name() : processInfo.getLookupStatus().name());
 
-        // timing
-        boolean noResp = response == null || response.getStartTime() == 0;
-        requestOverviewInfo.getTimeCost().setVal(noResp ? "-": Math.max(0, response.getEndTime() - request.getStartTime()) + " ms");
-        requestOverviewInfo.getRequestTime().setVal(Math.max(0, request.getEndTime() - request.getStartTime()) + " ms");
-        requestOverviewInfo.getRequestStart().setVal(dateFormat.format(new Date(request.getStartTime())));
-        requestOverviewInfo.getRequestEnd().setVal(dateFormat.format(new Date(request.getEndTime())));
-        requestOverviewInfo.getRespTime().setVal(noResp ? "-": Math.max(0,  response.getEndTime() - response.getStartTime()) + " ms");
-        requestOverviewInfo.getRespStart().setVal(noResp ? "-": dateFormat.format(new Date(response.getStartTime())));
-        requestOverviewInfo.getRespEnd().setVal(noResp ? "-": dateFormat.format(new Date(response.getEndTime())));
+        RequestTiming timing = RequestTiming.from(request);
+        requestOverviewInfo.getTimeCost().setVal(RequestTiming.formatDuration(timing.totalDuration()));
+        requestOverviewInfo.getRequestTime().setVal(RequestTiming.formatDuration(timing.requestDuration()));
+        requestOverviewInfo.getRequestStart().setVal(formatTimestamp(timing.requestStart()));
+        requestOverviewInfo.getRequestEnd().setVal(formatTimestamp(timing.requestEnd()));
+        requestOverviewInfo.getRespTime().setVal(RequestTiming.formatDuration(timing.responseDuration()));
+        requestOverviewInfo.getRespStart().setVal(formatTimestamp(timing.responseStart()));
+        requestOverviewInfo.getRespEnd().setVal(formatTimestamp(timing.responseEnd()));
 
         // size
         requestOverviewInfo.getRequestSize().setVal(WebUtils.getHSize(request.getSize()));
         requestOverviewInfo.getResponseSize().setVal(response == null ? "-": WebUtils.getHSize(response.getSize()));
-        requestOverviewInfo.getAverageSpeed().setVal(getSpeed(request, response));
+        requestOverviewInfo.getAverageSpeed().setVal(getSpeed(request, response, timing));
 
         detailTabController.refreshOverviewTable();
     }
 
-    private String getSpeed(RequestMessage request, ResponseMessage response) {
-        if (response == null || (request.getSize() == 0 && response.getSize() == 0)) {
+    private String formatTimestamp(OptionalLong timestamp) {
+        return timestamp.isPresent() ? dateFormat.format(new Date(timestamp.getAsLong())) : "-";
+    }
+
+    private String getSpeed(RequestMessage request, ResponseMessage response, RequestTiming timing) {
+        OptionalLong totalDuration = timing.totalDuration();
+        if (response == null || totalDuration.isEmpty() || totalDuration.getAsLong() <= 0
+                || (request.getSize() == 0 && response.getSize() == 0)) {
             return "-";
         }
         long size = request.getSize() + response.getSize();
-        int time = (int) (response.getEndTime() - request.getStartTime());
-        return String.format("%.2f KB/s", (double) size / (double) time);
+        return String.format("%.2f KB/s", (double) size / totalDuration.getAsLong());
     }
 
     private String getContentStr(Map<String, String> map) {

@@ -25,6 +25,8 @@ public class ButtonBarResourceTest {
         assertTrue(fxml.contains("fx:id=\"settingsUpdateBadge\""));
         assertTrue(fxml.contains("fx:id=\"menuUpdateBadge\""));
         assertTrue(fxml.contains("labelText=\"%setting-btn.label\""));
+        assertTrue(fxml.contains("activeIconLiteral=\"fas-record-vinyl\""));
+        assertTrue(fxml.contains("inactiveIconLiteral=\"far-play-circle\""));
     }
 
     @Test

@@ -15,6 +15,7 @@ import com.catas.wicked.proxy.gui.componet.SelectableTableCell;
 import com.catas.wicked.proxy.gui.componet.MessageLabel;
 import com.catas.wicked.proxy.gui.componet.SelectableTreeTableCell;
 import com.catas.wicked.proxy.gui.componet.SideBar;
+import com.catas.wicked.proxy.gui.componet.TimeSplitPane;
 import com.catas.wicked.proxy.gui.componet.ZoomImageView;
 import com.catas.wicked.proxy.gui.componet.builder.PairTextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.builder.TextAreaEditorNodeBuilder;
@@ -58,6 +59,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.skin.TableHeaderRow;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -109,6 +111,22 @@ public class DetailTabController implements Initializable {
     public SideBar reqQuerySideBar;
     @FXML
     public GridPane timingGridPane;
+    @FXML
+    private TimeSplitPane requestTimeSplit;
+    @FXML
+    private TimeSplitPane waitingTimeSplit;
+    @FXML
+    private TimeSplitPane responseTimeSplit;
+    @FXML
+    private Pane totalTimeBar;
+    @FXML
+    private Label requestDurationLabel;
+    @FXML
+    private Label waitingDurationLabel;
+    @FXML
+    private Label responseDurationLabel;
+    @FXML
+    private Label totalDurationLabel;
     @FXML
     public Tab overviewTab;
     @FXML

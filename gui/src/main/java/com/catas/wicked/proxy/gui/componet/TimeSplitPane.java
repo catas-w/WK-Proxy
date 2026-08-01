@@ -18,6 +18,7 @@ public class TimeSplitPane extends SplitPane {
     private Region[] regions = new Region[3];
     private StringProperty displayColor = new SimpleStringProperty("aquamarine");
     private IntegerProperty displayOrder = new SimpleIntegerProperty(0);
+    private boolean segmentVisible = true;
 
     private static final String STYLE = "time-split-pane";
 
@@ -43,7 +44,7 @@ public class TimeSplitPane extends SplitPane {
         for (int i = 0; i < 3; i++) {
             Region pane = regions[i];
             if (i == displayOrder.get()) {
-                pane.setVisible(true);
+                pane.setVisible(segmentVisible);
                 pane.setStyle("-fx-background-color: " + displayColor.get());
             } else {
                 pane.setVisible(false);
@@ -75,6 +76,11 @@ public class TimeSplitPane extends SplitPane {
 
     public void setDisplayOrder(int displayOrder) {
         this.displayOrder.set(displayOrder);
+        refreshSeg();
+    }
+
+    public void setSegmentVisible(boolean visible) {
+        segmentVisible = visible;
         refreshSeg();
     }
 }
