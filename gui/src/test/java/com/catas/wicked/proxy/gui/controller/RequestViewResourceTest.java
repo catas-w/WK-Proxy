@@ -3,6 +3,7 @@ package com.catas.wicked.proxy.gui.controller;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertFalse;
@@ -25,6 +26,37 @@ public class RequestViewResourceTest {
         assertTrue(css.contains("-fx-border-color: transparent transparent transparent #c3c3c3;"));
         assertTrue(css.contains("-fx-border-width: 0 0 0 1px;"));
         assertFalse(css.contains("transparent transparent transparent rgba(133, 133, 133, 0.45)"));
+    }
+
+    @Test
+    public void requestStatusStylesUseStableThreeStateIndicators() throws Exception {
+        String css = read("/css/request-view-pane.css");
+        String english = read("/lang/messages_en.properties");
+        String chinese = read("/lang/messages_zh_CN.properties");
+
+        assertTrue(css.contains(".request-status-indicator.pending"));
+        assertTrue(css.contains(".request-status-indicator.success"));
+        assertTrue(css.contains(".request-status-indicator.failed"));
+        assertTrue(css.contains(".request-failure-count"));
+        assertTrue(english.contains("request-status.waiting-response=Waiting for response"));
+        assertTrue(english.contains("request-status.failed-count=Failed requests: {0}"));
+        assertTrue(chinese.contains("request-status.failed-count="));
+    }
+
+    @Test
+    public void requestStatusIconIsEnabledByDefault() throws Exception {
+        Field field = RequestViewController.class.getDeclaredField("SHOW_REQUEST_STATUS_ICON");
+        field.setAccessible(true);
+
+        assertTrue(field.getBoolean(null));
+    }
+
+    @Test
+    public void groupFailureCountIsHiddenByDefault() throws Exception {
+        Field field = RequestViewController.class.getDeclaredField("SHOW_GROUP_FAILURE_COUNT");
+        field.setAccessible(true);
+
+        assertFalse(field.getBoolean(null));
     }
 
     private String read(String path) throws Exception {

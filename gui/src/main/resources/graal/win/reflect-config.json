@@ -486,7 +486,12 @@
 },
 {
   "name":"com.catas.wicked.proxy.gui.componet.ViewCellFactory",
-  "fields":[{"name":"requestViewService"}]
+  "fields":[
+    {"name":"requestViewService"},
+    {"name":"applicationIconService"},
+    {"name":"applicationConfig"},
+    {"name":"localization"}
+  ]
 },
 {
   "name":"com.catas.wicked.proxy.gui.componet.ZoomImageView",

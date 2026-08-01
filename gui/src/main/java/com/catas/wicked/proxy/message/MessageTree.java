@@ -60,6 +60,7 @@ public class MessageTree {
         // 创建 UI
         createTreeItemUI(parent, node);
         createListItemUI(node);
+        updateTransferStatus(msg);
 
         addCnt();
     }
@@ -246,6 +247,21 @@ public class MessageTree {
 
     public boolean isEmpty() {
         return CollectionUtils.isEmpty(root.getPathChildren()) && CollectionUtils.isEmpty(root.getLeafChildren());
+    }
+
+    void updateTransferStatus(RequestMessage message) {
+        if (message == null || StringUtils.isBlank(message.getRequestId())) {
+            return;
+        }
+        TreeNode node = findNodeByPath(message.getRequestUrl(), message.getRequestId());
+        if (node == null || node.getTreeItem() == null || node.getListItem() == null) {
+            return;
+        }
+        RequestTransferStatus status = RequestTransferStatus.from(message);
+        Platform.runLater(() -> {
+            status.applyTo(node.getTreeItem().getValue());
+            status.applyTo(node.getListItem());
+        });
     }
 
     void addCnt() {

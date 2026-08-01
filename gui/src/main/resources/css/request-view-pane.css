@@ -105,6 +105,33 @@
     -fx-padding: 0 3 0 5;
 }
 
+.request-status-indicator {
+    -fx-alignment: center;
+    -fx-padding: 0 2 0 2;
+}
+
+.request-status-indicator.pending .ikonli-font-icon {
+    -fx-icon-color: #71888c;
+    -fx-opacity: 0.82;
+}
+
+.request-status-indicator.success .ikonli-font-icon {
+    -fx-icon-color: #4f9b62;
+    -fx-opacity: 0.72;
+}
+
+.request-status-indicator.failed .ikonli-font-icon {
+    -fx-icon-color: #cf4848;
+    -fx-opacity: 1;
+}
+
+.request-failure-count {
+    -fx-text-fill: #cf4848;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 4 0 4;
+}
+
 
 /****** path label ******/
 .req-path-label {
@@ -174,6 +201,9 @@
 }
 .list-cell:selected {
     -fx-text-fill: #000000 ;
+}
+.list-cell:selected .req-path-label {
+    -fx-text-fill: #000000;
 }
 
 /********** filter input **********/

@@ -3,6 +3,8 @@ package com.catas.wicked.proxy.message;
 import com.catas.wicked.common.bean.ProcessInfo;
 import com.catas.wicked.common.bean.RequestCell;
 import com.catas.wicked.common.bean.message.RequestMessage;
+import com.catas.wicked.common.bean.message.ResponseMessage;
+import com.catas.wicked.common.constant.ClientStatus;
 import com.catas.wicked.proxy.gui.componet.FilterableTreeItem;
 import com.catas.wicked.proxy.gui.controller.RequestViewController;
 import javafx.scene.control.TreeItem;
@@ -87,6 +89,54 @@ public class ApplicationMessageTreeLifecycleTest {
         tree.clear();
 
         assertTrue(controller.root.getChildren().isEmpty());
+    }
+
+    @Test
+    public void tracksFailedRequestsAcrossUpdatesMovesAndRemoval() {
+        TestRequestViewController controller = new TestRequestViewController();
+        ApplicationMessageTree tree = new ApplicationMessageTree(controller, Runnable::run);
+        RequestMessage failed = request(
+                "failed", "api.example.com", "/failed", "Example App", "/Applications/Example.app");
+        RequestMessage retained = request(
+                "retained", "api.example.com", "/retained", "Example App", "/Applications/Example.app");
+        tree.add(failed);
+        tree.add(retained);
+
+        failed.updateClientStatus(ClientStatus.Status.TIMEOUT, "timeout");
+        tree.updateStatus(failed);
+
+        TreeItem<RequestCell> firstApplication = controller.root.getChildren().get(0);
+        TreeItem<RequestCell> firstHost = firstApplication.getChildren().get(0);
+        assertEquals(1, firstApplication.getValue().getFailedCount());
+        assertEquals(1, firstHost.getValue().getFailedCount());
+        assertEquals(RequestCell.TransferState.FAILED,
+                tree.item("failed").getValue().getTransferState());
+
+        RequestMessage staleSuccess = request(
+                "failed", "api.example.com", "/failed", "Example App", "/Applications/Example.app");
+        ResponseMessage response = new ResponseMessage();
+        response.setStatus(200);
+        staleSuccess.setResponse(response);
+        tree.updateStatus(staleSuccess);
+        assertEquals(RequestCell.TransferState.FAILED,
+                tree.item("failed").getValue().getTransferState());
+        assertEquals(1, firstApplication.getValue().getFailedCount());
+
+        failed.setProcessInfo(ProcessInfo.builder()
+                .applicationName("Second App")
+                .applicationExecutablePath("/Applications/Second.app")
+                .lookupStatus(ProcessInfo.LookupStatus.FOUND)
+                .build());
+        tree.update(failed, false);
+
+        assertEquals(2, controller.root.getChildren().size());
+        assertEquals(0, firstApplication.getValue().getFailedCount());
+        TreeItem<RequestCell> secondApplication = controller.root.getChildren().get(1);
+        assertEquals(1, secondApplication.getValue().getFailedCount());
+
+        tree.remove(Set.of("failed"));
+        assertEquals(1, controller.root.getChildren().size());
+        assertEquals(0, firstApplication.getValue().getFailedCount());
     }
 
     private static RequestMessage request(String requestId, String host, String path,

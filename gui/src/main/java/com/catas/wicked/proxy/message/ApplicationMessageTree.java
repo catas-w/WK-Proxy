@@ -51,7 +51,7 @@ public class ApplicationMessageTree {
         requests.put(message.getRequestId(), entry);
 
         runOnUiThread(() -> {
-            incrementCounts(application, hostGroup);
+            incrementCounts(application, hostGroup, entry);
             attachApplication(application);
             attachHost(application, hostGroup);
             hostGroup.item.getInternalChildren().add(entry.item);
@@ -69,6 +69,7 @@ public class ApplicationMessageTree {
         }
         ApplicationSource identity = ApplicationSource.from(message.getProcessInfo());
         if (StringUtils.equals(current.application.key, identity.key())) {
+            updateStatusInternal(current, RequestTransferStatus.from(message));
             runOnUiThread(() -> {
                 synchronized (ApplicationMessageTree.this) {
                     if (applications.get(identity.key()) == current.application) {
@@ -83,6 +84,16 @@ public class ApplicationMessageTree {
         add(message);
         if (restoreSelection) {
             runOnUiThread(() -> select(message.getRequestId()));
+        }
+    }
+
+    public synchronized void updateStatus(RequestMessage message) {
+        if (message == null || StringUtils.isBlank(message.getRequestId())) {
+            return;
+        }
+        RequestEntry entry = requests.get(message.getRequestId());
+        if (entry != null) {
+            updateStatusInternal(entry, RequestTransferStatus.from(message));
         }
     }
 
@@ -159,17 +170,22 @@ public class ApplicationMessageTree {
 
     public void select(String requestId) {
         TreeItem<RequestCell> item = item(requestId);
-        if (item == null) {
+        if (item == null || controller.getReqApplicationTreeView() == null) {
             return;
         }
         expandParents(item);
-        controller.getReqApplicationTreeView().getSelectionModel().select(item);
+        if (isAttachedToRoot(item) && controller.getReqApplicationTreeView().getRow(item) >= 0) {
+            controller.getReqApplicationTreeView().getSelectionModel().select(item);
+        }
     }
 
     public synchronized void clear() {
         applications.clear();
         requests.clear();
-        runOnUiThread(() -> root().getInternalChildren().clear());
+        runOnUiThread(() -> {
+            controller.clearSelectionsBeforeTreeMutation();
+            root().getInternalChildren().clear();
+        });
     }
 
     /** Removes request leaves while retaining application and host grouping nodes. */
@@ -182,8 +198,15 @@ public class ApplicationMessageTree {
         retainedHosts.forEach(host -> host.requests.clear());
 
         runOnUiThread(() -> {
-            retainedApplications.forEach(application -> application.item.getValue().setCount(0));
-            retainedHosts.forEach(host -> host.item.getValue().setCount(0));
+            controller.clearSelectionsBeforeTreeMutation();
+            retainedApplications.forEach(application -> {
+                application.item.getValue().setCount(0);
+                application.item.getValue().setFailedCount(0);
+            });
+            retainedHosts.forEach(host -> {
+                host.item.getValue().setCount(0);
+                host.item.getValue().setFailedCount(0);
+            });
             removedEntries.forEach(entry -> entry.host.item.getInternalChildren().remove(entry.item));
         });
     }
@@ -215,7 +238,10 @@ public class ApplicationMessageTree {
         cell.setFullPath(message.getRequestUrl());
         cell.setSearchText(application.item.getValue().getSearchText() + " " + host.host + " "
                 + StringUtils.defaultString(message.getMethod()) + " " + StringUtils.defaultString(message.getRequestUrl()));
-        return new RequestEntry(message.getRequestId(), application, host, new FilterableTreeItem<>(cell));
+        RequestTransferStatus status = RequestTransferStatus.from(message);
+        status.applyTo(cell);
+        return new RequestEntry(message.getRequestId(), application, host,
+                new FilterableTreeItem<>(cell), status.state());
     }
 
     private void removeInternal(RequestEntry entry) {
@@ -233,7 +259,10 @@ public class ApplicationMessageTree {
 
         boolean finalRemoveApplication = removeApplication;
         runOnUiThread(() -> {
-            decrementCounts(entry.application, entry.host);
+            TreeItem<RequestCell> removedSubtree = finalRemoveApplication
+                    ? entry.application.item : removeHost ? entry.host.item : entry.item;
+            controller.clearApplicationTreeSelectionBeforeRemoving(removedSubtree);
+            decrementCounts(entry.application, entry.host, entry);
             entry.host.item.getInternalChildren().remove(entry.item);
             if (entry.host.requests.isEmpty()) {
                 entry.application.item.getInternalChildren().remove(entry.host.item);
@@ -244,14 +273,44 @@ public class ApplicationMessageTree {
         });
     }
 
-    private void incrementCounts(ApplicationGroup application, HostGroup host) {
+    private void incrementCounts(ApplicationGroup application, HostGroup host, RequestEntry entry) {
         application.item.getValue().setCount(application.item.getValue().getCount() + 1);
         host.item.getValue().setCount(host.item.getValue().getCount() + 1);
+        if (entry.transferState == RequestCell.TransferState.FAILED) {
+            adjustFailedCounts(application, host, 1);
+        }
     }
 
-    private void decrementCounts(ApplicationGroup application, HostGroup host) {
+    private void decrementCounts(ApplicationGroup application, HostGroup host, RequestEntry entry) {
         application.item.getValue().setCount(Math.max(0, application.item.getValue().getCount() - 1));
         host.item.getValue().setCount(Math.max(0, host.item.getValue().getCount() - 1));
+        if (entry.transferState == RequestCell.TransferState.FAILED) {
+            adjustFailedCounts(application, host, -1);
+        }
+    }
+
+    private void updateStatusInternal(RequestEntry entry, RequestTransferStatus status) {
+        RequestCell.TransferState target = status.state();
+        if (target.ordinal() < entry.transferState.ordinal()) {
+            return;
+        }
+        RequestCell.TransferState previous = entry.transferState;
+        entry.transferState = target;
+        int failedDelta = previous == RequestCell.TransferState.FAILED
+                ? 0 : target == RequestCell.TransferState.FAILED ? 1 : 0;
+        runOnUiThread(() -> {
+            status.applyTo(entry.item.getValue());
+            if (failedDelta != 0) {
+                adjustFailedCounts(entry.application, entry.host, failedDelta);
+            }
+        });
+    }
+
+    private void adjustFailedCounts(ApplicationGroup application, HostGroup host, int delta) {
+        RequestCell applicationCell = application.item.getValue();
+        RequestCell hostCell = host.item.getValue();
+        applicationCell.setFailedCount(applicationCell.getFailedCount() + delta);
+        hostCell.setFailedCount(hostCell.getFailedCount() + delta);
     }
 
     private void attachApplication(ApplicationGroup application) {
@@ -263,6 +322,14 @@ public class ApplicationMessageTree {
 
     private FilterableTreeItem<RequestCell> root() {
         return controller.getApplicationTreeRoot();
+    }
+
+    private boolean isAttachedToRoot(TreeItem<RequestCell> item) {
+        TreeItem<RequestCell> current = item;
+        while (current != null && current.getParent() != null) {
+            current = current.getParent();
+        }
+        return current == root();
     }
 
     private void runOnUiThread(Runnable action) {
@@ -352,6 +419,21 @@ public class ApplicationMessageTree {
         }
     }
 
-    private record RequestEntry(String requestId, ApplicationGroup application, HostGroup host,
-                                FilterableTreeItem<RequestCell> item) {}
+    private static final class RequestEntry {
+        private final String requestId;
+        private final ApplicationGroup application;
+        private final HostGroup host;
+        private final FilterableTreeItem<RequestCell> item;
+        private RequestCell.TransferState transferState;
+
+        private RequestEntry(String requestId, ApplicationGroup application, HostGroup host,
+                             FilterableTreeItem<RequestCell> item,
+                             RequestCell.TransferState transferState) {
+            this.requestId = requestId;
+            this.application = application;
+            this.host = host;
+            this.item = item;
+            this.transferState = transferState;
+        }
+    }
 }

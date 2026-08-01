@@ -3,6 +3,7 @@ package com.catas.wicked.proxy.gui.componet;
 import com.catas.wicked.common.bean.RequestCell;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.proxy.service.RequestViewService;
+import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.proxy.service.icon.ApplicationIconService;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -23,12 +24,19 @@ public class ViewCellFactory {
     @Inject
     private ApplicationConfig applicationConfig;
 
-    public RequestViewTreeCell<RequestCell> createTreeCell(TreeView<RequestCell> treeView) {
+    @Inject
+    private LocalizationService localization;
+
+    public RequestViewTreeCell<RequestCell> createTreeCell(
+            TreeView<RequestCell> treeView, boolean showRequestStatusIcon,
+            boolean showGroupFailureCount) {
         return new RequestViewTreeCell<>(treeView, applicationIconService,
-                applicationConfig.getObservableConfig().showApplicationRequestCountProperty());
+                applicationConfig.getObservableConfig().showApplicationRequestCountProperty(), localization,
+                showRequestStatusIcon, showGroupFailureCount);
     }
 
-    public RequestViewListCell<RequestCell> createListCell(ListView<RequestCell> listView) {
-        return new RequestViewListCell<>(listView);
+    public RequestViewListCell<RequestCell> createListCell(
+            ListView<RequestCell> listView, boolean showRequestStatusIcon) {
+        return new RequestViewListCell<>(listView, localization, showRequestStatusIcon);
     }
 }

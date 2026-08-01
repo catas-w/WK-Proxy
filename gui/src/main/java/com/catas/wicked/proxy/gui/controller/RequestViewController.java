@@ -50,12 +50,14 @@ import org.ehcache.Cache;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 @Slf4j
 @Singleton
 public class RequestViewController implements Initializable {
+
+    private static final boolean SHOW_REQUEST_STATUS_ICON = true;
+    private static final boolean SHOW_GROUP_FAILURE_COUNT = false;
 
     @FXML
     public JFXToggleNode applicationViewToggleNode;
@@ -154,9 +156,14 @@ public class RequestViewController implements Initializable {
         // init filterTextField
         filterInputEventBind();
 
-        reqTreeView.setCellFactory(treeView -> cellFactory.createTreeCell(treeView));
-        reqApplicationTreeView.setCellFactory(treeView -> cellFactory.createTreeCell(treeView));
-        reqListView.setCellFactory(listView -> cellFactory.createListCell(listView));
+        reqTreeView.setCellFactory(
+                treeView -> cellFactory.createTreeCell(
+                        treeView, SHOW_REQUEST_STATUS_ICON, SHOW_GROUP_FAILURE_COUNT));
+        reqApplicationTreeView.setCellFactory(
+                treeView -> cellFactory.createTreeCell(
+                        treeView, SHOW_REQUEST_STATUS_ICON, SHOW_GROUP_FAILURE_COUNT));
+        reqListView.setCellFactory(
+                listView -> cellFactory.createListCell(listView, SHOW_REQUEST_STATUS_ICON));
 
         // context menu
         reqTreeView.setContextMenu(contextMenu);
@@ -253,7 +260,6 @@ public class RequestViewController implements Initializable {
     /**
      * filter requests
      */
-    @SuppressWarnings("unchecked")
     private void filterInputEventBind() {
         filterCancelBtn.visibleProperty().bind(Bindings.createBooleanBinding(
                 () -> !filterInput.getText().isEmpty(), filterInput.textProperty()));
@@ -262,36 +268,26 @@ public class RequestViewController implements Initializable {
             filterInput.clear();
         });
 
-        // bind filter treeView from: JFX
-        getTreeRoot().predicateProperty().bind(Bindings.createObjectBinding(() -> {
-            // System.out.println(filterInput.getText());
-            if (filterInput.getText() == null || filterInput.getText().isEmpty())
-                return null;
-            return TreeItemPredicate.create(cell -> cell.matchesFilter(filterInput.getText()));
-        }, filterInput.textProperty()));
+        filterInput.textProperty().addListener((observable, oldValue, newValue) -> applyRequestFilter(newValue));
+        applyRequestFilter(filterInput.getText());
+    }
 
-        getApplicationTreeRoot().predicateProperty().bind(Bindings.createObjectBinding(() -> {
-            if (filterInput.getText() == null || filterInput.getText().isEmpty()) {
-                return null;
-            }
-            return TreeItemPredicate.create(cell -> cell.matchesFilter(filterInput.getText()));
-        }, filterInput.textProperty()));
-
-        // bind filter listView
-        filteredList.predicateProperty().bind(Bindings.createObjectBinding(new Callable<Predicate<? super RequestCell>>() {
-            @Override
-            public Predicate<? super RequestCell> call() throws Exception {
-                if (filterInput.getText() == null || filterInput.getText().isEmpty())
-                    return null;
-                return new Predicate<RequestCell>() {
-                    @Override
-                    public boolean test(RequestCell requestCell) {
-                        // System.out.println("filter: " + filterInput.getText());
-                        return requestCell.matchesFilter(filterInput.getText());
-                    }
-                };
-            }
-        }, filterInput.textProperty()));
+    private void applyRequestFilter(String filterText) {
+        // Filtering changes the TreeView's visible row model. Drop stale selections
+        // before the FilteredList notifies JavaFX's selection model.
+        clearRequestSelection();
+        if (StringUtils.isBlank(filterText)) {
+            getTreeRoot().setPredicate(null);
+            getApplicationTreeRoot().setPredicate(null);
+            filteredList.setPredicate(null);
+            return;
+        }
+        TreeItemPredicate<RequestCell> treePredicate =
+                TreeItemPredicate.create(cell -> cell.matchesFilter(filterText));
+        Predicate<RequestCell> listPredicate = cell -> cell.matchesFilter(filterText);
+        getTreeRoot().setPredicate(treePredicate);
+        getApplicationTreeRoot().setPredicate(treePredicate);
+        filteredList.setPredicate(listPredicate);
     }
 
     /**
@@ -364,6 +360,48 @@ public class RequestViewController implements Initializable {
         reqListView.getSelectionModel().clearSelection();
         reqTreeView.getSelectionModel().clearSelection();
         reqApplicationTreeView.getSelectionModel().clearSelection();
+    }
+
+    public void clearSelectionsBeforeTreeMutation() {
+        if (reqListView != null) {
+            reqListView.getSelectionModel().clearSelection();
+        }
+        if (reqTreeView != null) {
+            reqTreeView.getSelectionModel().clearSelection();
+        }
+        if (reqApplicationTreeView != null) {
+            reqApplicationTreeView.getSelectionModel().clearSelection();
+        }
+    }
+
+    public void clearUrlTreeSelectionBeforeRemoving(TreeItem<RequestCell> item) {
+        clearTreeSelectionBeforeRemoving(reqTreeView, item);
+    }
+
+    public void clearApplicationTreeSelectionBeforeRemoving(TreeItem<RequestCell> item) {
+        clearTreeSelectionBeforeRemoving(reqApplicationTreeView, item);
+    }
+
+    private static void clearTreeSelectionBeforeRemoving(
+            TreeView<RequestCell> treeView, TreeItem<RequestCell> item) {
+        if (treeView == null || item == null) {
+            return;
+        }
+        TreeItem<RequestCell> selected = treeView.getSelectionModel().getSelectedItem();
+        if (isDescendantOrSelf(item, selected)) {
+            treeView.getSelectionModel().clearSelection();
+        }
+    }
+
+    static boolean isDescendantOrSelf(TreeItem<?> ancestor, TreeItem<?> item) {
+        TreeItem<?> current = item;
+        while (current != null) {
+            if (current == ancestor) {
+                return true;
+            }
+            current = current.getParent();
+        }
+        return false;
     }
 
     /**

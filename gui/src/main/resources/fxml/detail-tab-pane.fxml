@@ -21,8 +21,10 @@
         <URL value="@../css/common-design.css" />
         <URL value="@../css/component/richtext.css" />
     </stylesheets>
-    <JFXTabPane fx:id="mainTabPane" minWidth="300.0" prefHeight="567.0" prefWidth="600.0" style="-fx-background-color: TRANSPARENT;" styleClass="jfx-tab-pane" VBox.vgrow="ALWAYS">
-        <Tab text="  Overview  " fx:id="overviewTab">
+    <JFXTabPane fx:id="mainTabPane" minWidth="300.0" prefHeight="567.0" prefWidth="600.0"
+                tabMinWidth="104.0" tabMaxWidth="104.0"
+                style="-fx-background-color: TRANSPARENT;" styleClass="jfx-tab-pane" VBox.vgrow="ALWAYS">
+        <Tab text="Overview" fx:id="overviewTab">
             <AnchorPane styleClass="tab-anchor-pane">
                 <DisplayCodeArea fx:id="overviewArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <cursor>
@@ -37,7 +39,7 @@
                 <MessageLabel fx:id="overViewMsgLabel" visible="true" text="Empty"/>
             </AnchorPane>
         </Tab>
-        <Tab text="  Request  " fx:id="requestTab">
+        <Tab text="Request" fx:id="requestTab">
             <AnchorPane styleClass="tab-anchor-pane">
                 <SplitPane fx:id="reqSplitPane" styleClass="vertical-split-pane" dividerPositions="0.45" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <HeaderTitledPane fx:id="reqHeaderPane" animated="false" maxHeight="Infinity" text="Headers" VBox.vgrow="ALWAYS">
@@ -92,7 +94,7 @@
                 </SplitPane>
             </AnchorPane>
         </Tab>
-        <Tab text="  Response  " fx:id="respTab">
+        <Tab text="Response" fx:id="respTab">
             <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="tab-anchor-pane">
                 <SplitPane fx:id="respSplitPane" styleClass="vertical-split-pane" dividerPositions="0.45" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <HeaderTitledPane fx:id="respHeaderPane" checkBoxTitle="Raw" checkIndex="0" animated="false" maxHeight="Infinity" text="Headers" VBox.vgrow="ALWAYS">
@@ -127,7 +129,7 @@
                 </SplitPane>
             </AnchorPane>
         </Tab>
-        <Tab text="   Timing   " fx:id="timingTab">
+        <Tab text="Timing" fx:id="timingTab">
             <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="tab-anchor-pane">
                 <GridPane fx:id="timingGridPane" hgap="5" vgap="10"
                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0"

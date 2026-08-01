@@ -2,6 +2,7 @@ package com.catas.wicked.proxy.gui.componet;
 
 import com.catas.wicked.common.bean.RequestCell;
 import com.catas.wicked.proxy.service.icon.ApplicationIconService;
+import com.catas.wicked.proxy.service.LocalizationService;
 import javafx.application.Platform;
 import javafx.animation.FadeTransition;
 import javafx.beans.InvalidationListener;
@@ -9,6 +10,7 @@ import javafx.beans.WeakInvalidationListener;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.Tooltip;
@@ -71,8 +73,12 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
     private VBox applicationLabels;
     private RequestCell boundApplicationCell;
     private Label groupCountLabel;
-    private Region groupCountSpacer;
     private RequestCell boundGroupCountCell;
+    private RequestStatusIndicator requestStatusIndicator;
+    private RequestFailureBadge requestFailureBadge;
+    private final LocalizationService localization;
+    private final boolean showRequestStatusIcon;
+    private final boolean showGroupFailureCount;
 
     private InvalidationListener treeItemGraphicInvalidationListener = observable -> updateDisplay(getItem(),
             isEmpty());
@@ -86,9 +92,14 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
     private WeakReference<TreeItem<T>> treeItemRef;
 
     public RequestViewTreeCell(TreeView<RequestCell> treeView, ApplicationIconService applicationIconService,
-                               ObservableBooleanValue showApplicationRequestCount) {
+                               ObservableBooleanValue showApplicationRequestCount,
+                               LocalizationService localization, boolean showRequestStatusIcon,
+                               boolean showGroupFailureCount) {
         this.applicationIconService = applicationIconService;
         this.showApplicationRequestCount = showApplicationRequestCount;
+        this.localization = localization;
+        this.showRequestStatusIcon = showRequestStatusIcon;
+        this.showGroupFailureCount = showGroupFailureCount;
         this.showApplicationRequestCount.addListener(weakRequestCountVisibilityListener);
 
         final InvalidationListener treeItemInvalidationListener = observable -> {
@@ -177,9 +188,11 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
         }
         pathLabel.setTextOverrun(OverrunStyle.ELLIPSIS);
         pathLabel.setMaxWidth(Double.MAX_VALUE);
+        pathLabel.setGraphic(null);
 
         if (requestCell.getNodeType() == RequestCell.NodeType.APPLICATION) {
             unbindGroupCount();
+            unbindRequestStatus();
             String iconLiteral = switch (requestCell.getNodeKey()) {
                 case "__identifying__" -> "fas-search";
                 case "__unknown__" -> "fas-question-circle";
@@ -194,7 +207,12 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
                 setChildrenIfChanged(applicationTitle, applicationNameLabel);
             }
             hbox.getStyleClass().add("req-application-row");
-            setChildrenIfChanged(hbox, iconContainer, applicationLabels);
+            if (showGroupFailureCount) {
+                setChildrenIfChanged(hbox, iconContainer, applicationLabels, failureBadge(requestCell));
+            } else {
+                unbindFailureBadge();
+                setChildrenIfChanged(hbox, iconContainer, applicationLabels);
+            }
             if (StringUtils.isNotBlank(requestCell.getStatusText())) {
                 setTooltip(new Tooltip(requestCell.getStatusText()));
             }
@@ -203,27 +221,31 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
 
         unbindApplicationLabels();
         if (requestCell.getNodeType() == RequestCell.NodeType.HOST) {
+            unbindRequestStatus();
             if (hostIcon == null) {
                 hostIcon = new FontIcon("fas-globe-africa");
                 hostIcon.getStyleClass().add("req-icon");
                 hostIcon.setIconSize(14);
             }
-            if (groupCountSpacer == null) {
-                groupCountSpacer = new Region();
-            }
             HBox.setHgrow(pathStackPane, Priority.ALWAYS);
-            HBox.setHgrow(groupCountSpacer, Priority.ALWAYS);
             if (showApplicationRequestCount.get()) {
-                setChildrenIfChanged(hbox, hostIcon, pathStackPane, groupCountSpacer,
-                        countLabel(requestCell));
+                pathLabel.setGraphic(countLabel(requestCell));
+                pathLabel.setContentDisplay(ContentDisplay.RIGHT);
+                pathLabel.setGraphicTextGap(4);
             } else {
                 unbindGroupCount();
+            }
+            if (showGroupFailureCount) {
+                setChildrenIfChanged(hbox, hostIcon, pathStackPane, failureBadge(requestCell));
+            } else {
+                unbindFailureBadge();
                 setChildrenIfChanged(hbox, hostIcon, pathStackPane);
             }
             return;
         }
 
         unbindGroupCount();
+        unbindFailureBadge();
         if (requestCell.isLeaf()) {
             hbox.getStyleClass().add("req-leaf");
             if (methodLabel == null) {
@@ -241,8 +263,19 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
                 }
             }
             HBox.setHgrow(pathStackPane, Priority.ALWAYS);
-            setChildrenIfChanged(hbox, methodLabel, pathStackPane);
+            if (showRequestStatusIcon) {
+                RequestStatusIndicator statusIndicator = statusIndicator(requestCell);
+                setChildrenIfChanged(hbox, RequestLeafLayout
+                        .elements(true, statusIndicator, methodLabel, pathStackPane)
+                        .toArray(Node[]::new));
+            } else {
+                unbindRequestStatus();
+                setChildrenIfChanged(hbox, RequestLeafLayout
+                        .elements(false, null, methodLabel, pathStackPane)
+                        .toArray(Node[]::new));
+            }
         } else {
+            unbindRequestStatus();
             if (pathIcon == null) {
                 pathIcon = new FontIcon();
                 pathIcon.getStyleClass().add("req-icon");
@@ -330,11 +363,12 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
     private Label countLabel(RequestCell requestCell) {
         if (groupCountLabel == null) {
             groupCountLabel = new Label();
-            groupCountLabel.getStyleClass().add("request-count");
+            groupCountLabel.getStyleClass().add("application-request-count");
+            groupCountLabel.setMinWidth(Region.USE_PREF_SIZE);
         }
         if (boundGroupCountCell != requestCell) {
             unbindGroupCount();
-            groupCountLabel.textProperty().bind(requestCell.countProperty().asString());
+            groupCountLabel.textProperty().bind(requestCell.countProperty().asString("(%d)"));
             boundGroupCountCell = requestCell;
         }
         return groupCountLabel;
@@ -396,6 +430,34 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
         }
     }
 
+    private RequestStatusIndicator statusIndicator(RequestCell requestCell) {
+        if (requestStatusIndicator == null) {
+            requestStatusIndicator = new RequestStatusIndicator(localization);
+        }
+        requestStatusIndicator.bind(requestCell);
+        return requestStatusIndicator;
+    }
+
+    private RequestFailureBadge failureBadge(RequestCell requestCell) {
+        if (requestFailureBadge == null) {
+            requestFailureBadge = new RequestFailureBadge(localization);
+        }
+        requestFailureBadge.bind(requestCell);
+        return requestFailureBadge;
+    }
+
+    private void unbindRequestStatus() {
+        if (requestStatusIndicator != null) {
+            requestStatusIndicator.unbind();
+        }
+    }
+
+    private void unbindFailureBadge() {
+        if (requestFailureBadge != null) {
+            requestFailureBadge.unbind();
+        }
+    }
+
     private static void setChildrenIfChanged(HBox box, Node... nodes) {
         if (box.getChildren().size() == nodes.length) {
             boolean unchanged = true;
@@ -418,6 +480,8 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
             applicationRow = false;
             unbindApplicationLabels();
             unbindGroupCount();
+            unbindRequestStatus();
+            unbindFailureBadge();
             setText(null);
             setGraphic(null);
             if (this.fadeTransition != null) {

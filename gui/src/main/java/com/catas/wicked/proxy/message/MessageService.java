@@ -24,6 +24,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -74,6 +75,7 @@ public class MessageService {
     private final RequestUpdateBuffer requestUpdateBuffer = new RequestUpdateBuffer();
     private final ResponseUpdateBuffer responseUpdateBuffer = new ResponseUpdateBuffer();
     private boolean synchronizingSelection;
+    private long selectionSyncVersion;
 
     @Getter
     private final SimpleIntegerProperty requestCntProperty = new SimpleIntegerProperty(0);
@@ -157,10 +159,20 @@ public class MessageService {
     /**
      * set selectionMode in treeView/listView
      * @param requestId requestId
-     * @param fromTreeView source
+     * @param source selection source
      */
     public void selectRequestItem(String requestId, SelectionSource source) {
         if (requestId == null || synchronizingSelection) {
+            return;
+        }
+
+        long version = ++selectionSyncVersion;
+        Platform.runLater(() -> synchronizeRequestSelection(requestId, source, version));
+    }
+
+    private void synchronizeRequestSelection(String requestId, SelectionSource source, long version) {
+        if (version != selectionSyncVersion || synchronizingSelection
+                || !isStillSelected(requestId, source)) {
             return;
         }
 
@@ -176,16 +188,54 @@ public class MessageService {
                 return;
             }
             if (source != SelectionSource.LIST_VIEW) {
-                requestViewController.getReqListView().getSelectionModel().select(treeNode.getListItem());
+                ListView<RequestCell> listView = requestViewController.getReqListView();
+                if (listView.getItems().contains(treeNode.getListItem())) {
+                    listView.getSelectionModel().select(treeNode.getListItem());
+                }
             }
             if (source != SelectionSource.TREE_VIEW) {
-                requestViewController.getReqTreeView().getSelectionModel().select(treeNode.getTreeItem());
+                selectAttachedTreeItem(requestViewController.getReqTreeView(), treeNode.getTreeItem());
             }
             if (source != SelectionSource.APPLICATION_VIEW) {
                 applicationMessageTree.select(requestId);
             }
         } finally {
             synchronizingSelection = false;
+        }
+    }
+
+    private boolean isStillSelected(String requestId, SelectionSource source) {
+        RequestCell selected = switch (source) {
+            case TREE_VIEW -> valueOf(requestViewController.getReqTreeView().getSelectionModel().getSelectedItem());
+            case APPLICATION_VIEW -> valueOf(
+                    requestViewController.getReqApplicationTreeView().getSelectionModel().getSelectedItem());
+            case LIST_VIEW -> requestViewController.getReqListView().getSelectionModel().getSelectedItem();
+        };
+        return selected != null && StringUtils.equals(requestId, selected.getRequestId());
+    }
+
+    private static RequestCell valueOf(TreeItem<RequestCell> item) {
+        return item == null ? null : item.getValue();
+    }
+
+    private static void selectAttachedTreeItem(TreeView<RequestCell> treeView, TreeItem<RequestCell> item) {
+        if (treeView == null || item == null) {
+            return;
+        }
+        TreeItem<RequestCell> root = item;
+        while (root.getParent() != null) {
+            root = root.getParent();
+        }
+        if (root != treeView.getRoot()) {
+            return;
+        }
+        TreeItem<RequestCell> parent = item.getParent();
+        while (parent != null) {
+            parent.setExpanded(true);
+            parent = parent.getParent();
+        }
+        if (treeView.getRow(item) >= 0) {
+            treeView.getSelectionModel().select(item);
         }
     }
 
@@ -221,6 +271,7 @@ public class MessageService {
             boolean selected = StringUtils.equals(
                     appConfig.getObservableConfig().getCurrentRequestId(), requestMessage.getRequestId());
             applicationMessageTree.update(requestMessage, selected);
+            messageTree.updateTransferStatus(requestMessage);
             updateTimeStats(requestMessage, requestMessage);
             requestViewService.refreshCurrentRequest(requestMessage.getRequestId());
             requestViewService.refreshCurrentApplicationGroup();
@@ -342,6 +393,7 @@ public class MessageService {
 
         TreeItem<RequestCell> treeItemToDelete = nodeToDelete.getTreeItem();
         Platform.runLater(() -> {
+            requestViewController.clearUrlTreeSelectionBeforeRemoving(treeItemToDelete);
             if (treeItemToDelete.getParent() instanceof FilterableTreeItem<?> parent) {
                 ((FilterableTreeItem<RequestCell>) parent).getInternalChildren().remove(treeItemToDelete);
             }
@@ -384,6 +436,7 @@ public class MessageService {
         }
         List<RequestCell> listItems = new ArrayList<>();
         int removed = 0;
+        Platform.runLater(requestViewController::clearSelectionsBeforeTreeMutation);
         for (String requestId : requestIds) {
             RequestMessage request = requestCache.get(requestId);
             if (request == null) {
@@ -422,6 +475,7 @@ public class MessageService {
     private void cleanLeaves() {
         Set<String> requestIdList = new HashSet<>();
         List<TreeNode> treeNodeList = new ArrayList<>();
+        Platform.runLater(requestViewController::clearSelectionsBeforeTreeMutation);
 
         // delete leafNodes in treeView
         messageTree.travelRoot(treeNode -> {
@@ -457,6 +511,7 @@ public class MessageService {
      */
     private void removeAll() {
         Platform.runLater(() -> {
+            requestViewController.clearSelectionsBeforeTreeMutation();
             requestViewController.getTreeRoot().getInternalChildren().clear();
             requestViewController.getApplicationTreeRoot().getInternalChildren().clear();
             requestViewController.getReqSourceList().clear();
@@ -500,6 +555,8 @@ public class MessageService {
 
     private void updateResponseStats(RequestMessage requestMessage) {
         updateTimeStats(requestMessage, requestMessage.getResponse());
+        messageTree.updateTransferStatus(requestMessage);
+        applicationMessageTree.updateStatus(requestMessage);
         requestViewService.refreshCurrentRequest(requestMessage.getRequestId());
         requestViewService.refreshCurrentApplicationGroup();
     }

@@ -2,7 +2,9 @@ package com.catas.wicked.common.bean;
 
 import io.netty.handler.codec.http.HttpMethod;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import lombok.AccessLevel;
@@ -24,6 +26,12 @@ public class RequestCell {
         APPLICATION,
         HOST,
         REQUEST
+    }
+
+    public enum TransferState {
+        PENDING,
+        SUCCESS,
+        FAILED
     }
 
     private String requestId;
@@ -59,6 +67,33 @@ public class RequestCell {
 
     private String statusText;
 
+    private TransferState transferState = TransferState.PENDING;
+
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private final transient ObjectProperty<TransferState> transferStateProperty =
+            new SimpleObjectProperty<>(this, "transferState", TransferState.PENDING);
+
+    private String transferStatusKey = "request-status.pending";
+
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private final transient StringProperty transferStatusKeyProperty =
+            new SimpleStringProperty(this, "transferStatusKey", "request-status.pending");
+
+    private String transferStatusDetail;
+
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private final transient StringProperty transferStatusDetailProperty =
+            new SimpleStringProperty(this, "transferStatusDetail");
+
     /** GUI-only source metadata used to resolve an application icon locally. */
     private transient ProcessInfo processInfo;
 
@@ -69,6 +104,15 @@ public class RequestCell {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private final transient IntegerProperty countProperty = new SimpleIntegerProperty(this, "count");
+
+    private int failedCount;
+
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private final transient IntegerProperty failedCountProperty =
+            new SimpleIntegerProperty(this, "failedCount");
 
     private String searchText;
 
@@ -125,6 +169,56 @@ public class RequestCell {
         return secondaryTextProperty;
     }
 
+    public TransferState getTransferState() {
+        return transferStateProperty.get();
+    }
+
+    public void setTransferState(TransferState transferState) {
+        TransferState target = transferState == null ? TransferState.PENDING : transferState;
+        this.transferState = target;
+        transferStateProperty.set(target);
+    }
+
+    public ObjectProperty<TransferState> transferStateProperty() {
+        return transferStateProperty;
+    }
+
+    public String getTransferStatusKey() {
+        return transferStatusKeyProperty.get();
+    }
+
+    public void setTransferStatusKey(String transferStatusKey) {
+        this.transferStatusKey = transferStatusKey;
+        transferStatusKeyProperty.set(transferStatusKey);
+    }
+
+    public StringProperty transferStatusKeyProperty() {
+        return transferStatusKeyProperty;
+    }
+
+    public String getTransferStatusDetail() {
+        return transferStatusDetailProperty.get();
+    }
+
+    public void setTransferStatusDetail(String transferStatusDetail) {
+        this.transferStatusDetail = transferStatusDetail;
+        transferStatusDetailProperty.set(transferStatusDetail);
+    }
+
+    public StringProperty transferStatusDetailProperty() {
+        return transferStatusDetailProperty;
+    }
+
+    public void applyTransferStatus(TransferState state, String statusKey, String detail) {
+        TransferState target = state == null ? TransferState.PENDING : state;
+        if (target.ordinal() < getTransferState().ordinal()) {
+            return;
+        }
+        setTransferState(target);
+        setTransferStatusKey(statusKey);
+        setTransferStatusDetail(detail);
+    }
+
     public int getCount() {
         return countProperty.get();
     }
@@ -136,6 +230,20 @@ public class RequestCell {
 
     public IntegerProperty countProperty() {
         return countProperty;
+    }
+
+    public int getFailedCount() {
+        return failedCountProperty.get();
+    }
+
+    public void setFailedCount(int failedCount) {
+        int target = Math.max(0, failedCount);
+        this.failedCount = target;
+        failedCountProperty.set(target);
+    }
+
+    public IntegerProperty failedCountProperty() {
+        return failedCountProperty;
     }
 
     public String getMethod() {
