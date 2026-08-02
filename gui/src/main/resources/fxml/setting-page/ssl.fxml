@@ -32,8 +32,12 @@
                    GridPane.rowIndex="2" GridPane.columnSpan="2"/>
             <Label fx:id="sslBypassLabel" text="%ssl-bypass.label" styleClass="settings-field-label" contentDisplay="RIGHT"
                    GridPane.rowIndex="3">
-                <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
-                <tooltip><Tooltip fx:id="sslBypassTooltip" text="%ant-path.tooltip" showDelay="500ms"/></tooltip>
+                <graphic>
+                    <Label contentDisplay="GRAPHIC_ONLY" styleClass="tooltip-icon-host">
+                        <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
+                        <tooltip><Tooltip fx:id="sslBypassTooltip" text="%ant-path.tooltip" showDelay="0ms"/></tooltip>
+                    </Label>
+                </graphic>
             </Label>
             <TextArea fx:id="sslExcludeArea" prefRowCount="3" wrapText="true"
                       GridPane.rowIndex="3" GridPane.columnIndex="1"

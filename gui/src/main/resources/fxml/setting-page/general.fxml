@@ -38,8 +38,12 @@
                    GridPane.rowIndex="3" GridPane.columnSpan="2"/>
             <Label fx:id="recordSizeLabel" text="%record-size.label" styleClass="settings-field-label" contentDisplay="RIGHT"
                    GridPane.rowIndex="4">
-                <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
-                <tooltip><Tooltip fx:id="recordSizeTooltip" text="%record-size.tooltip" showDelay="500ms"/></tooltip>
+                <graphic>
+                    <Label contentDisplay="GRAPHIC_ONLY" styleClass="tooltip-icon-host">
+                        <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
+                        <tooltip><Tooltip fx:id="recordSizeTooltip" text="%record-size.tooltip" showDelay="0ms"/></tooltip>
+                    </Label>
+                </graphic>
             </Label>
             <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.rowIndex="4" GridPane.columnIndex="1">
                 <CustomTextField fx:id="maxSizeField" maxWidth="120.0" prefWidth="120.0"
@@ -48,8 +52,12 @@
             </HBox>
             <Label fx:id="recordBypassLabel" text="%record-bypass.label" styleClass="settings-field-label" contentDisplay="RIGHT"
                    GridPane.rowIndex="5">
-                <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
-                <tooltip><Tooltip fx:id="recordBypassTooltip" text="%ant-path.tooltip" showDelay="500ms"/></tooltip>
+                <graphic>
+                    <Label contentDisplay="GRAPHIC_ONLY" styleClass="tooltip-icon-host">
+                        <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
+                        <tooltip><Tooltip fx:id="recordBypassTooltip" text="%ant-path.tooltip" showDelay="0ms"/></tooltip>
+                    </Label>
+                </graphic>
             </Label>
             <TextArea fx:id="recordExcludeArea" prefRowCount="3" wrapText="true"
                       GridPane.rowIndex="5" GridPane.columnIndex="1"

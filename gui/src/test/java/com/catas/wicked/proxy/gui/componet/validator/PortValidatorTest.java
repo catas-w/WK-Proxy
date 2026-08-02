@@ -38,4 +38,18 @@ public class PortValidatorTest {
         assertFalse(PortValidator.isAllowedInput("１２"));
         assertFalse(PortValidator.isAllowedInput(null));
     }
+
+    @Test
+    public void stepsValidPortsWithinRange() {
+        assertEquals(Integer.valueOf(9967), PortValidator.step("9966", 1));
+        assertEquals(Integer.valueOf(9965), PortValidator.step("9966", -1));
+    }
+
+    @Test
+    public void doesNotStepPastBoundariesOrInvalidInput() {
+        assertNull(PortValidator.step("1", -1));
+        assertNull(PortValidator.step("65535", 1));
+        assertNull(PortValidator.step("", 1));
+        assertNull(PortValidator.step("invalid", -1));
+    }
 }

@@ -23,8 +23,12 @@
             <ColumnConstraints minWidth="180.0" prefWidth="240.0" hgrow="ALWAYS"/>
         </columnConstraints>
         <Label fx:id="enableExternalProxyLabel" text="%enable-ex-proxy.label" styleClass="settings-field-label" contentDisplay="RIGHT">
-            <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
-            <tooltip><Tooltip fx:id="externalProxyTooltip" text="%ex-proxy.tooltip" showDelay="500ms"/></tooltip>
+            <graphic>
+                <Label contentDisplay="GRAPHIC_ONLY" styleClass="tooltip-icon-host">
+                    <graphic><FontIcon styleClass="tooltip-icon" iconLiteral="fas-question-circle"/></graphic>
+                    <tooltip><Tooltip fx:id="externalProxyTooltip" text="%ex-proxy.tooltip" showDelay="0ms"/></tooltip>
+                </Label>
+            </graphic>
         </Label>
         <JFXToggleButton fx:id="exProxyBtn" GridPane.columnIndex="1"/>
     </GridPane>

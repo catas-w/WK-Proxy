@@ -194,6 +194,59 @@
     -fx-alignment: CENTER-LEFT;
 }
 
+.settings-root .port-stepper-field {
+    -fx-border-color: #aaaead transparent #aaaead #aaaead;
+    -fx-border-radius: 4px 0 0 4px;
+    -fx-background-radius: 4px 0 0 4px;
+}
+
+.settings-root .port-stepper-field:focused {
+    -fx-border-color: -settings-accent transparent -settings-accent -settings-accent;
+}
+
+.settings-root .port-stepper-button {
+    -fx-min-width: 26px;
+    -fx-pref-width: 26px;
+    -fx-max-width: 26px;
+    -fx-min-height: 17px;
+    -fx-pref-height: 17px;
+    -fx-max-height: 17px;
+    -fx-padding: 0;
+    -fx-background-color: #f1f2f2;
+    -fx-border-color: #aaaead;
+    -fx-cursor: hand;
+}
+
+.settings-root .port-stepper-up {
+    -fx-background-radius: 0 4px 0 0;
+    -fx-border-radius: 0 4px 0 0;
+    -fx-border-width: 1px 1px 0 1px;
+}
+
+.settings-root .port-stepper-down {
+    -fx-background-radius: 0 0 4px 0;
+    -fx-border-radius: 0 0 4px 0;
+    -fx-border-width: 0 1px 1px 1px;
+}
+
+.settings-root .port-stepper-button .ikonli-font-icon {
+    -fx-icon-size: 14px;
+    -fx-icon-color: #666b6b;
+}
+
+.settings-root .port-stepper-button:hover {
+    -fx-background-color: #e2e6e5;
+}
+
+.settings-root .port-stepper-button:pressed {
+    -fx-background-color: #d4dcda;
+}
+
+.settings-root .port-stepper-button:disabled {
+    -fx-opacity: 0.4;
+    -fx-cursor: default;
+}
+
 .lang-alert-label,
 .alert-label {
     -fx-text-fill: #b73012;
@@ -204,8 +257,19 @@
     -fx-icon-size: 12px;
 }
 
-.tooltip-icon {
+.settings-root .tooltip-icon-host {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-content-display: graphic-only;
+    -fx-cursor: hand;
+}
+
+.settings-root .tooltip-icon {
     -fx-icon-color: #a5a9a9;
+}
+
+.settings-root .tooltip-icon-host:hover .tooltip-icon {
+    -fx-icon-color: -settings-accent;
 }
 
 .settings-action-bar {

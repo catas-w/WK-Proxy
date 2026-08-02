@@ -17,10 +17,13 @@ import javafx.application.Platform;
 import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -36,6 +39,8 @@ public class ProxySettingsPageController implements SettingsPageController, Init
     @FXML private Label localProxySectionLabel;
     @FXML private Label listenPortLabel;
     @FXML private JFXTextField portField;
+    @FXML private Button portIncrementButton;
+    @FXML private Button portDecrementButton;
     @FXML private Label portUnavailableLabel;
     @FXML private Label systemProxySectionLabel;
     @FXML private Label enableSystemProxyLabel;
@@ -61,6 +66,8 @@ public class ProxySettingsPageController implements SettingsPageController, Init
     public void initialize(URL location, ResourceBundle resources) {
         localization.bind(localProxySectionLabel.textProperty(), "local-proxy-sep.label");
         localization.bind(listenPortLabel.textProperty(), "listen-port.label");
+        portIncrementButton.accessibleTextProperty().bind(localization.binding("port-increment.label"));
+        portDecrementButton.accessibleTextProperty().bind(localization.binding("port-decrement.label"));
         localization.bind(systemProxySectionLabel.textProperty(), "sys-proxy-sep.label");
         localization.bind(enableSystemProxyLabel.textProperty(), "enable-sys-proxy.label");
         localization.bind(systemProxyBypassLabel.textProperty(), "sys-proxy-bypass.label");
@@ -73,6 +80,7 @@ public class ProxySettingsPageController implements SettingsPageController, Init
         portField.getValidators().add(portValidator);
         portField.setTextFormatter(new TextFormatter<>(change ->
                 PortValidator.isAllowedInput(change.getControlNewText()) ? change : null));
+        portField.addEventFilter(KeyEvent.KEY_PRESSED, this::handlePortStepKey);
         for (ThrottlePreset preset : ThrottlePreset.values()) {
             throttleComboBox.getItems().add(new EnumLabel<>(preset, preset::getDesc));
         }
@@ -82,6 +90,7 @@ public class ProxySettingsPageController implements SettingsPageController, Init
                 portCheckSequence++;
             }
             Integer port = PortValidator.parse(newValue);
+            updatePortStepButtons(port);
             if (!loading && draft != null && port != null) {
                 draft.value().setPort(port);
                 changed();
@@ -212,6 +221,39 @@ public class ProxySettingsPageController implements SettingsPageController, Init
             portField.resetValidation();
             portField.pseudoClassStateChanged(ERROR_PSEUDO_CLASS, false);
         }
+    }
+
+    @FXML
+    private void incrementPort() {
+        stepPort(1);
+    }
+
+    @FXML
+    private void decrementPort() {
+        stepPort(-1);
+    }
+
+    private void handlePortStepKey(KeyEvent event) {
+        if (event.getCode() == KeyCode.UP) {
+            stepPort(1);
+            event.consume();
+        } else if (event.getCode() == KeyCode.DOWN) {
+            stepPort(-1);
+            event.consume();
+        }
+    }
+
+    private void stepPort(int delta) {
+        Integer port = PortValidator.step(portField.getText(), delta);
+        if (port != null) {
+            portField.setText(String.valueOf(port));
+            portField.positionCaret(portField.getText().length());
+        }
+    }
+
+    private void updatePortStepButtons(Integer port) {
+        portDecrementButton.setDisable(port == null || port <= 1);
+        portIncrementButton.setDisable(port == null || port >= 65535);
     }
 
     private void preflightPort(Integer port) {

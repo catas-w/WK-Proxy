@@ -106,6 +106,42 @@ public class SettingsLazyLoadingResourceTest {
     }
 
     @Test
+    public void proxyPageProvidesPortStepperControls() throws Exception {
+        String fxml = read("/fxml/setting-page/proxy.fxml");
+        assertTrue(fxml.contains("fx:id=\"portIncrementButton\""));
+        assertTrue(fxml.contains("fx:id=\"portDecrementButton\""));
+        assertTrue(fxml.contains("onAction=\"#incrementPort\""));
+        assertTrue(fxml.contains("onAction=\"#decrementPort\""));
+        assertTrue(fxml.contains("focusTraversable=\"false\""));
+    }
+
+    @Test
+    public void settingsHelpTooltipsOpenWithoutDelayAndHaveScopedHoverStyle() throws Exception {
+        String[] pages = {"general", "proxy", "ssl", "external-proxy"};
+        int[] expectedTooltipCounts = {2, 1, 1, 1};
+        for (int index = 0; index < pages.length; index++) {
+            String page = pages[index];
+            String fxml = read("/fxml/setting-page/" + page + ".fxml");
+            assertFalse(page, fxml.contains("showDelay=\"500ms\""));
+            assertFalse(page, fxml.contains("<toolztip>"));
+            assertEquals(page, expectedTooltipCounts[index], countOccurrences(fxml, "showDelay=\"0ms\""));
+            assertEquals(page, expectedTooltipCounts[index], countOccurrences(fxml, "styleClass=\"tooltip-icon-host\""));
+        }
+
+        String css = read("/css/setting-page.css");
+        assertTrue(css.contains(".settings-root .tooltip-icon-host:hover .tooltip-icon"));
+        assertTrue(css.contains("-fx-icon-color: -settings-accent;"));
+    }
+
+    @Test
+    public void portStepperUsesLargeIconsWithoutInternalDivider() throws Exception {
+        String css = read("/css/setting-page.css");
+        assertTrue(css.contains("-fx-icon-size: 14px;"));
+        assertTrue(css.contains("-fx-border-width: 1px 1px 0 1px;"));
+        assertTrue(css.contains("-fx-border-width: 0 1px 1px 1px;"));
+    }
+
+    @Test
     public void aboutPageContainsCompleteProductInformation() throws Exception {
         String fxml = read("/fxml/setting-page/about.fxml");
         assertTrue(fxml.contains("wk-proxy.2.png"));
@@ -131,5 +167,9 @@ public class SettingsLazyLoadingResourceTest {
         assertFalse(fxml.contains("minWidth=\"130.0\" prefWidth=\"130.0\""));
         assertTrue(resource, fxml.split(java.util.regex.Pattern.quote(constraint), -1).length - 1
                 == expectedCount);
+    }
+
+    private int countOccurrences(String value, String needle) {
+        return value.split(java.util.regex.Pattern.quote(needle), -1).length - 1;
     }
 }
