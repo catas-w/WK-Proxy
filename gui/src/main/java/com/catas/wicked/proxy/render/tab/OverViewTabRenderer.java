@@ -10,13 +10,13 @@ import com.catas.wicked.common.bean.StatsData;
 import com.catas.wicked.common.bean.message.RenderMessage;
 import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.bean.message.ResponseMessage;
-import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.provider.ResourceMessageProvider;
 import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.message.ApplicationGroupOverview;
 import com.catas.wicked.proxy.message.RequestTiming;
+import com.catas.wicked.proxy.render.PreparedRender;
 import io.netty.handler.codec.http.HttpMethod;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -50,9 +50,6 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
     private Cache<String, RequestMessage> requestCache;
 
     @Inject
-    private ApplicationConfig appConfig;
-
-    @Inject
     private RequestOverviewInfo requestOverviewInfo;
 
     @Inject
@@ -75,8 +72,15 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     @Override
-    public void render(RenderMessage renderMsg) {
-        // System.out.println("-- render overview --");
+    public PreparedRender prepare(RenderMessage renderMsg) {
+        RequestMessage request = renderMsg.isEmpty() || renderMsg.isPath()
+                || renderMsg.isApplicationGroup()
+                ? null : requestCache.get(renderMsg.getRequestId());
+        return new PreparedRender(renderMsg.getRequestId(), renderMsg.isEmpty(),
+                () -> apply(renderMsg, request));
+    }
+
+    private void apply(RenderMessage renderMsg, RequestMessage request) {
         detailTabController.getOverViewMsgLabel().setVisible(renderMsg.isEmpty());
         if (renderMsg.isEmpty()) {
             detailTabController.hideRequestOnlyTabs();
@@ -91,10 +95,12 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
             displayPathOverview(renderMsg);
         } else {
             // display request info
-            RequestMessage request = requestCache.get(renderMsg.getRequestId());
+            if (request == null) {
+                detailTabController.getOverViewMsgLabel().setVisible(true);
+                return;
+            }
             displayOverView(request);
         }
-
     }
 
     private void displayApplicationGroupOverview(RenderMessage renderMsg) {
@@ -237,7 +243,7 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
 
         String protocol = request.getProtocol() == null ? "-" : request.getProtocol();
         String url = request.getRequestUrl();
-        String method = request.getMethod();
+        String method = StringUtils.defaultIfBlank(request.getMethod(), "-");
         if (method.contains("UNK")) {
             method = "-";
         }
@@ -250,10 +256,12 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
             code = "Pending";
         } else if (response.getStatus() != null && response.getStatus() == -1) {
             requestOverviewInfo.getStatus().setColumnStyle(PairEntry.ColumnStyle.ERROR);
-            code = response.getReasonPhrase();
+            code = StringUtils.defaultIfBlank(response.getReasonPhrase(), "-");
         } else {
             requestOverviewInfo.getStatus().setColumnStyle(PairEntry.ColumnStyle.OK);
-            code = response.getStatusStr() + " " + response.getReasonPhrase();
+            String status = StringUtils.defaultIfBlank(response.getStatusStr(), "-");
+            String reason = StringUtils.defaultString(response.getReasonPhrase());
+            code = (status + " " + reason).strip();
         }
 
         // System.out.println(request.getRemoteHost() + " === " + request.getRemoteAddress());

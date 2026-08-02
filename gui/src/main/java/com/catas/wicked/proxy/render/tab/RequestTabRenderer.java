@@ -2,30 +2,27 @@ package com.catas.wicked.proxy.render.tab;
 
 import com.catas.wicked.common.bean.message.RenderMessage;
 import com.catas.wicked.common.bean.message.RequestMessage;
-import com.catas.wicked.common.config.ApplicationConfig;
-import com.catas.wicked.common.util.ImageUtils;
 import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.proxy.gui.componet.SideBar;
-import com.catas.wicked.proxy.gui.componet.richtext.DisplayCodeArea;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
+import com.catas.wicked.proxy.render.PreparedRender;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.ehcache.Cache;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.catas.wicked.common.constant.ProxyConstant.OVERSIZE_MSG;
@@ -44,73 +41,133 @@ public class RequestTabRenderer extends AbstractTabRenderer {
     @Inject
     private Cache<String, RequestMessage> requestCache;
 
-
-    @Inject
-    private ApplicationConfig appConfig;
-
     @Override
-    public void render(RenderMessage renderMsg) {
-        // System.out.println("-- render request --");
-        detailTabController.getReqHeaderMsgLabel().setVisible(renderMsg.isEmpty());
-        detailTabController.getReqContentMsgLabel().setVisible(renderMsg.isEmpty());
-        detailTabController.getReqMsgLabelBox().setVisible(renderMsg.isEmpty());
-        detailTabController.getReqOutputMsgLabel().setVisible(false);
-        if (renderMsg.isEmpty()) {
-            setEmptyMsgLabel(detailTabController.getReqHeaderMsgLabel());
-            setEmptyMsgLabel(detailTabController.getReqContentMsgLabel());
-            return;
-        }
+    public PreparedRender prepare(RenderMessage renderMsg) {
+        String requestId = renderMsg.getRequestId();
         if (renderMsg.isPath()) {
-            return;
+            return PreparedRender.noop(requestId, renderMsg.isEmpty());
         }
-        detailTabController.showRequestOnlyTabs();
-        RequestMessage request = requestCache.get(renderMsg.getRequestId());
-        displayRequest(request);
+        if (renderMsg.isEmpty()) {
+            return new PreparedRender(requestId, true, this::displayEmpty);
+        }
+
+        RequestMessage request = requestCache.get(requestId);
+        RequestRenderData data = prepareRequest(request);
+        return new PreparedRender(requestId, false, () -> displayRequest(data));
     }
 
-    /**
-     * exhibit request info
-     */
-    public void displayRequest(RequestMessage request) {
+    private RequestRenderData prepareRequest(RequestMessage request) {
         if (request == null) {
-            return;
+            return null;
         }
-
-        // display headers
-        Map<String, String> headers = request.getHeaders();
-        renderHeaders(headers, detailTabController.getReqHeaderTable());
-        detailTabController.getReqHeaderArea().replaceText(WebUtils.getHeaderText(headers), true);
-
-        // display query-params if exist
-        String query = request.getUrl().getQuery();
-        detailTabController.getReqParamArea().replaceText(query, true);
-
-        // display request content
-        // display oversize msg
-        if (request.isOversize()) {
-            setMsgLabel(detailTabController.getReqContentMsgLabel(), OVERSIZE_MSG, detailTabController.getReqMsgLabelBox());
-            return;
-        }
-
+        Map<String, String> headers = request.getHeaders() == null
+                ? Collections.emptyMap()
+                : new LinkedHashMap<>(request.getHeaders());
+        String query = request.getUrl() == null ? "" : request.getUrl().getQuery();
+        query = query == null ? "" : query;
+        byte[] body = request.getBody() == null ? new byte[0]
+                : Arrays.copyOf(request.getBody(), request.getBody().length);
+        byte[] content = WebUtils.parseContent(headers, body);
         ContentType contentType = WebUtils.getContentType(headers);
-        byte[] content = WebUtils.parseContent(request.getHeaders(), request.getBody());
-        Node target;
-        if (contentType != null && contentType.getMimeType().startsWith("image/")) {
-            target = detailTabController.getReqImageView();
-        } else {
-            target = detailTabController.getReqPayloadCodeArea();
-        }
         SideBar.Strategy strategy = predictCodeStyle(contentType, content.length);
-        detailTabController.getReqContentSideBar().setStrategy(strategy);
-        renderRequestContent(content, contentType, target);
+        Charset charset = contentType != null && contentType.getCharset() != null
+                ? contentType.getCharset() : StandardCharsets.UTF_8;
+        String contentText = new String(content, charset);
+        boolean image = contentType != null && contentType.getMimeType().startsWith("image/");
+        return new RequestRenderData(headers, WebUtils.getHeaderText(headers), query, content,
+                contentText, contentType, strategy, image, request.isOversize(), request.isEncrypted());
+    }
 
-        boolean hasQuery = query != null && !query.isEmpty();
-        boolean hasContent = content.length > 0;
-        // System.out.printf("hasQuery: %s, hasContent: %s\n", hasQuery, hasContent);
-        SingleSelectionModel<Tab> selectionModel = detailTabController.getReqPayloadTabPane().getSelectionModel();
+    private void displayEmpty() {
+        detailTabController.getReqHeaderMsgLabel().setVisible(true);
+        detailTabController.getReqContentMsgLabel().setVisible(true);
+        detailTabController.getReqMsgLabelBox().setVisible(true);
+        detailTabController.getReqOutputMsgLabel().setVisible(false);
+        clearRequestContent();
+        setEmptyMsgLabel(detailTabController.getReqHeaderMsgLabel());
+        setEmptyMsgLabel(detailTabController.getReqContentMsgLabel());
+    }
 
-        String titleKey = PAYLOAD_TITLE_KEY;
+    private void displayRequest(RequestRenderData data) {
+        if (data == null) {
+            displayEmpty();
+            return;
+        }
+
+        detailTabController.showRequestOnlyTabs();
+        detailTabController.getReqHeaderMsgLabel().setVisible(false);
         detailTabController.getReqContentMsgLabel().setVisible(false);
+        detailTabController.getReqMsgLabelBox().setVisible(false);
+        detailTabController.getReqOutputMsgLabel().setVisible(false);
+
+        renderHeaders(data.headers(), detailTabController.getReqHeaderTable());
+        detailTabController.getReqHeaderArea().replaceText(data.headerText(), true);
+        detailTabController.getReqParamArea().replaceText(data.query(), true);
+
+        if (data.oversize()) {
+            clearPayloadViews();
+            setMsgLabel(detailTabController.getReqContentMsgLabel(), OVERSIZE_MSG,
+                    detailTabController.getReqMsgLabelBox());
+            return;
+        }
+        if (data.encrypted() || data.content().length == 0) {
+            clearPayloadViews();
+            setEmptyMsgLabel(detailTabController.getReqContentMsgLabel());
+            detailTabController.getReqMsgLabelBox().setVisible(true);
+            updatePayloadTabs(!data.query().isEmpty(), false);
+            return;
+        }
+
+        detailTabController.getReqContentSideBar().setStrategy(data.strategy());
+        if (data.image()) {
+            showPayloadTarget(detailTabController.getReqImageView());
+            try {
+                detailTabController.getReqImageView().setImage(
+                        new ByteArrayInputStream(data.content()), data.contentType().getMimeType());
+            } catch (Exception e) {
+                detailTabController.getReqOutputMsgLabel().setVisible(true);
+                setMsgLabel(detailTabController.getReqContentMsgLabel(),
+                        "Image load error: " + data.contentType().getMimeType() + ", ",
+                        detailTabController.getReqMsgLabelBox());
+            }
+        } else {
+            showPayloadTarget(detailTabController.getReqPayloadCodeArea());
+            detailTabController.getReqPayloadCodeArea().setContentType(data.contentType());
+            detailTabController.getReqPayloadCodeArea().replaceText(data.contentText(), true);
+        }
+        updatePayloadTabs(!data.query().isEmpty(), true);
+    }
+
+    private void clearRequestContent() {
+        renderHeaders(Collections.emptyMap(), detailTabController.getReqHeaderTable());
+        detailTabController.getReqHeaderArea().replaceText("", true);
+        detailTabController.getReqParamArea().replaceText("", true);
+        clearPayloadViews();
+    }
+
+    private void clearPayloadViews() {
+        detailTabController.getReqPayloadCodeArea().replaceText("", true);
+        detailTabController.getReqPayloadCodeArea().setVisible(true);
+        detailTabController.getReqImageView().setVisible(false);
+        detailTabController.getReqContentTable().getItems().clear();
+    }
+
+    private void showPayloadTarget(Node target) {
+        target.setVisible(true);
+        Parent parent = target.getParent();
+        if (!(parent instanceof AnchorPane anchorPane)) {
+            return;
+        }
+        for (Node child : anchorPane.getChildren()) {
+            if (!(child instanceof SideBar) && child != target) {
+                child.setVisible(false);
+            }
+        }
+    }
+
+    private void updatePayloadTabs(boolean hasQuery, boolean hasContent) {
+        SingleSelectionModel<Tab> selectionModel = detailTabController.getReqPayloadTabPane().getSelectionModel();
+        String titleKey = PAYLOAD_TITLE_KEY;
         if (hasQuery && hasContent) {
             detailTabController.getReqPayloadTabPane().setTabMaxHeight(20);
             detailTabController.getReqPayloadTabPane().setTabMinHeight(20);
@@ -123,61 +180,14 @@ public class RequestTabRenderer extends AbstractTabRenderer {
             detailTabController.getReqPayloadTabPane().setTabMaxHeight(0);
             titleKey = CONTENT_TITLE_KEY;
         } else {
-            // detailTabController.getReqPayloadTitlePane().setExpanded(false);
             detailTabController.getReqContentMsgLabel().setVisible(true);
         }
-
-        String finalTitleKey = titleKey;
-        Platform.runLater(() -> detailTabController.setRequestPayloadTitleKey(finalTitleKey));
+        detailTabController.setRequestPayloadTitleKey(titleKey);
     }
 
-    private void renderRequestContent(byte[] content, ContentType contentType, Node target) {
-        if (target == null) {
-            return;
-        }
-        target.setVisible(true);
-        Parent parent = target.getParent();
-        for (Node child : ((AnchorPane) parent).getChildren()) {
-            if (!(child instanceof SideBar) && child != target) {
-                child.setVisible(false);
-            }
-        }
-
-        Charset charset = contentType != null && contentType.getCharset() != null ?
-                contentType.getCharset() : StandardCharsets.UTF_8;
-        if (target == detailTabController.getReqPayloadCodeArea()) {
-            String contentStr = new String(content, charset);
-            // TODO bug-fix codeStyle 是之前的
-            ((DisplayCodeArea) target).setContentType(contentType);
-            detailTabController.getReqPayloadCodeArea().replaceText(contentStr, true);
-        } else if (target == detailTabController.getReqContentTable()) {
-            assert contentType != null;
-            if (StringUtils.equals(ContentType.APPLICATION_FORM_URLENCODED.getMimeType(), contentType.getMimeType())) {
-                // parse url-encode
-                Map<String, String> formData = WebUtils.parseQueryParams(new String(content, charset));
-                renderHeaders(formData, detailTabController.getReqContentTable());
-            } else {
-                // parse multipart-form
-                try {
-                    Map<String, String> formData = WebUtils.parseMultipartForm(
-                            content, contentType.getParameter("boundary"), charset);
-                    renderHeaders(formData, detailTabController.getReqContentTable());
-                } catch (IOException e) {
-                    log.error("Error in parsing multipart-form data.", e);
-                }
-            }
-        } else if (target == detailTabController.getReqImageView()) {
-            InputStream inputStream = new ByteArrayInputStream(content);
-            try {
-                assert contentType != null;
-                String mimeType = contentType.getMimeType();
-                detailTabController.getReqImageView().setImage(inputStream, mimeType);
-            } catch (Exception e) {
-                detailTabController.getReqMsgLabelBox().setVisible(true);
-                detailTabController.getReqOutputMsgLabel().setVisible(true);
-                setMsgLabel(detailTabController.getReqContentMsgLabel(),
-                        "Image load error: " + contentType.getMimeType() + ", ", detailTabController.getReqMsgLabelBox());
-            }
-        }
+    private record RequestRenderData(Map<String, String> headers, String headerText, String query,
+                                     byte[] content, String contentText, ContentType contentType,
+                                     SideBar.Strategy strategy, boolean image, boolean oversize,
+                                     boolean encrypted) {
     }
 }

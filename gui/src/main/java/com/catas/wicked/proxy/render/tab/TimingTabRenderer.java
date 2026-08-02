@@ -2,14 +2,12 @@ package com.catas.wicked.proxy.render.tab;
 
 import com.catas.wicked.common.bean.message.RenderMessage;
 import com.catas.wicked.common.bean.message.RequestMessage;
-import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.proxy.gui.componet.TimeSplitPane;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
 import com.catas.wicked.proxy.message.RequestTiming;
+import com.catas.wicked.proxy.render.PreparedRender;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import javafx.application.Platform;
-import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;
 
 import java.util.List;
@@ -23,24 +21,16 @@ public class TimingTabRenderer extends AbstractTabRenderer {
     @Inject
     private Cache<String, RequestMessage> requestCache;
 
-    @Inject
-    private ApplicationConfig appConfig;
-
     @Override
-    public void render(RenderMessage renderMsg) {
+    public PreparedRender prepare(RenderMessage renderMsg) {
         if (renderMsg.isPath()) {
-            return;
+            return PreparedRender.noop(renderMsg.getRequestId(), renderMsg.isEmpty());
         }
         String requestId = renderMsg.getRequestId();
         RequestMessage request = renderMsg.isEmpty() ? null : requestCache.get(requestId);
         RequestTiming timing = RequestTiming.from(request);
 
-        Platform.runLater(() -> {
-            String currentRequestId = appConfig.getObservableConfig().getCurrentRequestId();
-            if ((renderMsg.isEmpty() && currentRequestId != null)
-                    || (!renderMsg.isEmpty() && !StringUtils.equals(requestId, currentRequestId))) {
-                return;
-            }
+        return new PreparedRender(requestId, renderMsg.isEmpty(), () -> {
             boolean empty = renderMsg.isEmpty() || request == null;
             detailTabController.getTimingMsgLabel().setVisible(empty);
             if (empty) {

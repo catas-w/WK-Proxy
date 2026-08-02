@@ -298,9 +298,7 @@ public class DetailTabController implements Initializable {
         if (overviewTable.getRoot() == root) {
             return;
         }
-        Platform.runLater(() -> {
-            overviewTable.setRoot(root);
-        });
+        overviewTable.setRoot(root);
     }
 
     public void refreshOverviewTable() {
@@ -528,9 +526,7 @@ public class DetailTabController implements Initializable {
         if (CollectionUtils.isEmpty(requestOnlyTabs)) {
             return;
         }
-        Platform.runLater(() -> {
-            requestOnlyTabs.forEach(tab -> tab.setDisable(true));
-        });
+        requestOnlyTabs.forEach(tab -> tab.setDisable(true));
         mainTabPane.getSelectionModel().select(overviewTab);
     }
 
@@ -538,9 +534,6 @@ public class DetailTabController implements Initializable {
         if (CollectionUtils.isEmpty(requestOnlyTabs)) {
             return;
         }
-        Platform.runLater(() -> {
-            // mainTabPane.getTabs().removeAll(requestOnlyTabs);
-            requestOnlyTabs.forEach(tab -> tab.setDisable(false));
-        });
+        requestOnlyTabs.forEach(tab -> tab.setDisable(false));
     }
 }

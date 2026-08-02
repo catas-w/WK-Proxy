@@ -492,7 +492,9 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
                 setText(requestCell.getPath());
 
                 createOrUpdateHBox(requestCell);
-                setGraphic(hbox);
+                if (getGraphic() != hbox) {
+                    setGraphic(hbox);
+                }
             }
         }
     }

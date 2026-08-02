@@ -10,6 +10,7 @@ import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
 import com.catas.wicked.proxy.gui.controller.DetailWebViewController;
 import com.catas.wicked.proxy.render.TabRenderer;
+import com.catas.wicked.proxy.render.PreparedRender;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -28,6 +29,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 /**
@@ -84,6 +86,7 @@ public class RequestViewService {
     private static final String ERROR_DATA = "<Error loading data>";
     private final AtomicBoolean applicationGroupRefreshScheduled = new AtomicBoolean();
     private final AtomicBoolean currentRequestRefreshScheduled = new AtomicBoolean();
+    private final AtomicLong renderGeneration = new AtomicLong();
 
 
     @PostConstruct
@@ -100,7 +103,8 @@ public class RequestViewService {
                 log.info("rendingMsg: {}", msg);
                 TabRenderer renderer = renderFuncMap.get(renderMsg.getTargetTab());
                 if (renderer != null) {
-                    renderer.render(renderMsg);
+                    PreparedRender preparedRender = renderer.prepare(renderMsg);
+                    Platform.runLater(() -> applyIfCurrent(renderMsg, preparedRender));
                 } else {
                     log.warn("consumer not exist");
                 }
@@ -110,6 +114,21 @@ public class RequestViewService {
         });
         localization.languageProperty().addListener((observable, oldValue, newValue) ->
                 refreshCurrentOverview());
+    }
+
+    private void applyIfCurrent(RenderMessage renderMsg, PreparedRender preparedRender) {
+        String selectedRequestId = appConfig.getObservableConfig().getCurrentRequestId();
+        if (!matchesSelection(renderMsg, selectedRequestId, renderGeneration.get())) {
+            return;
+        }
+        preparedRender.apply();
+    }
+
+    static boolean matchesSelection(RenderMessage renderMsg, String selectedRequestId,
+                                    long currentGeneration) {
+        return renderMsg.getRenderGeneration() == currentGeneration && (renderMsg.isEmpty()
+                ? selectedRequestId == null
+                : StringUtils.equals(renderMsg.getRequestId(), selectedRequestId));
     }
 
     /**
@@ -124,6 +143,7 @@ public class RequestViewService {
         if (StringUtils.equals(curRequestId, requestId)) {
             return;
         }
+        long generation = renderGeneration.incrementAndGet();
         // appConfig.getCurrentRequestId().set(requestId);
 
         String toSend = requestId;
@@ -134,7 +154,8 @@ public class RequestViewService {
 
         // display path info
         if (RenderMessage.isOverviewOnly(requestId)) {
-            messageQueue.pushMsg(Topic.RENDER, new RenderMessage(toSend, RenderMessage.Tab.OVERVIEW));
+            messageQueue.pushMsg(Topic.RENDER,
+                    new RenderMessage(toSend, RenderMessage.Tab.OVERVIEW, generation));
             return;
         }
 
@@ -143,10 +164,10 @@ public class RequestViewService {
         RenderMessage.Tab firstTargetTab = RenderMessage.Tab.valueOfIgnoreCase(curTab);
 
         Queue<RenderMessage> messages = new PriorityQueue<>(Comparator.comparingInt(o -> o.getTargetTab().getOrder()));
-        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.OVERVIEW));
-        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.REQUEST));
-        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.RESPONSE));
-        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.TIMING));
+        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.OVERVIEW, generation));
+        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.REQUEST, generation));
+        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.RESPONSE, generation));
+        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.TIMING, generation));
 
         // render current tab first
         Iterator<RenderMessage> iterator = messages.iterator();
@@ -190,7 +211,8 @@ public class RequestViewService {
             }
             messageQueue.clearMsg(Topic.RENDER);
             messageQueue.pushMsg(Topic.RENDER,
-                    new RenderMessage(currentSelection, RenderMessage.Tab.OVERVIEW));
+                    new RenderMessage(currentSelection, RenderMessage.Tab.OVERVIEW,
+                            renderGeneration.get()));
         });
     }
 
@@ -208,9 +230,11 @@ public class RequestViewService {
                 return;
             }
             messageQueue.pushMsg(Topic.RENDER,
-                    new RenderMessage(requestId, RenderMessage.Tab.OVERVIEW));
+                    new RenderMessage(requestId, RenderMessage.Tab.OVERVIEW,
+                            renderGeneration.get()));
             messageQueue.pushMsg(Topic.RENDER,
-                    new RenderMessage(requestId, RenderMessage.Tab.TIMING));
+                    new RenderMessage(requestId, RenderMessage.Tab.TIMING,
+                            renderGeneration.get()));
         });
     }
 
@@ -221,6 +245,7 @@ public class RequestViewService {
         }
         messageQueue.clearMsg(Topic.RENDER);
         messageQueue.pushMsg(Topic.RENDER,
-                new RenderMessage(selectionId, RenderMessage.Tab.OVERVIEW));
+                new RenderMessage(selectionId, RenderMessage.Tab.OVERVIEW,
+                        renderGeneration.get()));
     }
 }

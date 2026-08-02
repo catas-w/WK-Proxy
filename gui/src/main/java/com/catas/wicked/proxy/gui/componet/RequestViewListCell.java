@@ -126,7 +126,9 @@ public class RequestViewListCell<T> extends ListCell<T> {
                     statusIndicator.bind(requestCell);
                 }
                 setText(null);
-                setGraphic(hbox);
+                if (getGraphic() != hbox) {
+                    setGraphic(hbox);
+                }
             }
         }
     }

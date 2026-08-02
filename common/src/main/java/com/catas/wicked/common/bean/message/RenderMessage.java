@@ -19,6 +19,8 @@ public class RenderMessage extends BaseMessage {
 
     private Tab targetTab;
 
+    private transient long renderGeneration;
+
     private boolean isEmpty;
 
     private boolean isPath;
@@ -29,8 +31,13 @@ public class RenderMessage extends BaseMessage {
     }
 
     public RenderMessage(String requestId, Tab tab) {
+        this(requestId, tab, 0);
+    }
+
+    public RenderMessage(String requestId, Tab tab, long renderGeneration) {
         this.requestId = requestId;
         this.targetTab = tab;
+        this.renderGeneration = renderGeneration;
         this.isEmpty = StringUtils.equals(requestId, EMPTY_MSG);
         this.isPath = requestId.startsWith(PATH_MSG);
         this.isApplicationHost = requestId.startsWith(APPLICATION_HOST_MSG);

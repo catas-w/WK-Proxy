@@ -46,9 +46,9 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
 
     private final StringProperty codeStyle = new SimpleStringProperty(CodeStyle.PLAIN.name());
 
-    private String originText;
+    private volatile String originText = "";
 
-    private int appendixLen = 0;
+    private final TextRenderRevision renderRevision = new TextRenderRevision();
 
     @Getter
     private ContentType contentType;
@@ -97,21 +97,14 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
 
         // refresh style
         if (refreshStyle) {
-            refreshStyle();
+            scheduleTextUpdate(originText, true);
         }
     }
 
     public void replaceText(String text, boolean refreshStyle) {
-        this.originText = text;
-        if (refreshStyle) {
-            refreshStyle();
-            // ThreadPoolService.getInstance().run(this::refreshStyle);
-        } else {
-            String finalText = text;
-            Platform.runLater(() -> {
-                codeArea.replaceText(finalText);
-            });
-        }
+        String normalizedText = StringUtils.defaultString(text);
+        this.originText = normalizedText;
+        scheduleTextUpdate(normalizedText, refreshStyle);
     }
 
     /**
@@ -125,43 +118,50 @@ public class DisplayCodeArea extends VirtualizedScrollPane<CodeArea> {
     /**
      * force to update style
      */
-    private void refreshStyle() {
-        if (StringUtils.isEmpty(originText)) {
+    private void scheduleTextUpdate(String text, boolean refreshStyle) {
+        long version = renderRevision.next();
+        Runnable update = () -> applyTextUpdate(version, text, refreshStyle);
+        if (Platform.isFxApplicationThread()) {
+            update.run();
+        } else {
+            Platform.runLater(update);
+        }
+    }
+
+    private void applyTextUpdate(long version, String text, boolean refreshStyle) {
+        if (!renderRevision.isCurrent(version)) {
             return;
         }
-        Highlighter<Collection<String>> highlighter = getCurrentHighlighter();
-        assert highlighter != null;
-
-        // format text
-        String formatText = originText;
-        if (highlighter instanceof Formatter formatter) {
-            formatText = formatter.format(originText, this.contentType);
-        }
-
-        // truncate text
-        if (formatText != null && formatText.length() > MAX_TEXT_LENGTH) {
-            log.info("formatText is too long, truncate it.");
-            formatText = CommonUtils.truncate(formatText, MAX_TEXT_LENGTH);
-            appendixLen = formatText.length() - MAX_TEXT_LENGTH;
-        } else {
-            appendixLen = 0;
-        }
-
-        if (!StringUtils.equals(formatText, codeArea.getText())) {
-            String finalText = formatText;
-            Platform.runLater(() -> {
-                codeArea.replaceText(finalText);
-            });
-        }
-
-        // highlight
-        Platform.runLater(() -> {
-            StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(codeArea.getText());
-            codeArea.setStyleSpans(0, styleSpans);
-            if (appendixLen > 0) {
-                codeArea.setStyle(codeArea.getLength() - appendixLen, codeArea.getLength(), Collections.singleton("appendix"));
+        String displayText = text;
+        Highlighter<Collection<String>> highlighter = null;
+        if (refreshStyle) {
+            highlighter = getCurrentHighlighter();
+            if (highlighter instanceof Formatter formatter) {
+                displayText = StringUtils.defaultString(formatter.format(text, this.contentType));
             }
-        });
+        }
+
+        int appendixLength = 0;
+        if (displayText.length() > MAX_TEXT_LENGTH) {
+            log.info("formatText is too long, truncate it.");
+            displayText = CommonUtils.truncate(displayText, MAX_TEXT_LENGTH);
+            appendixLength = Math.max(0, displayText.length() - MAX_TEXT_LENGTH);
+        }
+
+        if (!StringUtils.equals(displayText, codeArea.getText())) {
+            codeArea.replaceText(displayText);
+        }
+        if (refreshStyle && highlighter != null) {
+            StyleSpans<Collection<String>> styleSpans = highlighter.computeHighlight(displayText);
+            if (!renderRevision.isCurrent(version)) {
+                return;
+            }
+            codeArea.setStyleSpans(0, styleSpans);
+            if (appendixLength > 0) {
+                codeArea.setStyle(codeArea.getLength() - appendixLength, codeArea.getLength(),
+                        Collections.singleton("appendix"));
+            }
+        }
     }
 
     private Highlighter<Collection<String>> getCurrentHighlighter() {

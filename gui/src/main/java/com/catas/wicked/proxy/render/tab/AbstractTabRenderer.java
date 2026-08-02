@@ -5,7 +5,6 @@ import com.catas.wicked.common.util.TableUtils;
 import com.catas.wicked.proxy.gui.componet.MessageLabel;
 import com.catas.wicked.proxy.gui.componet.SideBar;
 import com.catas.wicked.proxy.render.TabRenderer;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
@@ -17,11 +16,7 @@ public abstract class AbstractTabRenderer implements TabRenderer {
 
     protected void renderHeaders(Map<String, String> headers, TableView<HeaderEntry> tableView) {
         ObservableList<HeaderEntry> list = TableUtils.headersConvert(headers);
-        Platform.runLater(() -> {
-            if (!tableView.getColumns().isEmpty()) {
-                tableView.setItems(list);
-            }
-        });
+        renderHeaders(list, tableView);
     }
 
     protected void renderHeaders(ObservableList<HeaderEntry> list, TableView<HeaderEntry> tableView) {
@@ -35,18 +30,14 @@ public abstract class AbstractTabRenderer implements TabRenderer {
     }
 
     protected void setMsgLabel(MessageLabel msgLabel, String msg) {
-        Platform.runLater(() -> {
-            msgLabel.setText(msg);
-            msgLabel.setVisible(true);
-        });
+        msgLabel.setText(msg);
+        msgLabel.setVisible(true);
     }
 
     protected void setMsgLabel(MessageLabel msgLabel, String msg, HBox labelBox) {
-        Platform.runLater(() -> {
-            msgLabel.setText(msg);
-            msgLabel.setVisible(true);
-            labelBox.setVisible(true);
-        });
+        msgLabel.setText(msg);
+        msgLabel.setVisible(true);
+        labelBox.setVisible(true);
     }
 
     protected SideBar.Strategy predictCodeStyle(ContentType contentType, int contentLength) {

@@ -13,8 +13,13 @@ final class RequestStatusIndicator extends StackPane {
     private final LocalizationService localization;
     private final FontIcon icon = new FontIcon();
     private final Tooltip tooltip = new Tooltip();
-    private final InvalidationListener statusListener = observable -> refresh();
+    private final InvalidationListener stateListener = observable -> {
+        refreshVisualState();
+        refreshDescription();
+    };
+    private final InvalidationListener descriptionListener = observable -> refreshDescription();
     private RequestCell requestCell;
+    private RequestCell.TransferState renderedState;
 
     RequestStatusIndicator(LocalizationService localization) {
         this.localization = localization;
@@ -26,41 +31,46 @@ final class RequestStatusIndicator extends StackPane {
         icon.setIconSize(11);
         getChildren().add(icon);
         Tooltip.install(this, tooltip);
-        localization.languageProperty().addListener(statusListener);
+        localization.languageProperty().addListener(descriptionListener);
     }
 
     void bind(RequestCell cell) {
         if (requestCell == cell) {
-            refresh();
             return;
         }
         unbind();
         requestCell = cell;
         if (cell != null) {
-            cell.transferStateProperty().addListener(statusListener);
-            cell.transferStatusKeyProperty().addListener(statusListener);
-            cell.transferStatusDetailProperty().addListener(statusListener);
+            cell.transferStateProperty().addListener(stateListener);
+            cell.transferStatusKeyProperty().addListener(descriptionListener);
+            cell.transferStatusDetailProperty().addListener(descriptionListener);
         }
-        refresh();
+        refreshVisualState();
+        refreshDescription();
     }
 
     void unbind() {
         if (requestCell != null) {
-            requestCell.transferStateProperty().removeListener(statusListener);
-            requestCell.transferStatusKeyProperty().removeListener(statusListener);
-            requestCell.transferStatusDetailProperty().removeListener(statusListener);
+            requestCell.transferStateProperty().removeListener(stateListener);
+            requestCell.transferStatusKeyProperty().removeListener(descriptionListener);
+            requestCell.transferStatusDetailProperty().removeListener(descriptionListener);
             requestCell = null;
         }
+        setVisible(false);
     }
 
-    private void refresh() {
-        getStyleClass().removeAll("pending", "success", "failed");
+    private void refreshVisualState() {
         if (requestCell == null) {
             setVisible(false);
             return;
         }
         setVisible(true);
         RequestCell.TransferState state = requestCell.getTransferState();
+        if (state == renderedState) {
+            return;
+        }
+
+        getStyleClass().removeAll("pending", "success", "failed");
         switch (state) {
             case SUCCESS -> {
                 getStyleClass().add("success");
@@ -75,6 +85,16 @@ final class RequestStatusIndicator extends StackPane {
                 icon.setIconLiteral("far-circle");
             }
         }
+        renderedState = state;
+    }
+
+    private void refreshDescription() {
+        if (requestCell == null) {
+            tooltip.setText("");
+            setAccessibleText("");
+            return;
+        }
+        RequestCell.TransferState state = requestCell.getTransferState();
         String message = localization.getMessage(requestCell.getTransferStatusKey());
         if (StringUtils.isNotBlank(requestCell.getTransferStatusDetail())) {
             message += "\n" + requestCell.getTransferStatusDetail();
