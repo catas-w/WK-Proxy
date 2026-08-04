@@ -13,9 +13,14 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.LongSupplier;
 
@@ -24,14 +29,20 @@ import java.util.function.LongSupplier;
 public class OshiProcessInfoResolver implements ProcessInfoResolver {
 
     static final long SNAPSHOT_TTL_NANOS = 100_000_000L;
+    static final long PROCESS_CACHE_TTL_NANOS = TimeUnit.SECONDS.toNanos(5);
+    static final int PROCESS_CACHE_MAX_ENTRIES = 256;
 
     private final SystemQuery systemQuery;
     private final String osName;
     private final LongSupplier nanoTime;
     private final Object snapshotLock = new Object();
+    private final Object processCacheLock = new Object();
     private final AtomicBoolean linkageFailureLogged = new AtomicBoolean();
+    private final Map<Integer, Object> processLookupLocks = new ConcurrentHashMap<>();
+    private final LinkedHashMap<Integer, CachedProcessInfo> processCache =
+            new LinkedHashMap<>(16, 0.75f, true);
 
-    private volatile ConnectionSnapshot snapshot = new ConnectionSnapshot(List.of(), 0L);
+    private volatile ConnectionSnapshot snapshot = ConnectionSnapshot.empty();
 
     public OshiProcessInfoResolver() {
         this(new OshiSystemQuery(), SystemUtils.OS_NAME, System::nanoTime);
@@ -52,18 +63,16 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
             return ProcessInfo.withStatus(ProcessInfo.LookupStatus.NOT_FOUND);
         }
         try {
-            ConnectionRecord connection = findConnection(getSnapshot(false).connections(), clientAddress, proxyAddress);
+            ConnectionSnapshot current = getSnapshot(false, -1L);
+            ConnectionRecord connection = current.findConnection(clientAddress, proxyAddress);
             if (connection == null) {
-                connection = findConnection(getSnapshot(true).connections(), clientAddress, proxyAddress);
+                current = getSnapshot(true, current.generation());
+                connection = current.findConnection(clientAddress, proxyAddress);
             }
             if (connection == null || connection.owningProcessId() <= 0) {
                 return ProcessInfo.withStatus(ProcessInfo.LookupStatus.NOT_FOUND);
             }
-            NativeProcess owner = systemQuery.queryProcess(connection.owningProcessId());
-            if (owner == null) {
-                return ProcessInfo.withStatus(ProcessInfo.LookupStatus.NOT_FOUND);
-            }
-            return toProcessInfo(owner);
+            return resolveProcessInfo(connection.owningProcessId());
         } catch (UnsupportedOperationException exception) {
             log.debug("Process lookup is unsupported", exception);
             return ProcessInfo.withStatus(ProcessInfo.LookupStatus.UNSUPPORTED);
@@ -81,24 +90,113 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
         }
     }
 
-    private ConnectionSnapshot getSnapshot(boolean forceRefresh) {
+    private ConnectionSnapshot getSnapshot(boolean forceRefresh, long observedGeneration) {
         long now = nanoTime.getAsLong();
         ConnectionSnapshot current = snapshot;
-        if (!forceRefresh && current.fetchedAtNanos() > 0
-                && now - current.fetchedAtNanos() < SNAPSHOT_TTL_NANOS) {
+        if (!forceRefresh && current.isFresh(now)) {
+            log.debug("Process connection snapshot hit, generation={}", current.generation());
             return current;
         }
         synchronized (snapshotLock) {
             current = snapshot;
             now = nanoTime.getAsLong();
-            if (!forceRefresh && current.fetchedAtNanos() > 0
-                    && now - current.fetchedAtNanos() < SNAPSHOT_TTL_NANOS) {
+            if (forceRefresh && current.generation() != observedGeneration) {
+                log.debug("Reusing concurrently refreshed process connection snapshot, generation={}",
+                        current.generation());
                 return current;
             }
-            ConnectionSnapshot refreshed = new ConnectionSnapshot(List.copyOf(systemQuery.queryConnections()), now);
+            if (!forceRefresh && current.isFresh(now)) {
+                log.debug("Process connection snapshot hit after lock, generation={}", current.generation());
+                return current;
+            }
+            long startedAt = now;
+            List<ConnectionRecord> connections = List.copyOf(systemQuery.queryConnections());
+            long completedAt = nanoTime.getAsLong();
+            ConnectionSnapshot refreshed = ConnectionSnapshot.create(
+                    connections, completedAt, current.generation() + 1);
             snapshot = refreshed;
+            log.debug("Refreshed process connection snapshot: generation={}, forced={}, connections={}, elapsedMs={}",
+                    refreshed.generation(), forceRefresh, connections.size(),
+                    TimeUnit.NANOSECONDS.toMillis(completedAt - startedAt));
             return refreshed;
         }
+    }
+
+    private ProcessInfo resolveProcessInfo(int ownerPid) {
+        ProcessInfo cached = getCachedProcessInfo(ownerPid);
+        if (cached != null) {
+            log.debug("Process info cache hit, pid={}", ownerPid);
+            return cached;
+        }
+
+        Object processLock = processLookupLocks.computeIfAbsent(ownerPid, ignored -> new Object());
+        try {
+            synchronized (processLock) {
+                cached = getCachedProcessInfo(ownerPid);
+                if (cached != null) {
+                    log.debug("Process info cache hit after lock, pid={}", ownerPid);
+                    return cached;
+                }
+                NativeProcess owner = systemQuery.queryProcess(ownerPid);
+                if (owner == null) {
+                    return ProcessInfo.withStatus(ProcessInfo.LookupStatus.NOT_FOUND);
+                }
+                ProcessInfo processInfo = toProcessInfo(owner);
+                cacheProcessInfo(ownerPid, processInfo);
+                return copyProcessInfo(processInfo);
+            }
+        } finally {
+            processLookupLocks.remove(ownerPid, processLock);
+        }
+    }
+
+    private ProcessInfo getCachedProcessInfo(int ownerPid) {
+        long now = nanoTime.getAsLong();
+        synchronized (processCacheLock) {
+            CachedProcessInfo cached = processCache.get(ownerPid);
+            if (cached == null) {
+                return null;
+            }
+            if (now - cached.cachedAtNanos() >= PROCESS_CACHE_TTL_NANOS) {
+                processCache.remove(ownerPid);
+                return null;
+            }
+            return copyProcessInfo(cached.processInfo());
+        }
+    }
+
+    private void cacheProcessInfo(int ownerPid, ProcessInfo processInfo) {
+        if (processInfo == null || processInfo.getLookupStatus() != ProcessInfo.LookupStatus.FOUND) {
+            return;
+        }
+        long now = nanoTime.getAsLong();
+        synchronized (processCacheLock) {
+            Iterator<Map.Entry<Integer, CachedProcessInfo>> iterator = processCache.entrySet().iterator();
+            while (iterator.hasNext()) {
+                CachedProcessInfo cached = iterator.next().getValue();
+                if (now - cached.cachedAtNanos() >= PROCESS_CACHE_TTL_NANOS) {
+                    iterator.remove();
+                }
+            }
+            processCache.put(ownerPid, new CachedProcessInfo(copyProcessInfo(processInfo), now));
+            while (processCache.size() > PROCESS_CACHE_MAX_ENTRIES) {
+                Iterator<Integer> keys = processCache.keySet().iterator();
+                keys.next();
+                keys.remove();
+            }
+        }
+    }
+
+    private static ProcessInfo copyProcessInfo(ProcessInfo source) {
+        return ProcessInfo.builder()
+                .ownerPid(source.getOwnerPid())
+                .ownerProcessName(source.getOwnerProcessName())
+                .ownerExecutablePath(source.getOwnerExecutablePath())
+                .applicationPid(source.getApplicationPid())
+                .applicationName(source.getApplicationName())
+                .applicationExecutablePath(source.getApplicationExecutablePath())
+                .lookupStatus(source.getLookupStatus())
+                .build();
     }
 
     private ProcessInfo toProcessInfo(NativeProcess owner) {
@@ -316,7 +414,43 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
     record NativeProcess(int pid, int parentPid, String name, String path) {
     }
 
-    private record ConnectionSnapshot(List<ConnectionRecord> connections, long fetchedAtNanos) {
+    private record PortPair(int localPort, int remotePort) {
+    }
+
+    private record CachedProcessInfo(ProcessInfo processInfo, long cachedAtNanos) {
+    }
+
+    private record ConnectionSnapshot(Map<PortPair, List<ConnectionRecord>> connectionsByPort,
+                                      long fetchedAtNanos,
+                                      long generation) {
+
+        private static ConnectionSnapshot empty() {
+            return new ConnectionSnapshot(Map.of(), 0L, 0L);
+        }
+
+        private static ConnectionSnapshot create(List<ConnectionRecord> connections,
+                                                 long fetchedAtNanos,
+                                                 long generation) {
+            Map<PortPair, List<ConnectionRecord>> mutableIndex = new LinkedHashMap<>();
+            for (ConnectionRecord connection : connections) {
+                PortPair key = new PortPair(connection.localPort(), connection.remotePort());
+                mutableIndex.computeIfAbsent(key, ignored -> new ArrayList<>()).add(connection);
+            }
+            Map<PortPair, List<ConnectionRecord>> immutableIndex = new LinkedHashMap<>();
+            mutableIndex.forEach((key, value) -> immutableIndex.put(key, List.copyOf(value)));
+            return new ConnectionSnapshot(Map.copyOf(immutableIndex), fetchedAtNanos, generation);
+        }
+
+        private boolean isFresh(long now) {
+            return generation > 0 && now - fetchedAtNanos < SNAPSHOT_TTL_NANOS;
+        }
+
+        private ConnectionRecord findConnection(InetSocketAddress clientAddress,
+                                                InetSocketAddress proxyAddress) {
+            List<ConnectionRecord> candidates = connectionsByPort.getOrDefault(
+                    new PortPair(clientAddress.getPort(), proxyAddress.getPort()), List.of());
+            return OshiProcessInfoResolver.findConnection(candidates, clientAddress, proxyAddress);
+        }
     }
 
 }

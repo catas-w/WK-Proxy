@@ -49,7 +49,7 @@ public class ProcessInfoLookupService {
             executor.execute(() -> {
                 try {
                     ProcessInfo processInfo = resolver.resolve(clientAddress, proxyAddress);
-                    log.info("ProcessInfoLookupService.lookup: {}", processInfo);
+                    log.debug("ProcessInfoLookupService.lookup: {}", processInfo);
                     result.complete(processInfo == null ? ProcessInfo.unknown() : processInfo);
                 } catch (Exception exception) {
                     log.warn("Unexpected process lookup failure", exception);
