@@ -15,7 +15,7 @@ mvn clean;
 #mvn gluonfx:runagent
 mvn gluonfx:compile
 
-rm target/gluonfx/aarch64-darwin/gvm/lib/libjnidispatch.a
+#rm target/gluonfx/aarch64-darwin/gvm/lib/libjnidispatch.a
 
 mvn gluonfx:link
 

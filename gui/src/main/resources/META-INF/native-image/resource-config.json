@@ -3,19 +3,19 @@
   "includes":[
     {
       "pattern":"\\QMETA-INF/native/libnetty_tcnative_osx_aarch_64.jnilib\\E"
-    },
+    }, 
     {
       "pattern":"\\QMETA-INF/native/netty_tcnative_windows_x86_64.dll\\E"
-    },
+    }, 
     {
       "pattern":"\\QMETA-INF/resources/fontawesome5/5.15.3/fonts/fa-brands-400.ttf\\E"
-    },
+    }, 
     {
       "pattern":"\\QMETA-INF/resources/fontawesome5/5.15.3/fonts/fa-regular-400.ttf\\E"
-    },
+    }, 
     {
       "pattern":"\\QMETA-INF/resources/fontawesome5/5.15.3/fonts/fa-solid-900.ttf\\E"
-    },
+    }, 
     {
       "pattern":"\\QMETA-INF/resources/ikonli/0.0.0/fonts/ikonli.ttf\\E"
     }, 
@@ -36,7 +36,7 @@
     }, 
     {
       "pattern":"\\QMETA-INF/services/oshi.spi.SystemInfoProvider\\E"
-    },
+    }, 
     {
       "pattern":"\\Qapplication.properties\\E"
     }, 
@@ -83,15 +83,6 @@
       "pattern":"\\Qcom/sun/jna/win32-x86-64/jnidispatch.dll\\E"
     }, 
     {
-      "pattern":"\\Qoshi.architecture.properties\\E"
-    },
-    {
-      "pattern":"\\Qoshi.macos.versions.properties\\E"
-    },
-    {
-      "pattern":"\\Qoshi.properties\\E"
-    },
-    {
       "pattern":"\\Qcss/app.css\\E"
     }, 
     {
@@ -105,12 +96,12 @@
     }, 
     {
       "pattern":"\\Qcss/dialog.css\\E"
-    },
-    {
-      "pattern":"\\Qcss/setting-page.css\\E"
-    },
+    }, 
     {
       "pattern":"\\Qcss/request-view-pane.css\\E"
+    }, 
+    {
+      "pattern":"\\Qcss/setting-page.css\\E"
     }, 
     {
       "pattern":"\\Qcss/update-dialog.css\\E"
@@ -126,12 +117,30 @@
     }, 
     {
       "pattern":"\\Qfxml/application.fxml\\E"
-    },
-    {
-      "pattern":"\\Qfxml/setting-page/\\E.*"
-    },
+    }, 
     {
       "pattern":"\\Qfxml/component/side_bar.fxml\\E"
+    }, 
+    {
+      "pattern":"\\Qfxml/setting-page/\\E.*"
+    }, 
+    {
+      "pattern":"\\Qfxml/setting-page/about.fxml\\E"
+    }, 
+    {
+      "pattern":"\\Qfxml/setting-page/general.fxml\\E"
+    }, 
+    {
+      "pattern":"\\Qfxml/setting-page/proxy.fxml\\E"
+    }, 
+    {
+      "pattern":"\\Qfxml/setting-page/settings.fxml\\E"
+    }, 
+    {
+      "pattern":"\\Qfxml/setting-page/ssl.fxml\\E"
+    }, 
+    {
+      "pattern":"\\Qimage/application/\\E.*"
     }, 
     {
       "pattern":"\\Qimage/wk-proxy.2.ico\\E"
@@ -139,9 +148,6 @@
     {
       "pattern":"\\Qimage/wk-proxy.2.png\\E"
     }, 
-    {
-      "pattern":"\\Qimage/application/\\E.*"
-    },
     {
       "pattern":"\\QlibCertInstallerLib.dylib\\E"
     }, 
@@ -156,6 +162,15 @@
     }, 
     {
       "pattern":"\\Qorg/fxmisc/richtext/styled-text-area.css\\E"
+    }, 
+    {
+      "pattern":"\\Qoshi.architecture.properties\\E"
+    }, 
+    {
+      "pattern":"\\Qoshi.macos.versions.properties\\E"
+    }, 
+    {
+      "pattern":"\\Qoshi.properties\\E"
     }, 
     {
       "pattern":"\\Qwin32-x86-64/libwebp_animdecoder.dll\\E"
@@ -173,7 +188,6 @@
     {
       "name":"com/sun/glass/ui/win/themes",
       "locales":[
-        "", 
         "de", 
         "en", 
         "es", 

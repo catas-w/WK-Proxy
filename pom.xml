@@ -40,7 +40,7 @@
        <!-- <javafx.version>19.0.2.12</javafx.version> -->
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
         <!-- <gluonfx.maven.plugin.version>1.0.24</gluonfx.maven.plugin.version> -->
-        <gluonfx.maven.plugin.version>1.0.23</gluonfx.maven.plugin.version>
+        <gluonfx.maven.plugin.version>1.0.29</gluonfx.maven.plugin.version>
         <gluonfx.target>host</gluonfx.target>
         <javafx.version>22.0.1</javafx.version>
         <micronaut.version>3.4.4</micronaut.version>

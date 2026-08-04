@@ -6,6 +6,9 @@
   "name":"[D"
 },
 {
+  "name":"[Lcom.sun.jna.platform.mac.SystemB$ProcFdInfo;"
+},
+{
   "name":"[Lio.micronaut.context.annotation.Requires$Family;"
 },
 {
@@ -112,6 +115,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.catas.wicked.common.bean.$ApplicationGroupOverviewInfo$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.catas.wicked.common.bean.$PathOverviewInfo$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -133,6 +140,15 @@
   ]
 },
 {
+  "name":"com.catas.wicked.common.bean.ProcessInfo",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true,
+  "allDeclaredConstructors":true
+},
+{
+  "name":"com.catas.wicked.common.bean.ProcessInfo$LookupStatus"
+},
+{
   "name":"com.catas.wicked.common.bean.message.BaseMessage"
 },
 {
@@ -140,15 +156,6 @@
 },
 {
   "name":"com.catas.wicked.common.bean.message.RequestMessage"
-},
-{
-  "name":"com.catas.wicked.common.bean.ProcessInfo",
-  "allDeclaredConstructors":true,
-  "allDeclaredFields":true,
-  "allDeclaredMethods":true
-},
-{
-  "name":"com.catas.wicked.common.bean.ProcessInfo$LookupStatus"
 },
 {
   "name":"com.catas.wicked.common.bean.message.ResponseMessage"
@@ -237,6 +244,7 @@
     {"name":"isEnableSysProxyOnLaunch","parameterTypes":[] }, 
     {"name":"isHandleSsl","parameterTypes":[] }, 
     {"name":"isRecording","parameterTypes":[] }, 
+    {"name":"isShowApplicationRequestCount","parameterTypes":[] }, 
     {"name":"isShowButtonLabel","parameterTypes":[] }, 
     {"name":"isSystemProxy","parameterTypes":[] }, 
     {"name":"isThrottle","parameterTypes":[] }, 
@@ -250,6 +258,7 @@
     {"name":"setPort","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setRecording","parameterTypes":["boolean"] }, 
     {"name":"setSelectedCert","parameterTypes":["java.lang.String"] }, 
+    {"name":"setShowApplicationRequestCount","parameterTypes":["boolean"] }, 
     {"name":"setShowButtonLabel","parameterTypes":["boolean"] }, 
     {"name":"setSslExcludeList","parameterTypes":["java.util.List"] }, 
     {"name":"setSysProxyBypassList","parameterTypes":["java.util.List"] }, 
@@ -515,10 +524,10 @@
 {
   "name":"com.catas.wicked.proxy.gui.componet.ViewCellFactory",
   "fields":[
-    {"name":"requestViewService"},
-    {"name":"applicationIconService"},
-    {"name":"applicationConfig"},
-    {"name":"localization"}
+    {"name":"applicationConfig"}, 
+    {"name":"applicationIconService"}, 
+    {"name":"localization"}, 
+    {"name":"requestViewService"}
   ]
 },
 {
@@ -604,26 +613,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.catas.wicked.proxy.gui.controller.settings.$AboutSettingsPageController$Definition$Reference",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.catas.wicked.proxy.gui.controller.settings.$ExternalProxySettingsPageController$Definition$Reference",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.catas.wicked.proxy.gui.controller.settings.$GeneralSettingsPageController$Definition$Reference",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.catas.wicked.proxy.gui.controller.settings.$ProxySettingsPageController$Definition$Reference",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.catas.wicked.proxy.gui.controller.settings.$SslSettingsPageController$Definition$Reference",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"com.catas.wicked.proxy.gui.controller.AppController",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
@@ -671,6 +660,26 @@
   "allDeclaredFields":true
 },
 {
+  "name":"com.catas.wicked.proxy.gui.controller.settings.$AboutSettingsPageController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.$ExternalProxySettingsPageController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.$GeneralSettingsPageController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.$ProxySettingsPageController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.gui.controller.settings.$SslSettingsPageController$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.catas.wicked.proxy.gui.controller.settings.AboutSettingsPageController",
   "allDeclaredFields":true
 },
@@ -684,7 +693,12 @@
 },
 {
   "name":"com.catas.wicked.proxy.gui.controller.settings.ProxySettingsPageController",
-  "allDeclaredFields":true
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[
+    {"name":"decrementPort","parameterTypes":[] }, 
+    {"name":"incrementPort","parameterTypes":[] }
+  ]
 },
 {
   "name":"com.catas.wicked.proxy.gui.controller.settings.SslSettingsPageController",
@@ -745,6 +759,7 @@
   "name":"com.catas.wicked.proxy.render.tab.OverViewTabRenderer",
   "fields":[
     {"name":"appConfig"}, 
+    {"name":"applicationGroupOverviewInfo"}, 
     {"name":"detailTabController"}, 
     {"name":"pathOverviewInfo"}, 
     {"name":"requestCache"}, 
@@ -785,6 +800,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.catas.wicked.proxy.service.$LocalizationService$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.catas.wicked.proxy.service.$RandomIdGenerator$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -817,6 +836,7 @@
     {"name":"appConfig"}, 
     {"name":"detailTabController"}, 
     {"name":"detailWebViewController"}, 
+    {"name":"localization"}, 
     {"name":"messageQueue"}, 
     {"name":"overViewTabRenderer"}, 
     {"name":"requestCache"}, 
@@ -824,6 +844,15 @@
     {"name":"responseTabRenderer"}, 
     {"name":"timingTabRenderer"}
   ]
+},
+{
+  "name":"com.catas.wicked.proxy.service.icon.$ApplicationIconService$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.icon.WindowsApplicationIconProvider$ShellFileInfo",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.catas.wicked.proxy.service.settings.$DefaultPortAvailabilityChecker$Definition$Reference",
@@ -907,12 +936,17 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.catas.wicked.server.handler.server.ProcessInfoLookupHandler",
+  "queriedMethods":[{"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }]
+},
+{
   "name":"com.catas.wicked.server.handler.server.ServerChannelInitializer",
   "fields":[
     {"name":"appConfig"}, 
     {"name":"certManager"}, 
     {"name":"idGenerator"}, 
     {"name":"messageQueue"}, 
+    {"name":"processInfoLookupService"}, 
     {"name":"strategyManager"}
   ]
 },
@@ -945,6 +979,14 @@
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
     {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
   ]
+},
+{
+  "name":"com.catas.wicked.server.process.$OshiProcessInfoResolver$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.server.process.$ProcessInfoLookupService$Definition$Reference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.catas.wicked.server.proxy.$ProxyServer$Definition$Reference",
@@ -1141,6 +1183,177 @@
 },
 {
   "name":"com.sun.jna.NativeLong",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.SecurityManagerExposer",
+  "queriedMethods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getClassContext","parameterTypes":[] }
+  ]
+},
+{
+  "name":"com.sun.jna.Union",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.mac.CoreFoundation$CFAllocatorRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.CoreFoundation$CFDataRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.CoreFoundation$CFIndex",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.CoreFoundation$CFMutableDictionaryRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.CoreFoundation$CFStringRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.CoreFoundation$CFTypeID",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.CoreFoundation$CFTypeRef",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.IOKit$IOIterator",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.IOKit$IORegistryEntry",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB",
+  "allPublicFields":true
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$Group",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$In4In6Addr",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$In6Addr",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$InSockInfo",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$InsiAddr",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$Passwd",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$Pri",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$ProcBsdInfo",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$ProcFdInfo",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$ProcFileInfo",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$ProcTaskAllInfo",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$ProcTaskInfo",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$RUsageInfoV2",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$SockbufInfo",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$SocketFdInfo",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$SocketInfo",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$TcpSockInfo",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$Timeval",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$VinfoStat",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$VnodeInfoPath",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.mac.SystemB$VnodePathInfo",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.unix.LibCAPI$size_t",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -1661,6 +1874,20 @@
   "name":"java.lang.RuntimePermission"
 },
 {
+  "name":"java.lang.StackWalker",
+  "queriedMethods":[
+    {"name":"getInstance","parameterTypes":["java.lang.StackWalker$Option"] }, 
+    {"name":"walk","parameterTypes":["java.util.function.Function"] }
+  ]
+},
+{
+  "name":"java.lang.StackWalker$Option"
+},
+{
+  "name":"java.lang.StackWalker$StackFrame",
+  "queriedMethods":[{"name":"getDeclaringClass","parameterTypes":[] }]
+},
+{
   "name":"java.lang.String",
   "methods":[{"name":"valueOf","parameterTypes":["java.lang.Object"] }]
 },
@@ -1761,6 +1988,10 @@
   ]
 },
 {
+  "name":"java.security.AccessController",
+  "queriedMethods":[{"name":"doPrivileged","parameterTypes":["java.security.PrivilegedAction"] }]
+},
+{
   "name":"java.security.AlgorithmParametersSpi"
 },
 {
@@ -1854,6 +2085,8 @@
     {"name":"setEffect","parameterTypes":["javafx.scene.effect.Effect"] }, 
     {"name":"setFocusTraversable","parameterTypes":["boolean"] }, 
     {"name":"setId","parameterTypes":["java.lang.String"] }, 
+    {"name":"setManaged","parameterTypes":["boolean"] }, 
+    {"name":"setMouseTransparent","parameterTypes":["boolean"] }, 
     {"name":"setOnMouseClicked","parameterTypes":["javafx.event.EventHandler"] }, 
     {"name":"setStyle","parameterTypes":["java.lang.String"] }, 
     {"name":"setVisible","parameterTypes":["boolean"] }
@@ -1875,7 +2108,10 @@
   "name":"javafx.scene.control.Button",
   "queryAllDeclaredMethods":true,
   "queryAllPublicConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setDefaultButton","parameterTypes":["boolean"] }
+  ]
 },
 {
   "name":"javafx.scene.control.ButtonBase",
@@ -1937,7 +2173,8 @@
     {"name":"setMnemonicParsing","parameterTypes":["boolean"] }, 
     {"name":"setText","parameterTypes":["java.lang.String"] }, 
     {"name":"setTextFill","parameterTypes":["javafx.scene.paint.Paint"] }, 
-    {"name":"setTextOverrun","parameterTypes":["javafx.scene.control.OverrunStyle"] }
+    {"name":"setTextOverrun","parameterTypes":["javafx.scene.control.OverrunStyle"] }, 
+    {"name":"setWrapText","parameterTypes":["boolean"] }
   ]
 },
 {
@@ -1998,8 +2235,14 @@
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
     {"name":"getContent","parameterTypes":[] }, 
-    {"name":"setContent","parameterTypes":["javafx.scene.Node"] }
+    {"name":"setContent","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"setFitToWidth","parameterTypes":["boolean"] }, 
+    {"name":"setHbarPolicy","parameterTypes":["javafx.scene.control.ScrollPane$ScrollBarPolicy"] }
   ]
+},
+{
+  "name":"javafx.scene.control.ScrollPane$ScrollBarPolicy",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
 },
 {
   "name":"javafx.scene.control.Separator",
@@ -2037,7 +2280,9 @@
   "queryAllDeclaredMethods":true,
   "methods":[
     {"name":"getTabs","parameterTypes":[] }, 
-    {"name":"setTabClosingPolicy","parameterTypes":["javafx.scene.control.TabPane$TabClosingPolicy"] }
+    {"name":"setTabClosingPolicy","parameterTypes":["javafx.scene.control.TabPane$TabClosingPolicy"] }, 
+    {"name":"setTabMaxWidth","parameterTypes":["double"] }, 
+    {"name":"setTabMinWidth","parameterTypes":["double"] }
   ]
 },
 {
@@ -2057,7 +2302,11 @@
   "name":"javafx.scene.control.TextArea",
   "queryAllDeclaredMethods":true,
   "queryAllPublicConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setPrefRowCount","parameterTypes":["int"] }, 
+    {"name":"setWrapText","parameterTypes":["boolean"] }
+  ]
 },
 {
   "name":"javafx.scene.control.TextField",
@@ -2084,7 +2333,17 @@
 {
   "name":"javafx.scene.control.ToggleButton",
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"setSelected","parameterTypes":["boolean"] }]
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setSelected","parameterTypes":["boolean"] }, 
+    {"name":"setToggleGroup","parameterTypes":["javafx.scene.control.ToggleGroup"] }
+  ]
+},
+{
+  "name":"javafx.scene.control.ToggleGroup",
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"javafx.scene.control.Tooltip",
@@ -2147,7 +2406,8 @@
     {"name":"getImage","parameterTypes":[] }, 
     {"name":"setFitHeight","parameterTypes":["double"] }, 
     {"name":"setFitWidth","parameterTypes":["double"] }, 
-    {"name":"setImage","parameterTypes":["javafx.scene.image.Image"] }
+    {"name":"setImage","parameterTypes":["javafx.scene.image.Image"] }, 
+    {"name":"setPreserveRatio","parameterTypes":["boolean"] }
   ]
 },
 {
@@ -2169,6 +2429,17 @@
     {"name":"getLeftAnchor","parameterTypes":["javafx.scene.Node"] }, 
     {"name":"getRightAnchor","parameterTypes":["javafx.scene.Node"] }, 
     {"name":"getTopAnchor","parameterTypes":["javafx.scene.Node"] }
+  ]
+},
+{
+  "name":"javafx.scene.layout.BorderPane",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setBottom","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"setCenter","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"setTop","parameterTypes":["javafx.scene.Node"] }
   ]
 },
 {
@@ -2204,7 +2475,6 @@
   ],
   "queriedMethods":[
     {"name":"getColumnIndex","parameterTypes":["javafx.scene.Node"] }, 
-    {"name":"getColumnSpan","parameterTypes":["javafx.scene.Node"] }, 
     {"name":"getRowIndex","parameterTypes":["javafx.scene.Node"] }
   ]
 },
@@ -2240,12 +2510,15 @@
   "name":"javafx.scene.layout.Region",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
+  "queryAllPublicConstructors":true,
   "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
     {"name":"setMaxHeight","parameterTypes":["double"] }, 
     {"name":"setMaxWidth","parameterTypes":["double"] }, 
     {"name":"setMinHeight","parameterTypes":["double"] }, 
     {"name":"setMinWidth","parameterTypes":["double"] }, 
     {"name":"setOpaqueInsets","parameterTypes":["javafx.geometry.Insets"] }, 
+    {"name":"setPadding","parameterTypes":["javafx.geometry.Insets"] }, 
     {"name":"setPrefHeight","parameterTypes":["double"] }, 
     {"name":"setPrefWidth","parameterTypes":["double"] }
   ]
@@ -2268,8 +2541,10 @@
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
     {"name":"setAlignment","parameterTypes":["javafx.geometry.Pos"] }, 
+    {"name":"setAlignment","parameterTypes":["javafx.scene.Node","javafx.geometry.Pos"] }, 
     {"name":"setMargin","parameterTypes":["javafx.scene.Node","javafx.geometry.Insets"] }
-  ]
+  ],
+  "queriedMethods":[{"name":"getAlignment","parameterTypes":["javafx.scene.Node"] }]
 },
 {
   "name":"javafx.scene.layout.VBox",
@@ -2279,6 +2554,7 @@
     {"name":"<init>","parameterTypes":[] }, 
     {"name":"setAlignment","parameterTypes":["javafx.geometry.Pos"] }, 
     {"name":"setMargin","parameterTypes":["javafx.scene.Node","javafx.geometry.Insets"] }, 
+    {"name":"setSpacing","parameterTypes":["double"] }, 
     {"name":"setVgrow","parameterTypes":["javafx.scene.Node","javafx.scene.layout.Priority"] }
   ],
   "queriedMethods":[{"name":"getVgrow","parameterTypes":["javafx.scene.Node"] }]
@@ -2879,6 +3155,30 @@
   ]
 },
 {
+  "name":"oshi.jna.ByRef$CloseableSizeTByReference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"oshi.jna.Struct$CloseableProcTaskAllInfo",
+  "allDeclaredFields":true
+},
+{
+  "name":"oshi.jna.Struct$CloseableRUsageInfoV2",
+  "allDeclaredFields":true
+},
+{
+  "name":"oshi.jna.Struct$CloseableSocketFdInfo",
+  "allDeclaredFields":true
+},
+{
+  "name":"oshi.jna.Struct$CloseableTimeval",
+  "allDeclaredFields":true
+},
+{
+  "name":"oshi.jna.Struct$CloseableVnodePathInfo",
+  "allDeclaredFields":true
+},
+{
   "name":"sun.misc.Unsafe",
   "allDeclaredFields":true,
   "methods":[{"name":"invokeCleaner","parameterTypes":["java.nio.ByteBuffer"] }],
@@ -3061,10 +3361,5 @@
 {
   "name":"sun.security.x509.SubjectKeyIdentifierExtension",
   "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-},
-{
-  "name":"com.catas.wicked.proxy.service.icon.WindowsApplicationIconProvider$ShellFileInfo",
-  "allDeclaredFields":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
 }
 ]
