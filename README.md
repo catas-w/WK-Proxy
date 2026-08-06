@@ -39,6 +39,19 @@ cd gui/target
 java -jar gui-${version}.jar
 ```
 
+### Native build diagnostics
+
+Use the optional profile to print embedded-resource registration and native
+image heap partition sizes without changing regular release builds:
+
+```shell
+mvn -pl gui -Pnative-diagnostics clean gluonfx:compile
+```
+
+Set `WK_PROXY_STARTUP_METRICS=true` when launching the JVM or native executable
+to log the time spent in launcher/dependency injection, FXML/CSS loading, stage
+creation, and the first JavaFX pulse.
+
 ## Contribution
 Welcome to contribute! If you have any suggestions or comments, please submit an [Issue](https://github.com/catas-w/WK-Proxy/issues)
 Or contact me [catasw@foxmail.com](mailto:catasw@foxmail.com)

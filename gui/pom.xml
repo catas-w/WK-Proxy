@@ -314,4 +314,25 @@
             </resource>
         </resources>
     </build>
+
+    <profiles>
+        <profile>
+            <id>native-diagnostics</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.gluonhq</groupId>
+                        <artifactId>gluonfx-maven-plugin</artifactId>
+                        <configuration>
+                            <verbose>true</verbose>
+                            <nativeImageArgs combine.children="append">
+                                <arg>-H:Log=registerResource:3</arg>
+                                <arg>-H:+PrintImageHeapPartitionSizes</arg>
+                            </nativeImageArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

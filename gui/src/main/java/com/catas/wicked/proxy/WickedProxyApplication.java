@@ -11,6 +11,7 @@ import com.catas.wicked.proxy.service.DataOutputService;
 import com.catas.wicked.server.proxy.ProxyServer;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Inject;
+import javafx.animation.AnimationTimer;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -48,11 +49,13 @@ public class WickedProxyApplication implements ApplicationDelegate {
     private StageProvider stageProvider;
 
     public static void main(String[] args) {
+        StartupMetrics.markMainEntered();
         FxLauncher.find().launch(args, WickedProxyApplication.class);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        StartupMetrics.markApplicationStarted();
         Locale locale = applicationConfig.getSettings().getLanguage().getLocale();
         Locale.setDefault(locale);
         ResourceBundle bundle = ResourceBundle.getBundle("lang.messages", locale);
@@ -61,6 +64,7 @@ public class WickedProxyApplication implements ApplicationDelegate {
         loader.setResources(bundle);
 
         Parent root = loader.load();
+        StartupMetrics.markFxmlLoaded();
         // Scene scene = new Scene(root, 1000, 680);
         Scene scene = new Scene(root, 1100, 750);
         scene.setFill(Color.TRANSPARENT);
@@ -71,6 +75,22 @@ public class WickedProxyApplication implements ApplicationDelegate {
 
         primaryStage.setScene(scene);
         primaryStage.show();
+        StartupMetrics.markStageShown();
+        logStartupTimingOnFirstPulse();
+    }
+
+    private void logStartupTimingOnFirstPulse() {
+        AnimationTimer firstPulseTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                stop();
+                String timing = StartupMetrics.completeFirstPulse();
+                if (timing != null) {
+                    log.info(timing);
+                }
+            }
+        };
+        firstPulseTimer.start();
     }
 
     @Override

@@ -39,6 +39,16 @@ cd gui/target
 java -jar gui-${version}.jar
 ```
 
+### Native 构建诊断
+
+使用可选 profile 输出嵌入资源注册信息和 Native Image 镜像堆分区大小，普通发布构建不受影响：
+
+```shell
+mvn -pl gui -Pnative-diagnostics clean gluonfx:compile
+```
+
+启动 JVM 或 native 可执行文件前设置 `WK_PROXY_STARTUP_METRICS=true`，日志将分别输出启动器与依赖注入、FXML/CSS 加载、Stage 创建和首个 JavaFX pulse 的耗时。
+
 ## Contribution
 欢迎贡献！有任何建议或意见您可以给我们提 [Issue](https://github.com/catas-w/WK-Proxy/issues), 
 或联系本人 [catasw@foxmail.com](mailto:catasw@foxmail.com)
