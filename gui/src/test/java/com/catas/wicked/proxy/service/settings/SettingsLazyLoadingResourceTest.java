@@ -145,8 +145,8 @@ public class SettingsLazyLoadingResourceTest {
     public void aboutPageContainsCompleteProductInformation() throws Exception {
         String fxml = read("/fxml/setting-page/about.fxml");
         assertTrue(fxml.contains("wk-proxy.2.png"));
-        assertTrue(fxml.contains("text=\"WK Proxy\""));
-        assertTrue(fxml.contains("text=\"Http debug proxy tool.\""));
+        assertTrue(fxml.contains("text=\"%app-name.label\""));
+        assertTrue(fxml.contains("text=\"%about-description.label\""));
         assertTrue(fxml.contains("fx:id=\"appVersionLabel\""));
         assertTrue(fxml.contains("fx:id=\"licenseLink\""));
         assertTrue(fxml.contains("fx:id=\"githubLink\""));

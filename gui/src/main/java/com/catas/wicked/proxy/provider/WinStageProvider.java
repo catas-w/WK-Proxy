@@ -2,6 +2,7 @@ package com.catas.wicked.proxy.provider;
 
 import com.catas.wicked.common.provider.StageProvider;
 import com.catas.wicked.common.provider.WinCondition;
+import com.catas.wicked.proxy.ProductInfo;
 import io.micronaut.context.annotation.Requires;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Singleton;
@@ -28,7 +29,7 @@ public class WinStageProvider implements StageProvider {
     @Override
     public void initStage(Stage primaryStage) {
         log.info("init stage for windows");
-        primaryStage.setTitle("WK Proxy");
+        primaryStage.setTitle(ProductInfo.DISPLAY_NAME);
         if (appIcon != null) {
             primaryStage.getIcons().add(appIcon);
         }

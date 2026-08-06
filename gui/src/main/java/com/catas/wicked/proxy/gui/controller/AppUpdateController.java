@@ -8,6 +8,7 @@ import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.common.provider.VersionCheckProvider;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.CommonUtils;
+import com.catas.wicked.proxy.ProductInfo;
 import com.catas.wicked.proxy.gui.componet.skin.CustomJFXProgressBarSkin;
 import com.jfoenix.animation.alert.JFXAlertAnimation;
 import com.jfoenix.controls.JFXAlert;
@@ -137,7 +138,7 @@ public class AppUpdateController implements Initializable {
 
             Pair<String, String> res = versionCheckProvider.fetchLatestVersion();
             String version = res.getLeft();
-            String appVersion = "Wk-Proxy " + version;
+            String appVersion = ProductInfo.versionLabel(version);
             if (CommonUtils.compareVersions(appConfig.getAppVersion(), version) >= 0) {
                 AlertUtils.alertLater(Alert.AlertType.INFORMATION,
                         resourceMessageProvider.getMessage("alert.type.information"),

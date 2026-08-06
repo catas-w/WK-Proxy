@@ -67,7 +67,7 @@ public class LocalizationServiceTest {
     public void formatsMessagesAndFallsBackToTheKeyWhenMissing() {
         LocalizationService service = new LocalizationService(config(LanguagePreset.ENGLISH));
 
-        assertEquals("Version 1.0.9", service.getMessage("version-value.label", "1.0.9"));
+        assertEquals("Version 2.0.1", service.getMessage("version-value.label", "2.0.1"));
         assertEquals("missing.localization.key", service.getMessage("missing.localization.key"));
     }
 

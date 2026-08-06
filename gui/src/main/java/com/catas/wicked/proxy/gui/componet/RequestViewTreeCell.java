@@ -8,7 +8,6 @@ import javafx.animation.FadeTransition;
 import javafx.beans.InvalidationListener;
 import javafx.beans.WeakInvalidationListener;
 import javafx.beans.value.ObservableBooleanValue;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -65,7 +64,6 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
     private String displayedApplicationIconKey;
     private StackPane applicationIconContainer;
     private FontIcon applicationFallbackIcon;
-    private boolean applicationRow;
     private Label applicationNameLabel;
     private Label applicationSecondaryLabel;
     private Label applicationCountLabel;
@@ -121,32 +119,6 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
         }
     }
 
-    @Override
-    protected void layoutChildren() {
-        super.layoutChildren();
-        Node disclosureNode = lookup(".tree-disclosure-node");
-        if (disclosureNode == null) {
-            return;
-        }
-
-        // TreeCellSkin can reposition a reused disclosure node. Always calculate
-        // an absolute offset from its un-translated position to the application logo.
-        disclosureNode.setTranslateY(0);
-        if (applicationRow && applicationIconContainer != null
-                && applicationIconContainer.getParent() != null) {
-            Bounds disclosureBounds = disclosureNode.localToScene(disclosureNode.getBoundsInLocal());
-            Bounds iconBounds = applicationIconContainer.localToScene(applicationIconContainer.getBoundsInLocal());
-            if (disclosureBounds != null && iconBounds != null) {
-                double iconCenter = iconBounds.getMinY() + iconBounds.getHeight() / 2;
-                double disclosureCenter = disclosureBounds.getMinY() + disclosureBounds.getHeight() / 2;
-                double translateY = Math.rint(iconCenter - disclosureCenter);
-                if (Double.isFinite(translateY)) {
-                    disclosureNode.setTranslateY(translateY);
-                }
-            }
-        }
-    }
-
     /**
      * play animation
      */
@@ -179,8 +151,7 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
             pathStackPane.setMinWidth(0);
         }
 
-        hbox.getStyleClass().remove("req-application-row");
-        applicationRow = requestCell.getNodeType() == RequestCell.NodeType.APPLICATION;
+        resetReusableStyleState();
         setTooltip(null);
 
         if (requestCell.getPath() != null && !StringUtils.equals(requestCell.getPath(), pathLabel.getText())) {
@@ -474,14 +445,23 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
         box.getChildren().setAll(Arrays.asList(nodes));
     }
 
+    private void resetReusableStyleState() {
+        if (hbox == null) {
+            return;
+        }
+        hbox.getStyleClass().remove("req-application-row");
+        hbox.getStyleClass().remove("req-leaf");
+    }
+
     private void updateDisplay(T item, boolean empty) {
         if (item == null || empty) {
             pendingApplicationIconKey = null;
-            applicationRow = false;
             unbindApplicationLabels();
             unbindGroupCount();
             unbindRequestStatus();
             unbindFailureBadge();
+            resetReusableStyleState();
+            setTooltip(null);
             setText(null);
             setGraphic(null);
             if (this.fadeTransition != null) {

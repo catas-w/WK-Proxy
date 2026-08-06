@@ -1,4 +1,4 @@
-WK Proxy
+Wizard Proxy
 =======
 ![Java 17.0+](https://img.shields.io/badge/Java-17.0%2B-blue.svg)
 ![GraalVM 22](https://img.shields.io/badge/GraalVM-22.0+-blue.svg)
@@ -6,7 +6,7 @@ WK Proxy
 
 [English](https://github.com/catas-w/WK-Proxy/blob/master/README.md) | [中文](https://github.com/catas-w/WK-Proxy/blob/master/README_zh-CN.md)
 
-WK Proxy is an open-source desktop HTTP/HTTPS proxy and packet capture tool, available for both Windows and macOS platforms. It is designed to provide developers and testers with a clean and efficient network debugging experience.
+Wizard Proxy (WK Proxy) is an open-source desktop HTTP/HTTPS debugging proxy and packet capture tool for Windows and macOS. It gives developers and testers a clean and efficient network debugging experience.
 
 ## Features
 - Natively compiled with GraalVM & Java, offering excellent performance and cross-platform support.

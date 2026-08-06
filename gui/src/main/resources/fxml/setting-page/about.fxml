@@ -22,10 +22,10 @@
     </ImageView>
     <VBox alignment="CENTER_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
         <HBox alignment="CENTER_LEFT">
-            <Label prefHeight="45.0" text="WK Proxy" textFill="#707a7c">
+            <Label prefHeight="45.0" text="%app-name.label" textFill="#707a7c">
                 <font><Font name="MiSans Demibold" size="24.0"/></font>
             </Label>
-            <Label fx:id="descriptionLabel" prefHeight="45.0" text="Http debug proxy tool." textFill="#949090">
+            <Label fx:id="descriptionLabel" prefHeight="45.0" text="%about-description.label" textFill="#949090">
                 <HBox.margin><Insets left="10.0" top="5.0"/></HBox.margin>
             </Label>
         </HBox>

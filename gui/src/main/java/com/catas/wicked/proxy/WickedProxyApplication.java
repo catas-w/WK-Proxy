@@ -68,6 +68,7 @@ public class WickedProxyApplication implements ApplicationDelegate {
         // Scene scene = new Scene(root, 1000, 680);
         Scene scene = new Scene(root, 1100, 750);
         scene.setFill(Color.TRANSPARENT);
+        primaryStage.setTitle(ProductInfo.DISPLAY_NAME);
 
         if (stageProvider != null) {
             stageProvider.initStage(primaryStage);

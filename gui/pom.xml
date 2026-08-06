@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>gui</artifactId>
-    <name>Wk Proxy</name>
+    <name>Wizard Proxy</name>
 
     <dependencies>
         <dependency>
@@ -193,7 +193,7 @@
                     <releaseConfiguration>
                         <!-- all targets -->
                         <packageType>dmg</packageType>
-                        <description>Wk Proxy Http Proxy Debug Tool</description>
+                        <description>Wizard Proxy HTTP/HTTPS Debugging Proxy</description>
                         <vendor>Catas W</vendor>
                         <version>${wk.version}</version>
                         <!-- macOS -->
@@ -201,7 +201,7 @@
                         <!-- <macSigningUserName></macSigningUserName> -->
                         <!-- <macAppCategory></macAppCategory> -->
                         <!-- macOS/iOS -->
-                        <bundleName>Wk Proxy</bundleName>
+                        <bundleName>Wizard Proxy</bundleName>
                         <bundleVersion>${wk.version}</bundleVersion>
                         <bundleShortVersion>${wk.version}</bundleShortVersion>
                         <!-- <providedSigningIdentity></providedSigningIdentity> -->

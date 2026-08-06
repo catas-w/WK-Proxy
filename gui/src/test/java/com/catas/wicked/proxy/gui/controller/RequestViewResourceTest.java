@@ -1,10 +1,13 @@
 package com.catas.wicked.proxy.gui.controller;
 
+import com.catas.wicked.proxy.gui.componet.RequestViewTreeCell;
 import org.junit.Test;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -57,6 +60,15 @@ public class RequestViewResourceTest {
         field.setAccessible(true);
 
         assertFalse(field.getBoolean(null));
+    }
+
+    @Test
+    public void treeCellLeavesDisclosureLayoutToJavaFxSkin() {
+        boolean overridesLayoutChildren = Arrays.stream(RequestViewTreeCell.class.getDeclaredMethods())
+                .map(Method::getName)
+                .anyMatch("layoutChildren"::equals);
+
+        assertFalse(overridesLayoutChildren);
     }
 
     private String read(String path) throws Exception {

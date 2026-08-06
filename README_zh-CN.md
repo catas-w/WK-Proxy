@@ -1,4 +1,4 @@
-WK Proxy
+Wizard Proxy
 =======
 ![Java 17.0+](https://img.shields.io/badge/Java-17.0%2B-blue.svg)
 ![GraalVM 22](https://img.shields.io/badge/GraalVM-22.0+-blue.svg)
@@ -6,7 +6,7 @@ WK Proxy
 
 [English](https://github.com/catas-w/WK-Proxy/blob/master/README.md) | [中文](https://github.com/catas-w/WK-Proxy/blob/master/README_zh-CN.md)
 
-WK Proxy 是一款开源的桌面端 HTTP/HTTPS 网络代理与抓包工具，支持 Windows 和 macOS 平台，致力于为开发者与测试人员提供简洁高效的网络调试体验
+Wizard Proxy (WK Proxy) 是一款开源的桌面端 HTTP/HTTPS 网络调试代理与抓包工具，支持 Windows 和 macOS 平台，致力于为开发者与测试人员提供简洁高效的网络调试体验
 
 ## 功能特点
 - 基于 GraalVM 的 Java 原生编译，具备出色的性能表现与跨平台支持
