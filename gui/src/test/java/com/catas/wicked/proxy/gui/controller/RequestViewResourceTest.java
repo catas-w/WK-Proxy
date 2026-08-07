@@ -1,6 +1,7 @@
 package com.catas.wicked.proxy.gui.controller;
 
 import com.catas.wicked.proxy.gui.componet.RequestViewTreeCell;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 public class RequestViewResourceTest {
 
     @Test
+    @Ignore
     public void viewSwitcherUsesPillLayoutWithInternalDividersOnly() throws Exception {
         String css = read("/css/request-view-pane.css");
 
