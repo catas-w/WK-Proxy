@@ -22,7 +22,7 @@ public class AboutSettingsPageControllerTest {
         controller.openEmail();
 
         assertEquals(List.of(
-                "https://github.com/catas-w/HumBird-Proxy/",
+                "https://github.com/catas-w/WK-Proxy",
                 "https://www.gnu.org/licenses/gpl-3.0.html",
                 "mailto:catasw@foxmail.com"
         ), openedTargets);

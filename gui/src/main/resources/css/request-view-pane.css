@@ -208,7 +208,7 @@
 
 /********** filter input **********/
 #filterInput {
-    -fx-background-color: rgba(180, 180, 180, 0.51);
+    -fx-background-color: rgba(220, 220, 220, 0.6);
     -fx-background-radius: 12 12 12 12;
     -fx-border-width: 0;
     -fx-border-radius: 12;
@@ -217,6 +217,9 @@
     -fx-padding: 0 25 1 10;
 
     -fx-prompt-text-fill: #989898;
+}
+#filterInput:windows {
+    -fx-background-color: rgba(220, 220, 220, 0.6);
 }
 #filterCancelBtn {
     -fx-background-color: TRANSPARENT;
