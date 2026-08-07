@@ -238,6 +238,13 @@
     -fx-background-radius: 14px;
 }
 
+.request-view-switcher:windows {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-color: rgba(220, 220, 220, 0.6);
+    -fx-background-radius: 14px;
+}
+
 .toggle-node {
     -jfx-toggle-color: TRANSPARENT;
     -jfx-untoggle-color: TRANSPARENT;
@@ -256,7 +263,7 @@
     -fx-font-size: 11px;
 }
 .toggle-node:hover {
-    -fx-background-color: rgba(180, 180, 180, 0.28);
+    -fx-background-color: rgba(145, 145, 145, 0.28);
 }
 .toggle-node .ikonli-font-icon {
     -fx-icon-color: #686868;

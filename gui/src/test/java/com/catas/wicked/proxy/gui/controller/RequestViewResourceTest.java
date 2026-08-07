@@ -32,6 +32,16 @@ public class RequestViewResourceTest {
     }
 
     @Test
+    public void viewSwitcherDefinesWindowsBackgroundOverride() throws Exception {
+        String fxml = read("/fxml/request-view-pane.fxml");
+        String css = read("/css/request-view-pane.css");
+
+        assertTrue(fxml.contains("fx:id=\"requestViewSwitcher\""));
+        assertTrue(css.contains(".request-view-switcher:windows"));
+        assertTrue(css.contains("-fx-background-color: rgba(220, 220, 220, 0.6);"));
+    }
+
+    @Test
     public void requestStatusStylesUseStableThreeStateIndicators() throws Exception {
         String css = read("/css/request-view-pane.css");
         String english = read("/lang/messages_en.properties");

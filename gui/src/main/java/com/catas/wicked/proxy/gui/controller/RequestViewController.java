@@ -20,6 +20,7 @@ import com.catas.wicked.proxy.service.RequestViewService;
 import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.server.client.MinimalHttpClient;
 import com.jfoenix.controls.JFXToggleNode;
+import io.micronaut.context.condition.OperatingSystem;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponse;
 import jakarta.inject.Inject;
@@ -41,6 +42,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +60,10 @@ public class RequestViewController implements Initializable {
 
     private static final boolean SHOW_REQUEST_STATUS_ICON = true;
     private static final boolean SHOW_GROUP_FAILURE_COUNT = false;
+    private static final PseudoClass WINDOWS = PseudoClass.getPseudoClass("windows");
 
+    @FXML
+    private HBox requestViewSwitcher;
     @FXML
     public JFXToggleNode applicationViewToggleNode;
     @FXML
@@ -136,6 +141,7 @@ public class RequestViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        requestViewSwitcher.pseudoClassStateChanged(WINDOWS, OperatingSystem.getCurrent().isWindows());
         localization.bind(filterInput.promptTextProperty(), "filter.prompt");
         localization.bind(applicationViewToggleNode.textProperty(), "application-view.label");
         localization.bind(treeViewToggleNode.textProperty(), "tree-view.label");
