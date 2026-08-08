@@ -93,6 +93,41 @@ public class OshiProcessInfoResolverUnitTest {
     }
 
     @Test
+    public void usesALongerSnapshotTtlOnWindows() throws Exception {
+        AtomicLong clock = new AtomicLong(1L);
+        FakeSystemQuery query = new FakeSystemQuery();
+        query.connections.add(List.of(connection("127.0.0.1", 53110, "127.0.0.1", 9090, 312)));
+        query.processes.put(312, process(312, 1, "browser.exe", "C:\\Browser\\browser.exe"));
+        OshiProcessInfoResolver resolver = resolver(query, "Windows 11", clock::get);
+
+        resolver.resolve(address("127.0.0.1", 53110), address("127.0.0.1", 9090));
+        clock.addAndGet(OshiProcessInfoResolver.SNAPSHOT_TTL_NANOS + 1);
+        resolver.resolve(address("127.0.0.1", 53110), address("127.0.0.1", 9090));
+
+        Assert.assertEquals(1, query.connectionQueries);
+
+        clock.addAndGet(OshiProcessInfoResolver.WINDOWS_SNAPSHOT_TTL_NANOS);
+        resolver.resolve(address("127.0.0.1", 53110), address("127.0.0.1", 9090));
+        Assert.assertEquals(2, query.connectionQueries);
+    }
+
+    @Test
+    public void windowsWarmUpPrimesTheConnectionSnapshot() throws Exception {
+        FakeSystemQuery query = new FakeSystemQuery();
+        query.connections.add(List.of(connection("127.0.0.1", 53120, "127.0.0.1", 9090, 313)));
+        query.processes.put(313, process(313, 1, "browser.exe", "C:\\Browser\\browser.exe"));
+        OshiProcessInfoResolver resolver = resolver(query, "Windows 11");
+
+        resolver.warmUp();
+        ProcessInfo result = resolver.resolve(
+                address("127.0.0.1", 53120), address("127.0.0.1", 9090));
+
+        Assert.assertEquals(ProcessInfo.LookupStatus.FOUND, result.getLookupStatus());
+        Assert.assertEquals(1, query.warmUps);
+        Assert.assertEquals(1, query.connectionQueries);
+    }
+
+    @Test
     public void coalescesConcurrentForcedRefreshesForTheSameSnapshotGeneration() throws Exception {
         FakeSystemQuery query = new FakeSystemQuery();
         query.connections.add(List.of(connection("127.0.0.1", 53200, "127.0.0.1", 9090, 321)));
@@ -322,6 +357,7 @@ public class OshiProcessInfoResolverUnitTest {
         private final Map<Integer, OshiProcessInfoResolver.NativeProcess> processes = new HashMap<>();
         private final Map<Integer, Integer> processQueries = new HashMap<>();
         private int connectionQueries;
+        private int warmUps;
 
         @Override
         public synchronized List<OshiProcessInfoResolver.ConnectionRecord> queryConnections() {
@@ -333,6 +369,11 @@ public class OshiProcessInfoResolverUnitTest {
         public synchronized OshiProcessInfoResolver.NativeProcess queryProcess(int pid) {
             processQueries.merge(pid, 1, Integer::sum);
             return processes.get(pid);
+        }
+
+        @Override
+        public synchronized void warmUp() {
+            warmUps++;
         }
 
         private synchronized int processQueryCount(int pid) {

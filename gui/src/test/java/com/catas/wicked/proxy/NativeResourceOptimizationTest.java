@@ -33,4 +33,16 @@ public class NativeResourceOptimizationTest {
         assertTrue(pom.contains("-H:+PrintImageHeapPartitionSizes"));
     }
 
+    @Test
+    public void windowsNativeConfigIncludesTcpOwnerLookupMetadata() throws IOException {
+        String reflection = Files.readString(RESOURCES.resolve("graal/win/reflect-config.json"));
+        String proxies = Files.readString(RESOURCES.resolve("graal/win/proxy-config.json"));
+
+        assertTrue(proxies.contains("com.sun.jna.platform.win32.IPHlpAPI"));
+        assertTrue(reflection.contains("IPHlpAPI$MIB_TCPROW_OWNER_PID"));
+        assertTrue(reflection.contains("IPHlpAPI$MIB_TCPTABLE_OWNER_PID"));
+        assertTrue(reflection.contains("IPHlpAPI$MIB_TCP6ROW_OWNER_PID"));
+        assertTrue(reflection.contains("IPHlpAPI$MIB_TCP6TABLE_OWNER_PID"));
+    }
+
 }

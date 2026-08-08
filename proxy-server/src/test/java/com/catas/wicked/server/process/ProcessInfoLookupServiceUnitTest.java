@@ -8,6 +8,8 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,7 +39,7 @@ public class ProcessInfoLookupServiceUnitTest {
     }
 
     @Test
-    public void returnsUnknownImmediatelyWhenTheBoundedQueueIsFull() throws Exception {
+    public void returnsErrorImmediatelyWhenTheBoundedQueueIsFull() throws Exception {
         CountDownLatch firstLookupStarted = new CountDownLatch(1);
         CountDownLatch releaseFirstLookup = new CountDownLatch(1);
         AtomicInteger calls = new AtomicInteger();
@@ -62,12 +64,71 @@ public class ProcessInfoLookupServiceUnitTest {
 
             ProcessInfo rejected = service.lookup(address(51003), address(9090)).get(100, TimeUnit.MILLISECONDS);
 
-            Assert.assertEquals(ProcessInfo.LookupStatus.UNKNOWN, rejected.getLookupStatus());
+            Assert.assertEquals(ProcessInfo.LookupStatus.ERROR, rejected.getLookupStatus());
             releaseFirstLookup.countDown();
             Assert.assertEquals(ProcessInfo.LookupStatus.FOUND, running.get(1, TimeUnit.SECONDS).getLookupStatus());
             Assert.assertEquals(ProcessInfo.LookupStatus.FOUND, queued.get(1, TimeUnit.SECONDS).getLookupStatus());
         } finally {
             releaseFirstLookup.countDown();
+            service.shutdown();
+        }
+    }
+
+    @Test
+    public void returnsErrorAndInterruptsLookupAfterTheHardTimeout() throws Exception {
+        CountDownLatch lookupStarted = new CountDownLatch(1);
+        CountDownLatch interrupted = new CountDownLatch(1);
+        ProcessInfoResolver resolver = (client, proxy) -> {
+            lookupStarted.countDown();
+            try {
+                Thread.sleep(10_000L);
+            } catch (InterruptedException exception) {
+                interrupted.countDown();
+                Thread.currentThread().interrupt();
+            }
+            return ProcessInfo.withStatus(ProcessInfo.LookupStatus.FOUND);
+        };
+        ScheduledExecutorService timeoutExecutor = Executors.newSingleThreadScheduledExecutor();
+        ProcessInfoLookupService service = new ProcessInfoLookupService(
+                resolver, executor(1), timeoutExecutor, 40L);
+
+        try {
+            CompletableFuture<ProcessInfo> future = service.lookup(address(51006), address(9090));
+            Assert.assertTrue(lookupStarted.await(1, TimeUnit.SECONDS));
+
+            Assert.assertEquals(ProcessInfo.LookupStatus.ERROR,
+                    future.get(1, TimeUnit.SECONDS).getLookupStatus());
+            Assert.assertTrue(interrupted.await(1, TimeUnit.SECONDS));
+        } finally {
+            service.shutdown();
+        }
+    }
+
+    @Test
+    public void warmsUpOnceOutsideTheCallerThread() throws Exception {
+        CountDownLatch warmed = new CountDownLatch(1);
+        AtomicReference<String> warmUpThread = new AtomicReference<>();
+        ProcessInfoResolver resolver = new ProcessInfoResolver() {
+            @Override
+            public ProcessInfo resolve(InetSocketAddress clientAddress, InetSocketAddress proxyAddress) {
+                return ProcessInfo.withStatus(ProcessInfo.LookupStatus.FOUND);
+            }
+
+            @Override
+            public void warmUp() {
+                warmUpThread.set(Thread.currentThread().getName());
+                warmed.countDown();
+            }
+        };
+        ProcessInfoLookupService service = new ProcessInfoLookupService(resolver, executor(1));
+
+        try {
+            service.warmUp();
+            service.warmUp();
+
+            Assert.assertTrue(warmed.await(1, TimeUnit.SECONDS));
+            Assert.assertEquals("process-info-test", warmUpThread.get());
+        } finally {
             service.shutdown();
         }
     }

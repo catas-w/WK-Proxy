@@ -2910,5 +2910,25 @@
   "name":"com.catas.wicked.proxy.service.icon.WindowsApplicationIconProvider$ShellFileInfo",
   "allDeclaredFields":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCPROW_OWNER_PID",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCPTABLE_OWNER_PID",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":["com.sun.jna.Pointer"] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCP6ROW_OWNER_PID",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCP6TABLE_OWNER_PID",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":["com.sun.jna.Pointer"] }]
 }
 ]

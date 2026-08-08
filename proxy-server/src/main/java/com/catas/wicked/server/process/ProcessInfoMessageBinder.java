@@ -24,7 +24,11 @@ public class ProcessInfoMessageBinder {
                 .attr(ProcessInfoLookupHandler.PROCESS_INFO_FUTURE_KEY).get();
         ProcessInfo processInfo = ctx.channel().attr(ProcessInfoLookupHandler.PROCESS_INFO_KEY).get();
         if (future != null && future.isDone()) {
-            processInfo = future.getNow(ProcessInfo.unknown());
+            try {
+                processInfo = future.getNow(ProcessInfo.unknown());
+            } catch (RuntimeException exception) {
+                processInfo = ProcessInfo.withStatus(ProcessInfo.LookupStatus.ERROR);
+            }
         }
         requestInfo.setProcessInfo(processInfo == null ? ProcessInfo.unknown() : processInfo);
 
@@ -33,15 +37,17 @@ public class ProcessInfoMessageBinder {
         }
         String requestId = requestInfo.getRequestId();
         boolean recording = requestInfo.isRecording();
-        future.thenAccept(resolved -> ctx.executor().execute(() -> {
+        future.whenComplete((resolved, throwable) -> ctx.executor().execute(() -> {
+            ProcessInfo finalInfo = throwable == null && resolved != null
+                    ? resolved : ProcessInfo.withStatus(ProcessInfo.LookupStatus.ERROR);
             if (requestId.equals(requestInfo.getRequestId())) {
-                requestInfo.setProcessInfo(resolved);
+                requestInfo.setProcessInfo(finalInfo);
             }
             if (recording) {
                 RequestMessage update = new RequestMessage();
                 update.setType(BaseMessage.MessageType.UPDATE);
                 update.setRequestId(requestId);
-                update.setProcessInfo(resolved);
+                update.setProcessInfo(finalInfo);
                 messageQueue.pushMsg(Topic.UPDATE_MSG, update);
             }
         }));

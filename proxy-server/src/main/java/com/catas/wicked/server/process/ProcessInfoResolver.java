@@ -7,4 +7,8 @@ import java.net.InetSocketAddress;
 public interface ProcessInfoResolver {
 
     ProcessInfo resolve(InetSocketAddress clientAddress, InetSocketAddress proxyAddress);
+
+    default void warmUp() {
+        // Most resolvers have no expensive runtime initialization.
+    }
 }

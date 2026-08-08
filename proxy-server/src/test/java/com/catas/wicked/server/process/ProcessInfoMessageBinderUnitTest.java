@@ -60,6 +60,28 @@ public class ProcessInfoMessageBinderUnitTest {
     }
 
     @Test
+    public void publishesAnErrorUpdateWhenALateLookupFails() {
+        CapturingMessageQueue queue = new CapturingMessageQueue();
+        CompletableFuture<ProcessInfo> future = new CompletableFuture<>();
+        ProxyRequestInfo requestInfo = requestInfo("request-error");
+        EmbeddedChannel channel = channel(queue, requestInfo);
+        channel.attr(ProcessInfoLookupHandler.PROCESS_INFO_KEY).set(ProcessInfo.unknown());
+        channel.attr(ProcessInfoLookupHandler.PROCESS_INFO_FUTURE_KEY).set(future);
+
+        channel.writeInbound("bind");
+        future.completeExceptionally(new IllegalStateException("lookup failed"));
+        channel.runPendingTasks();
+
+        Assert.assertEquals(ProcessInfo.LookupStatus.ERROR,
+                requestInfo.getProcessInfo().getLookupStatus());
+        Assert.assertEquals(1, queue.getMessages().size());
+        RequestMessage update = (RequestMessage) queue.getMessages().get(0).message();
+        Assert.assertEquals(ProcessInfo.LookupStatus.ERROR,
+                update.getProcessInfo().getLookupStatus());
+        channel.finishAndReleaseAll();
+    }
+
+    @Test
     public void reusesTheCompletedChannelLookupForKeepAliveRequests() {
         CapturingMessageQueue queue = new CapturingMessageQueue();
         ProcessInfo resolved = foundProcess(126);
