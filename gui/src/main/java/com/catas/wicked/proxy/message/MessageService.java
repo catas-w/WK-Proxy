@@ -38,6 +38,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 @Slf4j
 @Singleton
@@ -74,6 +76,8 @@ public class MessageService {
     private ApplicationMessageTree applicationMessageTree;
     private final RequestUpdateBuffer requestUpdateBuffer = new RequestUpdateBuffer();
     private final ResponseUpdateBuffer responseUpdateBuffer = new ResponseUpdateBuffer();
+    private final AtomicBoolean requestViewActivated = new AtomicBoolean();
+    private final UiMutationScheduler uiMutationScheduler = new UiMutationScheduler(Platform::runLater);
     private boolean synchronizingSelection;
     private long selectionSyncVersion;
 
@@ -82,21 +86,39 @@ public class MessageService {
 
     @PostConstruct
     public void init() {
-        // TODO: use one thread-pool consumer
-        messageQueue.subscribe(Topic.RECORD, this::processMsg);
-        messageQueue.subscribe(Topic.UPDATE_MSG, this::processUpdate);
-
         // avoid circular dependency
         requestViewController.setMessageService(this);
         buttonBarController.setMessageService(this);
         overViewTabRenderer.setMessageService(this);
-        resetMessageTree();
+    }
+
+    public void onRequestViewReady() {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::onRequestViewReady);
+            return;
+        }
+        if (!requestViewController.isRequestViewReady()
+                || !requestViewActivated.compareAndSet(false, true)) {
+            return;
+        }
+        try {
+            resetMessageTree();
+            // MessageQueue retains startup messages until these consumers are registered.
+            messageQueue.subscribe(Topic.RECORD, this::processMsg);
+            messageQueue.subscribe(Topic.UPDATE_MSG, this::processUpdate);
+            log.debug("Request view is ready; message consumers activated");
+        } catch (RuntimeException | Error exception) {
+            requestViewActivated.set(false);
+            log.error("Unable to activate request view message consumers", exception);
+            throw exception;
+        }
     }
 
     private void resetMessageTree() {
-        messageTree = new MessageTree();
-        messageTree.setRequestViewController(requestViewController);
-        applicationMessageTree = new ApplicationMessageTree(requestViewController);
+        Consumer<Runnable> uiScheduler = uiMutationScheduler.nextSession();
+        messageTree = new MessageTree(
+                requestViewController.getTreeRoot(), requestViewController.getReqSourceList(), uiScheduler);
+        applicationMessageTree = new ApplicationMessageTree(requestViewController, uiScheduler);
         requestCntProperty.set(0);
     }
 

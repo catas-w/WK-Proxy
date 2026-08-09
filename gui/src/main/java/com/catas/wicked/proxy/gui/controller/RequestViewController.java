@@ -44,7 +44,6 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;
@@ -113,8 +112,9 @@ public class RequestViewController implements Initializable {
      * To avoid circular dependency
      * postConstruct() executed earlier than initialize()
      */
-    @Setter
     private MessageService messageService;
+
+    private boolean fxmlInitialized;
 
     /**
      * save requestList in filteredList
@@ -132,6 +132,24 @@ public class RequestViewController implements Initializable {
 
     public FilterableTreeItem<RequestCell> getApplicationTreeRoot() {
         return (FilterableTreeItem<RequestCell>) reqApplicationTreeView.getRoot();
+    }
+
+    public synchronized void setMessageService(MessageService messageService) {
+        this.messageService = messageService;
+        notifyMessageServiceIfReady();
+    }
+
+    public synchronized boolean isRequestViewReady() {
+        return fxmlInitialized
+                && reqTreeView != null && reqTreeView.getRoot() != null
+                && reqApplicationTreeView != null && reqApplicationTreeView.getRoot() != null
+                && reqListView != null && reqSourceList != null;
+    }
+
+    private synchronized void notifyMessageServiceIfReady() {
+        if (messageService != null && isRequestViewReady()) {
+            messageService.onRequestViewReady();
+        }
     }
 
     @Inject
@@ -234,6 +252,10 @@ public class RequestViewController implements Initializable {
 
         toggleRequestView();
         bindKeyboardDeleteEvent();
+        synchronized (this) {
+            fxmlInitialized = true;
+        }
+        notifyMessageServiceIfReady();
     }
 
     /**
