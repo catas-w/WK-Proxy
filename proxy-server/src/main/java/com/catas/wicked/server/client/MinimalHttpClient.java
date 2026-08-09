@@ -26,6 +26,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.Promise;
 import lombok.extern.slf4j.Slf4j;
 
@@ -158,6 +159,14 @@ public class MinimalHttpClient implements AutoCloseable {
     }
 
     public void close() {
+        synchronized (this) {
+            ReferenceCountUtil.release(httpResponse);
+            httpResponse = null;
+        }
+        closeTransport();
+    }
+
+    void closeTransport() {
         if (channelFuture != null) {
             channelFuture.channel().close();
         }
@@ -172,7 +181,14 @@ public class MinimalHttpClient implements AutoCloseable {
         if (promise == null) {
             throw new RuntimeException("Minimal client timeout in request: " + uri);
         }
-        return promise.get();
+        HttpResponse response = promise.get();
+        synchronized (this) {
+            if (httpResponse == response) {
+                // Ownership transfers to the caller. Reference-counted responses must be released by it.
+                httpResponse = null;
+            }
+        }
+        return response;
     }
 
     private HttpRequest buildHttpRequest() {

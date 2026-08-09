@@ -1,6 +1,7 @@
 package com.catas.wicked.server.handler.server;
 
 import com.catas.wicked.common.bean.ProxyRequestInfo;
+import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.bean.message.ResponseMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.ClientStatus;
@@ -33,11 +34,13 @@ import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.net.ssl.SSLHandshakeException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.channels.ClosedChannelException;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -224,12 +227,82 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        log.error("Server channel unexpected error, closing...", cause);
+        SSLHandshakeException handshakeException = findCause(cause, SSLHandshakeException.class);
+        if (handshakeException != null) {
+            ProxyRequestInfo requestInfo = ctx.channel().attr(requestInfoAttributeKey).get();
+            if (requestInfo != null) {
+                recordSslHandshakeFailure(requestInfo, handshakeException);
+                log.warn("Client TLS handshake failed for {}:{}, closing channel: {}",
+                        requestInfo.getHost(), requestInfo.getPort(), handshakeException.getMessage());
+            } else {
+                log.warn("Client TLS handshake failed, closing channel: {}", handshakeException.getMessage());
+            }
+            log.debug("Client TLS handshake failure", cause);
+        } else {
+            log.error("Server channel unexpected error, closing...", cause);
+        }
         releasePendingRequests();
         if (channelFuture != null) {
             channelFuture.channel().close();
         }
         ctx.channel().close();
+    }
+
+    private void recordSslHandshakeFailure(ProxyRequestInfo requestInfo,
+                                           SSLHandshakeException cause) {
+        requestInfo.updateClientStatus(ClientStatus.Status.SSL_HANDSHAKE_ERR, cause.getMessage());
+        requestInfo.updateRequestTime();
+        if (!requestInfo.isRecording() || messageQueue == null) {
+            return;
+        }
+
+        if (!requestInfo.isHasSentRequestMsg()) {
+            RequestMessage requestMessage = new RequestMessage(
+                    WebUtils.getHostname(requestInfo) + "/" + ProxyConstant.UNPARSED_ALIAS);
+            requestMessage.setRequestId(requestInfo.getRequestId());
+            requestMessage.setMethod("-");
+            requestMessage.setHeaders(new LinkedHashMap<>());
+            requestMessage.setEncrypted(true);
+            requestMessage.setStartTime(requestInfo.getRequestStartTime());
+            requestMessage.setEndTime(requestInfo.getRequestEndTime());
+            requestMessage.setSize(requestInfo.getRequestSize());
+            requestMessage.setRemoteHost(requestInfo.getHost());
+            requestMessage.setRemotePort(requestInfo.getPort());
+            requestMessage.setRemoteAddress(requestInfo.getRemoteAddress());
+            requestMessage.setLocalAddress(requestInfo.getLocalAddress());
+            requestMessage.setLocalPort(requestInfo.getLocalPort());
+            requestMessage.setClientStatus(requestInfo.getClientStatus().copy());
+            requestMessage.setProcessInfo(requestInfo.getProcessInfo());
+            messageQueue.pushMsg(Topic.RECORD, requestMessage);
+            requestInfo.setHasSentRequestMsg(true);
+        }
+
+        if (!requestInfo.isHasSentRespMsg()) {
+            requestInfo.updateResponseTime();
+            ResponseMessage responseMessage = new ResponseMessage();
+            responseMessage.setRequestId(requestInfo.getRequestId());
+            responseMessage.setStartTime(requestInfo.getResponseStartTime());
+            responseMessage.setEndTime(requestInfo.getResponseEndTime());
+            responseMessage.setSize(0);
+            responseMessage.setStatus(-1);
+            responseMessage.setReasonPhrase(ClientStatus.Status.SSL_HANDSHAKE_ERR.getDesc());
+            messageQueue.pushMsg(Topic.RECORD, responseMessage);
+            requestInfo.setHasSentRespMsg(true);
+        }
+    }
+
+    private static <T extends Throwable> T findCause(Throwable cause, Class<T> type) {
+        Throwable current = cause;
+        while (current != null) {
+            if (type.isInstance(current)) {
+                return type.cast(current);
+            }
+            if (current.getCause() == current) {
+                break;
+            }
+            current = current.getCause();
+        }
+        return null;
     }
 
     private void releasePendingRequests() {

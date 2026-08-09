@@ -44,6 +44,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -62,7 +64,16 @@ import java.util.NoSuchElementException;
 // @ChannelHandler.Sharable
 public class ServerStrategyHandler extends ChannelDuplexHandler {
 
-    private byte[] httpTagBuf;
+    private static final long TLS_PROBE_TIMEOUT_SECONDS = 2;
+    private static final String[] HTTP_METHOD_PREFIXES = {
+            "GET ", "POST ", "HEAD ", "PUT ", "DELETE ", "OPTIONS ", "CONNECT ", "TRACE "
+    };
+
+    private final TlsClientHelloInspector tlsInspector = new TlsClientHelloInspector();
+
+    private ByteBuf protocolProbeBuffer;
+
+    private ScheduledFuture<?> protocolProbeTimeout;
 
     private final ApplicationConfig appConfig;
 
@@ -214,21 +225,90 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
         ByteBuf byteBuf = (ByteBuf) msg;
         ProxyRequestInfo requestInfo = ctx.channel().attr(requestInfoAttributeKey).get();
 
-        if (byteBuf.getByte(0) == 22 && status == ConnectionStatus.AFTER_CONNECT) {
-            // process new request
+        if (status == ConnectionStatus.AFTER_CONNECT
+                && requestInfo.getClientType() == ProxyRequestInfo.ClientType.NORMAL
+                && requestInfo.isRecording() && needHandlerSsl(appConfig, requestInfo)) {
+            inspectConnectProtocol(ctx, byteBuf, requestInfo);
+            return;
+        }
+
+        switchToTunnel(ctx, requestInfo, byteBuf);
+    }
+
+    private void inspectConnectProtocol(ChannelHandlerContext ctx, ByteBuf input,
+                                        ProxyRequestInfo requestInfo) throws Exception {
+        int incomingSize = input.readableBytes();
+        if (protocolProbeBuffer == null) {
+            protocolProbeBuffer = ctx.alloc().buffer(Math.min(
+                    Math.max(incomingSize, 64), TlsClientHelloInspector.MAX_PROBE_BYTES));
+            protocolProbeTimeout = ctx.executor().schedule(
+                    () -> onProtocolProbeTimeout(ctx), TLS_PROBE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        }
+
+        if (protocolProbeBuffer.readableBytes() + incomingSize > TlsClientHelloInspector.MAX_PROBE_BYTES) {
+            ByteBuf replay = combineProbeAndInput(ctx, input);
+            log.debug("CONNECT protocol probe exceeded {} bytes for {}:{}, using raw tunnel",
+                    TlsClientHelloInspector.MAX_PROBE_BYTES, requestInfo.getHost(), requestInfo.getPort());
+            switchToTunnel(ctx, requestInfo, replay);
+            return;
+        }
+
+        protocolProbeBuffer.writeBytes(input, input.readerIndex(), incomingSize);
+        ReferenceCountUtil.release(input);
+
+        TlsClientHelloInspector.Result result = tlsInspector.inspect(protocolProbeBuffer);
+        if (result == TlsClientHelloInspector.Result.NEED_MORE_DATA) {
+            return;
+        }
+        if (result == TlsClientHelloInspector.Result.TUNNEL_NOT_TLS
+                && couldBeFragmentedHttp(protocolProbeBuffer)) {
+            return;
+        }
+
+        ByteBuf replay = takeProtocolProbeBuffer();
+        cancelProtocolProbeTimeout();
+        if (result == TlsClientHelloInspector.Result.MITM_SUPPORTED) {
+            installSslPipeline(ctx, requestInfo, replay);
+        } else {
+            log.debug("CONNECT protocol probe result {} for {}:{}, using raw tunnel",
+                    result, requestInfo.getHost(), requestInfo.getPort());
+            switchToTunnel(ctx, requestInfo, replay);
+        }
+    }
+
+    private void installSslPipeline(ChannelHandlerContext ctx, ProxyRequestInfo requestInfo,
+                                    ByteBuf clientHello) throws Exception {
+        boolean handedOff = false;
+        try {
             requestInfo.setSsl(true);
-            if (requestInfo.isRecording() && needHandlerSsl(appConfig, requestInfo)) {
-                int port = ((InetSocketAddress) ctx.channel().localAddress()).getPort();
-                String originHost = requestInfo.getHost();
-                SslContext sslCtx = SslContextBuilder.forServer(
-                        appConfig.getServerPriKey(), certManager.getServerCert(port, originHost)).build();
-                strategyList.setRequire(Handler.HTTP_CODEC.name(), true);
-                strategyList.setRequire(Handler.SSL_HANDLER.name(), true);
-                strategyList.setSupplier(Handler.SSL_HANDLER.name(), () -> sslCtx.newHandler(ctx.alloc()));
-                strategyManager.arrange(ctx.pipeline(), strategyList);
-                ctx.pipeline().fireChannelRead(msg);
-                return;
+            int port = ((InetSocketAddress) ctx.channel().localAddress()).getPort();
+            String originHost = requestInfo.getHost();
+            SslContext sslCtx = SslContextBuilder.forServer(
+                            appConfig.getServerPriKey(), certManager.getServerCert(port, originHost))
+                    .protocols("TLSv1.2", "TLSv1.3")
+                    .build();
+            strategyList.setRequire(Handler.HTTP_CODEC.name(), true);
+            strategyList.setRequire(Handler.SSL_HANDLER.name(), true);
+            strategyList.setSupplier(Handler.SSL_HANDLER.name(), () -> sslCtx.newHandler(ctx.alloc()));
+            strategyManager.arrange(ctx.pipeline(), strategyList);
+            handedOff = true;
+            ctx.pipeline().fireChannelRead(clientHello);
+        } catch (Exception ex) {
+            if (!handedOff) {
+                clientHello.release();
             }
+            throw ex;
+        }
+    }
+
+    private void switchToTunnel(ChannelHandlerContext ctx, ProxyRequestInfo requestInfo,
+                                ByteBuf byteBuf) {
+        cancelProtocolProbeTimeout();
+        releaseProtocolProbeBuffer();
+
+        if (byteBuf.isReadable() && byteBuf.getUnsignedByte(byteBuf.readerIndex()) == 22) {
+            // Preserve HTTPS metadata while forwarding the TLS bytes end-to-end.
+            requestInfo.setSsl(true);
         }
 
         if (requestInfo.getClientType() == ProxyRequestInfo.ClientType.NORMAL) {
@@ -240,29 +320,93 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
                 strategyManager.arrange(ctx.pipeline(), strategyList);
             } catch (NoSuchElementException ignore) {}
         }
-        if (byteBuf.readableBytes() < 8) {
-            httpTagBuf = new byte[byteBuf.readableBytes()];
-            byteBuf.readBytes(httpTagBuf);
-            ReferenceCountUtil.release(msg);
-            return;
-        }
-        if (httpTagBuf != null) {
-            byte[] tmp = new byte[byteBuf.readableBytes()];
-            byteBuf.readBytes(tmp);
-            byteBuf.writeBytes(httpTagBuf);
-            byteBuf.writeBytes(tmp);
-            httpTagBuf = null;
-        }
 
         // 如果connect后面跑的是HTTP报文，也可以抓包处理
-        if (WebUtils.isHttp(byteBuf)) {
+        if (byteBuf.readableBytes() >= 8 && WebUtils.isHttp(byteBuf)) {
             strategyList.setRequire(Handler.HTTP_CODEC.name(), true);
             strategyManager.arrange(ctx.pipeline(), strategyList);
 
-            ctx.pipeline().fireChannelRead(msg);
+            ctx.pipeline().fireChannelRead(byteBuf);
             return;
         }
-        ctx.fireChannelRead(msg);
+        ctx.fireChannelRead(byteBuf);
+    }
+
+    private ByteBuf combineProbeAndInput(ChannelHandlerContext ctx, ByteBuf input) {
+        int probeSize = protocolProbeBuffer == null ? 0 : protocolProbeBuffer.readableBytes();
+        ByteBuf replay = ctx.alloc().buffer(probeSize + input.readableBytes());
+        if (protocolProbeBuffer != null) {
+            replay.writeBytes(protocolProbeBuffer, protocolProbeBuffer.readerIndex(), probeSize);
+        }
+        replay.writeBytes(input, input.readerIndex(), input.readableBytes());
+        ReferenceCountUtil.release(input);
+        cancelProtocolProbeTimeout();
+        releaseProtocolProbeBuffer();
+        return replay;
+    }
+
+    private void onProtocolProbeTimeout(ChannelHandlerContext ctx) {
+        protocolProbeTimeout = null;
+        ByteBuf replay = takeProtocolProbeBuffer();
+        if (replay == null) {
+            return;
+        }
+        ProxyRequestInfo requestInfo = ctx.channel().attr(requestInfoAttributeKey).get();
+        if (requestInfo == null || !ctx.channel().isActive()) {
+            replay.release();
+            return;
+        }
+        log.debug("CONNECT protocol probe timed out for {}:{}, using raw tunnel",
+                requestInfo.getHost(), requestInfo.getPort());
+        switchToTunnel(ctx, requestInfo, replay);
+    }
+
+    private boolean couldBeFragmentedHttp(ByteBuf buffer) {
+        int length = buffer.readableBytes();
+        if (length >= 8) {
+            return false;
+        }
+        String prefix = buffer.toString(buffer.readerIndex(), length, java.nio.charset.StandardCharsets.US_ASCII);
+        for (String method : HTTP_METHOD_PREFIXES) {
+            if (method.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private ByteBuf takeProtocolProbeBuffer() {
+        ByteBuf buffer = protocolProbeBuffer;
+        protocolProbeBuffer = null;
+        return buffer;
+    }
+
+    private void cancelProtocolProbeTimeout() {
+        if (protocolProbeTimeout != null) {
+            protocolProbeTimeout.cancel(false);
+            protocolProbeTimeout = null;
+        }
+    }
+
+    private void releaseProtocolProbeBuffer() {
+        if (protocolProbeBuffer != null) {
+            protocolProbeBuffer.release();
+            protocolProbeBuffer = null;
+        }
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        cancelProtocolProbeTimeout();
+        releaseProtocolProbeBuffer();
+        super.channelInactive(ctx);
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        cancelProtocolProbeTimeout();
+        releaseProtocolProbeBuffer();
+        super.handlerRemoved(ctx);
     }
 
     private boolean needRecord(ApplicationConfig appConfig, ProxyRequestInfo requestInfo, HttpRequest request) {

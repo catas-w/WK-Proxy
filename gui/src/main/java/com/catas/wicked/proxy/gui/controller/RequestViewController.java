@@ -23,6 +23,7 @@ import com.jfoenix.controls.JFXToggleNode;
 import io.micronaut.context.condition.OperatingSystem;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.util.ReferenceCountUtil;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.beans.binding.Bindings;
@@ -509,7 +510,11 @@ public class RequestViewController implements Initializable {
                     .build()) {
                 client.execute();
                 HttpResponse response = client.response();
-                log.info("Get response in resending: {}", response);
+                try {
+                    log.info("Get response in resending: {}", response);
+                } finally {
+                    ReferenceCountUtil.release(response);
+                }
             } catch (Exception e) {
                 log.error("Error in resending request: {}", requestMessage.getRequestUrl());
             }

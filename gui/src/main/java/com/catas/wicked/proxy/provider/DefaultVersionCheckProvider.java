@@ -7,6 +7,7 @@ import com.catas.wicked.common.provider.VersionCheckProvider;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.util.ReferenceCountUtil;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -48,22 +49,26 @@ public class DefaultVersionCheckProvider implements VersionCheckProvider {
             log.info("Fetching release info from: {}", RELEASE_URL);
             client.execute();
             HttpResponse response = client.response();
-            HttpHeaders headers = response.headers();
-            headers.forEach(item -> {
-                headersMap.put(item.getKey(), item.getValue());
-            });
+            try {
+                HttpHeaders headers = response.headers();
+                headers.forEach(item -> {
+                    headersMap.put(item.getKey(), item.getValue());
+                });
 
-            String location = headersMap.getOrDefault("Location", "");
-            Pattern pattern = Pattern.compile("tag/(.+)");
-            Matcher matcher = pattern.matcher(location);
+                String location = headersMap.getOrDefault("Location", "");
+                Pattern pattern = Pattern.compile("tag/(.+)");
+                Matcher matcher = pattern.matcher(location);
 
-            if (!matcher.find()) {
-                throw new RuntimeException("Unable to find release info: " + location);
+                if (!matcher.find()) {
+                    throw new RuntimeException("Unable to find release info: " + location);
+                }
+
+                String version = matcher.group(1);
+                log.info("Get latest version: {}", version);
+                return Pair.of(version, location);
+            } finally {
+                ReferenceCountUtil.release(response);
             }
-
-            String version = matcher.group(1);
-            log.info("Get latest version: {}", version);
-            return Pair.of(version, location);
         } catch (Exception e) {
             log.error("Error in fetching release info.", e);
             throw new RuntimeException("Unable to find release info: " + RELEASE_URL);

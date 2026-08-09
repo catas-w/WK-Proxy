@@ -29,6 +29,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.util.ReferenceCountUtil;
 import org.junit.jupiter.api.Test;
 
 import javax.net.ssl.SSLException;
@@ -48,18 +49,21 @@ public class MinimalHttpClientTest {
         headerMap.put("Connection", "keep-alive");
         headerMap.put("User-Agent", "PostmanRuntime/7.43.0");
 
-        MinimalHttpClient client = MinimalHttpClient.builder()
-            .uri(url)
-            .method(HttpMethod.GET)
-            .headers(headerMap)
-            .fullResponse(true)
-            .build();
-        client.execute();
-        HttpResponse response = client.response();
-        HttpHeaders headers = response.headers();
-        headers.forEach(item -> {
-            System.out.println(item.getKey() + ": " + item.getValue());
-        });
+        try (MinimalHttpClient client = MinimalHttpClient.builder()
+                .uri(url)
+                .method(HttpMethod.GET)
+                .headers(headerMap)
+                .fullResponse(true)
+                .build()) {
+            client.execute();
+            HttpResponse response = client.response();
+            try {
+                HttpHeaders headers = response.headers();
+                headers.forEach(item -> System.out.println(item.getKey() + ": " + item.getValue()));
+            } finally {
+                ReferenceCountUtil.release(response);
+            }
+        }
     }
 
     @Test
@@ -72,20 +76,22 @@ public class MinimalHttpClientTest {
         headerMap.put("Accept", "*/*");
         headerMap.put("Host", "mdl.artvee.com");
 
-        MinimalHttpClient client = MinimalHttpClient.builder()
+        try (MinimalHttpClient client = MinimalHttpClient.builder()
                 .uri(url)
                 .method(HttpMethod.GET)
                 .fullResponse(true)
                 .headers(headerMap)
                 .timeout(5000)
-                .build();
-        client.execute();
-        HttpResponse response = client.response();
-
-        System.out.println("Accept response.");
-        HttpHeaders headers = response.headers();
-        headers.forEach(item -> {
-            System.out.println(item.getKey() + ": " + item.getValue());
-        });
+                .build()) {
+            client.execute();
+            HttpResponse response = client.response();
+            try {
+                System.out.println("Accept response.");
+                HttpHeaders headers = response.headers();
+                headers.forEach(item -> System.out.println(item.getKey() + ": " + item.getValue()));
+            } finally {
+                ReferenceCountUtil.release(response);
+            }
+        }
     }
 }
