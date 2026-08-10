@@ -7,6 +7,7 @@ import com.catas.wicked.common.constant.ProxyConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.util.WebUtils;
+import com.catas.wicked.server.client.UpstreamSslHandlerFactory;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,12 +15,15 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.ssl.SslHandshakeCompletionEvent;
+import io.netty.handler.ssl.SslHandler;
 import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.net.SocketException;
+import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
@@ -31,6 +35,10 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
 
     private final AttributeKey<ProxyRequestInfo> requestInfoAttributeKey =
             AttributeKey.valueOf(ProxyConstant.REQUEST_INFO);
+
+    private boolean terminalErrorHandled;
+
+    private boolean tlsFailureLogged;
 
     public ClientProcessHandler(Channel clientChannel, MessageQueue messageQueue) {
         this.clientChannel = clientChannel;
@@ -82,19 +90,65 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof SslHandshakeCompletionEvent handshakeEvent) {
+            logTlsHandshake(ctx, handshakeEvent);
+        }
+        ctx.fireUserEventTriggered(evt);
+    }
+
+    private void logTlsHandshake(ChannelHandlerContext ctx, SslHandshakeCompletionEvent event) {
+        String host = ctx.channel().attr(UpstreamSslHandlerFactory.TLS_PEER_HOST).get();
+        Integer port = ctx.channel().attr(UpstreamSslHandlerFactory.TLS_PEER_PORT).get();
+        String sni = ctx.channel().attr(UpstreamSslHandlerFactory.TLS_SNI_HOST).get();
+        Long startedAt = ctx.channel().attr(UpstreamSslHandlerFactory.TLS_HANDSHAKE_START_NANOS).get();
+        long elapsedMillis = startedAt == null ? -1L
+                : TimeUnit.NANOSECONDS.toMillis(Math.max(0L, System.nanoTime() - startedAt));
+
+        if (event.isSuccess()) {
+            SslHandler sslHandler = ctx.pipeline().get(SslHandler.class);
+            String protocol = sslHandler == null ? "-" : sslHandler.engine().getSession().getProtocol();
+            String cipher = sslHandler == null ? "-" : sslHandler.engine().getSession().getCipherSuite();
+            log.debug("Upstream TLS handshake completed for {}:{}, SNI={}, protocol={}, cipher={}, time={} ms",
+                    host, port, sni == null ? "<none>" : sni, protocol, cipher, elapsedMillis);
+            return;
+        }
+
+        tlsFailureLogged = true;
+        Throwable cause = event.cause();
+        log.warn("Upstream TLS handshake failed for {}:{}, SNI={}, time={} ms: {}",
+                host, port, sni == null ? "<none>" : sni, elapsedMillis,
+                cause == null ? "unknown error" : cause.getMessage());
+        if (cause != null) {
+            log.debug("Upstream TLS handshake failure", cause);
+        }
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        // record error
-        log.error("Error occurred in Proxy client.", cause);
+        if (terminalErrorHandled) {
+            log.debug("Ignoring duplicate upstream client error", cause);
+            ctx.close();
+            return;
+        }
+        terminalErrorHandled = true;
+
         ClientStatus.Status targetStatus;
 
-        Throwable originCause = cause.getCause();
-        if (cause instanceof SSLHandshakeException || originCause instanceof SSLHandshakeException) {
+        SSLHandshakeException handshakeException = findCause(cause, SSLHandshakeException.class);
+        SocketException socketException = findCause(cause, SocketException.class);
+        if (handshakeException != null) {
             targetStatus = ClientStatus.Status.SSL_HANDSHAKE_ERR;
-        } else if (cause instanceof SocketException || originCause instanceof SocketException) {
-            log.error("Client SocketException.");
+            if (!tlsFailureLogged) {
+                log.warn("Upstream TLS handshake failed: {}", handshakeException.getMessage());
+                log.debug("Upstream TLS handshake failure", cause);
+            }
+        } else if (socketException != null) {
+            log.warn("Upstream client socket error: {}", socketException.getMessage());
+            log.debug("Upstream client socket failure", cause);
             targetStatus = ClientStatus.Status.CONNECT_ERR;
         } else {
-            log.error("Unknown client error: ");
+            log.error("Error occurred in proxy client.", cause);
             targetStatus = ClientStatus.Status.UNKNOWN_ERR;
         }
 
@@ -103,8 +157,8 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
         // clientChannel.writeAndFlush(response);
 
         ProxyRequestInfo requestInfo = ctx.channel().attr(requestInfoAttributeKey).get();
-        requestInfo.updateClientStatus(targetStatus, cause.getMessage());
-        if (!requestInfo.getClientStatus().isSuccess()) {
+        if (requestInfo != null) {
+            requestInfo.updateClientStatus(targetStatus, cause.getMessage());
             ResponseMessage responseMsg = new ResponseMessage();
             responseMsg.setRequestId(requestInfo.getRequestId());
             // responseMsg.setStartTime(System.currentTimeMillis());
@@ -115,15 +169,22 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
             messageQueue.pushMsg(Topic.RECORD, responseMsg);
         }
 
-        log.warn("Proxy client error, closing channel-0");
-        if (ctx.channel() != null && ctx.channel().isOpen()) {
-            ctx.channel().close();
+        if (ctx.channel().isOpen()) {
+            ctx.close();
         }
-        log.warn("Proxy client error, closing channel-1");
-        if (clientChannel != null) {
+        if (clientChannel.isOpen()) {
             clientChannel.close();
         }
-        log.warn("Proxy client error, closing channel-2");
-        ctx.fireExceptionCaught(cause);
+    }
+
+    private static <T extends Throwable> T findCause(Throwable cause, Class<T> type) {
+        Throwable current = cause;
+        while (current != null) {
+            if (type.isInstance(current)) {
+                return type.cast(current);
+            }
+            current = current.getCause();
+        }
+        return null;
     }
 }

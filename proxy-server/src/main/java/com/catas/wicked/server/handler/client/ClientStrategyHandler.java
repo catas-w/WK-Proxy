@@ -4,6 +4,7 @@ import com.catas.wicked.common.bean.ProxyRequestInfo;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.ProxyConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
+import com.catas.wicked.server.client.UpstreamSslHandlerFactory;
 import com.catas.wicked.server.strategy.Handler;
 import com.catas.wicked.server.strategy.StrategyList;
 import com.catas.wicked.server.strategy.StrategyManager;
@@ -19,8 +20,6 @@ import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
-import java.net.InetSocketAddress;
 
 /**
  * decide which handlers to use when sending new request
@@ -123,15 +122,14 @@ public class ClientStrategyHandler extends ChannelDuplexHandler {
             if (requestInfo.getClientType() == ProxyRequestInfo.ClientType.NORMAL) {
                 // update sslHandler
                 if (requestInfo.isSsl()) {
-                    try {
-                        InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-                        SslHandler sslHandler = appConfig.getClientSslCtx().newHandler(ch.alloc(), address.getHostName(), address.getPort());
-                        strategyList.setSupplier(Handler.SSL_HANDLER.name(), () -> sslHandler);
-                        strategyList.setRequire(Handler.SSL_HANDLER.name(), true);
-                    } catch (Exception e) {
-                        log.error("Error establish Ssl context", e);
-                        strategyList.setRequire(Handler.SSL_HANDLER.name(), false);
+                    if (appConfig.getClientSslCtx() == null) {
+                        throw new IllegalStateException("Upstream TLS context is not ready");
                     }
+                    SslHandler sslHandler = UpstreamSslHandlerFactory.create(
+                            appConfig.getClientSslCtx(), ch,
+                            requestInfo.getHost(), requestInfo.getPort());
+                    strategyList.setSupplier(Handler.SSL_HANDLER.name(), () -> sslHandler);
+                    strategyList.setRequire(Handler.SSL_HANDLER.name(), true);
                 } else {
                     strategyList.setRequire(Handler.SSL_HANDLER.name(), false);
                 }

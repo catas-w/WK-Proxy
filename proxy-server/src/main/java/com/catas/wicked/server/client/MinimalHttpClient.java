@@ -70,13 +70,6 @@ public class MinimalHttpClient implements AutoCloseable {
     Promise<HttpResponse> responsePromise;
     BlockingQueue<Promise<HttpResponse>> msgList = new ArrayBlockingQueue<>(1);
 
-    private final SslContext context = SslContextBuilder.forClient()
-            .sslProvider(SslProvider.OPENSSL)
-            .startTls(true)
-            .protocols("TLSv1.1", "TLSv1.2", "TLSv1.3")
-            .trustManager(InsecureTrustManagerFactory.INSTANCE)
-            .build();
-
     public MinimalHttpClient() throws SSLException {
     }
 
@@ -88,19 +81,21 @@ public class MinimalHttpClient implements AutoCloseable {
         Bootstrap bootstrap = new Bootstrap();
 
         InetSocketAddress address = null;
+        String targetHost;
+        int targetPort;
         boolean isSSl = uri.startsWith("https://");
         try {
             URL url = new URL(uri);
-            String host = url.getHost();
-            int port = url.getPort();
-            if (port == -1) {
-                port = isSSl ? 443 : 80;
+            targetHost = url.getHost();
+            targetPort = url.getPort();
+            if (targetPort == -1) {
+                targetPort = isSSl ? 443 : 80;
             }
-            InetAddress addr = InetAddress.getByName(host);
-            if (!host.equalsIgnoreCase(addr.getHostAddress())) {
-                address = new InetSocketAddress(host, port);
+            InetAddress addr = InetAddress.getByName(targetHost);
+            if (!targetHost.equalsIgnoreCase(addr.getHostAddress())) {
+                address = new InetSocketAddress(targetHost, targetPort);
             } else {
-                address = InetSocketAddress.createUnresolved(host, port);
+                address = InetSocketAddress.createUnresolved(targetHost, targetPort);
             }
         } catch (Exception e) {
             log.error("Illegal uri: {}", uri, e);
@@ -109,7 +104,8 @@ public class MinimalHttpClient implements AutoCloseable {
 
         log.info("MinimalHttpClient connecting to: {}, uri: {}, method: {}", address, uri, method);
         MinimalHttpClient client = this;
-        InetSocketAddress finalAddress = address;
+        String finalTargetHost = targetHost;
+        int finalTargetPort = targetPort;
         bootstrap.group(eventExecutors)
                 .remoteAddress(address)
                 .channel(NioSocketChannel.class)
@@ -126,8 +122,10 @@ public class MinimalHttpClient implements AutoCloseable {
                             }
                         }
                         if (isSSl) {
-
-                            ch.pipeline().addLast(SSL_HANDLER, context.newHandler(ch.alloc(), finalAddress.getAddress().getHostName(), finalAddress.getPort()));
+                            ch.pipeline().addLast(SSL_HANDLER,
+                                    UpstreamSslHandlerFactory.create(
+                                            SslContextHolder.INSTANCE, ch,
+                                            finalTargetHost, finalTargetPort));
                         }
                         ch.pipeline().addLast(HTTP_CODEC, new HttpClientCodec());
                         if (fetchFullResponse) {
@@ -197,6 +195,22 @@ public class MinimalHttpClient implements AutoCloseable {
             headers.forEach((key, value) -> request.headers().set(key, value));
         }
         return request;
+    }
+
+    private static final class SslContextHolder {
+        private static final SslContext INSTANCE = createContext();
+
+        private static SslContext createContext() {
+            try {
+                return SslContextBuilder.forClient()
+                        .sslProvider(SslProvider.OPENSSL)
+                        .protocols("TLSv1.1", "TLSv1.2", "TLSv1.3")
+                        .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                        .build();
+            } catch (SSLException exception) {
+                throw new ExceptionInInitializerError(exception);
+            }
+        }
     }
 
     private List<HttpContent> buildHttpContent() {

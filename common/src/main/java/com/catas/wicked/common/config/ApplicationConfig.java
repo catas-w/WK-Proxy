@@ -21,6 +21,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.util.ReferenceCountUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
@@ -40,6 +41,9 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -72,6 +76,9 @@ public class ApplicationConfig implements AutoCloseable {
     private final AppObservableConfig observableConfig = new AppObservableConfig();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final AtomicBoolean shutDownFlag = new AtomicBoolean(false);
+    private final transient CompletableFuture<SslContext> clientSslContextFuture = new CompletableFuture<>();
+    private final transient AtomicBoolean clientSslContextStarted = new AtomicBoolean(false);
+    private final transient Object clientSslContextLock = new Object();
 
     @Inject
     private MessageQueue messageQueue;
@@ -108,24 +115,61 @@ public class ApplicationConfig implements AutoCloseable {
         }
     }
 
-    public void loadSslContext() {
-        ThreadPoolService.getInstance().run(() -> {
-            try {
-                long start = System.currentTimeMillis();
-                SslContextBuilder contextBuilder = SslContextBuilder.forClient()
-                        // .sslProvider(SslProvider.OPENSSL)
-                        .sslProvider(SslProvider.OPENSSL_REFCNT)
-                        .startTls(true)
-                        .protocols("TLSv1.1", "TLSv1.2", "TLSv1.3", "TLSv1")
-                        .trustManager(InsecureTrustManagerFactory.INSTANCE);
-                setClientSslCtx(contextBuilder.build());
-                long end = System.currentTimeMillis();
-                log.info("loadSslContext finished, time cost: {} ms", end - start);
-            } catch (Exception e) {
-                log.error("loadSslContext error: ", e);
-                setHandleSSL(false);
+    public CompletionStage<SslContext> loadSslContext() {
+        if (!clientSslContextStarted.compareAndSet(false, true)) {
+            return clientSslContextFuture;
+        }
+
+        try {
+            ThreadPoolService.getInstance().run(() -> {
+                try {
+                    long start = System.currentTimeMillis();
+                    SslContextBuilder contextBuilder = SslContextBuilder.forClient()
+                            // .sslProvider(SslProvider.OPENSSL)
+                            .sslProvider(SslProvider.OPENSSL_REFCNT)
+                            .protocols("TLSv1.1", "TLSv1.2", "TLSv1.3", "TLSv1")
+                            .trustManager(InsecureTrustManagerFactory.INSTANCE);
+                    SslContext sslContext = contextBuilder.build();
+                    if (!publishClientSslContext(sslContext)) {
+                        return;
+                    }
+                    long end = System.currentTimeMillis();
+                    log.info("loadSslContext finished, time cost: {} ms", end - start);
+                } catch (Exception | LinkageError e) {
+                    handleClientSslContextFailure(e);
+                }
+            });
+        } catch (Exception | LinkageError e) {
+            handleClientSslContextFailure(e);
+        }
+        return clientSslContextFuture;
+    }
+
+    public CompletionStage<SslContext> clientSslContextReady() {
+        return clientSslContextFuture;
+    }
+
+    private boolean publishClientSslContext(SslContext sslContext) {
+        synchronized (clientSslContextLock) {
+            if (shutDownFlag.get() || clientSslContextFuture.isDone()) {
+                ReferenceCountUtil.release(sslContext);
+                return false;
             }
-        });
+            clientSslCtx = sslContext;
+            clientSslContextFuture.complete(sslContext);
+            return true;
+        }
+    }
+
+    private void handleClientSslContextFailure(Throwable cause) {
+        synchronized (clientSslContextLock) {
+            if (clientSslContextFuture.isDone()) {
+                return;
+            }
+            log.error("loadSslContext error: ", cause);
+            setHandleSSL(false);
+            clientSslContextFuture.completeExceptionally(cause);
+        }
     }
 
     private File getLocalConfigFile() throws IOException {
@@ -230,7 +274,9 @@ public class ApplicationConfig implements AutoCloseable {
     }
 
     public void shutDownApplication() {
-        shutDownFlag.compareAndSet(false, true);
+        if (!shutDownFlag.compareAndSet(false, true)) {
+            return;
+        }
 
         // wait to clear sysProxy
         if (settings.isSystemProxy()) {
@@ -242,6 +288,13 @@ public class ApplicationConfig implements AutoCloseable {
 
         if (!(proxyLoopGroup.isShutdown() || proxyLoopGroup.isShuttingDown())) {
             proxyLoopGroup.shutdownGracefully();
+        }
+
+        synchronized (clientSslContextLock) {
+            clientSslContextFuture.completeExceptionally(
+                    new CancellationException("Application is shutting down"));
+            ReferenceCountUtil.release(clientSslCtx);
+            clientSslCtx = null;
         }
 
         ThreadPoolService.getInstance().shutdown();
