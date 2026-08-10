@@ -36,7 +36,9 @@ public class MacCertInstallProvider implements CertInstallProvider {
                 // Check if the output contains information about the certificate
                 return res.contains(certName) && (res.contains(SHA256.toUpperCase()) || res.contains(SHA256));
             } else {
-                throw new RuntimeException(res);
+                log.debug("Certificate is not installed in the macOS system keychain: {}, output: {}",
+                        certName, res.trim());
+                return false;
             }
         } catch (Exception e) {
             log.error("Error in checking cert installation in MacOS.", e);
@@ -49,8 +51,8 @@ public class MacCertInstallProvider implements CertInstallProvider {
         if (StringUtils.isBlank(certPath)) {
             throw new IllegalArgumentException();
         }
-        boolean success = CertInstallerLibrary.INSTANCE.installCert(certPath);
-        log.info("Installed certificate {} in MacOS, success: {}", certPath, success);
-        return success;
+        boolean accepted = CertInstallerLibrary.INSTANCE.installCert(certPath);
+        log.info("Certificate installation request accepted in MacOS: {}, path: {}", accepted, certPath);
+        return accepted;
     }
 }
