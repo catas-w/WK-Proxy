@@ -36,6 +36,9 @@ public class Settings {
     @JsonDeserialize(using = SafeIntegerDeserializer.class)
     private Integer maxContentSize = 10;
 
+    @JsonDeserialize(using = SafeIntegerDeserializer.class)
+    private Integer retainedPayloadSizeMb = 512;
+
     @Deprecated
     @JsonDeserialize(using = SafeJsonListDeserializer.class)
     private List<String> recordIncludeList;
@@ -95,6 +98,10 @@ public class Settings {
         return maxContentSize == null ? 10 : maxContentSize;
     }
 
+    public Integer getRetainedPayloadSizeMb() {
+        return retainedPayloadSizeMb == null || retainedPayloadSizeMb <= 0 ? 512 : retainedPayloadSizeMb;
+    }
+
     public Integer getPort() {
         return port == null ? 9966 : port;
     }
@@ -117,6 +124,7 @@ public class Settings {
         copy.showApplicationRequestCount = showApplicationRequestCount;
         copy.recording = recording;
         copy.maxContentSize = maxContentSize;
+        copy.retainedPayloadSizeMb = retainedPayloadSizeMb;
         copy.recordIncludeList = copyList(recordIncludeList);
         copy.recordExcludeList = copyList(recordExcludeList);
         copy.port = port;

@@ -25,4 +25,14 @@ public class RequestViewServiceTest {
         assertTrue(RequestViewService.matchesSelection(empty, null, 2));
         assertFalse(RequestViewService.matchesSelection(empty, "request-a", 2));
     }
+
+    @Test
+    public void requestDetailsAreAvailableOnlyForRequestLeaves() {
+        assertTrue(RequestViewService.requestDetailsAvailable("request-a"));
+        assertFalse(RequestViewService.requestDetailsAvailable(null));
+        assertFalse(RequestViewService.requestDetailsAvailable(RenderMessage.PATH_MSG + "/api"));
+        assertFalse(RequestViewService.requestDetailsAvailable(RenderMessage.APPLICATION_MSG + "chrome"));
+        assertFalse(RequestViewService.requestDetailsAvailable(
+                RenderMessage.APPLICATION_HOST_MSG + "chrome|example.com"));
+    }
 }

@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 public class MessageTree {
 
     private final TreeNode root = new TreeNode();
+    private final Map<String, TreeNode> requestNodes = new java.util.concurrent.ConcurrentHashMap<>();
 
     private int count;
 
@@ -62,6 +63,7 @@ public class MessageTree {
         TreeNode parent = findAndCreatParentNode(root, pathSplits, 0);
         parent.getLeafChildren().add(node);
         node.setParent(parent);
+        requestNodes.put(node.getRequestId(), node);
 
         // 创建 UI
         createTreeItemUI(parent, node);
@@ -80,7 +82,7 @@ public class MessageTree {
         if (!node.isLeaf() && node.getTreeItem() != null) {
             return;
         }
-        FilterableTreeItem<RequestCell> parentTreeItem = parent.getTreeItem();
+        FilterableTreeItem<RequestCell> parentTreeItem = (FilterableTreeItem<RequestCell>) parent.getTreeItem();
         // TreeItem<RequestCell> treeItem = new TreeItem<>();
 
         RequestCell requestCell = new RequestCell(node.getPath(),
@@ -92,15 +94,17 @@ public class MessageTree {
         requestCell.setSearchText(node.getFullPath() + " " + StringUtils.defaultString(requestCell.getMethod()));
 
         // treeItem.setValue(requestCell);
-        FilterableTreeItem<RequestCell> treeItem = new FilterableTreeItem<>(requestCell);
-        // expand child if children size = 1
-        treeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue && treeItem.getChildren().size() == 1) {
-                for (TreeItem<RequestCell> child : treeItem.getChildren()) {
-                    child.expandedProperty().set(true);
+        TreeItem<RequestCell> treeItem = node.isLeaf()
+                ? new TreeItem<>(requestCell) : new FilterableTreeItem<>(requestCell);
+        if (!node.isLeaf()) {
+            treeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue && treeItem.getChildren().size() == 1) {
+                    for (TreeItem<RequestCell> child : treeItem.getChildren()) {
+                        child.expandedProperty().set(true);
+                    }
                 }
-            }
-        });
+            });
+        }
         node.setTreeItem(treeItem);
 
         uiScheduler.accept(() -> attachTreeItem(parent, node, parentTreeItem, treeItem));
@@ -108,7 +112,7 @@ public class MessageTree {
 
     private void attachTreeItem(TreeNode parent, TreeNode node,
                                 FilterableTreeItem<RequestCell> parentTreeItem,
-                                FilterableTreeItem<RequestCell> treeItem) {
+                                TreeItem<RequestCell> treeItem) {
         if (!isCurrentChild(parent, node)
                 || parentTreeItem.getInternalChildren().contains(treeItem)) {
             return;
@@ -197,9 +201,11 @@ public class MessageTree {
         }
         // memory leak
         if (node.isLeaf()) {
+            requestNodes.remove(node.getRequestId());
             node.getParent().getLeafChildren().remove(node);
             // subtractCnt(1);
         } else {
+            travel(node, child -> requestNodes.remove(child.getRequestId()));
             node.getParent().getPathChildren().remove(node.getPath());
         }
     }
@@ -246,8 +252,15 @@ public class MessageTree {
      * @param requestId requestId
      */
     public TreeNode findNodeByPath(String fullPath, String requestId) {
+        if (requestId != null) {
+            return requestNodes.get(requestId);
+        }
         List<String> pathSplits = WebUtils.getPathSplits(fullPath, false);
         return findNodeByPath(root, requestId, pathSplits, 0);
+    }
+
+    TreeNode requestNode(String requestId) {
+        return requestId == null ? null : requestNodes.get(requestId);
     }
 
     private TreeNode findNodeByPath(TreeNode parent, String requestId, List<String> pathSplits, int index) {

@@ -49,6 +49,8 @@ public class ApplicationMessageTree {
         RequestEntry entry = createRequest(application, hostGroup, message);
         hostGroup.requests.put(message.getRequestId(), entry);
         requests.put(message.getRequestId(), entry);
+        application.statistics.put(message);
+        hostGroup.statistics.put(message);
 
         runOnUiThread(() -> {
             incrementCounts(application, hostGroup, entry);
@@ -69,6 +71,9 @@ public class ApplicationMessageTree {
         }
         ApplicationSource identity = ApplicationSource.from(message.getProcessInfo());
         if (StringUtils.equals(current.application.key, identity.key())) {
+            current.application.identity = identity;
+            current.application.statistics.put(message);
+            current.host.statistics.put(message);
             updateStatusInternal(current, RequestTransferStatus.from(message));
             runOnUiThread(() -> {
                 synchronized (ApplicationMessageTree.this) {
@@ -93,6 +98,8 @@ public class ApplicationMessageTree {
         }
         RequestEntry entry = requests.get(message.getRequestId());
         if (entry != null) {
+            entry.application.statistics.put(message);
+            entry.host.statistics.put(message);
             updateStatusInternal(entry, RequestTransferStatus.from(message));
         }
     }
@@ -157,6 +164,7 @@ public class ApplicationMessageTree {
             boolean hostHadRequests = !host.requests.isEmpty();
             Set<String> requestIds = new LinkedHashSet<>(host.requests.keySet());
             requestIds.forEach(requests::remove);
+            requestIds.forEach(application.statistics::remove);
             host.requests.clear();
             boolean removeApplication = hostHadRequests && application.hosts.isEmpty();
             if (removeApplication) {
@@ -238,6 +246,26 @@ public class ApplicationMessageTree {
         return null;
     }
 
+    synchronized ApplicationGroupOverview overview(RequestCell.NodeType nodeType, String nodeKey) {
+        if (nodeType == RequestCell.NodeType.APPLICATION) {
+            ApplicationGroup application = applications.get(nodeKey);
+            return application == null ? null : application.statistics.overview(nodeType,
+                    application.identity.displayName(), null, application.hosts.size());
+        }
+        if (nodeType == RequestCell.NodeType.HOST) {
+            int separator = StringUtils.defaultString(nodeKey).indexOf(KEY_SEPARATOR);
+            if (separator < 0) {
+                return null;
+            }
+            ApplicationGroup application = applications.get(nodeKey.substring(0, separator));
+            String hostName = nodeKey.substring(separator + 1);
+            HostGroup host = application == null ? null : application.hosts.get(hostName);
+            return host == null ? null : host.statistics.overview(nodeType,
+                    application.identity.displayName(), hostName, 1);
+        }
+        return null;
+    }
+
     public synchronized TreeItem<RequestCell> item(String requestId) {
         RequestEntry entry = requests.get(requestId);
         return entry == null ? null : entry.item;
@@ -249,7 +277,7 @@ public class ApplicationMessageTree {
             return;
         }
         expandParents(item);
-        if (isAttachedToRoot(item) && controller.getReqApplicationTreeView().getRow(item) >= 0) {
+        if (isAttachedToRoot(item)) {
             controller.getReqApplicationTreeView().getSelectionModel().select(item);
         }
     }
@@ -270,7 +298,11 @@ public class ApplicationMessageTree {
         Collection<HostGroup> retainedHosts = new ArrayList<>();
         retainedApplications.forEach(application -> retainedHosts.addAll(application.hosts.values()));
         requests.clear();
-        retainedHosts.forEach(host -> host.requests.clear());
+        retainedApplications.forEach(application -> application.statistics.clear());
+        retainedHosts.forEach(host -> {
+            host.requests.clear();
+            host.statistics.clear();
+        });
 
         runOnUiThread(() -> {
             controller.clearSelectionsBeforeTreeMutation();
@@ -292,7 +324,7 @@ public class ApplicationMessageTree {
         cell.setNodeType(RequestCell.NodeType.APPLICATION);
         cell.setNodeKey(identity.key());
         applyIdentity(cell, identity);
-        return new ApplicationGroup(identity.key(), new FilterableTreeItem<>(cell));
+        return new ApplicationGroup(identity.key(), identity, new FilterableTreeItem<>(cell));
     }
 
     private HostGroup createHost(ApplicationGroup application, String host) {
@@ -316,12 +348,14 @@ public class ApplicationMessageTree {
         RequestTransferStatus status = RequestTransferStatus.from(message);
         status.applyTo(cell);
         return new RequestEntry(message.getRequestId(), application, host,
-                new FilterableTreeItem<>(cell), status.state());
+                new TreeItem<>(cell), status.state());
     }
 
     private void removeInternal(RequestEntry entry, RemovalPolicy removalPolicy) {
         requests.remove(entry.requestId);
         entry.host.requests.remove(entry.requestId);
+        entry.application.statistics.remove(entry.requestId);
+        entry.host.statistics.remove(entry.requestId);
         boolean removeHost = removalPolicy == RemovalPolicy.PRUNE_EMPTY_GROUPS
                 && entry.host.requests.isEmpty();
         boolean removeApplication = removeHost && entry.application.hosts.size() == 1;
@@ -419,8 +453,14 @@ public class ApplicationMessageTree {
     }
 
     private void updateApplicationCell(ApplicationGroup application, ApplicationSource identity) {
-        applyIdentity(application.item.getValue(), identity);
-        String prefix = application.item.getValue().getSearchText();
+        RequestCell applicationCell = application.item.getValue();
+        if (StringUtils.equals(applicationCell.getPath(), identity.displayName())
+                && StringUtils.equals(applicationCell.getSecondaryText(), identity.secondaryText())
+                && StringUtils.equals(applicationCell.getStatusText(), identity.statusText())) {
+            return;
+        }
+        applyIdentity(applicationCell, identity);
+        String prefix = applicationCell.getSearchText();
         application.hosts.values().forEach(host -> {
             host.item.getValue().setSearchText(prefix + " " + host.host);
             host.requests.values().forEach(request -> request.item.getValue().setSearchText(
@@ -475,11 +515,15 @@ public class ApplicationMessageTree {
 
     private static final class ApplicationGroup {
         private final String key;
+        private ApplicationSource identity;
         private final FilterableTreeItem<RequestCell> item;
         private final Map<String, HostGroup> hosts = new LinkedHashMap<>();
+        private final ApplicationGroupStatistics.Accumulator statistics =
+                new ApplicationGroupStatistics.Accumulator();
 
-        private ApplicationGroup(String key, FilterableTreeItem<RequestCell> item) {
+        private ApplicationGroup(String key, ApplicationSource identity, FilterableTreeItem<RequestCell> item) {
             this.key = key;
+            this.identity = identity;
             this.item = item;
         }
     }
@@ -488,6 +532,8 @@ public class ApplicationMessageTree {
         private final String host;
         private final FilterableTreeItem<RequestCell> item;
         private final Map<String, RequestEntry> requests = new LinkedHashMap<>();
+        private final ApplicationGroupStatistics.Accumulator statistics =
+                new ApplicationGroupStatistics.Accumulator();
 
         private HostGroup(String host, FilterableTreeItem<RequestCell> item) {
             this.host = host;
@@ -499,11 +545,11 @@ public class ApplicationMessageTree {
         private final String requestId;
         private final ApplicationGroup application;
         private final HostGroup host;
-        private final FilterableTreeItem<RequestCell> item;
+        private final TreeItem<RequestCell> item;
         private RequestCell.TransferState transferState;
 
         private RequestEntry(String requestId, ApplicationGroup application, HostGroup host,
-                             FilterableTreeItem<RequestCell> item,
+                             TreeItem<RequestCell> item,
                              RequestCell.TransferState transferState) {
             this.requestId = requestId;
             this.application = application;

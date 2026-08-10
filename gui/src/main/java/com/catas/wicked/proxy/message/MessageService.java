@@ -7,6 +7,7 @@ import com.catas.wicked.common.bean.message.BaseMessage;
 import com.catas.wicked.common.bean.message.DeleteMessage;
 import com.catas.wicked.common.bean.message.Message;
 import com.catas.wicked.common.bean.message.RequestMessage;
+import com.catas.wicked.common.bean.message.RenderMessage;
 import com.catas.wicked.common.bean.message.ResponseMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.pipeline.MessageQueue;
@@ -16,6 +17,7 @@ import com.catas.wicked.proxy.gui.controller.ButtonBarController;
 import com.catas.wicked.proxy.gui.controller.RequestViewController;
 import com.catas.wicked.proxy.render.tab.OverViewTabRenderer;
 import com.catas.wicked.proxy.service.RequestViewService;
+import com.catas.wicked.proxy.service.record.RequestRecordStore;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -28,8 +30,6 @@ import javafx.scene.control.TreeView;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.ehcache.Cache;
-import org.ehcache.spi.loaderwriter.BulkCacheWritingException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,7 +61,7 @@ public class MessageService {
     private MessageQueue messageQueue;
 
     @Inject
-    private Cache<String, RequestMessage> requestCache;
+    private RequestRecordStore requestStore;
 
     @Inject
     private RequestViewController requestViewController;
@@ -78,8 +78,7 @@ public class MessageService {
     private final ResponseUpdateBuffer responseUpdateBuffer = new ResponseUpdateBuffer();
     private final AtomicBoolean requestViewActivated = new AtomicBoolean();
     private final UiMutationScheduler uiMutationScheduler = new UiMutationScheduler(Platform::runLater);
-    private boolean synchronizingSelection;
-    private long selectionSyncVersion;
+    private long lastQueueWarningNanos;
 
     @Getter
     private final SimpleIntegerProperty requestCntProperty = new SimpleIntegerProperty(0);
@@ -188,60 +187,26 @@ public class MessageService {
      * @param source selection source
      */
     public void selectRequestItem(String requestId, SelectionSource source) {
-        if (requestId == null || synchronizingSelection) {
+        // currentRequestId is the canonical selection. Hidden views are restored
+        // lazily when the user switches views, avoiding O(n) tree work per click.
+    }
+
+    public void restoreSelection(SelectionSource target) {
+        String requestId = appConfig.getObservableConfig().getCurrentRequestId();
+        if (requestId == null || RenderMessage.isOverviewOnly(requestId)) {
             return;
         }
-
-        long version = ++selectionSyncVersion;
-        Platform.runLater(() -> synchronizeRequestSelection(requestId, source, version));
-    }
-
-    private void synchronizeRequestSelection(String requestId, SelectionSource source, long version) {
-        if (version != selectionSyncVersion || synchronizingSelection
-                || !isStillSelected(requestId, source)) {
+        TreeNode treeNode = messageTree.requestNode(requestId);
+        if (treeNode == null) {
             return;
         }
-
-        synchronizingSelection = true;
-        try {
-            RequestMessage requestMessage = requestCache.get(requestId);
-            if (requestMessage == null) {
-                return;
-            }
-            TreeNode treeNode = messageTree.findNodeByPath(requestMessage.getRequestUrl(), requestId);
-            if (treeNode == null) {
-                log.error("treeNode to select is null: {}", requestId);
-                return;
-            }
-            if (source != SelectionSource.LIST_VIEW) {
-                ListView<RequestCell> listView = requestViewController.getReqListView();
-                if (listView.getItems().contains(treeNode.getListItem())) {
-                    listView.getSelectionModel().select(treeNode.getListItem());
-                }
-            }
-            if (source != SelectionSource.TREE_VIEW) {
-                selectAttachedTreeItem(requestViewController.getReqTreeView(), treeNode.getTreeItem());
-            }
-            if (source != SelectionSource.APPLICATION_VIEW) {
-                applicationMessageTree.select(requestId);
-            }
-        } finally {
-            synchronizingSelection = false;
+        switch (target) {
+            case TREE_VIEW -> selectAttachedTreeItem(
+                    requestViewController.getReqTreeView(), treeNode.getTreeItem());
+            case APPLICATION_VIEW -> applicationMessageTree.select(requestId);
+            case LIST_VIEW -> requestViewController.getReqListView()
+                    .getSelectionModel().select(treeNode.getListItem());
         }
-    }
-
-    private boolean isStillSelected(String requestId, SelectionSource source) {
-        RequestCell selected = switch (source) {
-            case TREE_VIEW -> valueOf(requestViewController.getReqTreeView().getSelectionModel().getSelectedItem());
-            case APPLICATION_VIEW -> valueOf(
-                    requestViewController.getReqApplicationTreeView().getSelectionModel().getSelectedItem());
-            case LIST_VIEW -> requestViewController.getReqListView().getSelectionModel().getSelectedItem();
-        };
-        return selected != null && StringUtils.equals(requestId, selected.getRequestId());
-    }
-
-    private static RequestCell valueOf(TreeItem<RequestCell> item) {
-        return item == null ? null : item.getValue();
     }
 
     private static void selectAttachedTreeItem(TreeView<RequestCell> treeView, TreeItem<RequestCell> item) {
@@ -260,14 +225,11 @@ public class MessageService {
             parent.setExpanded(true);
             parent = parent.getParent();
         }
-        if (treeView.getRow(item) >= 0) {
-            treeView.getSelectionModel().select(item);
-        }
+        treeView.getSelectionModel().select(item);
     }
 
     public ApplicationGroupOverview applicationGroupOverview(RequestCell.NodeType nodeType, String nodeKey) {
-        ApplicationGroupSnapshot snapshot = applicationMessageTree.snapshot(nodeType, nodeKey);
-        return ApplicationGroupStatistics.aggregate(snapshot, requestCache::get);
+        return applicationMessageTree.overview(nodeType, nodeKey);
     }
 
     public void deleteApplicationItem(RequestCell requestCell) {
@@ -286,13 +248,13 @@ public class MessageService {
         if (msg instanceof RequestMessage updateMsg) {
             RequestMessage requestMessage;
             synchronized (requestUpdateBuffer) {
-                requestMessage = requestCache.get(updateMsg.getRequestId());
+                requestMessage = requestStore.getMetadata(updateMsg.getRequestId());
                 if (requestMessage == null) {
                     requestUpdateBuffer.defer(updateMsg);
                     return;
                 }
                 RequestUpdateBuffer.apply(requestMessage, updateMsg);
-                requestCache.put(requestMessage.getRequestId(), requestMessage);
+                requestStore.put(requestMessage);
             }
             boolean selected = StringUtils.equals(
                     appConfig.getObservableConfig().getCurrentRequestId(), requestMessage.getRequestId());
@@ -304,10 +266,10 @@ public class MessageService {
         } else if (msg instanceof ResponseMessage updateMsg) {
             RequestMessage requestMessage;
             synchronized (responseUpdateBuffer) {
-                requestMessage = requestCache.get(updateMsg.getRequestId());
+                requestMessage = requestStore.getMetadata(updateMsg.getRequestId());
                 if (requestMessage != null && requestMessage.getResponse() != null) {
                     ResponseUpdateBuffer.apply(requestMessage.getResponse(), updateMsg);
-                    requestCache.put(requestMessage.getRequestId(), requestMessage);
+                    requestStore.put(requestMessage);
                 } else {
                     responseUpdateBuffer.defer(updateMsg);
                     return;
@@ -332,19 +294,20 @@ public class MessageService {
                                 requestMessage, requestUpdateBuffer.drain(requestMessage.getRequestId()));
                         messageTree.add(requestMessage);
                         applicationMessageTree.add(requestMessage);
-                        requestCache.put(requestMessage.getRequestId(), requestMessage);
+                        requestStore.put(requestMessage);
                     }
                     refreshCntProperty();
+                    logPerformanceSnapshot();
                     requestViewService.refreshCurrentApplicationGroup();
                 }
                 // TODO: deprecated
                 case REQUEST_CONTENT -> {
                     // 添加请求体
                     RequestMessage contentMsg = (RequestMessage) msg;
-                    RequestMessage data = requestCache.get(contentMsg.getRequestId());
+                    RequestMessage data = requestStore.getMetadata(contentMsg.getRequestId());
                     if (data != null) {
                         data.setBody(contentMsg.getBody());
-                        requestCache.put(data.getRequestId(), data);
+                        requestStore.put(data);
                     }
                 }
             }
@@ -355,13 +318,13 @@ public class MessageService {
                 case RESPONSE -> {
                     RequestMessage data;
                     synchronized (responseUpdateBuffer) {
-                        data = requestCache.get(responseMessage.getRequestId());
+                        data = requestStore.getMetadata(responseMessage.getRequestId());
                         if (data != null) {
                             data.setResponse(responseMessage);
                             ResponseMessage pendingUpdate =
                                     responseUpdateBuffer.drain(responseMessage.getRequestId());
                             ResponseUpdateBuffer.apply(responseMessage, pendingUpdate);
-                            requestCache.put(data.getRequestId(), data);
+                            requestStore.put(data);
                         }
                     }
                     if (data != null) {
@@ -373,10 +336,10 @@ public class MessageService {
                     // 添加响应体
                     // TODO 分开resp
                     ResponseMessage respMessage = (ResponseMessage) msg;
-                    RequestMessage data = requestCache.get(respMessage.getRequestId());
+                    RequestMessage data = requestStore.getMetadata(respMessage.getRequestId());
                     if (data != null && data.getResponse() != null) {
                         data.getResponse().setContent(respMessage.getContent());
-                        requestCache.put(data.getRequestId(), data);
+                        requestStore.put(data);
                     }
                 }
             }
@@ -398,6 +361,30 @@ public class MessageService {
             deleteDetachedApplicationRequests(requestIds);
             requestViewService.updateRequestTab(null);
             refreshCntProperty();
+        }
+    }
+
+    private void logPerformanceSnapshot() {
+        int count = messageTree == null ? 0 : messageTree.getCount();
+        if (count == 0 || count % 1000 != 0) {
+            return;
+        }
+        RequestRecordStore.StoreStats stats = requestStore.stats();
+        int recordQueue = messageQueue.getSize(Topic.RECORD);
+        int updateQueue = messageQueue.getSize(Topic.UPDATE_MSG);
+        int fxMutations = uiMutationScheduler.pendingActions();
+        log.debug("Request view stats: requests={}, payload={} MB/{}, evicted={}, recordQueue={}, "
+                        + "updateQueue={}, fxMutations={}",
+                stats.requestCount(), stats.retainedPayloadBytes() / (1024 * 1024),
+                stats.payloadBudgetBytes() / (1024 * 1024), stats.evictedPayloadCount(),
+                recordQueue, updateQueue, fxMutations);
+        if (Math.max(Math.max(recordQueue, updateQueue), fxMutations) >= 5_000) {
+            long now = System.nanoTime();
+            if (now - lastQueueWarningNanos >= 30_000_000_000L) {
+                lastQueueWarningNanos = now;
+                log.warn("Request view queue high water: record={}, update={}, fxMutations={}",
+                        recordQueue, updateQueue, fxMutations);
+            }
         }
     }
 
@@ -451,12 +438,7 @@ public class MessageService {
         requestUpdateBuffer.removeAll(requestIdList);
         responseUpdateBuffer.removeAll(requestIdList);
 
-        // remove requestId from ehcache
-        try {
-            requestCache.removeAll(requestIdList);
-        } catch (BulkCacheWritingException e) {
-            log.error("Error in deleting in cache.", e);
-        }
+        requestStore.removeAll(requestIdList);
     }
 
     private void deleteDetachedApplicationRequests(Set<String> requestIds) {
@@ -467,7 +449,7 @@ public class MessageService {
         int removed = 0;
         Platform.runLater(requestViewController::clearSelectionsBeforeTreeMutation);
         for (String requestId : requestIds) {
-            RequestMessage request = requestCache.get(requestId);
+            RequestMessage request = requestStore.getMetadata(requestId);
             if (request == null) {
                 continue;
             }
@@ -490,11 +472,7 @@ public class MessageService {
         responseUpdateBuffer.removeAll(requestIds);
         Platform.runLater(() -> requestViewController.getReqSourceList().removeAll(listItems));
         requestViewService.updateRequestTab(null);
-        try {
-            requestCache.removeAll(requestIds);
-        } catch (BulkCacheWritingException e) {
-            log.error("Error in deleting in cache.", e);
-        }
+        requestStore.removeAll(requestIds);
     }
 
     /**
@@ -509,7 +487,8 @@ public class MessageService {
         messageTree.travelRoot(treeNode -> {
             requestIdList.add(treeNode.getRequestId());
             // delete current leaf-node
-            FilterableTreeItem<RequestCell> nodeParent = treeNode.getParent().getTreeItem();
+            FilterableTreeItem<RequestCell> nodeParent =
+                    (FilterableTreeItem<RequestCell>) treeNode.getParent().getTreeItem();
             treeNodeList.add(treeNode);
             Platform.runLater(() -> {
                 nodeParent.getInternalChildren().remove(treeNode.getTreeItem());
@@ -526,12 +505,7 @@ public class MessageService {
         ObservableList<RequestCell> reqSourceList = requestViewController.getReqSourceList();
         Platform.runLater(() -> reqSourceList.remove(0, reqSourceList.size()));
 
-        // delete in cache
-        try {
-            requestCache.removeAll(requestIdList);
-        } catch (BulkCacheWritingException e) {
-            log.error("Error in deleting in cache.", e);
-        }
+        requestStore.removeAll(requestIdList);
     }
 
     /**
@@ -550,11 +524,7 @@ public class MessageService {
         responseUpdateBuffer.clear();
         requestViewService.updateRequestTab(null);
 
-        try {
-            requestCache.clear();
-        } catch (Exception e) {
-            log.error("Error in deleting in cache.", e);
-        }
+        requestStore.clear();
     }
 
     /**
