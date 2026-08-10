@@ -80,7 +80,7 @@ public class ApplicationMessageTree {
             return;
         }
 
-        removeInternal(current);
+        removeInternal(current, RemovalPolicy.PRUNE_EMPTY_GROUPS);
         add(message);
         if (restoreSelection) {
             runOnUiThread(() -> select(message.getRequestId()));
@@ -97,16 +97,91 @@ public class ApplicationMessageTree {
         }
     }
 
-    public synchronized void remove(Collection<String> requestIds) {
+    synchronized void remove(Collection<String> requestIds, boolean preserveEmptyGroups) {
         if (requestIds == null || requestIds.isEmpty()) {
             return;
         }
+        RemovalPolicy removalPolicy = preserveEmptyGroups
+                ? RemovalPolicy.PRESERVE_EMPTY_GROUPS : RemovalPolicy.PRUNE_EMPTY_GROUPS;
         for (String requestId : new ArrayList<>(requestIds)) {
             RequestEntry entry = requests.get(requestId);
             if (entry != null) {
-                removeInternal(entry);
+                removeInternal(entry, removalPolicy);
             }
         }
+    }
+
+    /**
+     * Detaches an application-view node and returns the requests owned by it.
+     * The node identity remains meaningful after a leaf-only clear, when there
+     * are no request ids left to drive the deletion.
+     */
+    synchronized Set<String> detach(RequestCell.NodeType nodeType, String nodeKey) {
+        if (nodeType == null || StringUtils.isBlank(nodeKey)) {
+            return Collections.emptySet();
+        }
+        if (nodeType == RequestCell.NodeType.REQUEST) {
+            RequestEntry entry = requests.get(nodeKey);
+            if (entry == null) {
+                return Collections.emptySet();
+            }
+            removeInternal(entry, RemovalPolicy.PRESERVE_EMPTY_GROUPS);
+            return Set.of(entry.requestId);
+        }
+        if (nodeType == RequestCell.NodeType.APPLICATION) {
+            ApplicationGroup application = applications.remove(nodeKey);
+            if (application == null) {
+                return Collections.emptySet();
+            }
+            Set<String> requestIds = collect(application.hosts.values());
+            requestIds.forEach(requests::remove);
+            application.hosts.values().forEach(host -> host.requests.clear());
+            application.hosts.clear();
+            runOnUiThread(() -> {
+                controller.clearApplicationTreeSelectionBeforeRemoving(application.item);
+                root().getInternalChildren().remove(application.item);
+            });
+            return requestIds;
+        }
+        if (nodeType == RequestCell.NodeType.HOST) {
+            int separator = nodeKey.indexOf(KEY_SEPARATOR);
+            if (separator < 0) {
+                return Collections.emptySet();
+            }
+            ApplicationGroup application = applications.get(nodeKey.substring(0, separator));
+            String hostName = nodeKey.substring(separator + 1);
+            HostGroup host = application == null ? null : application.hosts.remove(hostName);
+            if (host == null) {
+                return Collections.emptySet();
+            }
+            boolean hostHadRequests = !host.requests.isEmpty();
+            Set<String> requestIds = new LinkedHashSet<>(host.requests.keySet());
+            requestIds.forEach(requests::remove);
+            host.requests.clear();
+            boolean removeApplication = hostHadRequests && application.hosts.isEmpty();
+            if (removeApplication) {
+                applications.remove(application.key);
+            }
+            runOnUiThread(() -> {
+                TreeItem<RequestCell> removedSubtree = removeApplication ? application.item : host.item;
+                controller.clearApplicationTreeSelectionBeforeRemoving(removedSubtree);
+                if (removeApplication) {
+                    root().getInternalChildren().remove(application.item);
+                } else {
+                    RequestCell applicationCell = application.item.getValue();
+                    applicationCell.setCount(Math.max(0, applicationCell.getCount() - host.item.getValue().getCount()));
+                    applicationCell.setFailedCount(Math.max(0,
+                            applicationCell.getFailedCount() - host.item.getValue().getFailedCount()));
+                    application.item.getInternalChildren().remove(host.item);
+                }
+            });
+            return requestIds;
+        }
+        return Collections.emptySet();
+    }
+
+    synchronized boolean hasGroups() {
+        return !applications.isEmpty();
     }
 
     public synchronized Set<String> requestIds(RequestCell cell) {
@@ -244,10 +319,11 @@ public class ApplicationMessageTree {
                 new FilterableTreeItem<>(cell), status.state());
     }
 
-    private void removeInternal(RequestEntry entry) {
+    private void removeInternal(RequestEntry entry, RemovalPolicy removalPolicy) {
         requests.remove(entry.requestId);
         entry.host.requests.remove(entry.requestId);
-        boolean removeHost = entry.host.requests.isEmpty();
+        boolean removeHost = removalPolicy == RemovalPolicy.PRUNE_EMPTY_GROUPS
+                && entry.host.requests.isEmpty();
         boolean removeApplication = removeHost && entry.application.hosts.size() == 1;
         if (removeHost) {
             entry.application.hosts.remove(entry.host.host);
@@ -264,7 +340,7 @@ public class ApplicationMessageTree {
             controller.clearApplicationTreeSelectionBeforeRemoving(removedSubtree);
             decrementCounts(entry.application, entry.host, entry);
             entry.host.item.getInternalChildren().remove(entry.item);
-            if (entry.host.requests.isEmpty()) {
+            if (removeHost) {
                 entry.application.item.getInternalChildren().remove(entry.host.item);
             }
             if (finalRemoveApplication) {
@@ -435,5 +511,10 @@ public class ApplicationMessageTree {
             this.item = item;
             this.transferState = transferState;
         }
+    }
+
+    private enum RemovalPolicy {
+        PRESERVE_EMPTY_GROUPS,
+        PRUNE_EMPTY_GROUPS
     }
 }

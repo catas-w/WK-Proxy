@@ -915,7 +915,8 @@
   "queriedMethods":[
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
     {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
+    {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }
   ]
 },
 {
@@ -2476,7 +2477,6 @@
   ],
   "queriedMethods":[
     {"name":"getColumnIndex","parameterTypes":["javafx.scene.Node"] }, 
-    {"name":"getColumnSpan","parameterTypes":["javafx.scene.Node"] }, 
     {"name":"getRowIndex","parameterTypes":["javafx.scene.Node"] }
   ]
 },

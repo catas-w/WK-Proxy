@@ -123,11 +123,15 @@ public class MessageService {
     }
 
     private void refreshCntProperty() {
-        if (messageTree.isEmpty()) {
-            requestCntProperty.set(-1);
-        } else {
-            requestCntProperty.set(messageTree.getCount());
+        requestCntProperty.set(requestCountState(
+                messageTree.getCount(), !messageTree.isEmpty(), applicationMessageTree.hasGroups()));
+    }
+
+    static int requestCountState(int requestCount, boolean hasUrlStructure, boolean hasApplicationGroups) {
+        if (requestCount > 0) {
+            return requestCount;
         }
+        return hasUrlStructure || hasApplicationGroups ? 0 : -1;
     }
 
     public StatsData pathStatistics(String fullPath) {
@@ -261,17 +265,17 @@ public class MessageService {
         }
     }
 
-    public Set<String> getApplicationRequestIds(RequestCell requestCell) {
-        return applicationMessageTree.requestIds(requestCell);
-    }
-
     public ApplicationGroupOverview applicationGroupOverview(RequestCell.NodeType nodeType, String nodeKey) {
         ApplicationGroupSnapshot snapshot = applicationMessageTree.snapshot(nodeType, nodeKey);
         return ApplicationGroupStatistics.aggregate(snapshot, requestCache::get);
     }
 
-    public void deleteApplicationRequests(Set<String> requestIds) {
-        messageQueue.pushMsg(Topic.RECORD, new ApplicationDeleteMessage(requestIds));
+    public void deleteApplicationItem(RequestCell requestCell) {
+        if (requestCell == null) {
+            return;
+        }
+        messageQueue.pushMsg(Topic.RECORD,
+                new ApplicationDeleteMessage(requestCell.getNodeType(), requestCell.getNodeKey()));
     }
 
     /**
@@ -389,7 +393,10 @@ public class MessageService {
             refreshCntProperty();
         }
         if (msg instanceof ApplicationDeleteMessage deleteMessage) {
-            deleteRequestsById(deleteMessage.getRequestIds());
+            Set<String> requestIds = applicationMessageTree.detach(
+                    deleteMessage.getNodeType(), deleteMessage.getNodeKey());
+            deleteDetachedApplicationRequests(requestIds);
+            requestViewService.updateRequestTab(null);
             refreshCntProperty();
         }
     }
@@ -440,7 +447,7 @@ public class MessageService {
         Platform.runLater(() -> reqSourceList.removeAll(listItemList));
         messageTree.delete(nodeToDelete);
         messageTree.subtractCnt(requestIdList.size());
-        applicationMessageTree.remove(requestIdList);
+        applicationMessageTree.remove(requestIdList, requestCell.isLeaf());
         requestUpdateBuffer.removeAll(requestIdList);
         responseUpdateBuffer.removeAll(requestIdList);
 
@@ -452,7 +459,7 @@ public class MessageService {
         }
     }
 
-    private void deleteRequestsById(Set<String> requestIds) {
+    private void deleteDetachedApplicationRequests(Set<String> requestIds) {
         if (requestIds == null || requestIds.isEmpty()) {
             return;
         }
@@ -479,7 +486,6 @@ public class MessageService {
             removed++;
         }
         messageTree.subtractCnt(removed);
-        applicationMessageTree.remove(requestIds);
         requestUpdateBuffer.removeAll(requestIds);
         responseUpdateBuffer.removeAll(requestIds);
         Platform.runLater(() -> requestViewController.getReqSourceList().removeAll(listItems));

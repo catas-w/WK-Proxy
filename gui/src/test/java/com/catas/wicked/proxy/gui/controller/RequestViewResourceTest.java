@@ -83,6 +83,17 @@ public class RequestViewResourceTest {
         assertFalse(overridesLayoutChildren);
     }
 
+    @Test
+    public void applicationRowsUseStableCenteredDimensions() throws Exception {
+        String css = read("/css/request-view-pane.css");
+
+        assertTrue(css.contains(".req-application-row"));
+        assertTrue(css.contains("-fx-alignment: center-left;"));
+        assertTrue(css.contains("-fx-pref-height: 36px;"));
+        assertTrue(css.contains(".tree-cell.req-application-cell"));
+        assertTrue(css.contains("-fx-pref-height: 38px;"));
+    }
+
     private String read(String path) throws Exception {
         try (InputStream input = getClass().getResourceAsStream(path)) {
             assertNotNull(path, input);

@@ -79,6 +79,16 @@
 .req-application-row {
     -fx-spacing: 7;
     -fx-padding: 3 4 3 0;
+    -fx-alignment: center-left;
+    -fx-min-height: 36px;
+    -fx-pref-height: 36px;
+    -fx-max-height: 36px;
+}
+
+.tree-cell.req-application-cell {
+    -fx-min-height: 38px;
+    -fx-pref-height: 38px;
+    -fx-max-height: 38px;
 }
 
 .application-icon {

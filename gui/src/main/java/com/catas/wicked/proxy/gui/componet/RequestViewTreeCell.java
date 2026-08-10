@@ -34,6 +34,9 @@ import java.util.Optional;
 
 public class RequestViewTreeCell<T> extends TreeCell<T> {
 
+    private static final String APPLICATION_CELL_STYLE = "req-application-cell";
+    private static final double APPLICATION_CELL_HEIGHT = 38;
+    private static final double APPLICATION_ROW_HEIGHT = 36;
     private static final String DEFAULT_APPLICATION_ICON = "fas-window-maximize";
     private static final int APPLICATION_FALLBACK_ICON_SIZE = 22;
     private static final int DEFAULT_APPLICATION_ICON_SIZE = 22;
@@ -77,6 +80,8 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
     private final LocalizationService localization;
     private final boolean showRequestStatusIcon;
     private final boolean showGroupFailureCount;
+    private RequestCell.NodeType renderedNodeType;
+    private boolean rowLayoutChanged;
 
     private InvalidationListener treeItemGraphicInvalidationListener = observable -> updateDisplay(getItem(),
             isEmpty());
@@ -152,6 +157,7 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
         }
 
         resetReusableStyleState();
+        applyRowLayout(requestCell.getNodeType());
         setTooltip(null);
 
         if (requestCell.getPath() != null && !StringUtils.equals(requestCell.getPath(), pathLabel.getText())) {
@@ -446,11 +452,65 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
     }
 
     private void resetReusableStyleState() {
+        getStyleClass().remove(APPLICATION_CELL_STYLE);
         if (hbox == null) {
             return;
         }
         hbox.getStyleClass().remove("req-application-row");
         hbox.getStyleClass().remove("req-leaf");
+    }
+
+    private void applyRowLayout(RequestCell.NodeType nodeType) {
+        rowLayoutChanged = RequestTreeRowLayout.requiresGraphicReattach(renderedNodeType, nodeType);
+        if (rowLayoutChanged && getGraphic() == hbox) {
+            setGraphic(null);
+        }
+
+        boolean applicationRow = nodeType == RequestCell.NodeType.APPLICATION;
+        if (applicationRow) {
+            getStyleClass().add(APPLICATION_CELL_STYLE);
+            setMinHeight(APPLICATION_CELL_HEIGHT);
+            setPrefHeight(APPLICATION_CELL_HEIGHT);
+            setMaxHeight(APPLICATION_CELL_HEIGHT);
+            hbox.setMinHeight(APPLICATION_ROW_HEIGHT);
+            hbox.setPrefHeight(APPLICATION_ROW_HEIGHT);
+            hbox.setMaxHeight(APPLICATION_ROW_HEIGHT);
+        } else {
+            resetRowDimensions();
+        }
+        renderedNodeType = nodeType;
+    }
+
+    private void resetRowLayout() {
+        boolean applicationRow = renderedNodeType == RequestCell.NodeType.APPLICATION;
+        renderedNodeType = null;
+        rowLayoutChanged = false;
+        resetRowDimensions();
+        if (applicationRow) {
+            requestCellLayout();
+        }
+    }
+
+    private void resetRowDimensions() {
+        setMinHeight(Region.USE_COMPUTED_SIZE);
+        setPrefHeight(Region.USE_COMPUTED_SIZE);
+        setMaxHeight(Region.USE_COMPUTED_SIZE);
+        if (hbox != null) {
+            hbox.setMinHeight(Region.USE_COMPUTED_SIZE);
+            hbox.setPrefHeight(Region.USE_COMPUTED_SIZE);
+            hbox.setMaxHeight(Region.USE_COMPUTED_SIZE);
+        }
+    }
+
+    private void requestCellLayout() {
+        if (hbox != null) {
+            hbox.requestLayout();
+        }
+        requestLayout();
+        TreeView<T> treeView = getTreeView();
+        if (treeView != null) {
+            treeView.requestLayout();
+        }
     }
 
     private void updateDisplay(T item, boolean empty) {
@@ -461,6 +521,7 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
             unbindRequestStatus();
             unbindFailureBadge();
             resetReusableStyleState();
+            resetRowLayout();
             setTooltip(null);
             setText(null);
             setGraphic(null);
@@ -474,6 +535,10 @@ public class RequestViewTreeCell<T> extends TreeCell<T> {
                 createOrUpdateHBox(requestCell);
                 if (getGraphic() != hbox) {
                     setGraphic(hbox);
+                }
+                if (rowLayoutChanged) {
+                    requestCellLayout();
+                    rowLayoutChanged = false;
                 }
             }
         }

@@ -359,7 +359,7 @@ public class RequestViewController implements Initializable {
                 log.error("Unable to delete request, request cell is null.");
                 return;
             }
-            messageService.deleteApplicationRequests(messageService.getApplicationRequestIds(requestCell));
+            messageService.deleteApplicationItem(requestCell);
             clearRequestSelection();
             requestViewService.updateRequestTab(null);
             return;
