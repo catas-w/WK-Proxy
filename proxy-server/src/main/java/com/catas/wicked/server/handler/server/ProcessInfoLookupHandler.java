@@ -40,11 +40,23 @@ public class ProcessInfoLookupHandler extends ChannelInboundHandlerAdapter {
         }
         ctx.channel().attr(PROCESS_INFO_FUTURE_KEY).set(future);
         future.whenComplete((processInfo, throwable) -> ctx.executor().execute(() -> {
+            if (ctx.channel().attr(PROCESS_INFO_FUTURE_KEY).get() != future) {
+                return;
+            }
             ProcessInfo finalInfo = throwable == null && processInfo != null
                     ? processInfo : ProcessInfo.withStatus(ProcessInfo.LookupStatus.ERROR);
             ctx.channel().attr(PROCESS_INFO_KEY).set(finalInfo);
         }));
 
         super.channelActive(ctx);
+    }
+
+    public static void override(ChannelHandlerContext ctx, ProcessInfo processInfo) {
+        CompletableFuture<ProcessInfo> previous = ctx.channel().attr(PROCESS_INFO_FUTURE_KEY).getAndSet(
+                CompletableFuture.completedFuture(processInfo));
+        ctx.channel().attr(PROCESS_INFO_KEY).set(processInfo);
+        if (previous != null && !previous.isDone()) {
+            previous.cancel(true);
+        }
     }
 }

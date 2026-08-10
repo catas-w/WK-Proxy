@@ -1,6 +1,7 @@
 package com.catas.wicked.proxy.message;
 
 import com.catas.wicked.common.bean.ProcessInfo;
+import com.catas.wicked.common.constant.ProductIdentity;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -62,5 +63,22 @@ public class ApplicationSourceTest {
         assertEquals("name:visual studio code", source.key());
         assertEquals("Visual Studio Code", source.displayName());
         assertTrue(source.secondaryText().contains("7"));
+    }
+
+    @Test
+    public void wizardProxyAlwaysUsesReservedApplicationKey() {
+        ProcessInfo info = ProcessInfo.builder()
+                .lookupStatus(ProcessInfo.LookupStatus.FOUND)
+                .applicationName(ProductIdentity.DISPLAY_NAME)
+                .applicationExecutablePath("/Applications/Wizard Proxy.app/Contents/MacOS/Wizard Proxy")
+                .ownerProcessName(ProductIdentity.DISPLAY_NAME)
+                .ownerPid(42)
+                .build();
+
+        ApplicationSource source = ApplicationSource.from(info);
+
+        assertEquals(ProductIdentity.APPLICATION_KEY, source.key());
+        assertEquals(ProductIdentity.DISPLAY_NAME, source.displayName());
+        assertTrue(source.secondaryText().contains("42"));
     }
 }

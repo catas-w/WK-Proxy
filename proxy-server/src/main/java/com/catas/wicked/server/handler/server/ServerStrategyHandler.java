@@ -5,6 +5,8 @@ import com.catas.wicked.common.bean.ProxyRequestInfo;
 import com.catas.wicked.common.config.Settings;
 import com.catas.wicked.common.constant.ClientStatus;
 import com.catas.wicked.common.constant.ProxyConstant;
+import com.catas.wicked.common.constant.InternalRequestOrigin;
+import com.catas.wicked.common.constant.ProductIdentity;
 import com.catas.wicked.common.constant.ConnectionStatus;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.ThrottlePreset;
@@ -92,6 +94,8 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
     private StrategyManager strategyManager;
 
     private final AttributeKey<ProxyRequestInfo> requestInfoAttributeKey = AttributeKey.valueOf("requestInfo");
+    private static final AttributeKey<InternalRequestOrigin> INTERNAL_REQUEST_ORIGIN_KEY =
+            AttributeKey.valueOf("internalRequestOrigin");
 
     public ServerStrategyHandler(ApplicationConfig applicationConfig,
                                  CertManager certManager,
@@ -167,7 +171,13 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
         requestInfo.setThrottling(appConfig.getSettings().isThrottle());
         requestInfo.updateClientStatus(ClientStatus.Status.WAITING);
         requestInfo.resetBasicInfo();
-        processInfoMessageBinder.bind(ctx, requestInfo);
+        if (ctx.channel().attr(INTERNAL_REQUEST_ORIGIN_KEY).get() == InternalRequestOrigin.RESEND) {
+            var processInfo = ProductIdentity.currentProcess();
+            ProcessInfoLookupHandler.override(ctx, processInfo);
+            requestInfo.setProcessInfo(processInfo);
+        } else {
+            processInfoMessageBinder.bind(ctx, requestInfo);
+        }
 
         SocketAddress remoteAddress = ctx.channel().remoteAddress();
         SocketAddress localAddress = ctx.channel().localAddress();
@@ -184,6 +194,11 @@ public class ServerStrategyHandler extends ChannelDuplexHandler {
 
     private void handleHttpRequest(ChannelHandlerContext ctx, Object msg) {
         HttpRequest request = (HttpRequest) msg;
+        InternalRequestOrigin origin = InternalRequestMarker.consume(
+                request, ctx.channel().remoteAddress(), appConfig.getInternalRequestToken());
+        if (origin != null) {
+            ctx.channel().attr(INTERNAL_REQUEST_ORIGIN_KEY).set(origin);
+        }
         DecoderResult result = request.decoderResult();
         Throwable cause = result.cause();
 

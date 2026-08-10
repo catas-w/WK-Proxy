@@ -11,6 +11,7 @@ import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.util.AlertUtils;
 import com.catas.wicked.common.util.SystemUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -41,6 +42,7 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -79,6 +81,8 @@ public class ApplicationConfig implements AutoCloseable {
     private final transient CompletableFuture<SslContext> clientSslContextFuture = new CompletableFuture<>();
     private final transient AtomicBoolean clientSslContextStarted = new AtomicBoolean(false);
     private final transient Object clientSslContextLock = new Object();
+    @JsonIgnore
+    private final transient String internalRequestToken = UUID.randomUUID().toString();
 
     @Inject
     private MessageQueue messageQueue;

@@ -1,6 +1,7 @@
 package com.catas.wicked.proxy.message;
 
 import com.catas.wicked.common.bean.ProcessInfo;
+import com.catas.wicked.common.constant.ProductIdentity;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
@@ -21,8 +22,10 @@ record ApplicationSource(String key, String displayName, String secondaryText, S
         }
         String applicationName = StringUtils.firstNonBlank(
                 info.getApplicationName(), info.getOwnerProcessName(), "Unknown Application");
+        boolean isWizardProxy = ProductIdentity.DISPLAY_NAME.equalsIgnoreCase(applicationName);
         String path = StringUtils.firstNonBlank(info.getApplicationExecutablePath(), info.getOwnerExecutablePath());
-        String key = StringUtils.isNotBlank(path) ? normalizePath(path)
+        String key = isWizardProxy ? ProductIdentity.APPLICATION_KEY
+                : StringUtils.isNotBlank(path) ? normalizePath(path)
                 : "name:" + applicationName.toLowerCase(Locale.ROOT);
         String processName = StringUtils.firstNonBlank(info.getOwnerProcessName(), applicationName);
         long pid = info.getOwnerPid() > 0 ? info.getOwnerPid() : info.getApplicationPid();

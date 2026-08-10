@@ -5,6 +5,7 @@ import com.catas.wicked.common.bean.RequestCell;
 import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.bean.message.ResponseMessage;
 import com.catas.wicked.common.constant.ClientStatus;
+import com.catas.wicked.common.constant.ProductIdentity;
 import com.catas.wicked.proxy.gui.componet.FilterableTreeItem;
 import com.catas.wicked.proxy.gui.controller.RequestViewController;
 import javafx.scene.control.TreeItem;
@@ -89,6 +90,29 @@ public class ApplicationMessageTreeLifecycleTest {
         tree.clear();
 
         assertTrue(controller.root.getChildren().isEmpty());
+    }
+
+    @Test
+    public void wizardProxyGroupIsCreatedLazilyAndReused() {
+        TestRequestViewController controller = new TestRequestViewController();
+        ApplicationMessageTree tree = new ApplicationMessageTree(controller, Runnable::run);
+        assertTrue(controller.root.getChildren().isEmpty());
+
+        RequestMessage first = request(
+                "resend-one", "api.example.com", "/one", ProductIdentity.DISPLAY_NAME, null);
+        first.setProcessInfo(ProductIdentity.currentProcess());
+        RequestMessage second = request(
+                "resend-two", "other.example.com", "/two", ProductIdentity.DISPLAY_NAME, null);
+        second.setProcessInfo(ProductIdentity.currentProcess());
+        tree.add(first);
+        tree.add(second);
+
+        assertEquals(1, controller.root.getChildren().size());
+        TreeItem<RequestCell> application = controller.root.getChildren().get(0);
+        assertEquals(ProductIdentity.APPLICATION_KEY, application.getValue().getNodeKey());
+        assertEquals(ProductIdentity.DISPLAY_NAME, application.getValue().getPath());
+        assertEquals(2, application.getValue().getCount());
+        assertEquals(2, application.getChildren().size());
     }
 
     @Test

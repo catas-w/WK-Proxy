@@ -1,6 +1,7 @@
 package com.catas.wicked.server.client;
 
 import com.catas.wicked.common.config.ExternalProxyConfig;
+import com.catas.wicked.common.constant.InternalRequestOrigin;
 import com.catas.wicked.common.util.ProxyHandlerFactory;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
@@ -19,6 +20,8 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.proxy.ProxyHandler;
@@ -64,6 +67,8 @@ public class MinimalHttpClient implements AutoCloseable {
     private int timeout = 60 * 1000;
     private HttpVersion httpVersion = HttpVersion.HTTP_1_1;
     private boolean fetchFullResponse;
+    private InternalRequestOrigin internalRequestOrigin;
+    private String internalRequestToken;
 
     private ChannelFuture channelFuture;
     HttpResponse httpResponse;
@@ -116,7 +121,8 @@ public class MinimalHttpClient implements AutoCloseable {
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         if (proxyConfig != null) {
                             // add external proxy handler
-                            ProxyHandler proxyHandler = ProxyHandlerFactory.getExternalProxyHandler(proxyConfig, uri);
+                            ProxyHandler proxyHandler = ProxyHandlerFactory.getExternalProxyHandler(
+                                    proxyConfig, uri, buildConnectHeaders());
                             if (proxyHandler != null) {
                                 ch.pipeline().addLast(EXTERNAL_PROXY, proxyHandler);
                             }
@@ -195,6 +201,17 @@ public class MinimalHttpClient implements AutoCloseable {
             headers.forEach((key, value) -> request.headers().set(key, value));
         }
         return request;
+    }
+
+    HttpHeaders buildConnectHeaders() {
+        if (internalRequestOrigin == null || internalRequestToken == null
+                || internalRequestToken.isBlank()) {
+            return null;
+        }
+        HttpHeaders headers = new DefaultHttpHeaders();
+        headers.set(InternalRequestOrigin.HEADER_NAME,
+                internalRequestOrigin.headerValue(internalRequestToken));
+        return headers;
     }
 
     private static final class SslContextHolder {
@@ -353,6 +370,12 @@ public class MinimalHttpClient implements AutoCloseable {
 
         public Builder fullResponse(boolean fullResponse) {
             httpClient.setFetchFullResponse(fullResponse);
+            return this;
+        }
+
+        public Builder internalRequest(InternalRequestOrigin origin, String sessionToken) {
+            httpClient.internalRequestOrigin = origin;
+            httpClient.internalRequestToken = sessionToken;
             return this;
         }
     }

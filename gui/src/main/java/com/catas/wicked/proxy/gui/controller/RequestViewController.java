@@ -19,6 +19,7 @@ import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.service.RequestViewService;
 import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.server.client.MinimalHttpClient;
+import com.catas.wicked.common.constant.InternalRequestOrigin;
 import com.jfoenix.controls.JFXToggleNode;
 import io.micronaut.context.condition.OperatingSystem;
 import io.netty.handler.codec.http.HttpMethod;
@@ -507,6 +508,7 @@ public class RequestViewController implements Initializable {
                     .headers(headers)
                     .content(content)
                     .proxyConfig(proxyConfig)
+                    .internalRequest(InternalRequestOrigin.RESEND, appConfig.getInternalRequestToken())
                     .build()) {
                 client.execute();
                 HttpResponse response = client.response();

@@ -1,6 +1,7 @@
 package com.catas.wicked.proxy.service.icon;
 
 import com.catas.wicked.common.bean.ProcessInfo;
+import com.catas.wicked.common.constant.ProductIdentity;
 import org.junit.Test;
 
 import java.nio.file.Files;
@@ -48,6 +49,12 @@ public class ApplicationIconProviderTest {
                 .lookupStatus(ProcessInfo.LookupStatus.FOUND)
                 .build();
         assertTrue(new BundledApplicationIconProvider().load(info).isPresent());
+    }
+
+    @Test
+    public void bundledProviderUsesProductLogoForWizardProxy() {
+        assertTrue(new BundledApplicationIconProvider()
+                .load(ProductIdentity.currentProcess()).isPresent());
     }
 
     @Test
