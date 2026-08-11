@@ -48,7 +48,7 @@ final class ResponseUpdateBuffer {
         target.setDurationNanos(Math.max(target.getDurationNanos(), update.getDurationNanos()));
         target.setWaitingDurationNanos(Math.max(
                 target.getWaitingDurationNanos(), update.getWaitingDurationNanos()));
-        if (update.getStatus() == -1) {
+        if (Integer.valueOf(-1).equals(update.getStatus())) {
             target.setStatus(-1);
             target.setReasonPhrase(update.getReasonPhrase());
         }

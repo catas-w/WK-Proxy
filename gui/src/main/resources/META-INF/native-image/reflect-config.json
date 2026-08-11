@@ -236,6 +236,7 @@
     {"name":"getPort","parameterTypes":[] }, 
     {"name":"getRecordExcludeList","parameterTypes":[] }, 
     {"name":"getRecordIncludeList","parameterTypes":[] }, 
+    {"name":"getRetainedPayloadSizeMb","parameterTypes":[] }, 
     {"name":"getSelectedCert","parameterTypes":[] }, 
     {"name":"getSslExcludeList","parameterTypes":[] }, 
     {"name":"getSysProxyBypassList","parameterTypes":[] }, 
@@ -257,6 +258,7 @@
     {"name":"setMaxContentSize","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setPort","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setRecording","parameterTypes":["boolean"] }, 
+    {"name":"setRetainedPayloadSizeMb","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setSelectedCert","parameterTypes":["java.lang.String"] }, 
     {"name":"setShowApplicationRequestCount","parameterTypes":["boolean"] }, 
     {"name":"setShowButtonLabel","parameterTypes":["boolean"] }, 
@@ -716,6 +718,7 @@
     {"name":"messageQueue"}, 
     {"name":"overViewTabRenderer"}, 
     {"name":"requestCache"}, 
+    {"name":"requestStore"}, 
     {"name":"requestViewController"}, 
     {"name":"requestViewService"}
   ]
@@ -764,6 +767,7 @@
     {"name":"pathOverviewInfo"}, 
     {"name":"requestCache"}, 
     {"name":"requestOverviewInfo"}, 
+    {"name":"requestStore"}, 
     {"name":"resourceMessageProvider"}
   ]
 },
@@ -772,7 +776,9 @@
   "fields":[
     {"name":"appConfig"}, 
     {"name":"detailTabController"}, 
-    {"name":"requestCache"}
+    {"name":"requestCache"}, 
+    {"name":"requestStore"}, 
+    {"name":"resourceMessageProvider"}
   ]
 },
 {
@@ -780,7 +786,9 @@
   "fields":[
     {"name":"appConfig"}, 
     {"name":"detailTabController"}, 
-    {"name":"requestCache"}
+    {"name":"requestCache"}, 
+    {"name":"requestStore"}, 
+    {"name":"resourceMessageProvider"}
   ]
 },
 {
@@ -788,7 +796,8 @@
   "fields":[
     {"name":"appConfig"}, 
     {"name":"detailTabController"}, 
-    {"name":"requestCache"}
+    {"name":"requestCache"}, 
+    {"name":"requestStore"}
   ]
 },
 {
@@ -819,7 +828,8 @@
   "name":"com.catas.wicked.proxy.service.DataOutputService",
   "fields":[
     {"name":"messageQueue"}, 
-    {"name":"requestCache"}
+    {"name":"requestCache"}, 
+    {"name":"requestStore"}
   ]
 },
 {
@@ -852,6 +862,10 @@
 {
   "name":"com.catas.wicked.proxy.service.icon.WindowsApplicationIconProvider$ShellFileInfo",
   "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.record.$RequestRecordStore$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -1654,6 +1668,15 @@
   "name":"io.netty.handler.codec.socksx.v4.Socks4ClientEncoder"
 },
 {
+  "name":"io.netty.handler.codec.socksx.v5.Socks5ClientEncoder"
+},
+{
+  "name":"io.netty.handler.codec.socksx.v5.Socks5CommandResponseDecoder"
+},
+{
+  "name":"io.netty.handler.codec.socksx.v5.Socks5InitialResponseDecoder"
+},
+{
   "name":"io.netty.handler.logging.LoggingHandler",
   "queriedMethods":[
     {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
@@ -1714,6 +1737,9 @@
 },
 {
   "name":"io.netty.handler.proxy.Socks4ProxyHandler"
+},
+{
+  "name":"io.netty.handler.proxy.Socks5ProxyHandler"
 },
 {
   "name":"io.netty.handler.ssl.SslHandler",
@@ -2477,6 +2503,7 @@
   ],
   "queriedMethods":[
     {"name":"getColumnIndex","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"getColumnSpan","parameterTypes":["javafx.scene.Node"] }, 
     {"name":"getRowIndex","parameterTypes":["javafx.scene.Node"] }
   ]
 },
