@@ -1,9 +1,7 @@
 package com.catas.wicked.server.handler.server;
 
 import com.catas.wicked.common.bean.ProxyRequestInfo;
-import com.catas.wicked.common.bean.message.BaseMessage;
 import com.catas.wicked.common.bean.message.RequestMessage;
-import com.catas.wicked.common.bean.message.ResponseMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.ProxyConstant;
 import com.catas.wicked.common.pipeline.MessageQueue;
@@ -22,7 +20,6 @@ import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -44,18 +41,6 @@ public class ServerPostRecorder extends ChannelDuplexHandler {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        // update response size & time
-        ProxyRequestInfo requestInfo = ctx.channel().attr(requestInfoKey).get();
-        if (requestInfo != null && requestInfo.isHasSentRespMsg()) {
-            requestInfo.updateResponseTime();
-
-            ResponseMessage responseMsg = new ResponseMessage();
-            responseMsg.setRequestId(requestInfo.getRequestId());
-            responseMsg.setType(BaseMessage.MessageType.UPDATE);
-            responseMsg.setEndTime(requestInfo.getResponseEndTime());
-            responseMsg.setSize(requestInfo.getRespSize());
-            messageQueue.pushMsg(Topic.UPDATE_MSG, responseMsg);
-        }
         super.write(ctx, msg, promise);
     }
 

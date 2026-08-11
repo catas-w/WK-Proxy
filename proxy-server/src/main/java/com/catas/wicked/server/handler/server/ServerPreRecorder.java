@@ -65,7 +65,7 @@ public class ServerPreRecorder extends ChannelDuplexHandler {
             newRequest = curRequestId.compareAndSet(reqId, requestInfo.getRequestId());
         }
 
-        requestInfo.updateRequestTime();
+        requestInfo.markRequestStart();
         if (msg instanceof HttpRequest httpRequest) {
             requestInfo.updateRequestSize(WebUtils.estimateSize(httpRequest));
             // requestInfo.updateRequestSize(((ByteBuf) msg).readableBytes());
@@ -128,6 +128,7 @@ public class ServerPreRecorder extends ChannelDuplexHandler {
             requestMessage.setRequestId(requestInfo.getRequestId());
             requestMessage.setType(BaseMessage.MessageType.UPDATE);
             requestMessage.setEndTime(requestInfo.getRequestEndTime());
+            requestMessage.setDurationNanos(requestInfo.timing().getRequestDurationNanos());
             requestMessage.setSize(requestInfo.getRequestSize());
 
             LinkedHashMap<String, String> headerMap = new LinkedHashMap<>();
@@ -173,6 +174,7 @@ public class ServerPreRecorder extends ChannelDuplexHandler {
         requestMsg.setRequestId(requestInfo.getRequestId());
         requestMsg.setStartTime(requestInfo.getRequestStartTime());
         requestMsg.setEndTime(requestInfo.getRequestEndTime());
+        requestMsg.setDurationNanos(requestInfo.timing().getRequestDurationNanos());
         requestMsg.setSize(requestInfo.getRequestSize());
         requestMsg.setRemoteHost(requestInfo.getHost());
         requestMsg.setRemotePort(requestInfo.getPort());

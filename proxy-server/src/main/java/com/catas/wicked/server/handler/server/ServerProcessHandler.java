@@ -1,6 +1,8 @@
 package com.catas.wicked.server.handler.server;
 
 import com.catas.wicked.common.bean.ProxyRequestInfo;
+import com.catas.wicked.common.bean.ProxyRequestTiming;
+import com.catas.wicked.common.bean.message.BaseMessage;
 import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.bean.message.ResponseMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
@@ -22,6 +24,7 @@ import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
@@ -58,7 +61,7 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
 
     private ChannelFuture channelFuture;
 
-    private final List<Object> requestList;
+    private final List<PendingRequest> requestList;
 
     private final MessageQueue messageQueue;
 
@@ -141,15 +144,16 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
                     }
 
                     ReferenceCountUtil.retain(msg);
-                    future.channel().writeAndFlush(msg);
+                    writeUpstream(future.channel(), new PendingRequest(
+                            msg, requestInfo.timing(), requestInfo.getRequestSize(), requestInfo.isRecording()));
                     ctx.fireChannelRead(msg);
 
                     if (!requestList.isEmpty()) {
                         synchronized (requestList) {
-                            requestList.forEach(obj -> {
-                                ReferenceCountUtil.retain(obj);
-                                future.channel().writeAndFlush(obj);
-                                ctx.fireChannelRead(obj);
+                            requestList.forEach(pending -> {
+                                ReferenceCountUtil.retain(pending.message());
+                                writeUpstream(future.channel(), pending);
+                                ctx.fireChannelRead(pending.message());
                             });
                             requestList.clear();
                         }
@@ -175,10 +179,13 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
                         targetStatus = ClientStatus.Status.UNKNOWN_ERR;
                     }
                     requestInfo.updateClientStatus(targetStatus, cause.getMessage());
+                    ProxyRequestTiming timing = requestInfo.timing();
+                    requestInfo.markRequestEnd(timing);
+                    requestInfo.markResponseEnd(timing);
 
                     ctx.fireChannelRead(msg);
                     synchronized (requestList) {
-                        requestList.forEach(ctx::fireChannelRead);
+                        requestList.forEach(pending -> ctx.fireChannelRead(pending.message()));
                         requestList.clear();
                     }
 
@@ -190,8 +197,10 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
                     if (!clientStatus.isSuccess()) {
                         ResponseMessage responseMsg = new ResponseMessage();
                         responseMsg.setRequestId(requestInfo.getRequestId());
-                        // responseMsg.setStartTime(System.currentTimeMillis());
-                        // responseMsg.setEndTime(System.currentTimeMillis());
+                        responseMsg.setStartTime(timing.getResponseStartTime());
+                        responseMsg.setEndTime(timing.getResponseEndTime());
+                        responseMsg.setDurationNanos(timing.getResponseDurationNanos());
+                        responseMsg.setWaitingDurationNanos(timing.getWaitingDurationNanos());
                         responseMsg.setSize(0);
                         responseMsg.setStatus(-1);
                         responseMsg.setReasonPhrase(clientStatus.getStatus().getDesc());
@@ -206,10 +215,12 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
             synchronized (requestList) {
                 if (isConnected) {
                     ReferenceCountUtil.retain(msg);
-                    channelFuture.channel().writeAndFlush(msg);
+                    writeUpstream(channelFuture.channel(), new PendingRequest(
+                            msg, requestInfo.timing(), requestInfo.getRequestSize(), requestInfo.isRecording()));
                     ctx.fireChannelRead(msg);
                 } else {
-                    requestList.add(msg);
+                    requestList.add(new PendingRequest(
+                            msg, requestInfo.timing(), requestInfo.getRequestSize(), requestInfo.isRecording()));
                 }
             }
         }
@@ -251,7 +262,8 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
     private void recordSslHandshakeFailure(ProxyRequestInfo requestInfo,
                                            SSLHandshakeException cause) {
         requestInfo.updateClientStatus(ClientStatus.Status.SSL_HANDSHAKE_ERR, cause.getMessage());
-        requestInfo.updateRequestTime();
+        ProxyRequestTiming timing = requestInfo.timing();
+        requestInfo.markRequestEnd(timing);
         if (!requestInfo.isRecording() || messageQueue == null) {
             return;
         }
@@ -265,6 +277,7 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
             requestMessage.setEncrypted(true);
             requestMessage.setStartTime(requestInfo.getRequestStartTime());
             requestMessage.setEndTime(requestInfo.getRequestEndTime());
+            requestMessage.setDurationNanos(timing.getRequestDurationNanos());
             requestMessage.setSize(requestInfo.getRequestSize());
             requestMessage.setRemoteHost(requestInfo.getHost());
             requestMessage.setRemotePort(requestInfo.getPort());
@@ -278,11 +291,13 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
         }
 
         if (!requestInfo.isHasSentRespMsg()) {
-            requestInfo.updateResponseTime();
+            requestInfo.markResponseEnd(timing);
             ResponseMessage responseMessage = new ResponseMessage();
             responseMessage.setRequestId(requestInfo.getRequestId());
             responseMessage.setStartTime(requestInfo.getResponseStartTime());
             responseMessage.setEndTime(requestInfo.getResponseEndTime());
+            responseMessage.setDurationNanos(timing.getResponseDurationNanos());
+            responseMessage.setWaitingDurationNanos(timing.getWaitingDurationNanos());
             responseMessage.setSize(0);
             responseMessage.setStatus(-1);
             responseMessage.setReasonPhrase(ClientStatus.Status.SSL_HANDSHAKE_ERR.getDesc());
@@ -307,8 +322,33 @@ public class ServerProcessHandler extends ChannelInboundHandlerAdapter {
 
     private void releasePendingRequests() {
         synchronized (requestList) {
-            requestList.forEach(ReferenceCountUtil::release);
+            requestList.forEach(pending -> ReferenceCountUtil.release(pending.message()));
             requestList.clear();
         }
+    }
+
+    private void writeUpstream(io.netty.channel.Channel channel, PendingRequest pending) {
+        ChannelFuture writeFuture = channel.writeAndFlush(pending.message());
+        if (!(pending.message() instanceof LastHttpContent) || !pending.recording()) {
+            return;
+        }
+        writeFuture.addListener(future -> {
+            if (!future.isSuccess()) {
+                return;
+            }
+            ProxyRequestTiming timing = pending.timing();
+            timing.markRequestEnd();
+            RequestMessage update = new RequestMessage();
+            update.setRequestId(timing.getRequestId());
+            update.setType(BaseMessage.MessageType.UPDATE);
+            update.setStartTime(timing.getRequestStartTime());
+            update.setEndTime(timing.getRequestEndTime());
+            update.setDurationNanos(timing.getRequestDurationNanos());
+            update.setSize(pending.size());
+            messageQueue.pushMsg(Topic.UPDATE_MSG, update);
+        });
+    }
+
+    private record PendingRequest(Object message, ProxyRequestTiming timing, long size, boolean recording) {
     }
 }

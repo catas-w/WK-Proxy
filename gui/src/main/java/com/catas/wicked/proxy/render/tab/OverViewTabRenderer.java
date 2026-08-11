@@ -293,11 +293,11 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
                 ? ProcessInfo.LookupStatus.UNKNOWN.name() : processInfo.getLookupStatus().name());
 
         RequestTiming timing = RequestTiming.from(request);
-        requestOverviewInfo.getTimeCost().setVal(RequestTiming.formatDuration(timing.totalDuration()));
-        requestOverviewInfo.getRequestTime().setVal(RequestTiming.formatDuration(timing.requestDuration()));
+        requestOverviewInfo.getTimeCost().setVal(timing.formattedTotalDuration());
+        requestOverviewInfo.getRequestTime().setVal(timing.formattedRequestDuration());
         requestOverviewInfo.getRequestStart().setVal(formatTimestamp(timing.requestStart()));
         requestOverviewInfo.getRequestEnd().setVal(formatTimestamp(timing.requestEnd()));
-        requestOverviewInfo.getRespTime().setVal(RequestTiming.formatDuration(timing.responseDuration()));
+        requestOverviewInfo.getRespTime().setVal(timing.formattedResponseDuration());
         requestOverviewInfo.getRespStart().setVal(formatTimestamp(timing.responseStart()));
         requestOverviewInfo.getRespEnd().setVal(formatTimestamp(timing.responseEnd()));
 

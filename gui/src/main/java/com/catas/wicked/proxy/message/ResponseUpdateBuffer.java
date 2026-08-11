@@ -39,8 +39,19 @@ final class ResponseUpdateBuffer {
         if (target == null || update == null) {
             return;
         }
+        if (update.getStartTime() > 0
+                && (target.getStartTime() <= 0 || update.getStartTime() < target.getStartTime())) {
+            target.setStartTime(update.getStartTime());
+        }
         target.setSize(Math.max(target.getSize(), update.getSize()));
         target.setEndTime(Math.max(target.getEndTime(), update.getEndTime()));
+        target.setDurationNanos(Math.max(target.getDurationNanos(), update.getDurationNanos()));
+        target.setWaitingDurationNanos(Math.max(
+                target.getWaitingDurationNanos(), update.getWaitingDurationNanos()));
+        if (update.getStatus() == -1) {
+            target.setStatus(-1);
+            target.setReasonPhrase(update.getReasonPhrase());
+        }
     }
 
     private static ResponseMessage merge(ResponseMessage current, ResponseMessage incoming) {
@@ -52,7 +63,12 @@ final class ResponseUpdateBuffer {
         ResponseMessage copy = new ResponseMessage();
         copy.setRequestId(source.getRequestId());
         copy.setSize(source.getSize());
+        copy.setStartTime(source.getStartTime());
         copy.setEndTime(source.getEndTime());
+        copy.setDurationNanos(source.getDurationNanos());
+        copy.setWaitingDurationNanos(source.getWaitingDurationNanos());
+        copy.setStatus(source.getStatus());
+        copy.setReasonPhrase(source.getReasonPhrase());
         return copy;
     }
 }

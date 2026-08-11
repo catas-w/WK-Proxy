@@ -69,6 +69,29 @@ public class RequestTimingTest {
         assertTrue(timing.secondDivider() < 1);
     }
 
+    @Test
+    public void prefersMonotonicDurationsAndFormatsSubMillisecondPhases() {
+        RequestMessage request = new RequestMessage();
+        request.setStartTime(10_000);
+        request.setEndTime(10_999);
+        request.setDurationNanos(500_000);
+        ResponseMessage response = new ResponseMessage();
+        response.setStartTime(11_999);
+        response.setEndTime(15_999);
+        response.setWaitingDurationNanos(2_000_000);
+        response.setDurationNanos(3_500_000);
+        request.setResponse(response);
+
+        RequestTiming timing = RequestTiming.from(request);
+
+        assertEquals(0, timing.requestDuration().getAsLong());
+        assertEquals(2, timing.waitingDuration().getAsLong());
+        assertEquals(3, timing.responseDuration().getAsLong());
+        assertEquals(6, timing.totalDuration().getAsLong());
+        assertEquals("<1 ms", timing.formattedRequestDuration());
+        assertEquals("6 ms", timing.formattedTotalDuration());
+    }
+
     private static RequestTiming timing(long requestStart, long requestEnd,
                                         long responseStart, long responseEnd) {
         RequestMessage request = new RequestMessage();

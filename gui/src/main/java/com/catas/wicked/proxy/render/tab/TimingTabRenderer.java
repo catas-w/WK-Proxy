@@ -50,13 +50,13 @@ public class TimingTabRenderer extends AbstractTabRenderer {
                     splitPane.setDividerPositions(firstDivider, secondDivider));
 
             detailTabController.getRequestDurationLabel().setText(
-                    RequestTiming.formatDuration(timing.requestDuration()));
+                    timing.formattedRequestDuration());
             detailTabController.getWaitingDurationLabel().setText(
-                    RequestTiming.formatDuration(timing.waitingDuration()));
+                    timing.formattedWaitingDuration());
             detailTabController.getResponseDurationLabel().setText(
-                    RequestTiming.formatDuration(timing.responseDuration()));
+                    timing.formattedResponseDuration());
             detailTabController.getTotalDurationLabel().setText(
-                    RequestTiming.formatDuration(timing.totalDuration()));
+                    timing.formattedTotalDuration());
 
             detailTabController.getRequestTimeSplit().setSegmentVisible(timing.requestDuration().isPresent());
             detailTabController.getWaitingTimeSplit().setSegmentVisible(timing.waitingDuration().isPresent());

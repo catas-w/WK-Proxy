@@ -24,6 +24,9 @@ public class ResponseMessage extends BaseMessage implements Serializable {
 
     private boolean isOversize;
 
+    /** Monotonic delay between the completed request write and first response headers. */
+    private long waitingDurationNanos;
+
     public ResponseMessage() {
         this.setType(MessageType.RESPONSE);
     }

@@ -45,6 +45,7 @@ final class RequestUpdateBuffer {
             target.setStartTime(update.getStartTime());
         }
         target.setEndTime(Math.max(target.getEndTime(), update.getEndTime()));
+        target.setDurationNanos(Math.max(target.getDurationNanos(), update.getDurationNanos()));
         target.setSize(Math.max(target.getSize(), update.getSize()));
         target.setOversize(target.isOversize() || update.isOversize());
         if (update.getClientStatus() != null) {

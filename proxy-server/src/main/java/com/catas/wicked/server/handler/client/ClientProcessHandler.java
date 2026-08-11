@@ -1,6 +1,9 @@
 package com.catas.wicked.server.handler.client;
 
 import com.catas.wicked.common.bean.ProxyRequestInfo;
+import com.catas.wicked.common.bean.ProxyRequestTiming;
+import com.catas.wicked.common.bean.message.BaseMessage;
+import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.bean.message.ResponseMessage;
 import com.catas.wicked.common.constant.ClientStatus;
 import com.catas.wicked.common.constant.ProxyConstant;
@@ -10,11 +13,13 @@ import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.server.client.UpstreamSslHandlerFactory;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.ssl.SslHandshakeCompletionEvent;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.AttributeKey;
@@ -54,8 +59,15 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
 
         // refresh timing & size
         ProxyRequestInfo requestInfo = ctx.channel().attr(requestInfoAttributeKey).get();
+        ProxyRequestTiming timing = null;
         if (requestInfo != null) {
-            requestInfo.updateResponseTime();
+            if (msg instanceof HttpResponse || msg instanceof HttpContent) {
+                timing = requestInfo.timing();
+                requestInfo.markResponseStart(timing);
+            } else {
+                // Raw tunnels have no HTTP end marker; retain the legacy estimate.
+                requestInfo.updateResponseTime();
+            }
 
             if (msg instanceof HttpResponse httpResponse) {
                 requestInfo.updateRespSize(WebUtils.estimateSize(httpResponse));
@@ -71,16 +83,21 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
             }
         }
 
+        ChannelFuture downstreamWrite;
         if (msg instanceof HttpResponse origin) {
             // Bug-fix: HttpAggregator removes Transfer-Encoding header
             DefaultHttpResponse copiedResp = new DefaultHttpResponse(
                     origin.protocolVersion(), origin.status(), origin.headers().copy());
-            clientChannel.writeAndFlush(msg);
+            downstreamWrite = clientChannel.writeAndFlush(msg);
             ctx.fireChannelRead(copiedResp);
         } else {
             ReferenceCountUtil.retain(msg);
-            clientChannel.writeAndFlush(msg);
+            downstreamWrite = clientChannel.writeAndFlush(msg);
             ctx.fireChannelRead(msg);
+        }
+        if (requestInfo != null && requestInfo.isRecording()
+                && timing != null && msg instanceof LastHttpContent) {
+            trackDownstreamCompletion(requestInfo, timing, requestInfo.getRespSize(), downstreamWrite);
         }
     }
 
@@ -159,10 +176,15 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
         ProxyRequestInfo requestInfo = ctx.channel().attr(requestInfoAttributeKey).get();
         if (requestInfo != null) {
             requestInfo.updateClientStatus(targetStatus, cause.getMessage());
+            ProxyRequestTiming timing = requestInfo.timing();
+            requestInfo.markRequestEnd(timing);
+            requestInfo.markResponseEnd(timing);
             ResponseMessage responseMsg = new ResponseMessage();
             responseMsg.setRequestId(requestInfo.getRequestId());
-            // responseMsg.setStartTime(System.currentTimeMillis());
-            // responseMsg.setEndTime(System.currentTimeMillis());
+            responseMsg.setStartTime(timing.getResponseStartTime());
+            responseMsg.setEndTime(timing.getResponseEndTime());
+            responseMsg.setDurationNanos(timing.getResponseDurationNanos());
+            responseMsg.setWaitingDurationNanos(timing.getWaitingDurationNanos());
             responseMsg.setSize(0);
             responseMsg.setStatus(-1);
             responseMsg.setReasonPhrase(targetStatus.getDesc());
@@ -186,5 +208,37 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
             current = current.getCause();
         }
         return null;
+    }
+
+    private void trackDownstreamCompletion(ProxyRequestInfo requestInfo, ProxyRequestTiming timing,
+                                           long responseSize, ChannelFuture writeFuture) {
+        writeFuture.addListener(future -> {
+            requestInfo.markResponseEnd(timing);
+            ResponseMessage update = new ResponseMessage();
+            update.setRequestId(timing.getRequestId());
+            update.setType(BaseMessage.MessageType.UPDATE);
+            update.setStartTime(timing.getResponseStartTime());
+            update.setEndTime(timing.getResponseEndTime());
+            update.setDurationNanos(timing.getResponseDurationNanos());
+            update.setWaitingDurationNanos(timing.getWaitingDurationNanos());
+            update.setSize(responseSize);
+
+            if (!future.isSuccess()) {
+                String failureMessage = future.cause() == null
+                        ? "Downstream response write failed"
+                        : future.cause().getMessage();
+                requestInfo.updateClientStatus(ClientStatus.Status.UNKNOWN_ERR, failureMessage);
+                update.setStatus(-1);
+                update.setReasonPhrase(ClientStatus.Status.UNKNOWN_ERR.getDesc());
+
+                RequestMessage requestUpdate = new RequestMessage();
+                requestUpdate.setRequestId(timing.getRequestId());
+                requestUpdate.setType(BaseMessage.MessageType.UPDATE);
+                requestUpdate.setClientStatus(requestInfo.getClientStatus());
+                messageQueue.pushMsg(Topic.UPDATE_MSG, requestUpdate);
+                log.debug("Downstream response write failed for request {}", timing.getRequestId(), future.cause());
+            }
+            messageQueue.pushMsg(Topic.UPDATE_MSG, update);
+        });
     }
 }

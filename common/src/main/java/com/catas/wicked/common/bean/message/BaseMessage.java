@@ -16,6 +16,9 @@ public class BaseMessage implements Message {
 
     private long endTime;
 
+    /** Monotonic elapsed duration for this phase; zero means unavailable. */
+    private long durationNanos;
+
     private long size;
 
     public enum MessageType {

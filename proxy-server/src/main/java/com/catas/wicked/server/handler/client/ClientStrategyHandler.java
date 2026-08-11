@@ -96,9 +96,6 @@ public class ClientStrategyHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (ctx.channel().attr(requestInfoKey).get() != null) {
-            ctx.channel().attr(requestInfoKey).get().updateResponseTime();
-        }
         if (msg instanceof HttpResponse httpResponse) {
             // remove httpCodec in websocket
             if (HttpHeaderValues.WEBSOCKET.toString().equals(httpResponse.headers().get(HttpHeaderNames.UPGRADE))){

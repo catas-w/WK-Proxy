@@ -42,6 +42,7 @@ public class TestMessageService {
             }
             requestMessage.setSize(updateMsg.getSize());
             requestMessage.setEndTime(updateMsg.getEndTime());
+            requestMessage.setDurationNanos(updateMsg.getDurationNanos());
             requestMessage.setClientStatus(updateMsg.getClientStatus());
             if (updateMsg.getBody() != null) {
                 requestMessage.setBody(updateMsg.getBody());
@@ -71,6 +72,8 @@ public class TestMessageService {
             // TODO 分开resp
             requestMessage.getResponse().setSize(updateMsg.getSize());
             requestMessage.getResponse().setEndTime(updateMsg.getEndTime());
+            requestMessage.getResponse().setDurationNanos(updateMsg.getDurationNanos());
+            requestMessage.getResponse().setWaitingDurationNanos(updateMsg.getWaitingDurationNanos());
             requestCache.put(requestMessage.getRequestId(), requestMessage);
         } else {
             log.warn("Unrecognized requestMsg");

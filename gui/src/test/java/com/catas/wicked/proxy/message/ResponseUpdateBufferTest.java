@@ -21,6 +21,10 @@ public class ResponseUpdateBufferTest {
 
         assertEquals(250, response.getSize());
         assertEquals(1_300, response.getEndTime());
+        assertEquals(300, response.getDurationNanos());
+        assertEquals(30, response.getWaitingDurationNanos());
+        assertEquals(Integer.valueOf(-1), response.getStatus());
+        assertEquals("downstream write failed", response.getReasonPhrase());
         assertEquals(0, buffer.size());
     }
 
@@ -53,6 +57,10 @@ public class ResponseUpdateBufferTest {
         update.setRequestId(requestId);
         update.setSize(size);
         update.setEndTime(endTime);
+        update.setDurationNanos(endTime - 1_000);
+        update.setWaitingDurationNanos((endTime - 1_000) / 10);
+        update.setStatus(-1);
+        update.setReasonPhrase("downstream write failed");
         return update;
     }
 }

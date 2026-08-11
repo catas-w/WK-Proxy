@@ -235,6 +235,7 @@ public class RequestRecordStore {
         copy.setHeaders(source.getHeaders() == null ? null : new LinkedHashMap<>(source.getHeaders()));
         copy.setRetryTimes(source.getRetryTimes());
         copy.setOversize(source.isOversize());
+        copy.setWaitingDurationNanos(source.getWaitingDurationNanos());
         return copy;
     }
 
@@ -242,6 +243,7 @@ public class RequestRecordStore {
         target.setType(source.getType());
         target.setStartTime(source.getStartTime());
         target.setEndTime(source.getEndTime());
+        target.setDurationNanos(source.getDurationNanos());
         target.setSize(source.getSize());
     }
 
