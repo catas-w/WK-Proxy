@@ -1,6 +1,7 @@
 package com.catas.wicked.proxy.gui.controller.settings;
 
 import com.catas.wicked.common.bean.HeaderEntry;
+import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.CertificateConfig;
 import com.catas.wicked.common.provider.CertManager;
 import com.catas.wicked.common.provider.ResourceMessageProvider;
@@ -11,6 +12,7 @@ import com.catas.wicked.proxy.gui.componet.SelectableTableCell;
 import com.catas.wicked.proxy.gui.componet.builder.TextAreaEditorNodeBuilder;
 import com.catas.wicked.proxy.gui.componet.dialog.CertImportDialog;
 import com.catas.wicked.proxy.service.LocalizationService;
+import com.catas.wicked.proxy.service.settings.CertificateInstallationVerifier;
 import com.catas.wicked.proxy.service.settings.SettingsDraft;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleButton;
@@ -71,6 +73,7 @@ public class SslSettingsPageController implements SettingsPageController, Initia
     @FXML private Label loadingLabel;
 
     @Inject private CertManager certManager;
+    @Inject private ApplicationConfig appConfig;
     @Inject private ResourceMessageProvider messages;
     @Inject private LocalizationService localization;
 
@@ -89,6 +92,7 @@ public class SslSettingsPageController implements SettingsPageController, Initia
     private boolean certificatesLoaded;
     private boolean renderingCertificates;
     private List<CertificateRow> certificateRows = List.of();
+    private final Map<String, CertSelectComponent> certificateComponents = new LinkedHashMap<>();
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
@@ -214,6 +218,7 @@ public class SslSettingsPageController implements SettingsPageController, Initia
                     component.setStatusAction(event -> installCertificate(config.getId()));
                 }
                 component.setDisable(!sslBtn.isSelected());
+                certificateComponents.put(config.getId(), component);
                 sslGridPane.add(component, 1, rowIndex++);
             }
             sslGridPane.add(importCertBox, 1, rowIndex);
@@ -224,6 +229,7 @@ public class SslSettingsPageController implements SettingsPageController, Initia
     }
 
     private void clearCertificateRows() {
+        certificateComponents.clear();
         sslGridPane.getChildren().remove(importCertBox);
         sslGridPane.getChildren().removeIf(node -> node instanceof CertSelectComponent);
     }
@@ -268,7 +274,40 @@ public class SslSettingsPageController implements SettingsPageController, Initia
                 messages.getMessage("cert-install-confirm.label"))) {
             return;
         }
-        runCertificateCommand(() -> certManager.installCert(certId));
+        setLoading(true);
+        CompletableFuture.supplyAsync(() -> verifyCertificateInstallation(certId), executor)
+                .whenComplete((result, error) -> Platform.runLater(() -> {
+                    setLoading(false);
+                    if (error != null) {
+                        showError(error);
+                        return;
+                    }
+                    applyCertificateInstallation(result);
+                }));
+    }
+
+    private CertificateInstallationVerifier.Result verifyCertificateInstallation(String certId) {
+        try {
+            return CertificateInstallationVerifier.installAndVerify(
+                    certManager, certId, () -> appConfig.getSettings().getSelectedCert());
+        } catch (CertificateInstallationVerifier.VerificationException error) {
+            throw new IllegalStateException(messages.getMessage("cert-install-failed.alert"), error);
+        } catch (Exception error) {
+            throw new IllegalStateException(error);
+        }
+    }
+
+    private void applyCertificateInstallation(CertificateInstallationVerifier.Result result) {
+        certificateRows = certificateRows.stream()
+                .map(row -> StringUtils.equals(row.config().getId(), result.certId())
+                        ? new CertificateRow(row.config(), true) : row)
+                .toList();
+        CertSelectComponent component = certificateComponents.get(result.certId());
+        if (component != null) {
+            component.setInstallationStatus(true, messages.getMessage("cert-status.installed"));
+            component.setStatusAction(null);
+        }
+        appConfig.getObservableConfig().setCertInstalledStatus(result.runtimeCertInstalled());
     }
 
     private void deleteCertificate(String certId) {

@@ -4,7 +4,9 @@ import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.config.Settings;
 import com.catas.wicked.common.provider.CertManager;
 import com.catas.wicked.server.proxy.ProxyServer;
+import com.catas.wicked.proxy.service.record.RequestRecordStore;
 import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import java.security.PrivateKey;
@@ -22,22 +24,33 @@ public class SettingsCommitService {
     private final ProxyServer proxyServer;
     private final CertManager certManager;
     private final PortAvailabilityChecker portAvailabilityChecker;
+    private final RequestRecordStore requestStore;
     private final ThreadPoolExecutor executor;
 
+    @Inject
     public SettingsCommitService(ApplicationConfig applicationConfig,
                                  ProxyServer proxyServer,
                                  CertManager certManager,
-                                 PortAvailabilityChecker portAvailabilityChecker) {
+                                 PortAvailabilityChecker portAvailabilityChecker,
+                                 RequestRecordStore requestStore) {
         this.applicationConfig = applicationConfig;
         this.proxyServer = proxyServer;
         this.certManager = certManager;
         this.portAvailabilityChecker = portAvailabilityChecker;
+        this.requestStore = requestStore;
         this.executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(4), runnable -> {
                     Thread thread = new Thread(runnable, "settings-commit");
                     thread.setDaemon(true);
                     return thread;
                 }, new ThreadPoolExecutor.AbortPolicy());
+    }
+
+    SettingsCommitService(ApplicationConfig applicationConfig,
+                          ProxyServer proxyServer,
+                          CertManager certManager,
+                          PortAvailabilityChecker portAvailabilityChecker) {
+        this(applicationConfig, proxyServer, certManager, portAvailabilityChecker, null);
     }
 
     public CompletionStage<SettingsApplyResult> apply(SettingsDraft draft) {
@@ -76,6 +89,9 @@ public class SettingsCommitService {
             }
 
             applicationConfig.replaceSettings(candidate);
+            if (requestStore != null) {
+                requestStore.refreshBudget();
+            }
             if (changes.portChanged()) {
                 switchedPort = true;
                 proxyServer.restart();
@@ -88,6 +104,9 @@ public class SettingsCommitService {
             return SettingsApplyResult.success(changes);
         } catch (Throwable error) {
             applicationConfig.replaceSettings(before);
+            if (requestStore != null) {
+                requestStore.refreshBudget();
+            }
             if (switchedPort) {
                 try {
                     proxyServer.restart();

@@ -34,7 +34,7 @@
                 </Button>
             </StackPane>
         </HBox>
-        <HBox maxWidth="Infinity" styleClass="request-view-switcher">
+        <HBox fx:id="requestViewSwitcher" maxWidth="Infinity" styleClass="request-view-switcher">
             <CustomToggleNode fx:id="applicationViewToggleNode" maxWidth="Infinity"
                               styleClass="toggle-node" text="%application-view.label" HBox.hgrow="ALWAYS">
                 <graphic>

@@ -2910,5 +2910,59 @@
   "name":"com.catas.wicked.proxy.service.icon.WindowsApplicationIconProvider$ShellFileInfo",
   "allDeclaredFields":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCPROW_OWNER_PID",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCPTABLE_OWNER_PID",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":["com.sun.jna.Pointer"] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCP6ROW_OWNER_PID",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCP6TABLE_OWNER_PID",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":["com.sun.jna.Pointer"] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CERT_CONTEXT",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CERT_CONTEXT$ByReference",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$HCERTSTORE",
+  "allDeclaredFields":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] },
+    {"name":"<init>","parameterTypes":["com.sun.jna.Pointer"] }
+  ]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$HCRYPTPROV_LEGACY",
+  "allDeclaredFields":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] },
+    {"name":"<init>","parameterTypes":["long"] }
+  ]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CertStoreProviderName",
+  "allDeclaredFields":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] },
+    {"name":"<init>","parameterTypes":["int"] }
+  ]
 }
 ]

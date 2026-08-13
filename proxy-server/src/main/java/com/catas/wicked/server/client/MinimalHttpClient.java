@@ -1,6 +1,7 @@
 package com.catas.wicked.server.client;
 
 import com.catas.wicked.common.config.ExternalProxyConfig;
+import com.catas.wicked.common.constant.InternalRequestOrigin;
 import com.catas.wicked.common.util.ProxyHandlerFactory;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
@@ -19,6 +20,8 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.proxy.ProxyHandler;
@@ -26,6 +29,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.Promise;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,18 +67,13 @@ public class MinimalHttpClient implements AutoCloseable {
     private int timeout = 60 * 1000;
     private HttpVersion httpVersion = HttpVersion.HTTP_1_1;
     private boolean fetchFullResponse;
+    private InternalRequestOrigin internalRequestOrigin;
+    private String internalRequestToken;
 
     private ChannelFuture channelFuture;
     HttpResponse httpResponse;
     Promise<HttpResponse> responsePromise;
     BlockingQueue<Promise<HttpResponse>> msgList = new ArrayBlockingQueue<>(1);
-
-    private final SslContext context = SslContextBuilder.forClient()
-            .sslProvider(SslProvider.OPENSSL)
-            .startTls(true)
-            .protocols("TLSv1.1", "TLSv1.2", "TLSv1.3")
-            .trustManager(InsecureTrustManagerFactory.INSTANCE)
-            .build();
 
     public MinimalHttpClient() throws SSLException {
     }
@@ -87,19 +86,21 @@ public class MinimalHttpClient implements AutoCloseable {
         Bootstrap bootstrap = new Bootstrap();
 
         InetSocketAddress address = null;
+        String targetHost;
+        int targetPort;
         boolean isSSl = uri.startsWith("https://");
         try {
             URL url = new URL(uri);
-            String host = url.getHost();
-            int port = url.getPort();
-            if (port == -1) {
-                port = isSSl ? 443 : 80;
+            targetHost = url.getHost();
+            targetPort = url.getPort();
+            if (targetPort == -1) {
+                targetPort = isSSl ? 443 : 80;
             }
-            InetAddress addr = InetAddress.getByName(host);
-            if (!host.equalsIgnoreCase(addr.getHostAddress())) {
-                address = new InetSocketAddress(host, port);
+            InetAddress addr = InetAddress.getByName(targetHost);
+            if (!targetHost.equalsIgnoreCase(addr.getHostAddress())) {
+                address = new InetSocketAddress(targetHost, targetPort);
             } else {
-                address = InetSocketAddress.createUnresolved(host, port);
+                address = InetSocketAddress.createUnresolved(targetHost, targetPort);
             }
         } catch (Exception e) {
             log.error("Illegal uri: {}", uri, e);
@@ -108,7 +109,8 @@ public class MinimalHttpClient implements AutoCloseable {
 
         log.info("MinimalHttpClient connecting to: {}, uri: {}, method: {}", address, uri, method);
         MinimalHttpClient client = this;
-        InetSocketAddress finalAddress = address;
+        String finalTargetHost = targetHost;
+        int finalTargetPort = targetPort;
         bootstrap.group(eventExecutors)
                 .remoteAddress(address)
                 .channel(NioSocketChannel.class)
@@ -119,14 +121,17 @@ public class MinimalHttpClient implements AutoCloseable {
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         if (proxyConfig != null) {
                             // add external proxy handler
-                            ProxyHandler proxyHandler = ProxyHandlerFactory.getExternalProxyHandler(proxyConfig, uri);
+                            ProxyHandler proxyHandler = ProxyHandlerFactory.getExternalProxyHandler(
+                                    proxyConfig, uri, buildConnectHeaders());
                             if (proxyHandler != null) {
                                 ch.pipeline().addLast(EXTERNAL_PROXY, proxyHandler);
                             }
                         }
                         if (isSSl) {
-
-                            ch.pipeline().addLast(SSL_HANDLER, context.newHandler(ch.alloc(), finalAddress.getAddress().getHostName(), finalAddress.getPort()));
+                            ch.pipeline().addLast(SSL_HANDLER,
+                                    UpstreamSslHandlerFactory.create(
+                                            SslContextHolder.INSTANCE, ch,
+                                            finalTargetHost, finalTargetPort));
                         }
                         ch.pipeline().addLast(HTTP_CODEC, new HttpClientCodec());
                         if (fetchFullResponse) {
@@ -158,6 +163,14 @@ public class MinimalHttpClient implements AutoCloseable {
     }
 
     public void close() {
+        synchronized (this) {
+            ReferenceCountUtil.release(httpResponse);
+            httpResponse = null;
+        }
+        closeTransport();
+    }
+
+    void closeTransport() {
         if (channelFuture != null) {
             channelFuture.channel().close();
         }
@@ -172,7 +185,14 @@ public class MinimalHttpClient implements AutoCloseable {
         if (promise == null) {
             throw new RuntimeException("Minimal client timeout in request: " + uri);
         }
-        return promise.get();
+        HttpResponse response = promise.get();
+        synchronized (this) {
+            if (httpResponse == response) {
+                // Ownership transfers to the caller. Reference-counted responses must be released by it.
+                httpResponse = null;
+            }
+        }
+        return response;
     }
 
     private HttpRequest buildHttpRequest() {
@@ -181,6 +201,33 @@ public class MinimalHttpClient implements AutoCloseable {
             headers.forEach((key, value) -> request.headers().set(key, value));
         }
         return request;
+    }
+
+    HttpHeaders buildConnectHeaders() {
+        if (internalRequestOrigin == null || internalRequestToken == null
+                || internalRequestToken.isBlank()) {
+            return null;
+        }
+        HttpHeaders headers = new DefaultHttpHeaders();
+        headers.set(InternalRequestOrigin.HEADER_NAME,
+                internalRequestOrigin.headerValue(internalRequestToken));
+        return headers;
+    }
+
+    private static final class SslContextHolder {
+        private static final SslContext INSTANCE = createContext();
+
+        private static SslContext createContext() {
+            try {
+                return SslContextBuilder.forClient()
+                        .sslProvider(SslProvider.OPENSSL)
+                        .protocols("TLSv1.1", "TLSv1.2", "TLSv1.3")
+                        .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                        .build();
+            } catch (SSLException exception) {
+                throw new ExceptionInInitializerError(exception);
+            }
+        }
     }
 
     private List<HttpContent> buildHttpContent() {
@@ -323,6 +370,12 @@ public class MinimalHttpClient implements AutoCloseable {
 
         public Builder fullResponse(boolean fullResponse) {
             httpClient.setFetchFullResponse(fullResponse);
+            return this;
+        }
+
+        public Builder internalRequest(InternalRequestOrigin origin, String sessionToken) {
+            httpClient.internalRequestOrigin = origin;
+            httpClient.internalRequestToken = sessionToken;
             return this;
         }
     }

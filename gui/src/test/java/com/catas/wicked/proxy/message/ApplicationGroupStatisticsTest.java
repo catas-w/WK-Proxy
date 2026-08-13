@@ -78,6 +78,32 @@ public class ApplicationGroupStatisticsTest {
         assertEquals(Integer.valueOf(1), clientOverview.statistics().getCountMap().get(HttpMethod.POST));
     }
 
+    @Test
+    public void incrementalAccumulatorReplacesAndRemovesContributions() {
+        ApplicationGroupStatistics.Accumulator accumulator = new ApplicationGroupStatistics.Accumulator();
+        RequestMessage request = request("one", "GET", "HTTPS", 443,
+                10, 100, process("Browser", 1, 1));
+        accumulator.put(request);
+
+        ResponseMessage response = new ResponseMessage();
+        response.setSize(20);
+        response.setEndTime(150);
+        request.setResponse(response);
+        accumulator.put(request);
+
+        ApplicationGroupOverview overview = accumulator.overview(
+                RequestCell.NodeType.HOST, "Browser", "example.test", 1);
+        assertEquals(1, overview.statistics().getCount());
+        assertEquals(30, overview.statistics().getTotalSize());
+        assertEquals(50, overview.statistics().getTimeCost());
+
+        accumulator.remove("one");
+        overview = accumulator.overview(RequestCell.NodeType.HOST, "Browser", "example.test", 1);
+        assertEquals(0, overview.statistics().getCount());
+        assertEquals(0, overview.statistics().getTotalSize());
+        assertTrue(overview.protocols().isEmpty());
+    }
+
     private static RequestMessage request(String id, String method, String protocol, int port, long size,
                                           long startTime, ProcessInfo processInfo) {
         RequestMessage request = new RequestMessage();

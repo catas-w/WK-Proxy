@@ -53,6 +53,8 @@ public class ProxyRequestInfo {
     private volatile int requestSize;
     private volatile int respSize;
 
+    private volatile ProxyRequestTiming timing;
+
     private boolean isNewRequest;
 
     private boolean usingExternalProxy;
@@ -78,6 +80,50 @@ public class ProxyRequestInfo {
         hasSentRequestMsg = false;
         hasSentRespMsg = false;
         isNewRequest = true;
+        timing = new ProxyRequestTiming(requestId);
+    }
+
+    public ProxyRequestTiming timing() {
+        ProxyRequestTiming current = timing;
+        if (current == null) {
+            synchronized (this) {
+                current = timing;
+                if (current == null) {
+                    current = new ProxyRequestTiming(requestId);
+                    timing = current;
+                }
+            }
+        }
+        return current;
+    }
+
+    public void markRequestStart() {
+        ProxyRequestTiming current = timing();
+        current.markRequestStart();
+        requestStartTime = current.getRequestStartTime();
+    }
+
+    public void markRequestEnd(ProxyRequestTiming target) {
+        target.markRequestEnd();
+        if (timing == target) {
+            requestStartTime = target.getRequestStartTime();
+            requestEndTime = target.getRequestEndTime();
+        }
+    }
+
+    public void markResponseStart(ProxyRequestTiming target) {
+        target.markResponseStart();
+        if (timing == target) {
+            responseStartTime = target.getResponseStartTime();
+        }
+    }
+
+    public void markResponseEnd(ProxyRequestTiming target) {
+        target.markResponseEnd();
+        if (timing == target) {
+            responseStartTime = target.getResponseStartTime();
+            responseEndTime = target.getResponseEndTime();
+        }
     }
 
     public synchronized void updateRequestTime() {

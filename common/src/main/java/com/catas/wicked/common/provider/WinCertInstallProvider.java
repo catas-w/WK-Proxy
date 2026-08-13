@@ -8,16 +8,33 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import java.security.KeyStore;
+import java.nio.charset.StandardCharsets;
 import java.security.Security;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.Enumeration;
+import java.util.Base64;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Singleton
 @Requires(os = Requires.Family.WINDOWS)
 public class WinCertInstallProvider implements CertInstallProvider {
+
+    private static final String POWERSHELL = "powershell.exe";
+    private static final long STORE_ERROR_LOG_INTERVAL_NANOS = TimeUnit.SECONDS.toNanos(30);
+    private static final AtomicLong NEXT_STORE_ERROR_LOG_NANOS = new AtomicLong();
+
+    private final ProcessExecutor processExecutor;
+    private final CertificateStoreReader certificateStoreReader;
+
+    public WinCertInstallProvider() {
+        this(WinCertInstallProvider::execute, new WindowsRootCertificateStore()::readCertificates);
+    }
+
+    WinCertInstallProvider(ProcessExecutor processExecutor, CertificateStoreReader certificateStoreReader) {
+        this.processExecutor = processExecutor;
+        this.certificateStoreReader = certificateStoreReader;
+    }
 
     @PostConstruct
     public void init() {
@@ -26,88 +43,104 @@ public class WinCertInstallProvider implements CertInstallProvider {
 
     @Override
     public boolean checkCertInstalled(String certName, String sha256) {
+        if (StringUtils.isBlank(sha256)) {
+            log.warn("Cannot check Windows certificate {} without a SHA-256 fingerprint.", certName);
+            return false;
+        }
         try {
-            KeyStore keyStore = KeyStore.getInstance("Windows-ROOT");
-            keyStore.load(null, null);
-
-            // Iterate over all certificates in the Windows-ROOT store
-            Enumeration<String> aliases = keyStore.aliases();
-            while (aliases.hasMoreElements()) {
-                String alias = aliases.nextElement();
-                Certificate cert = keyStore.getCertificate(alias);
-                if (alias.equals(certName) && cert instanceof X509Certificate localCert) {
-                    if (StringUtils.equalsIgnoreCase(sha256, CommonUtils.SHA256(localCert.getEncoded()))) {
-                        log.info("Certificate: {} is installed in the Windows-ROOT store.", certName);
-                        return true;
-                    }
+            for (byte[] encodedCertificate : certificateStoreReader.read()) {
+                if (encodedCertificate != null
+                        && StringUtils.equalsIgnoreCase(sha256, CommonUtils.SHA256(encodedCertificate))) {
+                    log.info("Certificate {} is installed in LocalMachine\\Root.", certName);
+                    return true;
                 }
             }
-        } catch (Exception e) {
-            log.error("Error in checking cert installation on Win: {}", certName, e);
+        } catch (Exception error) {
+            logStoreReadError(certName, error);
+            return false;
         }
-        log.warn("Certificate: {} is not installed in the Windows-ROOT store.", certName);
+        log.debug("Certificate {} is not installed in LocalMachine\\Root.", certName);
         return false;
     }
 
     @Override
     public boolean install(String certPath) {
-        return installWithPowerShell(certPath);
-    }
-
-    /**
-     * Import-Certificate -FilePath "C:\Users\catas\Desktop\TestLocheed.crt" -CertStoreLocation Cert:\LocalMachine\Root
-     */
-    private boolean installWithPowerShell(String certPath) {
-        String[] cmd = {
-            "Import-Certificate", "-FilePath", certPath, "-CertStoreLocation", "Cert:\\LocalMachine\\Root"
-        };
-
-        // PowerShell command to run cmd as admin
-        String psCommand = "\"Start-Process powershell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -Command " +
-               StringUtils.join(cmd, ' ') + "' -Verb RunAs\"";
-
+        List<String> command = buildInstallCommand(certPath);
         try {
-            ProcessBuilder pb = new ProcessBuilder("powershell.exe", "-Command", psCommand);
-            pb.inheritIO();
-
-            // Start the process
-            Process process = pb.start();
-            process.waitFor();
-            int exitCode = process.waitFor();
-
+            int exitCode = processExecutor.execute(command);
             if (exitCode == 0) {
-                log.info("Certificate installed successfully.");
-            } else {
-                throw new RuntimeException("Failed to install the certificate. Exit code: " + exitCode);
+                log.info("Windows accepted and completed the certificate installation command.");
+                return true;
             }
-            return true;
-        } catch (Exception e) {
-            log.error("Error in installing certificate in Windows: ", e);
+            log.warn("Windows certificate installation failed with exit code {}.", exitCode);
+        } catch (InterruptedException error) {
+            Thread.currentThread().interrupt();
+            log.warn("Windows certificate installation was interrupted.", error);
+        } catch (Exception error) {
+            log.error("Error installing certificate in LocalMachine\\Root.", error);
         }
         return false;
     }
 
-    private boolean installWithCmd(String certPath) {
-        String[] command = {
-            "cmd.exe", "/c", "certutil", "-addstore", "root", certPath
-        };
-
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-        try {
-            // Start the process
-            Process process = processBuilder.start();
-
-            // Wait for the process to complete and check the exit value
-            int exitCode = process.waitFor();
-            if (exitCode == 0) {
-                log.info("Certificate installed successfully.");
-            } else {
-                throw new RuntimeException("Failed to install the certificate. Exit code: " + exitCode);
-            }
-        } catch (Exception e) {
-            log.error("Error in installing certificate in Windows: ", e);
-            throw new RuntimeException(e.getMessage());
+    static List<String> buildInstallCommand(String certPath) {
+        if (StringUtils.isBlank(certPath)) {
+            throw new IllegalArgumentException("certPath must not be blank");
         }
-        return false;
+        String escapedPath = certPath.replace("'", "''");
+        String innerScript = "$ErrorActionPreference='Stop'; "
+                + "Import-Certificate -FilePath '" + escapedPath + "' "
+                + "-CertStoreLocation 'Cert:\\LocalMachine\\Root' "
+                + "-Confirm:$false -ErrorAction Stop | Out-Null";
+        String innerEncoded = encodePowerShell(innerScript);
+
+        String outerScript = "$ErrorActionPreference='Stop'; try { "
+                + "$process = Start-Process -FilePath 'powershell.exe' "
+                + "-ArgumentList @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',"
+                + "'-EncodedCommand','" + innerEncoded + "') "
+                + "-Verb RunAs -Wait -PassThru -ErrorAction Stop; "
+                + "exit $process.ExitCode } catch { Write-Error $_; exit 1 }";
+        return List.of(POWERSHELL, "-NoProfile", "-NonInteractive", "-EncodedCommand",
+                encodePowerShell(outerScript));
+    }
+
+    static String decodePowerShell(String encodedCommand) {
+        return new String(Base64.getDecoder().decode(encodedCommand), StandardCharsets.UTF_16LE);
+    }
+
+    private static String encodePowerShell(String script) {
+        return Base64.getEncoder().encodeToString(script.getBytes(StandardCharsets.UTF_16LE));
+    }
+
+    private static int execute(List<String> command) throws Exception {
+        ProcessBuilder builder = new ProcessBuilder(command);
+        builder.inheritIO();
+        Process process = builder.start();
+        return process.waitFor();
+    }
+
+    private static void logStoreReadError(String certName, Exception error) {
+        long now = System.nanoTime();
+        long nextLog = NEXT_STORE_ERROR_LOG_NANOS.get();
+        if (now >= nextLog && NEXT_STORE_ERROR_LOG_NANOS.compareAndSet(
+                nextLog, now + STORE_ERROR_LOG_INTERVAL_NANOS)) {
+            if (error instanceof WindowsRootCertificateStore.CertificateStoreException storeError) {
+                log.error("Error checking certificate {} in LocalMachine\\Root: operation={}, error={}.",
+                        certName, storeError.operation(), storeError.errorCode(), storeError);
+            } else {
+                log.error("Error checking certificate {} in LocalMachine\\Root.", certName, error);
+            }
+            return;
+        }
+        log.debug("Suppressed repeated LocalMachine\\Root read failure for certificate {}.", certName, error);
+    }
+
+    @FunctionalInterface
+    interface ProcessExecutor {
+        int execute(List<String> command) throws Exception;
+    }
+
+    @FunctionalInterface
+    interface CertificateStoreReader {
+        List<byte[]> read() throws Exception;
     }
 }

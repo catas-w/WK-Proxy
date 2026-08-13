@@ -79,6 +79,8 @@ public class ClientPostRecorder extends ChannelDuplexHandler {
         responseMessage.setRequestId(requestInfo.getRequestId());
         responseMessage.setStartTime(requestInfo.getResponseStartTime());
         responseMessage.setEndTime(requestInfo.getResponseEndTime());
+        responseMessage.setDurationNanos(requestInfo.timing().getResponseDurationNanos());
+        responseMessage.setWaitingDurationNanos(requestInfo.timing().getWaitingDurationNanos());
         responseMessage.setSize(requestInfo.getRespSize());
         messageQueue.pushMsg(Topic.RECORD, responseMessage);
 
@@ -109,6 +111,8 @@ public class ClientPostRecorder extends ChannelDuplexHandler {
         responseMessage.setRequestId(requestInfo.getRequestId());
         responseMessage.setStartTime(requestInfo.getResponseStartTime());
         responseMessage.setEndTime(requestInfo.getResponseEndTime());
+        responseMessage.setDurationNanos(requestInfo.timing().getResponseDurationNanos());
+        responseMessage.setWaitingDurationNanos(requestInfo.timing().getWaitingDurationNanos());
         responseMessage.setSize(requestInfo.getRespSize());
         if (resp instanceof OversizeHttpMessage) {
             responseMessage.setOversize(true);

@@ -41,6 +41,7 @@ final class BundledApplicationIconProvider implements ApplicationIconProvider {
 
     private static Map<String, String> icons() {
         Map<String, String> result = new LinkedHashMap<>();
+        result.put("wizard proxy", "/image/wk-proxy.2.png");
         result.put("visual studio code", "/image/application/vscode.png");
         result.put("code.exe", "/image/application/vscode.png");
         result.put("intellij idea", "/image/application/intellij-idea.png");

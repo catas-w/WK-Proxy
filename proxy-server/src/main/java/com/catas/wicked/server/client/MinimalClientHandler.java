@@ -77,13 +77,17 @@ public class MinimalClientHandler extends ChannelInboundHandlerAdapter {
                 if (response == null) {
                     client.responsePromise.tryFailure(new IOException("Minimal httpClient received an incomplete response"));
                 } else {
-                    client.responsePromise.trySuccess(response);
+                    client.httpResponse = response;
+                    if (!client.responsePromise.trySuccess(response)) {
+                        client.httpResponse = null;
+                        ReferenceCountUtil.release(response);
+                    }
                 }
             } else if (response instanceof FullHttpResponse fullResponse) {
                 fullResponse.release();
             }
         }
-        client.close();
+        client.closeTransport();
     }
 
     @Override

@@ -6,9 +6,10 @@ import com.catas.wicked.proxy.gui.componet.TimeSplitPane;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
 import com.catas.wicked.proxy.message.RequestTiming;
 import com.catas.wicked.proxy.render.PreparedRender;
+import com.catas.wicked.proxy.service.record.RequestRecordStore;
+import com.catas.wicked.proxy.service.record.RequestRecordSnapshot;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.ehcache.Cache;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class TimingTabRenderer extends AbstractTabRenderer {
     private DetailTabController detailTabController;
 
     @Inject
-    private Cache<String, RequestMessage> requestCache;
+    private RequestRecordStore requestStore;
 
     @Override
     public PreparedRender prepare(RenderMessage renderMsg) {
@@ -27,7 +28,8 @@ public class TimingTabRenderer extends AbstractTabRenderer {
             return PreparedRender.noop(renderMsg.getRequestId(), renderMsg.isEmpty());
         }
         String requestId = renderMsg.getRequestId();
-        RequestMessage request = renderMsg.isEmpty() ? null : requestCache.get(requestId);
+        RequestRecordSnapshot snapshot = renderMsg.isEmpty() ? null : requestStore.snapshot(requestId);
+        RequestMessage request = snapshot == null ? null : snapshot.message();
         RequestTiming timing = RequestTiming.from(request);
 
         return new PreparedRender(requestId, renderMsg.isEmpty(), () -> {
@@ -38,7 +40,6 @@ public class TimingTabRenderer extends AbstractTabRenderer {
                 return;
             }
 
-            detailTabController.showRequestOnlyTabs();
             double firstDivider = timing.firstDivider();
             double secondDivider = timing.secondDivider();
             List<TimeSplitPane> splitPanes = List.of(
@@ -49,13 +50,13 @@ public class TimingTabRenderer extends AbstractTabRenderer {
                     splitPane.setDividerPositions(firstDivider, secondDivider));
 
             detailTabController.getRequestDurationLabel().setText(
-                    RequestTiming.formatDuration(timing.requestDuration()));
+                    timing.formattedRequestDuration());
             detailTabController.getWaitingDurationLabel().setText(
-                    RequestTiming.formatDuration(timing.waitingDuration()));
+                    timing.formattedWaitingDuration());
             detailTabController.getResponseDurationLabel().setText(
-                    RequestTiming.formatDuration(timing.responseDuration()));
+                    timing.formattedResponseDuration());
             detailTabController.getTotalDurationLabel().setText(
-                    RequestTiming.formatDuration(timing.totalDuration()));
+                    timing.formattedTotalDuration());
 
             detailTabController.getRequestTimeSplit().setSegmentVisible(timing.requestDuration().isPresent());
             detailTabController.getWaitingTimeSplit().setSegmentVisible(timing.waitingDuration().isPresent());

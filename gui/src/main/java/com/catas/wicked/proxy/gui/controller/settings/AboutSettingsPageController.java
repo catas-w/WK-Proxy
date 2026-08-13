@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 @Prototype
 public class AboutSettingsPageController implements SettingsPageController, Initializable {
 
-    static final String REPOSITORY_URL = "https://github.com/catas-w/HumBird-Proxy/";
+    static final String REPOSITORY_URL = "https://github.com/catas-w/WK-Proxy";
     static final String LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.html";
     static final String EMAIL_ADDRESS = "catasw@foxmail.com";
     static final String EMAIL_URI = "mailto:" + EMAIL_ADDRESS;

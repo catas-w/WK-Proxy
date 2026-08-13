@@ -2,7 +2,8 @@ package com.catas.wicked.proxy;
 
 public final class ProductInfo {
 
-    public static final String DISPLAY_NAME = "Wizard Proxy";
+    public static final String DISPLAY_NAME =
+            com.catas.wicked.common.constant.ProductIdentity.DISPLAY_NAME;
 
     private ProductInfo() {
     }

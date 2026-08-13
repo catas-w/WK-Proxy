@@ -92,6 +92,11 @@ public class MessageQueue {
         messageChannel.clear();
     }
 
+    public int getSize(Topic topic) {
+        MessageChannel channel = channelMap.get(topic);
+        return channel == null ? 0 : channel.getSize();
+    }
+
     /**
      * push message to a specific queue
      * @param topic topic

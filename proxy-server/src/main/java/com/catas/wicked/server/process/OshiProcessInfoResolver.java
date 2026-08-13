@@ -29,12 +29,15 @@ import java.util.function.LongSupplier;
 public class OshiProcessInfoResolver implements ProcessInfoResolver {
 
     static final long SNAPSHOT_TTL_NANOS = 100_000_000L;
+    static final long WINDOWS_SNAPSHOT_TTL_NANOS = 500_000_000L;
     static final long PROCESS_CACHE_TTL_NANOS = TimeUnit.SECONDS.toNanos(5);
     static final int PROCESS_CACHE_MAX_ENTRIES = 256;
 
     private final SystemQuery systemQuery;
+    private final TcpConnectionProvider connectionProvider;
     private final String osName;
     private final LongSupplier nanoTime;
+    private final long snapshotTtlNanos;
     private final Object snapshotLock = new Object();
     private final Object processCacheLock = new Object();
     private final AtomicBoolean linkageFailureLogged = new AtomicBoolean();
@@ -45,13 +48,37 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
     private volatile ConnectionSnapshot snapshot = ConnectionSnapshot.empty();
 
     public OshiProcessInfoResolver() {
-        this(new OshiSystemQuery(), SystemUtils.OS_NAME, System::nanoTime);
+        this(new OshiSystemQuery(), SystemUtils.OS_NAME, System::nanoTime, true);
     }
 
     OshiProcessInfoResolver(SystemQuery systemQuery, String osName, LongSupplier nanoTime) {
+        this(systemQuery, osName, nanoTime, false);
+    }
+
+    private OshiProcessInfoResolver(SystemQuery systemQuery, String osName, LongSupplier nanoTime,
+                                    boolean useWindowsNativeProvider) {
         this.systemQuery = systemQuery;
         this.osName = osName == null ? "" : osName.toLowerCase(Locale.ROOT);
         this.nanoTime = nanoTime;
+        this.snapshotTtlNanos = this.osName.contains("win")
+                ? WINDOWS_SNAPSHOT_TTL_NANOS : SNAPSHOT_TTL_NANOS;
+        TcpConnectionProvider oshiProvider = systemQuery::queryConnections;
+        this.connectionProvider = useWindowsNativeProvider && this.osName.contains("win")
+                ? new FallbackTcpConnectionProvider(new WindowsTcpConnectionProvider(), oshiProvider)
+                : oshiProvider;
+    }
+
+    @Override
+    public void warmUp() {
+        if (!osName.contains("win")) {
+            return;
+        }
+        long startedAt = nanoTime.getAsLong();
+        systemQuery.warmUp();
+        ConnectionSnapshot warmed = getSnapshot(false, -1L);
+        log.info("Windows process lookup initialized: generation={}, connections={}, elapsedMs={}",
+                warmed.generation(), warmed.connectionCount(),
+                TimeUnit.NANOSECONDS.toMillis(nanoTime.getAsLong() - startedAt));
     }
 
     @Override
@@ -63,6 +90,7 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
             return ProcessInfo.withStatus(ProcessInfo.LookupStatus.NOT_FOUND);
         }
         try {
+            long startedAt = nanoTime.getAsLong();
             ConnectionSnapshot current = getSnapshot(false, -1L);
             ConnectionRecord connection = current.findConnection(clientAddress, proxyAddress);
             if (connection == null) {
@@ -70,9 +98,20 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
                 connection = current.findConnection(clientAddress, proxyAddress);
             }
             if (connection == null || connection.owningProcessId() <= 0) {
+                log.debug("Process endpoint was not found: generation={}, client={}, proxy={}, elapsedMs={}",
+                        current.generation(), clientAddress, proxyAddress,
+                        TimeUnit.NANOSECONDS.toMillis(nanoTime.getAsLong() - startedAt));
                 return ProcessInfo.withStatus(ProcessInfo.LookupStatus.NOT_FOUND);
             }
-            return resolveProcessInfo(connection.owningProcessId());
+            long processStartedAt = nanoTime.getAsLong();
+            ProcessInfo result = resolveProcessInfo(connection.owningProcessId());
+            long completedAt = nanoTime.getAsLong();
+            log.debug("Process endpoint resolved: generation={}, pid={}, connectionMs={}, processMs={}, totalMs={}",
+                    current.generation(), connection.owningProcessId(),
+                    TimeUnit.NANOSECONDS.toMillis(processStartedAt - startedAt),
+                    TimeUnit.NANOSECONDS.toMillis(completedAt - processStartedAt),
+                    TimeUnit.NANOSECONDS.toMillis(completedAt - startedAt));
+            return result;
         } catch (UnsupportedOperationException exception) {
             log.debug("Process lookup is unsupported", exception);
             return ProcessInfo.withStatus(ProcessInfo.LookupStatus.UNSUPPORTED);
@@ -93,7 +132,7 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
     private ConnectionSnapshot getSnapshot(boolean forceRefresh, long observedGeneration) {
         long now = nanoTime.getAsLong();
         ConnectionSnapshot current = snapshot;
-        if (!forceRefresh && current.isFresh(now)) {
+        if (!forceRefresh && current.isFresh(now, snapshotTtlNanos)) {
             log.debug("Process connection snapshot hit, generation={}", current.generation());
             return current;
         }
@@ -105,12 +144,12 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
                         current.generation());
                 return current;
             }
-            if (!forceRefresh && current.isFresh(now)) {
+            if (!forceRefresh && current.isFresh(now, snapshotTtlNanos)) {
                 log.debug("Process connection snapshot hit after lock, generation={}", current.generation());
                 return current;
             }
             long startedAt = now;
-            List<ConnectionRecord> connections = List.copyOf(systemQuery.queryConnections());
+            List<ConnectionRecord> connections = List.copyOf(connectionProvider.queryConnections());
             long completedAt = nanoTime.getAsLong();
             ConnectionSnapshot refreshed = ConnectionSnapshot.create(
                     connections, completedAt, current.generation() + 1);
@@ -354,6 +393,9 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
         List<ConnectionRecord> queryConnections();
 
         NativeProcess queryProcess(int pid);
+
+        default void warmUp() {
+        }
     }
 
     static final class OshiSystemQuery implements SystemQuery {
@@ -376,6 +418,12 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
             OSProcess process = operatingSystem().getProcess(pid);
             return process == null ? null : new NativeProcess(
                     process.getProcessID(), process.getParentProcessID(), process.getName(), process.getPath());
+        }
+
+        @Override
+        public void warmUp() {
+            operatingSystem();
+            internetProtocolStats();
         }
 
         private OperatingSystem operatingSystem() {
@@ -441,8 +489,12 @@ public class OshiProcessInfoResolver implements ProcessInfoResolver {
             return new ConnectionSnapshot(Map.copyOf(immutableIndex), fetchedAtNanos, generation);
         }
 
-        private boolean isFresh(long now) {
-            return generation > 0 && now - fetchedAtNanos < SNAPSHOT_TTL_NANOS;
+        private boolean isFresh(long now, long ttlNanos) {
+            return generation > 0 && now - fetchedAtNanos < ttlNanos;
+        }
+
+        private int connectionCount() {
+            return connectionsByPort.values().stream().mapToInt(List::size).sum();
         }
 
         private ConnectionRecord findConnection(InetSocketAddress clientAddress,

@@ -4,6 +4,7 @@ import com.catas.wicked.common.bean.HeaderEntry;
 import com.catas.wicked.common.bean.RequestOverviewInfo;
 import com.catas.wicked.common.bean.PairEntry;
 import com.catas.wicked.common.bean.message.OutputMessage;
+import com.catas.wicked.common.bean.message.RenderMessage;
 import com.catas.wicked.common.config.ApplicationConfig;
 import com.catas.wicked.common.constant.CodeStyle;
 import com.catas.wicked.common.pipeline.MessageQueue;
@@ -27,7 +28,6 @@ import com.catas.wicked.proxy.service.LocalizationService;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTreeTableView;
-import io.micronaut.core.util.CollectionUtils;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.application.Platform;
@@ -225,7 +225,7 @@ public class DetailTabController implements Initializable {
         dividerPositionMap.put(respSplitPane, respSplitPane.getDividerPositions().clone());
 
         requestOnlyTabs.addAll(List.of(requestTab, respTab, timingTab));
-        hideRequestOnlyTabs();
+        setRequestDetailsAvailable(false);
 
         // init titlePane collapse
         addTitleListener(reqHeaderPane, reqSplitPane);
@@ -522,18 +522,24 @@ public class DetailTabController implements Initializable {
         return selectedTab.getText();
     }
 
-    public void hideRequestOnlyTabs() {
-        if (CollectionUtils.isEmpty(requestOnlyTabs)) {
-            return;
+    public RenderMessage.Tab getActiveRenderTab() {
+        Tab selectedTab = mainTabPane.getSelectionModel().getSelectedItem();
+        if (selectedTab == requestTab) {
+            return RenderMessage.Tab.REQUEST;
         }
-        requestOnlyTabs.forEach(tab -> tab.setDisable(true));
-        mainTabPane.getSelectionModel().select(overviewTab);
+        if (selectedTab == respTab) {
+            return RenderMessage.Tab.RESPONSE;
+        }
+        if (selectedTab == timingTab) {
+            return RenderMessage.Tab.TIMING;
+        }
+        return RenderMessage.Tab.OVERVIEW;
     }
 
-    public void showRequestOnlyTabs() {
-        if (CollectionUtils.isEmpty(requestOnlyTabs)) {
-            return;
+    public void setRequestDetailsAvailable(boolean available) {
+        requestOnlyTabs.forEach(tab -> tab.setDisable(!available));
+        if (!available) {
+            mainTabPane.getSelectionModel().select(overviewTab);
         }
-        requestOnlyTabs.forEach(tab -> tab.setDisable(false));
     }
 }

@@ -1,17 +1,18 @@
 package com.catas.wicked.proxy.message;
 
+import com.catas.wicked.common.bean.RequestCell;
 import com.catas.wicked.common.bean.message.BaseMessage;
 import lombok.Getter;
 
-import java.util.Set;
-
-/** Internal GUI message for deleting an application or host request group. */
+/** Internal GUI message for deleting an item from the application view. */
 @Getter
 final class ApplicationDeleteMessage extends BaseMessage {
 
-    private final Set<String> requestIds;
+    private final RequestCell.NodeType nodeType;
+    private final String nodeKey;
 
-    ApplicationDeleteMessage(Set<String> requestIds) {
-        this.requestIds = requestIds == null ? Set.of() : Set.copyOf(requestIds);
+    ApplicationDeleteMessage(RequestCell.NodeType nodeType, String nodeKey) {
+        this.nodeType = nodeType;
+        this.nodeKey = nodeKey;
     }
 }

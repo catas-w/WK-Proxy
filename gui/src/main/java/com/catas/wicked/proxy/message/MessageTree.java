@@ -5,11 +5,9 @@ import com.catas.wicked.common.bean.message.BaseMessage;
 import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.bean.RequestCell;
 import com.catas.wicked.proxy.gui.componet.FilterableTreeItem;
-import com.catas.wicked.proxy.gui.controller.RequestViewController;
 import com.catas.wicked.common.util.WebUtils;
 import io.micronaut.core.util.CollectionUtils;
 import io.netty.handler.codec.http.HttpMethod;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import lombok.extern.slf4j.Slf4j;
@@ -23,15 +21,24 @@ import java.util.function.Consumer;
 public class MessageTree {
 
     private final TreeNode root = new TreeNode();
+    private final Map<String, TreeNode> requestNodes = new java.util.concurrent.ConcurrentHashMap<>();
 
     private int count;
 
     private TreeNode latestNode;
 
-    private RequestViewController requestViewController;
+    private final ObservableList<RequestCell> requestList;
+    private final Consumer<Runnable> uiScheduler;
 
-    public void setRequestViewController(RequestViewController requestViewController) {
-        this.requestViewController = requestViewController;
+    MessageTree(FilterableTreeItem<RequestCell> treeRoot,
+                ObservableList<RequestCell> requestList,
+                Consumer<Runnable> uiScheduler) {
+        if (treeRoot == null || requestList == null || uiScheduler == null) {
+            throw new IllegalArgumentException("Request view must be initialized before creating MessageTree");
+        }
+        root.setTreeItem(treeRoot);
+        this.requestList = requestList;
+        this.uiScheduler = uiScheduler;
     }
 
     /**
@@ -56,6 +63,7 @@ public class MessageTree {
         TreeNode parent = findAndCreatParentNode(root, pathSplits, 0);
         parent.getLeafChildren().add(node);
         node.setParent(parent);
+        requestNodes.put(node.getRequestId(), node);
 
         // 创建 UI
         createTreeItemUI(parent, node);
@@ -74,10 +82,7 @@ public class MessageTree {
         if (!node.isLeaf() && node.getTreeItem() != null) {
             return;
         }
-        if (parent == root && parent.getTreeItem() == null) {
-            parent.setTreeItem(requestViewController.getTreeRoot());
-        }
-        FilterableTreeItem<RequestCell> parentTreeItem = parent.getTreeItem();
+        FilterableTreeItem<RequestCell> parentTreeItem = (FilterableTreeItem<RequestCell>) parent.getTreeItem();
         // TreeItem<RequestCell> treeItem = new TreeItem<>();
 
         RequestCell requestCell = new RequestCell(node.getPath(),
@@ -89,27 +94,50 @@ public class MessageTree {
         requestCell.setSearchText(node.getFullPath() + " " + StringUtils.defaultString(requestCell.getMethod()));
 
         // treeItem.setValue(requestCell);
-        FilterableTreeItem<RequestCell> treeItem = new FilterableTreeItem<>(requestCell);
-        // expand child if children size = 1
-        treeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue && treeItem.getChildren().size() == 1) {
-                for (TreeItem<RequestCell> child : treeItem.getChildren()) {
-                    child.expandedProperty().set(true);
+        TreeItem<RequestCell> treeItem = node.isLeaf()
+                ? new TreeItem<>(requestCell) : new FilterableTreeItem<>(requestCell);
+        if (!node.isLeaf()) {
+            treeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue && treeItem.getChildren().size() == 1) {
+                    for (TreeItem<RequestCell> child : treeItem.getChildren()) {
+                        child.expandedProperty().set(true);
+                    }
                 }
-            }
-        });
+            });
+        }
         node.setTreeItem(treeItem);
 
-        // define tree item order
-        int index;
-        if (node.isLeaf()) {
-            index = parent.getPathChildren().size() + parent.getLeafChildren().size() - 1;
-        } else {
-            index = parent.getPathChildren().size() - 1;
+        uiScheduler.accept(() -> attachTreeItem(parent, node, parentTreeItem, treeItem));
+    }
+
+    private void attachTreeItem(TreeNode parent, TreeNode node,
+                                FilterableTreeItem<RequestCell> parentTreeItem,
+                                TreeItem<RequestCell> treeItem) {
+        if (!isCurrentChild(parent, node)
+                || parentTreeItem.getInternalChildren().contains(treeItem)) {
+            return;
         }
-        Platform.runLater(() -> {
-           parentTreeItem.getInternalChildren().add(index, treeItem);
-        });
+        ObservableList<TreeItem<RequestCell>> children = parentTreeItem.getInternalChildren();
+        if (node.isLeaf()) {
+            children.add(treeItem);
+            return;
+        }
+        int insertionIndex = 0;
+        while (insertionIndex < children.size()) {
+            RequestCell value = children.get(insertionIndex).getValue();
+            if (value != null && value.isLeaf()) {
+                break;
+            }
+            insertionIndex++;
+        }
+        children.add(insertionIndex, treeItem);
+    }
+
+    private static boolean isCurrentChild(TreeNode parent, TreeNode node) {
+        if (node.isLeaf()) {
+            return parent.getLeafChildren().contains(node);
+        }
+        return parent.getPathChildren().get(node.getPath()) == node;
     }
 
     /**
@@ -155,10 +183,12 @@ public class MessageTree {
 
         // use filterableList
         // ListView<RequestCell> reqListView = requestViewController.getReqListView();
-        ObservableList<RequestCell> reqSourceList = requestViewController.getReqSourceList();
-        Platform.runLater(() -> {
+        uiScheduler.accept(() -> {
             // reqListView.getItems().add(requestCell);
-            reqSourceList.add(requestCell);
+            if (node.getParent() != null && node.getParent().getLeafChildren().contains(node)
+                    && !requestList.contains(requestCell)) {
+                requestList.add(requestCell);
+            }
         });
     }
 
@@ -171,9 +201,11 @@ public class MessageTree {
         }
         // memory leak
         if (node.isLeaf()) {
+            requestNodes.remove(node.getRequestId());
             node.getParent().getLeafChildren().remove(node);
             // subtractCnt(1);
         } else {
+            travel(node, child -> requestNodes.remove(child.getRequestId()));
             node.getParent().getPathChildren().remove(node.getPath());
         }
     }
@@ -220,8 +252,15 @@ public class MessageTree {
      * @param requestId requestId
      */
     public TreeNode findNodeByPath(String fullPath, String requestId) {
+        if (requestId != null) {
+            return requestNodes.get(requestId);
+        }
         List<String> pathSplits = WebUtils.getPathSplits(fullPath, false);
         return findNodeByPath(root, requestId, pathSplits, 0);
+    }
+
+    TreeNode requestNode(String requestId) {
+        return requestId == null ? null : requestNodes.get(requestId);
     }
 
     private TreeNode findNodeByPath(TreeNode parent, String requestId, List<String> pathSplits, int index) {
@@ -258,7 +297,7 @@ public class MessageTree {
             return;
         }
         RequestTransferStatus status = RequestTransferStatus.from(message);
-        Platform.runLater(() -> {
+        uiScheduler.accept(() -> {
             status.applyTo(node.getTreeItem().getValue());
             status.applyTo(node.getListItem());
         });

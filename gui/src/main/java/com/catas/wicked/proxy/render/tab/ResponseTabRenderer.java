@@ -7,17 +7,19 @@ import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.proxy.gui.componet.SideBar;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
 import com.catas.wicked.proxy.render.PreparedRender;
+import com.catas.wicked.proxy.service.record.RequestRecordSnapshot;
+import com.catas.wicked.proxy.service.record.RequestRecordStore;
+import com.catas.wicked.proxy.service.record.ContentPreviewDecoder;
+import com.catas.wicked.common.provider.ResourceMessageProvider;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
-import org.ehcache.Cache;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,7 +33,10 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
     private DetailTabController detailTabController;
 
     @Inject
-    private Cache<String, RequestMessage> requestCache;
+    private RequestRecordStore requestStore;
+
+    @Inject
+    private ResourceMessageProvider resourceMessageProvider;
 
     @Override
     public PreparedRender prepare(RenderMessage renderMsg) {
@@ -43,15 +48,16 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
             return new PreparedRender(requestId, true, () -> displayEmpty("Empty"));
         }
 
-        RequestMessage request = requestCache.get(requestId);
-        ResponseRenderData data = prepareResponse(request);
+        RequestRecordSnapshot snapshot = requestStore.snapshot(requestId);
+        ResponseRenderData data = prepareResponse(snapshot);
         return new PreparedRender(requestId, false, () -> displayResponse(data));
     }
 
-    private ResponseRenderData prepareResponse(RequestMessage request) {
-        if (request == null) {
+    private ResponseRenderData prepareResponse(RequestRecordSnapshot snapshot) {
+        if (snapshot == null || snapshot.message() == null) {
             return ResponseRenderData.forMissingRequest();
         }
+        RequestMessage request = snapshot.message();
         ResponseMessage response = request.getResponse();
         if (response == null) {
             return ResponseRenderData.forPendingResponse();
@@ -59,16 +65,16 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
         Map<String, String> headers = response.getHeaders() == null
                 ? Collections.emptyMap()
                 : new LinkedHashMap<>(response.getHeaders());
-        byte[] responseContent = response.getContent() == null ? new byte[0]
-                : Arrays.copyOf(response.getContent(), response.getContent().length);
-        byte[] content = WebUtils.parseContent(headers, responseContent);
+        byte[] responseContent = response.getContent() == null ? new byte[0] : response.getContent();
         ContentType contentType = WebUtils.getContentType(headers);
+        boolean image = contentType != null && contentType.getMimeType().startsWith("image/");
+        byte[] content = image ? responseContent : ContentPreviewDecoder.decode(headers, responseContent);
         SideBar.Strategy strategy = predictCodeStyle(contentType, content.length);
         Charset charset = contentType != null && contentType.getCharset() != null
                 ? contentType.getCharset() : StandardCharsets.UTF_8;
-        String contentText = new String(content, charset);
-        boolean image = contentType != null && contentType.getMimeType().startsWith("image/");
+        String contentText = image ? "" : ContentPreviewDecoder.toPreviewText(content, charset);
         return new ResponseRenderData(false, false, request.isEncrypted(), response.isOversize(),
+                snapshot.responsePayloadEvicted(),
                 headers, WebUtils.getHeaderText(headers), content, contentText, contentType,
                 strategy, image);
     }
@@ -83,13 +89,19 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
             return;
         }
 
-        detailTabController.showRequestOnlyTabs();
         detailTabController.getRespHeaderMsgLabel().setVisible(false);
         detailTabController.getRespMsgLabelBox().setVisible(false);
         detailTabController.getRespOutputMsgLabel().setVisible(false);
         renderHeaders(data.headers(), detailTabController.getRespHeaderTable());
         detailTabController.getRespHeaderArea().replaceText(data.headerText(), true);
 
+        if (data.payloadEvicted()) {
+            clearResponseContent();
+            setMsgLabel(detailTabController.getRespContentMsgLabel(),
+                    resourceMessageProvider.getMessage("payload-released.label"),
+                    detailTabController.getRespMsgLabelBox());
+            return;
+        }
         if (data.oversize()) {
             clearResponseContent();
             setMsgLabel(detailTabController.getRespContentMsgLabel(), OVERSIZE_MSG,
@@ -145,17 +157,17 @@ public class ResponseTabRenderer extends AbstractTabRenderer {
     }
 
     private record ResponseRenderData(boolean missingRequest, boolean pending, boolean encrypted,
-                                      boolean oversize, Map<String, String> headers,
+                                      boolean oversize, boolean payloadEvicted, Map<String, String> headers,
                                       String headerText, byte[] content, String contentText,
                                       ContentType contentType, SideBar.Strategy strategy,
                                       boolean image) {
         private static ResponseRenderData forMissingRequest() {
-            return new ResponseRenderData(true, false, false, false, Collections.emptyMap(),
+            return new ResponseRenderData(true, false, false, false, false, Collections.emptyMap(),
                     "", new byte[0], "", null, SideBar.Strategy.TEXT, false);
         }
 
         private static ResponseRenderData forPendingResponse() {
-            return new ResponseRenderData(false, true, false, false, Collections.emptyMap(),
+            return new ResponseRenderData(false, true, false, false, false, Collections.emptyMap(),
                     "", new byte[0], "", null, SideBar.Strategy.TEXT, false);
         }
     }

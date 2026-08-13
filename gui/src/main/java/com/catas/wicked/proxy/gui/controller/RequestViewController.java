@@ -17,14 +17,22 @@ import com.catas.wicked.proxy.gui.componet.TreeItemPredicate;
 import com.catas.wicked.proxy.gui.componet.ViewCellFactory;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.service.RequestViewService;
+import com.catas.wicked.proxy.service.record.RequestRecordSnapshot;
+import com.catas.wicked.proxy.service.record.RequestRecordStore;
 import com.catas.wicked.proxy.service.LocalizationService;
 import com.catas.wicked.server.client.MinimalHttpClient;
+import com.catas.wicked.common.constant.InternalRequestOrigin;
 import com.jfoenix.controls.JFXToggleNode;
+import io.micronaut.context.condition.OperatingSystem;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.util.ReferenceCountUtil;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.beans.binding.Bindings;
+import javafx.application.Platform;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -41,11 +49,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.ehcache.Cache;
 
 import java.net.URL;
 import java.util.Map;
@@ -58,7 +65,10 @@ public class RequestViewController implements Initializable {
 
     private static final boolean SHOW_REQUEST_STATUS_ICON = true;
     private static final boolean SHOW_GROUP_FAILURE_COUNT = false;
+    private static final PseudoClass WINDOWS = PseudoClass.getPseudoClass("windows");
 
+    @FXML
+    private HBox requestViewSwitcher;
     @FXML
     public JFXToggleNode applicationViewToggleNode;
     @FXML
@@ -96,7 +106,7 @@ public class RequestViewController implements Initializable {
     @Inject
     private ApplicationConfig appConfig;
     @Inject
-    private Cache<String, RequestMessage> requestCache;
+    private RequestRecordStore requestStore;
     @Inject
     private LocalizationService localization;
 
@@ -108,8 +118,9 @@ public class RequestViewController implements Initializable {
      * To avoid circular dependency
      * postConstruct() executed earlier than initialize()
      */
-    @Setter
     private MessageService messageService;
+
+    private boolean fxmlInitialized;
 
     /**
      * save requestList in filteredList
@@ -118,6 +129,7 @@ public class RequestViewController implements Initializable {
     private ObservableList<RequestCell> reqSourceList;
 
     private FilteredList<RequestCell> filteredList;
+    private PauseTransition filterDebounce;
 
     private final PseudoClass FocusPseudoClass = PseudoClass.getPseudoClass("custom-focused");
 
@@ -129,6 +141,24 @@ public class RequestViewController implements Initializable {
         return (FilterableTreeItem<RequestCell>) reqApplicationTreeView.getRoot();
     }
 
+    public synchronized void setMessageService(MessageService messageService) {
+        this.messageService = messageService;
+        notifyMessageServiceIfReady();
+    }
+
+    public synchronized boolean isRequestViewReady() {
+        return fxmlInitialized
+                && reqTreeView != null && reqTreeView.getRoot() != null
+                && reqApplicationTreeView != null && reqApplicationTreeView.getRoot() != null
+                && reqListView != null && reqSourceList != null;
+    }
+
+    private synchronized void notifyMessageServiceIfReady() {
+        if (messageService != null && isRequestViewReady()) {
+            messageService.onRequestViewReady();
+        }
+    }
+
     @Inject
     public void setResourceMessageProvider(ResourceMessageProvider resourceMessageProvider) {
         this.resourceMessageProvider = resourceMessageProvider;
@@ -136,6 +166,8 @@ public class RequestViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        filterDebounce = new PauseTransition(Duration.millis(150));
+        requestViewSwitcher.pseudoClassStateChanged(WINDOWS, OperatingSystem.getCurrent().isWindows());
         localization.bind(filterInput.promptTextProperty(), "filter.prompt");
         localization.bind(applicationViewToggleNode.textProperty(), "application-view.label");
         localization.bind(treeViewToggleNode.textProperty(), "tree-view.label");
@@ -228,6 +260,10 @@ public class RequestViewController implements Initializable {
 
         toggleRequestView();
         bindKeyboardDeleteEvent();
+        synchronized (this) {
+            fxmlInitialized = true;
+        }
+        notifyMessageServiceIfReady();
     }
 
     /**
@@ -253,6 +289,14 @@ public class RequestViewController implements Initializable {
                 reqTreeView.setVisible(toggleNode == treeViewToggleNode);
                 reqApplicationTreeView.setVisible(toggleNode == applicationViewToggleNode);
                 reqListView.setVisible(toggleNode == listViewToggleNode);
+                if (messageService != null) {
+                    MessageService.SelectionSource target = toggleNode == treeViewToggleNode
+                            ? MessageService.SelectionSource.TREE_VIEW
+                            : toggleNode == listViewToggleNode
+                            ? MessageService.SelectionSource.LIST_VIEW
+                            : MessageService.SelectionSource.APPLICATION_VIEW;
+                    Platform.runLater(() -> messageService.restoreSelection(target));
+                }
             }
         });
     }
@@ -268,7 +312,11 @@ public class RequestViewController implements Initializable {
             filterInput.clear();
         });
 
-        filterInput.textProperty().addListener((observable, oldValue, newValue) -> applyRequestFilter(newValue));
+        filterDebounce.setOnFinished(event -> applyRequestFilter(filterInput.getText()));
+        filterInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterDebounce.stop();
+            filterDebounce.playFromStart();
+        });
         applyRequestFilter(filterInput.getText());
     }
 
@@ -330,7 +378,7 @@ public class RequestViewController implements Initializable {
                 log.error("Unable to delete request, request cell is null.");
                 return;
             }
-            messageService.deleteApplicationRequests(messageService.getApplicationRequestIds(requestCell));
+            messageService.deleteApplicationItem(requestCell);
             clearRequestSelection();
             requestViewService.updateRequestTab(null);
             return;
@@ -446,7 +494,8 @@ public class RequestViewController implements Initializable {
         if (StringUtils.isBlank(requestId)) {
             return;
         }
-        RequestMessage requestMessage = requestCache.get(requestId);
+        RequestRecordSnapshot snapshot = requestStore.snapshot(requestId);
+        RequestMessage requestMessage = snapshot == null ? null : snapshot.message();
         if (requestMessage == null || requestMessage.isEncrypted() || requestMessage.isOversize()) {
             log.warn("Not integrated http request, unable to resend");
             String msg;
@@ -456,6 +505,11 @@ public class RequestViewController implements Initializable {
                 msg = resourceMessageProvider.getMessage("resend.encrypted.label");
             }
             AlertUtils.alertWarning(resourceMessageProvider.getMessage("alert.type.warning"), msg);
+            return;
+        }
+        if (requiresBody(requestMessage.getMethod()) && snapshot.requestPayloadEvicted()) {
+            AlertUtils.alertWarning(resourceMessageProvider.getMessage("alert.type.warning"),
+                    resourceMessageProvider.getMessage("payload-released.label"));
             return;
         }
 
@@ -478,13 +532,23 @@ public class RequestViewController implements Initializable {
                     .headers(headers)
                     .content(content)
                     .proxyConfig(proxyConfig)
+                    .internalRequest(InternalRequestOrigin.RESEND, appConfig.getInternalRequestToken())
                     .build()) {
                 client.execute();
                 HttpResponse response = client.response();
-                log.info("Get response in resending: {}", response);
+                try {
+                    log.info("Get response in resending: {}", response);
+                } finally {
+                    ReferenceCountUtil.release(response);
+                }
             } catch (Exception e) {
                 log.error("Error in resending request: {}", requestMessage.getRequestUrl());
             }
         });
+    }
+
+    private static boolean requiresBody(String method) {
+        return "POST".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method)
+                || "PATCH".equalsIgnoreCase(method);
     }
 }

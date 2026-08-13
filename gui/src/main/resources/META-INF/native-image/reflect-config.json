@@ -9,6 +9,27 @@
   "name":"[Lcom.sun.jna.platform.mac.SystemB$ProcFdInfo;"
 },
 {
+  "name":"[Lcom.sun.jna.platform.win32.IPHlpAPI$MIB_TCP6ROW_OWNER_PID;"
+},
+{
+  "name":"[Lcom.sun.jna.platform.win32.IPHlpAPI$MIB_TCPROW_OWNER_PID;"
+},
+{
+  "name":"[Lcom.sun.jna.platform.win32.IPHlpAPI$MIB_UDP6ROW_OWNER_PID;"
+},
+{
+  "name":"[Lcom.sun.jna.platform.win32.IPHlpAPI$MIB_UDPROW_OWNER_PID;"
+},
+{
+  "name":"[Lcom.sun.jna.platform.win32.WinGDI$RGBQUAD;"
+},
+{
+  "name":"[Lcom.sun.jna.platform.win32.WinNT$LUID_AND_ATTRIBUTES;"
+},
+{
+  "name":"[Lcom.sun.jna.platform.win32.Wtsapi32$WTS_PROCESS_INFO_EX;"
+},
+{
   "name":"[Lio.micronaut.context.annotation.Requires$Family;"
 },
 {
@@ -236,6 +257,7 @@
     {"name":"getPort","parameterTypes":[] }, 
     {"name":"getRecordExcludeList","parameterTypes":[] }, 
     {"name":"getRecordIncludeList","parameterTypes":[] }, 
+    {"name":"getRetainedPayloadSizeMb","parameterTypes":[] }, 
     {"name":"getSelectedCert","parameterTypes":[] }, 
     {"name":"getSslExcludeList","parameterTypes":[] }, 
     {"name":"getSysProxyBypassList","parameterTypes":[] }, 
@@ -257,6 +279,7 @@
     {"name":"setMaxContentSize","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setPort","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setRecording","parameterTypes":["boolean"] }, 
+    {"name":"setRetainedPayloadSizeMb","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setSelectedCert","parameterTypes":["java.lang.String"] }, 
     {"name":"setShowApplicationRequestCount","parameterTypes":["boolean"] }, 
     {"name":"setShowButtonLabel","parameterTypes":["boolean"] }, 
@@ -716,6 +739,7 @@
     {"name":"messageQueue"}, 
     {"name":"overViewTabRenderer"}, 
     {"name":"requestCache"}, 
+    {"name":"requestStore"}, 
     {"name":"requestViewController"}, 
     {"name":"requestViewService"}
   ]
@@ -764,6 +788,7 @@
     {"name":"pathOverviewInfo"}, 
     {"name":"requestCache"}, 
     {"name":"requestOverviewInfo"}, 
+    {"name":"requestStore"}, 
     {"name":"resourceMessageProvider"}
   ]
 },
@@ -772,7 +797,9 @@
   "fields":[
     {"name":"appConfig"}, 
     {"name":"detailTabController"}, 
-    {"name":"requestCache"}
+    {"name":"requestCache"}, 
+    {"name":"requestStore"}, 
+    {"name":"resourceMessageProvider"}
   ]
 },
 {
@@ -780,7 +807,9 @@
   "fields":[
     {"name":"appConfig"}, 
     {"name":"detailTabController"}, 
-    {"name":"requestCache"}
+    {"name":"requestCache"}, 
+    {"name":"requestStore"}, 
+    {"name":"resourceMessageProvider"}
   ]
 },
 {
@@ -788,7 +817,8 @@
   "fields":[
     {"name":"appConfig"}, 
     {"name":"detailTabController"}, 
-    {"name":"requestCache"}
+    {"name":"requestCache"}, 
+    {"name":"requestStore"}
   ]
 },
 {
@@ -819,7 +849,8 @@
   "name":"com.catas.wicked.proxy.service.DataOutputService",
   "fields":[
     {"name":"messageQueue"}, 
-    {"name":"requestCache"}
+    {"name":"requestCache"}, 
+    {"name":"requestStore"}
   ]
 },
 {
@@ -852,6 +883,10 @@
 {
   "name":"com.catas.wicked.proxy.service.icon.WindowsApplicationIconProvider$ShellFileInfo",
   "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.catas.wicked.proxy.service.record.$RequestRecordStore$Definition$Reference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -915,7 +950,8 @@
   "queriedMethods":[
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
     {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
+    {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }
   ]
 },
 {
@@ -976,6 +1012,7 @@
   "name":"com.catas.wicked.server.handler.server.ServerStrategyHandler",
   "queriedMethods":[
     {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
     {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
   ]
@@ -1357,6 +1394,286 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.sun.jna.platform.win32.BaseTSD$DWORD_PTR",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.BaseTSD$ULONG_PTR",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCP6ROW_OWNER_PID",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCP6TABLE_OWNER_PID",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCPROW_OWNER_PID",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_TCPTABLE_OWNER_PID",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_UDP6ROW_OWNER_PID",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_UDP6TABLE_OWNER_PID",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_UDPROW_OWNER_PID",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.IPHlpAPI$MIB_UDPTABLE_OWNER_PID",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WTypes$LPWSTR",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinBase$FILETIME",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["com.sun.jna.Pointer"] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinBase$SYSTEMTIME",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinBase$SYSTEM_INFO",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinBase$SYSTEM_INFO$PI",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinBase$SYSTEM_INFO$UNION",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CERT_CONTEXT",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CERT_CONTEXT$ByReference",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CERT_INFO",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CERT_INFO$ByReference",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CERT_PUBLIC_KEY_INFO",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CRYPT_ALGORITHM_IDENTIFIER",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CRYPT_BIT_BLOB",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CertStoreProviderName",
+  "allDeclaredFields":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"<init>","parameterTypes":["int"] }
+  ]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$DATA_BLOB",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["com.sun.jna.Pointer"] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$HCERTSTORE",
+  "allDeclaredFields":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"<init>","parameterTypes":["com.sun.jna.Pointer"] }
+  ]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$HCRYPTPROV_LEGACY",
+  "allDeclaredFields":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"<init>","parameterTypes":["long"] }
+  ]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinDef$DWORD",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinDef$HBITMAP",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinDef$HDC",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinDef$HICON",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinDef$WORD",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinGDI$BITMAP",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinGDI$BITMAPINFO",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinGDI$BITMAPINFOHEADER",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinGDI$ICONINFO",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinGDI$RGBQUAD",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinNT$EVENTLOGRECORD",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinNT$HANDLE",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinNT$LARGE_INTEGER",
+  "allDeclaredFields":true,
+  "allPublicFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinNT$LARGE_INTEGER$LowHigh",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinNT$LARGE_INTEGER$UNION",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinNT$LUID",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinNT$LUID_AND_ATTRIBUTES",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinNT$OSVERSIONINFOEX",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinNT$PSID",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["com.sun.jna.Pointer"] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinNT$TOKEN_PRIVILEGES",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinPerf$PERF_COUNTER_BLOCK",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinPerf$PERF_COUNTER_DEFINITION",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinPerf$PERF_DATA_BLOCK",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinPerf$PERF_INSTANCE_DEFINITION",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinPerf$PERF_OBJECT_TYPE",
+  "allDeclaredFields":true
+},
+{
+  "name":"com.sun.jna.platform.win32.WinReg$HKEY",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinReg$HKEYByReference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.Wtsapi32$WTS_PROCESS_INFO_EX",
+  "allDeclaredFields":true,
+  "queryAllPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["com.sun.jna.Pointer"] }]
+},
+{
   "name":"com.sun.jna.ptr.IntByReference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -1652,6 +1969,15 @@
   "name":"io.netty.handler.codec.socksx.v4.Socks4ClientEncoder"
 },
 {
+  "name":"io.netty.handler.codec.socksx.v5.Socks5ClientEncoder"
+},
+{
+  "name":"io.netty.handler.codec.socksx.v5.Socks5CommandResponseDecoder"
+},
+{
+  "name":"io.netty.handler.codec.socksx.v5.Socks5InitialResponseDecoder"
+},
+{
   "name":"io.netty.handler.logging.LoggingHandler",
   "queriedMethods":[
     {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
@@ -1712,6 +2038,9 @@
 },
 {
   "name":"io.netty.handler.proxy.Socks4ProxyHandler"
+},
+{
+  "name":"io.netty.handler.proxy.Socks5ProxyHandler"
 },
 {
   "name":"io.netty.handler.ssl.SslHandler",
@@ -2475,6 +2804,7 @@
   ],
   "queriedMethods":[
     {"name":"getColumnIndex","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"getColumnSpan","parameterTypes":["javafx.scene.Node"] }, 
     {"name":"getRowIndex","parameterTypes":["javafx.scene.Node"] }
   ]
 },
@@ -3155,6 +3485,18 @@
   ]
 },
 {
+  "name":"oshi.jna.ByRef$CloseableHANDLEByReference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"oshi.jna.ByRef$CloseableIntByReference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"oshi.jna.ByRef$CloseablePointerByReference",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"oshi.jna.ByRef$CloseableSizeTByReference",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -3168,6 +3510,10 @@
 },
 {
   "name":"oshi.jna.Struct$CloseableSocketFdInfo",
+  "allDeclaredFields":true
+},
+{
+  "name":"oshi.jna.Struct$CloseableSystemInfo",
   "allDeclaredFields":true
 },
 {

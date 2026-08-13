@@ -79,6 +79,16 @@
 .req-application-row {
     -fx-spacing: 7;
     -fx-padding: 3 4 3 0;
+    -fx-alignment: center-left;
+    -fx-min-height: 36px;
+    -fx-pref-height: 36px;
+    -fx-max-height: 36px;
+}
+
+.tree-cell.req-application-cell {
+    -fx-min-height: 38px;
+    -fx-pref-height: 38px;
+    -fx-max-height: 38px;
 }
 
 .application-icon {
@@ -208,7 +218,7 @@
 
 /********** filter input **********/
 #filterInput {
-    -fx-background-color: rgba(180, 180, 180, 0.51);
+    -fx-background-color: rgba(220, 220, 220, 0.6);
     -fx-background-radius: 12 12 12 12;
     -fx-border-width: 0;
     -fx-border-radius: 12;
@@ -217,6 +227,9 @@
     -fx-padding: 0 25 1 10;
 
     -fx-prompt-text-fill: #989898;
+}
+#filterInput:windows {
+    -fx-background-color: rgba(220, 220, 220, 0.6);
 }
 #filterCancelBtn {
     -fx-background-color: TRANSPARENT;
@@ -238,6 +251,13 @@
     -fx-background-radius: 14px;
 }
 
+.request-view-switcher:windows {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-color: rgba(220, 220, 220, 0.6);
+    -fx-background-radius: 14px;
+}
+
 .toggle-node {
     -jfx-toggle-color: TRANSPARENT;
     -jfx-untoggle-color: TRANSPARENT;
@@ -256,7 +276,7 @@
     -fx-font-size: 11px;
 }
 .toggle-node:hover {
-    -fx-background-color: rgba(180, 180, 180, 0.28);
+    -fx-background-color: rgba(145, 145, 145, 0.28);
 }
 .toggle-node .ikonli-font-icon {
     -fx-icon-color: #686868;

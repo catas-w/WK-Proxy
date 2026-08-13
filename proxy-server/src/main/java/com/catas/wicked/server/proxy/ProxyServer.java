@@ -17,6 +17,9 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 @Slf4j
 @Singleton
 public class ProxyServer {
@@ -31,11 +34,20 @@ public class ProxyServer {
 
     private ChannelFuture channelFuture;
 
+    private final AtomicBoolean initialStartScheduled = new AtomicBoolean(false);
+
     public void setStatus(ServerStatus status) {
         applicationConfig.getObservableConfig().setServerStatus(status);
     }
 
     public void start() {
+        if (!applicationConfig.clientSslContextReady().toCompletableFuture().isDone()) {
+            throw new IllegalStateException("Proxy server cannot start before upstream TLS initialization completes");
+        }
+        if (applicationConfig.getSettings().isHandleSsl()
+                && applicationConfig.getClientSslCtx() == null) {
+            throw new IllegalStateException("HTTPS interception is enabled without an upstream TLS context");
+        }
         log.info("--- Proxy server Starting on: {} ---", applicationConfig.getSettings().getPort());
         setStatus(ServerStatus.INIT);
         NioEventLoopGroup workGroup = new NioEventLoopGroup(2);
@@ -93,24 +105,36 @@ public class ProxyServer {
     @PostConstruct
     private void init() {
         setStatus(ServerStatus.INIT);
-        if (standalone) {
+        if (!initialStartScheduled.compareAndSet(false, true)) {
+            return;
+        }
+        applicationConfig.clientSslContextReady().whenComplete((sslContext, error) -> {
+            try {
+                ThreadPoolService.getInstance().run(() -> startAfterTlsInitialization(error));
+            } catch (RuntimeException rejected) {
+                log.error("Unable to schedule proxy server startup.", rejected);
+                setStatus(ServerStatus.HALTED);
+            }
+        });
+    }
+
+    private void startAfterTlsInitialization(Throwable tlsError) {
+        if (tlsError != null) {
+            Throwable cause = tlsError instanceof CompletionException && tlsError.getCause() != null
+                    ? tlsError.getCause() : tlsError;
+            log.warn("Upstream TLS context initialization failed; starting with HTTPS interception disabled: {}",
+                    cause.getMessage());
+            log.debug("Upstream TLS context initialization failure", cause);
+        }
+        try {
+            if (!standalone && !WebUtils.isPortAvailable(applicationConfig.getSettings().getPort())) {
+                throw new IllegalStateException(
+                        "Proxy port is unavailable: " + applicationConfig.getSettings().getPort());
+            }
             start();
-        } else {
-            ThreadPoolService.getInstance().run(() -> {
-                System.out.println("Starting");
-                try {
-                    boolean portAvailable = WebUtils.isPortAvailable(applicationConfig.getSettings().getPort());
-                    if (!portAvailable) {
-                        throw new RuntimeException();
-                    }
-                    start();
-                } catch (Exception e) {
-                    log.error("Error in starting proxy server.", e);
-                    setStatus(ServerStatus.HALTED);
-                    // String msg = "Port: " + applicationConfig.getSettings().getPort() + " is unavailable, change port in settings";
-                    // AlertUtils.alertLater(Alert.AlertType.ERROR, msg);
-                }
-            });
+        } catch (Exception e) {
+            log.error("Error in starting proxy server.", e);
+            setStatus(ServerStatus.HALTED);
         }
     }
 }

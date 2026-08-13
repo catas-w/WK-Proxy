@@ -21,6 +21,7 @@ public record SettingsChangeSet(
         return new SettingsChangeSet(
                 before.getLanguage() != after.getLanguage(),
                 !Objects.equals(before.getMaxContentSize(), after.getMaxContentSize())
+                        || !Objects.equals(before.getRetainedPayloadSizeMb(), after.getRetainedPayloadSizeMb())
                         || !Objects.equals(before.getRecordExcludeList(), after.getRecordExcludeList()),
                 before.isShowButtonLabel() != after.isShowButtonLabel()
                         || before.isShowApplicationRequestCount() != after.isShowApplicationRequestCount(),

@@ -42,7 +42,7 @@ public class RequestCell {
     @Setter(AccessLevel.NONE)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private final transient StringProperty pathProperty = new SimpleStringProperty(this, "path");
+    private transient StringProperty pathProperty;
 
     private String fullPath;
 
@@ -62,8 +62,7 @@ public class RequestCell {
     @Setter(AccessLevel.NONE)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private final transient StringProperty secondaryTextProperty =
-            new SimpleStringProperty(this, "secondaryText");
+    private transient StringProperty secondaryTextProperty;
 
     private String statusText;
 
@@ -73,8 +72,7 @@ public class RequestCell {
     @Setter(AccessLevel.NONE)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private final transient ObjectProperty<TransferState> transferStateProperty =
-            new SimpleObjectProperty<>(this, "transferState", TransferState.PENDING);
+    private transient ObjectProperty<TransferState> transferStateProperty;
 
     private String transferStatusKey = "request-status.pending";
 
@@ -82,8 +80,7 @@ public class RequestCell {
     @Setter(AccessLevel.NONE)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private final transient StringProperty transferStatusKeyProperty =
-            new SimpleStringProperty(this, "transferStatusKey", "request-status.pending");
+    private transient StringProperty transferStatusKeyProperty;
 
     private String transferStatusDetail;
 
@@ -91,8 +88,7 @@ public class RequestCell {
     @Setter(AccessLevel.NONE)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private final transient StringProperty transferStatusDetailProperty =
-            new SimpleStringProperty(this, "transferStatusDetail");
+    private transient StringProperty transferStatusDetailProperty;
 
     /** GUI-only source metadata used to resolve an application icon locally. */
     private transient ProcessInfo processInfo;
@@ -103,7 +99,7 @@ public class RequestCell {
     @Setter(AccessLevel.NONE)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private final transient IntegerProperty countProperty = new SimpleIntegerProperty(this, "count");
+    private transient IntegerProperty countProperty;
 
     private int failedCount;
 
@@ -111,8 +107,7 @@ public class RequestCell {
     @Setter(AccessLevel.NONE)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private final transient IntegerProperty failedCountProperty =
-            new SimpleIntegerProperty(this, "failedCount");
+    private transient IntegerProperty failedCountProperty;
 
     private String searchText;
 
@@ -144,68 +139,93 @@ public class RequestCell {
     }
 
     public String getPath() {
-        return pathProperty.get();
+        return pathProperty == null ? path : pathProperty.get();
     }
 
     public void setPath(String path) {
         this.path = path;
-        pathProperty.set(path);
+        if (pathProperty != null) {
+            pathProperty.set(path);
+        }
     }
 
     public StringProperty pathProperty() {
+        if (pathProperty == null) {
+            pathProperty = new SimpleStringProperty(this, "path", path);
+        }
         return pathProperty;
     }
 
     public String getSecondaryText() {
-        return secondaryTextProperty.get();
+        return secondaryTextProperty == null ? secondaryText : secondaryTextProperty.get();
     }
 
     public void setSecondaryText(String secondaryText) {
         this.secondaryText = secondaryText;
-        secondaryTextProperty.set(secondaryText);
+        if (secondaryTextProperty != null) {
+            secondaryTextProperty.set(secondaryText);
+        }
     }
 
     public StringProperty secondaryTextProperty() {
+        if (secondaryTextProperty == null) {
+            secondaryTextProperty = new SimpleStringProperty(this, "secondaryText", secondaryText);
+        }
         return secondaryTextProperty;
     }
 
     public TransferState getTransferState() {
-        return transferStateProperty.get();
+        return transferStateProperty == null ? transferState : transferStateProperty.get();
     }
 
     public void setTransferState(TransferState transferState) {
         TransferState target = transferState == null ? TransferState.PENDING : transferState;
         this.transferState = target;
-        transferStateProperty.set(target);
+        if (transferStateProperty != null) {
+            transferStateProperty.set(target);
+        }
     }
 
     public ObjectProperty<TransferState> transferStateProperty() {
+        if (transferStateProperty == null) {
+            transferStateProperty = new SimpleObjectProperty<>(this, "transferState", transferState);
+        }
         return transferStateProperty;
     }
 
     public String getTransferStatusKey() {
-        return transferStatusKeyProperty.get();
+        return transferStatusKeyProperty == null ? transferStatusKey : transferStatusKeyProperty.get();
     }
 
     public void setTransferStatusKey(String transferStatusKey) {
         this.transferStatusKey = transferStatusKey;
-        transferStatusKeyProperty.set(transferStatusKey);
+        if (transferStatusKeyProperty != null) {
+            transferStatusKeyProperty.set(transferStatusKey);
+        }
     }
 
     public StringProperty transferStatusKeyProperty() {
+        if (transferStatusKeyProperty == null) {
+            transferStatusKeyProperty = new SimpleStringProperty(this, "transferStatusKey", transferStatusKey);
+        }
         return transferStatusKeyProperty;
     }
 
     public String getTransferStatusDetail() {
-        return transferStatusDetailProperty.get();
+        return transferStatusDetailProperty == null ? transferStatusDetail : transferStatusDetailProperty.get();
     }
 
     public void setTransferStatusDetail(String transferStatusDetail) {
         this.transferStatusDetail = transferStatusDetail;
-        transferStatusDetailProperty.set(transferStatusDetail);
+        if (transferStatusDetailProperty != null) {
+            transferStatusDetailProperty.set(transferStatusDetail);
+        }
     }
 
     public StringProperty transferStatusDetailProperty() {
+        if (transferStatusDetailProperty == null) {
+            transferStatusDetailProperty = new SimpleStringProperty(this, "transferStatusDetail", transferStatusDetail);
+        }
         return transferStatusDetailProperty;
     }
 
@@ -220,29 +240,39 @@ public class RequestCell {
     }
 
     public int getCount() {
-        return countProperty.get();
+        return countProperty == null ? count : countProperty.get();
     }
 
     public void setCount(int count) {
         this.count = count;
-        countProperty.set(count);
+        if (countProperty != null) {
+            countProperty.set(count);
+        }
     }
 
     public IntegerProperty countProperty() {
+        if (countProperty == null) {
+            countProperty = new SimpleIntegerProperty(this, "count", count);
+        }
         return countProperty;
     }
 
     public int getFailedCount() {
-        return failedCountProperty.get();
+        return failedCountProperty == null ? failedCount : failedCountProperty.get();
     }
 
     public void setFailedCount(int failedCount) {
         int target = Math.max(0, failedCount);
         this.failedCount = target;
-        failedCountProperty.set(target);
+        if (failedCountProperty != null) {
+            failedCountProperty.set(target);
+        }
     }
 
     public IntegerProperty failedCountProperty() {
+        if (failedCountProperty == null) {
+            failedCountProperty = new SimpleIntegerProperty(this, "failedCount", failedCount);
+        }
         return failedCountProperty;
     }
 

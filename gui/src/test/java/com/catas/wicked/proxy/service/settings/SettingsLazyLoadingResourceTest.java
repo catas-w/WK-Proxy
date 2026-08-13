@@ -118,7 +118,7 @@ public class SettingsLazyLoadingResourceTest {
     @Test
     public void settingsHelpTooltipsOpenWithoutDelayAndHaveScopedHoverStyle() throws Exception {
         String[] pages = {"general", "proxy", "ssl", "external-proxy"};
-        int[] expectedTooltipCounts = {2, 1, 1, 1};
+        int[] expectedTooltipCounts = {3, 1, 1, 1};
         for (int index = 0; index < pages.length; index++) {
             String page = pages[index];
             String fxml = read("/fxml/setting-page/" + page + ".fxml");

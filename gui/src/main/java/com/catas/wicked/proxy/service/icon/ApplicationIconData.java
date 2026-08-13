@@ -8,12 +8,15 @@ import java.io.ByteArrayInputStream;
 
 interface ApplicationIconData {
 
+    int PNG_RASTER_SIZE = 64;
+
     Image toImage();
 
     record Png(byte[] bytes) implements ApplicationIconData {
         @Override
         public Image toImage() {
-            return new Image(new ByteArrayInputStream(bytes), 32, 32, true, true);
+            return new Image(new ByteArrayInputStream(bytes), PNG_RASTER_SIZE, PNG_RASTER_SIZE,
+                    true, true);
         }
     }
 

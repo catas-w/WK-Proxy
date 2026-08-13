@@ -5,11 +5,12 @@ import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.pipeline.MessageQueue;
 import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.common.util.WebUtils;
+import com.catas.wicked.proxy.service.record.RequestRecordSnapshot;
+import com.catas.wicked.proxy.service.record.RequestRecordStore;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
-import org.ehcache.Cache;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -22,7 +23,7 @@ public class DataOutputService {
     private MessageQueue messageQueue;
 
     @Inject
-    private Cache<String, RequestMessage> requestCache;
+    private RequestRecordStore requestStore;
 
     @PostConstruct
     public void init() {
@@ -50,7 +51,8 @@ public class DataOutputService {
             return;
         }
 
-        RequestMessage request = requestCache.get(requestId);
+        RequestRecordSnapshot snapshot = requestStore.snapshot(requestId);
+        RequestMessage request = snapshot == null ? null : snapshot.message();
         if (request == null) {
             throw new RuntimeException("Request request not found for requestId: " + requestId);
         }
@@ -58,10 +60,16 @@ public class DataOutputService {
         // determine the data to output based on the source
         byte[] toOutputData;
         if (source == OutputMessage.Source.REQ_CONTENT) {
+            if (snapshot.requestPayloadEvicted()) {
+                throw new IllegalStateException("Request payload has been released: " + requestId);
+            }
             toOutputData = WebUtils.parseContent(request.getHeaders(), request.getBody());
         } else if (source == OutputMessage.Source.RESP_CONTENT) {
             if (request.getResponse() == null) {
                 throw new RuntimeException("Response not found for requestId: " + requestId);
+            }
+            if (snapshot.responsePayloadEvicted()) {
+                throw new IllegalStateException("Response payload has been released: " + requestId);
             }
             toOutputData = WebUtils.parseContent(request.getResponse().getHeaders(), request.getResponse().getContent());
         } else {

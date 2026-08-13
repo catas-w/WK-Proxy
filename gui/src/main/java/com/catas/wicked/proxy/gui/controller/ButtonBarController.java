@@ -16,6 +16,8 @@ import com.catas.wicked.proxy.gui.componet.button.WkButton;
 import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.service.RequestMockService;
 import com.catas.wicked.proxy.service.LocalizationService;
+import com.catas.wicked.proxy.service.record.RequestRecordSnapshot;
+import com.catas.wicked.proxy.service.record.RequestRecordStore;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.application.Platform;
@@ -32,7 +34,6 @@ import javafx.scene.layout.AnchorPane;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.ehcache.Cache;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
@@ -100,7 +101,7 @@ public class ButtonBarController implements Initializable {
     @Inject
     private ApplicationConfig appConfig;
     @Inject
-    private Cache<String, RequestMessage> requestCache;
+    private RequestRecordStore requestStore;
     @Inject
     private RequestMockService requestMockService;
     @Inject
@@ -149,8 +150,11 @@ public class ButtonBarController implements Initializable {
 
             // disable resendBtn when request is encrypted or oversize
             if (!disableResend) {
-                RequestMessage requestMessage = requestCache.get(newValue);
+                RequestRecordSnapshot snapshot = requestStore.snapshot(newValue);
+                RequestMessage requestMessage = snapshot == null ? null : snapshot.message();
                 if (requestMessage == null || requestMessage.isOversize() || requestMessage.isEncrypted()) {
+                    resendBtn.setDisable(true);
+                } else if (requiresBody(requestMessage.getMethod()) && snapshot.requestPayloadEvicted()) {
                     resendBtn.setDisable(true);
                 }
             }
@@ -236,6 +240,11 @@ public class ButtonBarController implements Initializable {
 
         bindUpdateBadge();
         refreshDynamicTooltips();
+    }
+
+    private static boolean requiresBody(String method) {
+        return "POST".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method)
+                || "PATCH".equalsIgnoreCase(method);
     }
 
     private void refreshDynamicTooltips() {

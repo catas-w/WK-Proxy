@@ -19,7 +19,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -67,6 +66,8 @@ public class SimpleCertManager implements CertManager {
     private final List<CertificateConfig> customCertList = new ArrayList<>();
 
     private final Map<Integer, Map<String, X509Certificate>> serverCertCache = new ConcurrentHashMap<>();
+
+    private final CertificateInstallWorkflow certificateInstallWorkflow = new CertificateInstallWorkflow();
 
     private CertificateConfig defaultCert;
 
@@ -363,20 +364,33 @@ public class SimpleCertManager implements CertManager {
         if (StringUtils.isBlank(certPEM)) {
             throw new RuntimeException(resourceMessageProvider.getMessage("cert-cannot-parse.alert"));
         }
+        Map<String, String> certInfo = getCertInfo(certId);
+        String certificateName = certInfo.get("CN");
+        String sha256 = certInfo.get("SHA256");
+        if (StringUtils.isAnyBlank(certificateName, sha256)) {
+            throw new RuntimeException(resourceMessageProvider.getMessage("cert-cannot-parse.alert"));
+        }
+        if (certInstallProvider.checkCertInstalled(certificateName, sha256)) {
+            log.info("Certificate {} is already installed", certificateName);
+            return;
+        }
 
         File tempFile = SystemUtils.getStoragePath("temp_" + IdUtil.getSimpleId() + ".crt").toFile();
         if (!tempFile.exists()) {
             tempFile.getParentFile().mkdirs();
         }
         try {
-            FileUtils.writeByteArrayToFile(tempFile, certPEM.getBytes(StandardCharsets.UTF_8));
             log.info("Trying to install {}", tempFile.getAbsoluteFile());
-            boolean res = certInstallProvider.install(tempFile.getAbsolutePath());
-            if (!res) {
-                throw new RuntimeException(resourceMessageProvider.getMessage("cert-install-failed.alert"));
-            }
-        } finally {
-            FileUtils.deleteQuietly(tempFile);
+            certificateInstallWorkflow.install(tempFile, certPEM.getBytes(StandardCharsets.UTF_8),
+                    certificateName, sha256, certInstallProvider);
+            log.info("Certificate {} installation confirmed", certificateName);
+        } catch (CertificateInstallWorkflow.InstallTimeoutException exception) {
+            throw new RuntimeException(resourceMessageProvider.getMessage("cert-install-timeout.alert"), exception);
+        } catch (CertificateInstallWorkflow.InstallRejectedException exception) {
+            throw new RuntimeException(resourceMessageProvider.getMessage("cert-install-failed.alert"), exception);
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(resourceMessageProvider.getMessage("cert-install-failed.alert"), exception);
         }
     }
 

@@ -30,11 +30,14 @@ public class GeneralSettingsPageController implements SettingsPageController, In
     @FXML private Label showButtonLabel;
     @FXML private Label recordSectionLabel;
     @FXML private Label recordSizeLabel;
+    @FXML private Label retainedPayloadSizeLabel;
     @FXML private Tooltip recordSizeTooltip;
+    @FXML private Tooltip retainedPayloadSizeTooltip;
     @FXML private Label recordBypassLabel;
     @FXML private Tooltip recordBypassTooltip;
     @FXML private JFXToggleButton buttonLabelBtn;
     @FXML private JFXTextField maxSizeField;
+    @FXML private JFXTextField retainedPayloadSizeField;
     @FXML private TextArea recordExcludeArea;
 
     @Inject private LocalizationService localization;
@@ -50,7 +53,9 @@ public class GeneralSettingsPageController implements SettingsPageController, In
         localization.bind(showButtonLabel.textProperty(), "show-btn-label.label");
         localization.bind(recordSectionLabel.textProperty(), "record-sep.label");
         localization.bind(recordSizeLabel.textProperty(), "record-size.label");
+        localization.bind(retainedPayloadSizeLabel.textProperty(), "retained-payload-size.label");
         localization.bind(recordSizeTooltip.textProperty(), "record-size.tooltip");
+        localization.bind(retainedPayloadSizeTooltip.textProperty(), "retained-payload-size.tooltip");
         localization.bind(recordBypassLabel.textProperty(), "record-bypass.label");
         localization.bind(recordBypassTooltip.textProperty(), "ant-path.tooltip");
         for (LanguagePreset value : LanguagePreset.values()) {
@@ -58,6 +63,9 @@ public class GeneralSettingsPageController implements SettingsPageController, In
         }
         SettingsFormSupport.require(maxSizeField, resources.getString("validation.required"));
         SettingsFormSupport.positiveInteger(maxSizeField, resources.getString("validation.positive-integer"));
+        SettingsFormSupport.require(retainedPayloadSizeField, resources.getString("validation.required"));
+        SettingsFormSupport.positiveInteger(
+                retainedPayloadSizeField, resources.getString("validation.positive-integer"));
 
         languageComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (!loading && draft != null && newValue != null) {
@@ -74,6 +82,12 @@ public class GeneralSettingsPageController implements SettingsPageController, In
         maxSizeField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!loading && draft != null && newValue.matches("[1-9][0-9]*")) {
                 draft.value().setMaxContentSize(Integer.parseInt(newValue));
+                changed();
+            }
+        });
+        retainedPayloadSizeField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!loading && draft != null && newValue.matches("[1-9][0-9]*")) {
+                draft.value().setRetainedPayloadSizeMb(Integer.parseInt(newValue));
                 changed();
             }
         });
@@ -97,6 +111,7 @@ public class GeneralSettingsPageController implements SettingsPageController, In
                     .findFirst().ifPresent(languageComboBox.getSelectionModel()::select);
             buttonLabelBtn.setSelected(settings.isShowButtonLabel());
             maxSizeField.setText(String.valueOf(settings.getMaxContentSize()));
+            retainedPayloadSizeField.setText(String.valueOf(settings.getRetainedPayloadSizeMb()));
             recordExcludeArea.setText(SettingsFormSupport.formatList(settings.getRecordExcludeList()));
         } finally {
             loading = false;
@@ -105,19 +120,28 @@ public class GeneralSettingsPageController implements SettingsPageController, In
 
     @Override
     public boolean validate() {
-        return maxSizeField.validate();
+        return maxSizeField.validate() && retainedPayloadSizeField.validate();
     }
 
     @Override
     public void focusFirstError() {
         if (!maxSizeField.validate()) {
             maxSizeField.requestFocus();
+        } else if (!retainedPayloadSizeField.validate()) {
+            retainedPayloadSizeField.requestFocus();
         }
     }
 
     @Override
     public void onLocaleChanged() {
         maxSizeField.getValidators().forEach(validator -> {
+            if (validator instanceof RequiredFieldValidator) {
+                validator.setMessage(localization.getMessage("validation.required"));
+            } else if (validator instanceof PositiveIntegerValidator) {
+                validator.setMessage(localization.getMessage("validation.positive-integer"));
+            }
+        });
+        retainedPayloadSizeField.getValidators().forEach(validator -> {
             if (validator instanceof RequiredFieldValidator) {
                 validator.setMessage(localization.getMessage("validation.required"));
             } else if (validator instanceof PositiveIntegerValidator) {

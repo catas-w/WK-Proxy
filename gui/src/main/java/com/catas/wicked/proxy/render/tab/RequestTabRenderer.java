@@ -6,6 +6,10 @@ import com.catas.wicked.common.util.WebUtils;
 import com.catas.wicked.proxy.gui.componet.SideBar;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
 import com.catas.wicked.proxy.render.PreparedRender;
+import com.catas.wicked.proxy.service.record.RequestRecordSnapshot;
+import com.catas.wicked.proxy.service.record.RequestRecordStore;
+import com.catas.wicked.proxy.service.record.ContentPreviewDecoder;
+import com.catas.wicked.common.provider.ResourceMessageProvider;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.scene.Node;
@@ -15,13 +19,11 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
-import org.ehcache.Cache;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -39,7 +41,10 @@ public class RequestTabRenderer extends AbstractTabRenderer {
     private DetailTabController detailTabController;
 
     @Inject
-    private Cache<String, RequestMessage> requestCache;
+    private RequestRecordStore requestStore;
+
+    @Inject
+    private ResourceMessageProvider resourceMessageProvider;
 
     @Override
     public PreparedRender prepare(RenderMessage renderMsg) {
@@ -51,31 +56,32 @@ public class RequestTabRenderer extends AbstractTabRenderer {
             return new PreparedRender(requestId, true, this::displayEmpty);
         }
 
-        RequestMessage request = requestCache.get(requestId);
-        RequestRenderData data = prepareRequest(request);
+        RequestRecordSnapshot snapshot = requestStore.snapshot(requestId);
+        RequestRenderData data = prepareRequest(snapshot);
         return new PreparedRender(requestId, false, () -> displayRequest(data));
     }
 
-    private RequestRenderData prepareRequest(RequestMessage request) {
-        if (request == null) {
+    private RequestRenderData prepareRequest(RequestRecordSnapshot snapshot) {
+        if (snapshot == null || snapshot.message() == null) {
             return null;
         }
+        RequestMessage request = snapshot.message();
         Map<String, String> headers = request.getHeaders() == null
                 ? Collections.emptyMap()
                 : new LinkedHashMap<>(request.getHeaders());
         String query = request.getUrl() == null ? "" : request.getUrl().getQuery();
         query = query == null ? "" : query;
-        byte[] body = request.getBody() == null ? new byte[0]
-                : Arrays.copyOf(request.getBody(), request.getBody().length);
-        byte[] content = WebUtils.parseContent(headers, body);
+        byte[] body = request.getBody() == null ? new byte[0] : request.getBody();
         ContentType contentType = WebUtils.getContentType(headers);
+        boolean image = contentType != null && contentType.getMimeType().startsWith("image/");
+        byte[] content = image ? body : ContentPreviewDecoder.decode(headers, body);
         SideBar.Strategy strategy = predictCodeStyle(contentType, content.length);
         Charset charset = contentType != null && contentType.getCharset() != null
                 ? contentType.getCharset() : StandardCharsets.UTF_8;
-        String contentText = new String(content, charset);
-        boolean image = contentType != null && contentType.getMimeType().startsWith("image/");
+        String contentText = image ? "" : ContentPreviewDecoder.toPreviewText(content, charset);
         return new RequestRenderData(headers, WebUtils.getHeaderText(headers), query, content,
-                contentText, contentType, strategy, image, request.isOversize(), request.isEncrypted());
+                contentText, contentType, strategy, image, request.isOversize(), request.isEncrypted(),
+                snapshot.requestPayloadEvicted());
     }
 
     private void displayEmpty() {
@@ -94,7 +100,6 @@ public class RequestTabRenderer extends AbstractTabRenderer {
             return;
         }
 
-        detailTabController.showRequestOnlyTabs();
         detailTabController.getReqHeaderMsgLabel().setVisible(false);
         detailTabController.getReqContentMsgLabel().setVisible(false);
         detailTabController.getReqMsgLabelBox().setVisible(false);
@@ -104,6 +109,14 @@ public class RequestTabRenderer extends AbstractTabRenderer {
         detailTabController.getReqHeaderArea().replaceText(data.headerText(), true);
         detailTabController.getReqParamArea().replaceText(data.query(), true);
 
+        if (data.payloadEvicted()) {
+            clearPayloadViews();
+            setMsgLabel(detailTabController.getReqContentMsgLabel(),
+                    resourceMessageProvider.getMessage("payload-released.label"),
+                    detailTabController.getReqMsgLabelBox());
+            updatePayloadTabs(!data.query().isEmpty(), false);
+            return;
+        }
         if (data.oversize()) {
             clearPayloadViews();
             setMsgLabel(detailTabController.getReqContentMsgLabel(), OVERSIZE_MSG,
@@ -188,6 +201,6 @@ public class RequestTabRenderer extends AbstractTabRenderer {
     private record RequestRenderData(Map<String, String> headers, String headerText, String query,
                                      byte[] content, String contentText, ContentType contentType,
                                      SideBar.Strategy strategy, boolean image, boolean oversize,
-                                     boolean encrypted) {
+                                     boolean encrypted, boolean payloadEvicted) {
     }
 }

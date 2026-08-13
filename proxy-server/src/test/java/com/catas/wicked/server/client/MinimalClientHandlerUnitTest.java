@@ -65,6 +65,25 @@ public class MinimalClientHandlerUnitTest {
     }
 
     @Test
+    public void closeReleasesSuccessfulResponseThatWasNeverClaimed() throws Exception {
+        MinimalHttpClient client = new MinimalHttpClient();
+        EmbeddedChannel channel = new EmbeddedChannel(new MinimalClientHandler(client));
+        channel.writeInbound(new DefaultFullHttpResponse(
+                HttpVersion.HTTP_1_1,
+                HttpResponseStatus.OK,
+                Unpooled.copiedBuffer("unclaimed", CharsetUtil.UTF_8)));
+
+        FullHttpResponse response = (FullHttpResponse) client.responsePromise.getNow();
+        Assert.assertNotNull(response);
+        Assert.assertEquals(1, response.refCnt());
+
+        client.close();
+
+        Assert.assertEquals(0, response.refCnt());
+        channel.finishAndReleaseAll();
+    }
+
+    @Test
     public void failsAnIncompleteResponseWithoutThrowingFromThePipeline() throws Exception {
         MinimalHttpClient client = new MinimalHttpClient();
         EmbeddedChannel channel = new EmbeddedChannel(new MinimalClientHandler(client));

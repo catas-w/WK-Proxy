@@ -17,13 +17,14 @@ import com.catas.wicked.proxy.message.MessageService;
 import com.catas.wicked.proxy.message.ApplicationGroupOverview;
 import com.catas.wicked.proxy.message.RequestTiming;
 import com.catas.wicked.proxy.render.PreparedRender;
+import com.catas.wicked.proxy.service.record.RequestRecordStore;
+import com.catas.wicked.proxy.service.record.RequestRecordSnapshot;
 import io.netty.handler.codec.http.HttpMethod;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import javafx.scene.control.TreeItem;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.ehcache.Cache;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.MalformedURLException;
@@ -47,7 +48,7 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
     private DetailTabController detailTabController;
 
     @Inject
-    private Cache<String, RequestMessage> requestCache;
+    private RequestRecordStore requestStore;
 
     @Inject
     private RequestOverviewInfo requestOverviewInfo;
@@ -73,9 +74,9 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
 
     @Override
     public PreparedRender prepare(RenderMessage renderMsg) {
-        RequestMessage request = renderMsg.isEmpty() || renderMsg.isPath()
-                || renderMsg.isApplicationGroup()
-                ? null : requestCache.get(renderMsg.getRequestId());
+        RequestRecordSnapshot snapshot = renderMsg.isEmpty() || renderMsg.isPath()
+                || renderMsg.isApplicationGroup() ? null : requestStore.snapshot(renderMsg.getRequestId());
+        RequestMessage request = snapshot == null ? null : snapshot.message();
         return new PreparedRender(renderMsg.getRequestId(), renderMsg.isEmpty(),
                 () -> apply(renderMsg, request));
     }
@@ -83,15 +84,12 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
     private void apply(RenderMessage renderMsg, RequestMessage request) {
         detailTabController.getOverViewMsgLabel().setVisible(renderMsg.isEmpty());
         if (renderMsg.isEmpty()) {
-            detailTabController.hideRequestOnlyTabs();
             return;
         }
         if (renderMsg.isApplicationGroup()) {
-            detailTabController.hideRequestOnlyTabs();
             displayApplicationGroupOverview(renderMsg);
         } else if (renderMsg.isPath()) {
             // display path info
-            detailTabController.hideRequestOnlyTabs();
             displayPathOverview(renderMsg);
         } else {
             // display request info
@@ -295,11 +293,11 @@ public class OverViewTabRenderer extends AbstractTabRenderer {
                 ? ProcessInfo.LookupStatus.UNKNOWN.name() : processInfo.getLookupStatus().name());
 
         RequestTiming timing = RequestTiming.from(request);
-        requestOverviewInfo.getTimeCost().setVal(RequestTiming.formatDuration(timing.totalDuration()));
-        requestOverviewInfo.getRequestTime().setVal(RequestTiming.formatDuration(timing.requestDuration()));
+        requestOverviewInfo.getTimeCost().setVal(timing.formattedTotalDuration());
+        requestOverviewInfo.getRequestTime().setVal(timing.formattedRequestDuration());
         requestOverviewInfo.getRequestStart().setVal(formatTimestamp(timing.requestStart()));
         requestOverviewInfo.getRequestEnd().setVal(formatTimestamp(timing.requestEnd()));
-        requestOverviewInfo.getRespTime().setVal(RequestTiming.formatDuration(timing.responseDuration()));
+        requestOverviewInfo.getRespTime().setVal(timing.formattedResponseDuration());
         requestOverviewInfo.getRespStart().setVal(formatTimestamp(timing.responseStart()));
         requestOverviewInfo.getRespEnd().setVal(formatTimestamp(timing.responseEnd()));
 

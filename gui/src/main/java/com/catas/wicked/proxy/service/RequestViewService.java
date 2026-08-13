@@ -1,17 +1,14 @@
 package com.catas.wicked.proxy.service;
 
-import com.catas.wicked.common.bean.message.BaseMessage;
 import com.catas.wicked.common.bean.message.RenderMessage;
-import com.catas.wicked.common.bean.message.RequestMessage;
 import com.catas.wicked.common.bean.RequestCell;
 import com.catas.wicked.common.config.ApplicationConfig;
-import com.catas.wicked.common.pipeline.MessageQueue;
-import com.catas.wicked.common.pipeline.Topic;
 import com.catas.wicked.proxy.gui.controller.DetailTabController;
 import com.catas.wicked.proxy.gui.controller.DetailWebViewController;
 import com.catas.wicked.proxy.render.TabRenderer;
 import com.catas.wicked.proxy.render.PreparedRender;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -19,15 +16,11 @@ import javafx.application.Platform;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.ehcache.Cache;
-
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -46,19 +39,13 @@ public class RequestViewService {
     @Inject
     private DetailWebViewController detailWebViewController;
 
-    @Inject
-    private Cache<String, RequestMessage> requestCache;
-
     private String currentRequestId;
 
     @Inject
     private ApplicationConfig appConfig;
 
     @Inject
-    private MessageQueue messageQueue;
-    @Inject
     private LocalizationService localization;
-    private BlockingQueue<BaseMessage> queue;
 
     @Named("request")
     @Inject
@@ -87,6 +74,13 @@ public class RequestViewService {
     private final AtomicBoolean applicationGroupRefreshScheduled = new AtomicBoolean();
     private final AtomicBoolean currentRequestRefreshScheduled = new AtomicBoolean();
     private final AtomicLong renderGeneration = new AtomicLong();
+    private final ThreadPoolExecutor renderExecutor = new ThreadPoolExecutor(
+            1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(1), runnable -> {
+                Thread thread = new Thread(runnable, "request-detail-render");
+                thread.setDaemon(true);
+                return thread;
+            }, new ThreadPoolExecutor.DiscardOldestPolicy());
+    private boolean tabListenerInstalled;
 
 
     @PostConstruct
@@ -98,22 +92,37 @@ public class RequestViewService {
         renderFuncMap.put(RenderMessage.Tab.OVERVIEW, overViewTabRenderer);
         renderFuncMap.put(RenderMessage.Tab.TIMING, timingTabRenderer);
 
-        messageQueue.subscribe(Topic.RENDER, msg -> {
-            if (msg instanceof RenderMessage renderMsg) {
-                log.info("rendingMsg: {}", msg);
-                TabRenderer renderer = renderFuncMap.get(renderMsg.getTargetTab());
-                if (renderer != null) {
-                    PreparedRender preparedRender = renderer.prepare(renderMsg);
-                    Platform.runLater(() -> applyIfCurrent(renderMsg, preparedRender));
-                } else {
-                    log.warn("consumer not exist");
-                }
-            } else {
-                log.warn("cannot to process message type: {}", msg);
-            }
-        });
         localization.languageProperty().addListener((observable, oldValue, newValue) ->
                 refreshCurrentOverview());
+    }
+
+    @PreDestroy
+    void shutdownRenderer() {
+        renderExecutor.shutdownNow();
+    }
+
+    private void installTabListener() {
+        if (tabListenerInstalled) {
+            return;
+        }
+        tabListenerInstalled = true;
+        detailTabController.getMainTabPane().getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> renderActiveTab());
+    }
+
+    private void submitRender(RenderMessage renderMsg) {
+        renderExecutor.getQueue().clear();
+        renderExecutor.execute(() -> {
+            TabRenderer renderer = renderFuncMap.get(renderMsg.getTargetTab());
+            if (renderer == null) {
+                return;
+            }
+            long started = System.nanoTime();
+            PreparedRender preparedRender = renderer.prepare(renderMsg);
+            log.debug("Prepared {} for {} in {} ms", renderMsg.getTargetTab(),
+                    renderMsg.getRequestId(), TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started));
+            Platform.runLater(() -> applyIfCurrent(renderMsg, preparedRender));
+        });
     }
 
     private void applyIfCurrent(RenderMessage renderMsg, PreparedRender preparedRender) {
@@ -136,54 +145,39 @@ public class RequestViewService {
      * @param requestId requestId, nullable
      */
     public void updateRequestTab(String requestId) {
-        // String curRequestId = appConfig.getCurrentRequestId().get();
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> updateRequestTab(requestId));
+            return;
+        }
+        installTabListener();
         String curRequestId = appConfig.getObservableConfig().getCurrentRequestId();
         appConfig.getObservableConfig().currentRequestIdProperty().set(requestId);
+        detailTabController.setRequestDetailsAvailable(requestDetailsAvailable(requestId));
 
         if (StringUtils.equals(curRequestId, requestId)) {
             return;
         }
         long generation = renderGeneration.incrementAndGet();
-        // appConfig.getCurrentRequestId().set(requestId);
+        String toSend = requestId == null ? RenderMessage.EMPTY_MSG : requestId;
 
-        String toSend = requestId;
-        if (requestId == null) {
-            toSend = RenderMessage.EMPTY_MSG;
-        }
-        messageQueue.clearMsg(Topic.RENDER);
-
-        // display path info
         if (RenderMessage.isOverviewOnly(requestId)) {
-            messageQueue.pushMsg(Topic.RENDER,
-                    new RenderMessage(toSend, RenderMessage.Tab.OVERVIEW, generation));
+            submitRender(new RenderMessage(toSend, RenderMessage.Tab.OVERVIEW, generation));
             return;
         }
+        submitRender(new RenderMessage(toSend, detailTabController.getActiveRenderTab(), generation));
+    }
 
-        // current requestView tab
-        String curTab = detailTabController.getActiveRequestTab();
-        RenderMessage.Tab firstTargetTab = RenderMessage.Tab.valueOfIgnoreCase(curTab);
+    static boolean requestDetailsAvailable(String requestId) {
+        return requestId != null && !RenderMessage.isOverviewOnly(requestId);
+    }
 
-        Queue<RenderMessage> messages = new PriorityQueue<>(Comparator.comparingInt(o -> o.getTargetTab().getOrder()));
-        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.OVERVIEW, generation));
-        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.REQUEST, generation));
-        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.RESPONSE, generation));
-        messages.offer(new RenderMessage(toSend, RenderMessage.Tab.TIMING, generation));
-
-        // render current tab first
-        Iterator<RenderMessage> iterator = messages.iterator();
-        while (iterator.hasNext()) {
-            RenderMessage msg = iterator.next();
-            if (msg.getTargetTab() == firstTargetTab) {
-                // pushMsg(msg);
-                messageQueue.pushMsg(Topic.RENDER, msg);
-                iterator.remove();
-            }
+    private void renderActiveTab() {
+        String requestId = appConfig.getObservableConfig().getCurrentRequestId();
+        if (requestId == null || RenderMessage.isOverviewOnly(requestId)) {
+            return;
         }
-
-        while (!messages.isEmpty()) {
-            // pushMsg(messages.poll());
-            messageQueue.pushMsg(Topic.RENDER, messages.poll());
-        }
+        submitRender(new RenderMessage(requestId, detailTabController.getActiveRenderTab(),
+                renderGeneration.get()));
     }
 
     public void updateApplicationGroupTab(RequestCell requestCell) {
@@ -209,10 +203,10 @@ public class RequestViewService {
             if (!StringUtils.equals(selectionId, currentSelection)) {
                 return;
             }
-            messageQueue.clearMsg(Topic.RENDER);
-            messageQueue.pushMsg(Topic.RENDER,
-                    new RenderMessage(currentSelection, RenderMessage.Tab.OVERVIEW,
-                            renderGeneration.get()));
+            if (detailTabController.getActiveRenderTab() == RenderMessage.Tab.OVERVIEW) {
+                submitRender(new RenderMessage(currentSelection, RenderMessage.Tab.OVERVIEW,
+                        renderGeneration.get()));
+            }
         });
     }
 
@@ -229,12 +223,8 @@ public class RequestViewService {
                     appConfig.getObservableConfig().getCurrentRequestId())) {
                 return;
             }
-            messageQueue.pushMsg(Topic.RENDER,
-                    new RenderMessage(requestId, RenderMessage.Tab.OVERVIEW,
-                            renderGeneration.get()));
-            messageQueue.pushMsg(Topic.RENDER,
-                    new RenderMessage(requestId, RenderMessage.Tab.TIMING,
-                            renderGeneration.get()));
+            submitRender(new RenderMessage(requestId, detailTabController.getActiveRenderTab(),
+                    renderGeneration.get()));
         });
     }
 
@@ -243,9 +233,9 @@ public class RequestViewService {
         if (selectionId == null) {
             return;
         }
-        messageQueue.clearMsg(Topic.RENDER);
-        messageQueue.pushMsg(Topic.RENDER,
-                new RenderMessage(selectionId, RenderMessage.Tab.OVERVIEW,
-                        renderGeneration.get()));
+        if (detailTabController.getActiveRenderTab() == RenderMessage.Tab.OVERVIEW) {
+            submitRender(new RenderMessage(selectionId, RenderMessage.Tab.OVERVIEW,
+                    renderGeneration.get()));
+        }
     }
 }

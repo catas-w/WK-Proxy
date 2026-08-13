@@ -5,6 +5,7 @@ import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.ProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
+import io.netty.handler.codec.http.HttpHeaders;
 
 import java.util.Optional;
 
@@ -21,17 +22,30 @@ public class ProxyHandlerFactory {
      * @return ProxyHandler
      */
     public static ProxyHandler getExternalProxyHandler(ExternalProxyConfig proxyConfig, String url) {
+        return getExternalProxyHandler(proxyConfig, url, null);
+    }
+
+    /**
+     * Creates a proxy handler and optionally adds headers to the HTTP CONNECT handshake.
+     * The headers are ignored for SOCKS proxies.
+     */
+    public static ProxyHandler getExternalProxyHandler(ExternalProxyConfig proxyConfig, String url,
+                                                        HttpHeaders connectHeaders) {
         if (proxyConfig != null) {
             switch (proxyConfig.getProtocol()) {
                 case HTTP -> {
                     HttpProxyHandler httpProxyHandler = null;
                     if (proxyConfig.isProxyAuth()) {
-                        httpProxyHandler = new HttpProxyHandler(
-                                proxyConfig.getSocketAddress(),
-                                Optional.ofNullable(proxyConfig.getUsername()).orElse(""),
-                                Optional.ofNullable(proxyConfig.getPassword()).orElse("")); // fix: NPE
+                        String username = Optional.ofNullable(proxyConfig.getUsername()).orElse("");
+                        String password = Optional.ofNullable(proxyConfig.getPassword()).orElse("");
+                        httpProxyHandler = connectHeaders == null
+                                ? new HttpProxyHandler(proxyConfig.getSocketAddress(), username, password)
+                                : new HttpProxyHandler(proxyConfig.getSocketAddress(), username, password,
+                                        connectHeaders);
                     } else {
-                        httpProxyHandler = new HttpProxyHandler(proxyConfig.getSocketAddress());
+                        httpProxyHandler = connectHeaders == null
+                                ? new HttpProxyHandler(proxyConfig.getSocketAddress())
+                                : new HttpProxyHandler(proxyConfig.getSocketAddress(), connectHeaders);
                     }
                     return httpProxyHandler;
                 }
@@ -60,7 +74,7 @@ public class ProxyHandlerFactory {
                 }
                 case SYSTEM -> {
                     ExternalProxyConfig systemProxy = WebUtils.getSystemProxy(url);
-                    return getExternalProxyHandler(systemProxy, url);
+                    return getExternalProxyHandler(systemProxy, url, connectHeaders);
                 }
             }
         }
