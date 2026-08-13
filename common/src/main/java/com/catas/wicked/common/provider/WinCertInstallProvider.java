@@ -9,27 +9,26 @@ import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
 import java.security.Security;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Singleton
 @Requires(os = Requires.Family.WINDOWS)
 public class WinCertInstallProvider implements CertInstallProvider {
 
-    static final String ROOT_STORE_TYPE = "Windows-ROOT-LOCALMACHINE";
     private static final String POWERSHELL = "powershell.exe";
+    private static final long STORE_ERROR_LOG_INTERVAL_NANOS = TimeUnit.SECONDS.toNanos(30);
+    private static final AtomicLong NEXT_STORE_ERROR_LOG_NANOS = new AtomicLong();
 
     private final ProcessExecutor processExecutor;
     private final CertificateStoreReader certificateStoreReader;
 
     public WinCertInstallProvider() {
-        this(WinCertInstallProvider::execute, WinCertInstallProvider::loadRootCertificates);
+        this(WinCertInstallProvider::execute, new WindowsRootCertificateStore()::readCertificates);
     }
 
     WinCertInstallProvider(ProcessExecutor processExecutor, CertificateStoreReader certificateStoreReader) {
@@ -49,15 +48,15 @@ public class WinCertInstallProvider implements CertInstallProvider {
             return false;
         }
         try {
-            for (Certificate certificate : certificateStoreReader.read()) {
-                if (certificate != null
-                        && StringUtils.equalsIgnoreCase(sha256, CommonUtils.SHA256(certificate.getEncoded()))) {
+            for (byte[] encodedCertificate : certificateStoreReader.read()) {
+                if (encodedCertificate != null
+                        && StringUtils.equalsIgnoreCase(sha256, CommonUtils.SHA256(encodedCertificate))) {
                     log.info("Certificate {} is installed in LocalMachine\\Root.", certName);
                     return true;
                 }
             }
         } catch (Exception error) {
-            log.error("Error checking certificate {} in LocalMachine\\Root.", certName, error);
+            logStoreReadError(certName, error);
             return false;
         }
         log.debug("Certificate {} is not installed in LocalMachine\\Root.", certName);
@@ -119,15 +118,20 @@ public class WinCertInstallProvider implements CertInstallProvider {
         return process.waitFor();
     }
 
-    private static List<Certificate> loadRootCertificates() throws Exception {
-        KeyStore keyStore = KeyStore.getInstance(ROOT_STORE_TYPE);
-        keyStore.load(null, null);
-        List<Certificate> certificates = new ArrayList<>();
-        Enumeration<String> aliases = keyStore.aliases();
-        while (aliases.hasMoreElements()) {
-            certificates.add(keyStore.getCertificate(aliases.nextElement()));
+    private static void logStoreReadError(String certName, Exception error) {
+        long now = System.nanoTime();
+        long nextLog = NEXT_STORE_ERROR_LOG_NANOS.get();
+        if (now >= nextLog && NEXT_STORE_ERROR_LOG_NANOS.compareAndSet(
+                nextLog, now + STORE_ERROR_LOG_INTERVAL_NANOS)) {
+            if (error instanceof WindowsRootCertificateStore.CertificateStoreException storeError) {
+                log.error("Error checking certificate {} in LocalMachine\\Root: operation={}, error={}.",
+                        certName, storeError.operation(), storeError.errorCode(), storeError);
+            } else {
+                log.error("Error checking certificate {} in LocalMachine\\Root.", certName, error);
+            }
+            return;
         }
-        return certificates;
+        log.debug("Suppressed repeated LocalMachine\\Root read failure for certificate {}.", certName, error);
     }
 
     @FunctionalInterface
@@ -137,6 +141,6 @@ public class WinCertInstallProvider implements CertInstallProvider {
 
     @FunctionalInterface
     interface CertificateStoreReader {
-        List<Certificate> read() throws Exception;
+        List<byte[]> read() throws Exception;
     }
 }

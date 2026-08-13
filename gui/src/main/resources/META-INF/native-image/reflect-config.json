@@ -3628,5 +3628,39 @@
 {
   "name":"sun.security.x509.SubjectKeyIdentifierExtension",
   "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CERT_CONTEXT",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CERT_CONTEXT$ByReference",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$HCERTSTORE",
+  "allDeclaredFields":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] },
+    {"name":"<init>","parameterTypes":["com.sun.jna.Pointer"] }
+  ]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$HCRYPTPROV_LEGACY",
+  "allDeclaredFields":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] },
+    {"name":"<init>","parameterTypes":["long"] }
+  ]
+},
+{
+  "name":"com.sun.jna.platform.win32.WinCrypt$CertStoreProviderName",
+  "allDeclaredFields":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] },
+    {"name":"<init>","parameterTypes":["int"] }
+  ]
 }
 ]

@@ -3,8 +3,6 @@ package com.catas.wicked.common.provider;
 import com.catas.wicked.common.util.CommonUtils;
 import org.junit.Test;
 
-import java.security.PublicKey;
-import java.security.cert.Certificate;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -53,9 +51,8 @@ public class WinCertInstallProviderUnitTest {
     @Test
     public void certificateCheckMatchesFingerprintWithoutDependingOnAliasOrCommonName() {
         byte[] encoded = {1, 2, 3, 4};
-        Certificate certificate = new EncodedCertificate(encoded);
         WinCertInstallProvider provider = new WinCertInstallProvider(command -> 0,
-                () -> List.of(certificate));
+                () -> List.of(encoded));
 
         assertTrue(provider.checkCertInstalled("different-common-name", CommonUtils.SHA256(encoded)));
         assertFalse(provider.checkCertInstalled("different-common-name", CommonUtils.SHA256(new byte[]{9})));
@@ -66,18 +63,4 @@ public class WinCertInstallProviderUnitTest {
         return value.substring(from, value.indexOf(end, from));
     }
 
-    private static final class EncodedCertificate extends Certificate {
-        private final byte[] encoded;
-
-        private EncodedCertificate(byte[] encoded) {
-            super("X.509");
-            this.encoded = encoded.clone();
-        }
-
-        @Override public byte[] getEncoded() { return encoded.clone(); }
-        @Override public void verify(PublicKey key) { }
-        @Override public void verify(PublicKey key, String sigProvider) { }
-        @Override public String toString() { return "test-certificate"; }
-        @Override public PublicKey getPublicKey() { return null; }
-    }
 }

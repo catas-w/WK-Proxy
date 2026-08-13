@@ -33,6 +33,9 @@
     "interfaces":["com.sun.jna.platform.win32.GDI32"]}
   ,
   {
+    "interfaces":["com.sun.jna.platform.win32.Crypt32"]}
+  ,
+  {
     "interfaces":["com.sun.jna.platform.win32.IPHlpAPI"]}
   ,
   {
