@@ -22,7 +22,7 @@ Wizard Proxy (WK Proxy) 是一款开源的桌面端 HTTP/HTTPS 网络调试代�
 ## 预览截图
 ![image](screenshots/001.png)
 ![image](screenshots/002.png)
-![image](screenshots/004.png)
+![image](screenshots/003.png)
 
 ## 安装
 ### 安装二进制包

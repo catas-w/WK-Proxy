@@ -22,7 +22,7 @@ Wizard Proxy (WK Proxy) is an open-source desktop HTTP/HTTPS debugging proxy and
 ## Screenshots
 ![image](screenshots/001.png)
 ![image](screenshots/002.png)
-![image](screenshots/004.png)
+![image](screenshots/003.png)
 
 ## Installation
 ### Install the binary package
