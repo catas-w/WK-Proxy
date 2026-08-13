@@ -695,16 +695,5 @@
     {"name":"threadAllocatedMemorySupport"}, 
     {"name":"threadContentionMonitoringSupport"}
   ]
-},
-{
-  "name":"sun.security.mscapi.CKeyStore",
-  "methods":[
-    {"name":"generateCertificate","parameterTypes":["byte[]","java.util.Collection"] }, 
-    {"name":"generateCertificateChain","parameterTypes":["java.lang.String","java.util.Collection"] }, 
-    {"name":"generateKeyAndCertificateChain","parameterTypes":["boolean","java.lang.String","long","long","int","java.util.Collection"] }
-  ]
-},
-{
-  "name":"sun.security.mscapi.CKeyStore$ROOT"
 }
 ]
